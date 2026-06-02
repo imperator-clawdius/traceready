@@ -31,6 +31,8 @@ Resolve-DnsName www.traceready.online
 gh variable list --repo imperator-clawdius/traceready
 ```
 
+`npm run verify:launch` checks the deployed GitHub Pages artifact directly through a GitHub Pages IP with the `traceready.online` host header. It verifies the app root, `/privacy/`, `/terms/`, and the live Stripe Payment Link. DNS is reported separately so the app artifact can be validated while registrar records are still pending.
+
 ## DNS Required For Claimed Domain
 
 Namecheap is still serving URL forwarding/parking until these records are changed:

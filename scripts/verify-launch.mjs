@@ -10,38 +10,56 @@ const WWW_DOMAIN = `www.${DOMAIN}`;
 const STRIPE_LINK = "https://buy.stripe.com/4gMbJ1d4Tate2L531O8IU01";
 const STRICT_DNS = process.argv.includes("--strict-dns");
 
-const requiredContent = [
-  "TraceReady",
-  "Sample CSV",
-  "Sample KML",
-  "Sample GeoJSON",
-  STRIPE_LINK,
-  "Send paid-cleanup file",
+const requiredPages = [
+  {
+    label: "APP_ROOT",
+    path: "/",
+    content: ["TraceReady", "Sample CSV", "Sample KML", "Sample GeoJSON", STRIPE_LINK, "Send paid-cleanup file"],
+  },
+  {
+    label: "PRIVACY_PAGE",
+    path: "/privacy/",
+    content: ["Privacy", "browser", "paid cleanup", "Stripe"],
+  },
+  {
+    label: "TERMS_PAGE",
+    path: "/terms/",
+    content: ["Terms", "No legal certification", "Paid cleanup", "Buy cleanup - $149"],
+  },
 ];
 
 async function main() {
-  const [apexRecords, wwwCname, appArtifact, stripeLink] = await Promise.all([
+  const [apexRecords, wwwCname, pageResults, stripeLink] = await Promise.all([
     resolveA(DOMAIN),
     resolveCnameRecord(WWW_DOMAIN),
-    fetchGitHubPagesArtifact(),
+    Promise.all(requiredPages.map((page) => fetchGitHubPagesArtifact(page))),
     head(STRIPE_LINK),
   ]);
 
   const apexReady = EXPECTED_APEX_A.every((ip) => apexRecords.includes(ip));
   const wwwReady = wwwCname.includes(EXPECTED_WWW_CNAME);
   const dnsReady = apexReady && wwwReady;
-  const appReady = appArtifact.status === 200 && requiredContent.every((text) => appArtifact.body.includes(text));
+  const pageChecks = pageResults.map((result) => ({
+    ...result,
+    ready: result.status === 200 && result.content.every((text) => result.body.includes(text)),
+    missing: result.content.filter((text) => !result.body.includes(text)),
+  }));
+  const appReady = pageChecks.every((check) => check.ready);
   const stripeReady = stripeLink.status >= 200 && stripeLink.status < 400;
 
-  printStatus("APP_ARTIFACT", appReady, `status=${appArtifact.status} host=${DOMAIN} via=${GITHUB_PAGES_IP}`);
+  for (const check of pageChecks) {
+    printStatus(check.label, check.ready, `status=${check.status} path=${check.path} host=${DOMAIN} via=${GITHUB_PAGES_IP}`);
+  }
+
   printStatus("STRIPE_LINK", stripeReady, `status=${stripeLink.status} url=${STRIPE_LINK}`);
   printStatus("DNS_APEX", apexReady, `current=${apexRecords.join(",") || "none"}`);
   printStatus("DNS_WWW", wwwReady, `current=${wwwCname.join(",") || "none"}`);
   console.log(`CLAIMED_DOMAIN_READY=${dnsReady}`);
 
-  if (!appReady) {
-    const missing = requiredContent.filter((text) => !appArtifact.body.includes(text));
-    console.log(`APP_MISSING=${missing.join(",") || "none"}`);
+  for (const check of pageChecks) {
+    if (!check.ready) {
+      console.log(`${check.label}_MISSING=${check.missing.join(",") || "none"}`);
+    }
   }
 
   if (!dnsReady) {
@@ -74,12 +92,12 @@ async function resolveCnameRecord(hostname) {
   }
 }
 
-async function fetchGitHubPagesArtifact() {
+async function fetchGitHubPagesArtifact(page) {
   return new Promise((resolve) => {
     const request = http.request(
       {
         host: GITHUB_PAGES_IP,
-        path: "/",
+        path: page.path,
         method: "GET",
         headers: {
           Host: DOMAIN,
@@ -94,17 +112,17 @@ async function fetchGitHubPagesArtifact() {
           body += chunk;
         });
         response.on("end", () => {
-          resolve({ status: response.statusCode ?? 0, body });
+          resolve({ ...page, status: response.statusCode ?? 0, body });
         });
       },
     );
 
     request.on("timeout", () => {
       request.destroy();
-      resolve({ status: 0, body: "" });
+      resolve({ ...page, status: 0, body: "" });
     });
     request.on("error", () => {
-      resolve({ status: 0, body: "" });
+      resolve({ ...page, status: 0, body: "" });
     });
     request.end();
   });
