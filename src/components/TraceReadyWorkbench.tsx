@@ -401,6 +401,23 @@ export function TraceReadyWorkbench() {
           </section>
         </aside>
       </main>
+
+      <footer className="border-t border-zinc-200 bg-white">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-5 text-sm text-zinc-600 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+          <p>Browser-side validation for launch. Paid cleanup files are submitted by email after checkout.</p>
+          <nav className="flex gap-4 font-semibold text-zinc-800" aria-label="Trust links">
+            <a href="/privacy/" className="hover:text-emerald-700">
+              Privacy
+            </a>
+            <a href="/terms/" className="hover:text-emerald-700">
+              Terms
+            </a>
+            <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-emerald-700">
+              Contact
+            </a>
+          </nav>
+        </div>
+      </footer>
     </div>
   );
 }

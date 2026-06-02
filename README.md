@@ -10,6 +10,7 @@ Clean and validate messy farm CSV, KML, and GeoJSON files into EUDR-ready coffee
 - EUDR readiness checks for missing traceability fields, invalid coordinates, duplicate farm IDs, and polygon requirements for plots over 4 hectares.
 - Downloadable ZIP pack with cleaned CSV, issue log, buyer summary, readiness report, normalized GeoJSON, structured EUDR checklist, and a paid-cleanup intake note.
 - Paid cleanup CTA using `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` when configured, with email fallback.
+- Minimal privacy and terms pages linked from the product footer for buyer trust before checkout.
 
 ## Local
 
