@@ -25,8 +25,8 @@ COF-002,Kofi Adu,Ghana,coffee,LOT-24-10,8.2,6.3344,-1.6129
 COC-114,Coop San Pedro,Peru,cocoa,,3.9,-6.6232,-78.4420
 `;
 
-const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "founder@traceready.online";
-const PAYMENT_LINK = process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK ?? "";
+const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "founder@traceready.online";
+const PAYMENT_LINK = process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK || "";
 
 export function TraceReadyWorkbench() {
   const inputRef = useRef<HTMLInputElement>(null);
