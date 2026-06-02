@@ -7,6 +7,7 @@
 - Custom domain configured in GitHub Pages: `traceready.online`
 - Static export output: `out/`
 - Launch feature: browser-side CSV, KML, and GeoJSON validator that creates a downloadable EUDR readiness pack for coffee and cocoa farm files.
+- Downloaded pack includes cleaned CSV, issue log, readiness report, normalized GeoJSON, and paid-cleanup intake note.
 - Launch demo coverage: built-in sample runners for CSV, KML, and GeoJSON.
 - Conversion action: `Buy 24-hour cleanup` CTA. `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` is configured to a live Stripe Payment Link; email fallback remains available in code if the variable is removed.
 - Paid-order handoff: after checkout, customers are prompted to email the source file, Stripe receipt email, commodity, source country, and deadline to `founder@traceready.online`.

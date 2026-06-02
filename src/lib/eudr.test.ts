@@ -137,10 +137,14 @@ CSV-1,Ama Mensah,Ghana,coffee,LOT-1,2.2,6.2031,-1.7082
       "traceready-cleaned-farms.csv",
       "traceready-geolocation.geojson",
       "traceready-issues.csv",
+      "traceready-paid-cleanup-intake.txt",
       "traceready-readiness-report.txt",
     ]);
     await expect(zip.file("traceready-readiness-report.txt")?.async("string")).resolves.toContain(
       "TraceReady EUDR Readiness Report",
+    );
+    await expect(zip.file("traceready-paid-cleanup-intake.txt")?.async("string")).resolves.toContain(
+      "Stripe receipt email",
     );
   });
 });

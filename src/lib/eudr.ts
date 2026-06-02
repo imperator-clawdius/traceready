@@ -151,6 +151,7 @@ export async function createCompliancePack(analysis: TraceReadyAnalysis): Promis
   zip.file("traceready-cleaned-farms.csv", buildCleanedCsv(analysis.records));
   zip.file("traceready-issues.csv", buildIssuesCsv(analysis.issues));
   zip.file("traceready-geolocation.geojson", JSON.stringify(buildGeoJson(analysis.records), null, 2));
+  zip.file("traceready-paid-cleanup-intake.txt", buildPaidCleanupIntake(analysis));
 
   return zip.generateAsync({ type: "blob" });
 }
@@ -770,6 +771,49 @@ function buildReport(analysis: TraceReadyAnalysis): string {
             `- [${issue.severity.toUpperCase()}] ${issue.sourceLabel} ${issue.field}: ${issue.message} ${issue.suggestion}`,
         )
       : ["- No blockers or warnings detected."]),
+    "",
+  ].join("\n");
+}
+
+function buildPaidCleanupIntake(analysis: TraceReadyAnalysis): string {
+  const commodities = Array.from(
+    new Set(
+      analysis.records
+        .map((record) => (record.commodity === "unknown" ? record.rawCommodity : record.commodity))
+        .filter((commodity) => commodity.trim().length > 0),
+    ),
+  );
+  const countries = Array.from(new Set(analysis.records.map((record) => record.country).filter(Boolean)));
+
+  return [
+    "TraceReady Paid Cleanup Intake",
+    "",
+    "Send this note with the source file or generated ZIP after checkout.",
+    "",
+    "Customer details:",
+    "- Stripe receipt email:",
+    "- Company:",
+    "- Contact name:",
+    "- Deadline:",
+    "- Importer/exporter role:",
+    "",
+    "File summary:",
+    `- Source file: ${analysis.fileName}`,
+    `- Detected format: ${analysis.format}`,
+    `- Records checked: ${analysis.summary.totalRecords}`,
+    `- Blockers: ${analysis.summary.blockers}`,
+    `- Warnings: ${analysis.summary.warnings}`,
+    `- Commodity: ${commodities.join(", ") || "not detected"}`,
+    `- Country: ${countries.join(", ") || "not detected"}`,
+    "",
+    "What TraceReady needs to finish the paid cleanup:",
+    "- Original source file if this ZIP was generated from a browser sample.",
+    "- Shipment, batch, or lot reference if missing from the issue log.",
+    "- Correct supplier or producer identity for every blocker row.",
+    "- Polygon files for any plot over 4 hectares that only has a point.",
+    "- Any buyer-specific naming requirements for the final pack.",
+    "",
+    "Fulfillment target: return cleaned CSV, issues CSV, readiness report, and normalized GeoJSON within 24 hours.",
     "",
   ].join("\n");
 }
