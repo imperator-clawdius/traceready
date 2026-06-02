@@ -20,6 +20,8 @@
 npm run lint
 npm run test
 npm run build
+npm run verify:launch
+npm run verify:launch -- --strict-dns
 gh run list --repo imperator-clawdius/traceready --workflow pages.yml --limit 3
 gh api repos/imperator-clawdius/traceready/pages
 Resolve-DnsName traceready.online

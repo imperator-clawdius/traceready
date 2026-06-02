@@ -19,6 +19,7 @@ npm run lint
 npm run test
 npm run build
 npm run check
+npm run verify:launch
 npm run dev
 ```
 
@@ -35,3 +36,5 @@ Custom domain: `traceready.online`
 After checkout, the launch app prompts customers to email the source file, Stripe receipt email, commodity, source country, and deadline so the paid cleanup order can be fulfilled manually.
 
 See `docs/launch-status.md` for the current deployment and DNS checklist.
+
+Use `npm run verify:launch -- --strict-dns` after the registrar records are changed to fail fast until `traceready.online` resolves to GitHub Pages.
