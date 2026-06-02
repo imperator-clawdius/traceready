@@ -28,6 +28,6 @@ Custom domain: `traceready.online`
 
 ## Conversion
 
-Set `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` as a GitHub Actions variable to turn the cleanup CTA into a Stripe payment link. Until then, the button opens a prefilled email to `NEXT_PUBLIC_CONTACT_EMAIL`.
+`NEXT_PUBLIC_STRIPE_PAYMENT_LINK` is configured in GitHub Actions variables for the live $149 cleanup Payment Link. If that variable is removed, the button opens a prefilled email to `NEXT_PUBLIC_CONTACT_EMAIL`.
 
 See `docs/launch-status.md` for the current deployment and DNS checklist.
