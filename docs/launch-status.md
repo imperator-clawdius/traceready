@@ -8,6 +8,7 @@
 - Static export output: `out/`
 - Launch feature: browser-side CSV, KML, and GeoJSON validator that creates a downloadable EUDR readiness pack for coffee and cocoa farm files.
 - Conversion action: `Buy 24-hour cleanup` CTA. `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` is configured to a live Stripe Payment Link; email fallback remains available in code if the variable is removed.
+- Paid-order handoff: after checkout, customers are prompted to email the source file, Stripe receipt email, commodity, source country, and deadline to `founder@traceready.online`.
 - Live Stripe product: `TraceReady 24-hour cleanup`
 - Live Stripe price: `price_1TdyJyEB0YO5IZfZmyF6kC2L`
 - Live Stripe payment link: `https://buy.stripe.com/4gMbJ1d4Tate2L531O8IU01`

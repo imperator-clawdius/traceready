@@ -48,6 +48,15 @@ export function TraceReadyWorkbench() {
 
     return `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
   }, []);
+  const orderHandoffHref = useMemo(() => {
+    const subject = encodeURIComponent("TraceReady paid cleanup file");
+    const body = encodeURIComponent(
+      `I bought TraceReady cleanup and need to submit my file.\n\nStripe receipt email:\nCommodity:\nSource country:\nDeadline:\nNotes:`,
+    );
+
+    return `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+  }, []);
+  const opensCheckout = Boolean(PAYMENT_LINK);
 
   async function runAnalysis(file: File) {
     setError("");
@@ -125,6 +134,8 @@ export function TraceReadyWorkbench() {
 
           <a
             href={buyHref}
+            target={opensCheckout ? "_blank" : undefined}
+            rel={opensCheckout ? "noopener noreferrer" : undefined}
             className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-md bg-zinc-950 px-5 text-sm font-semibold text-white transition hover:bg-zinc-800"
           >
             <CreditCard className="size-4" aria-hidden="true" />
@@ -244,11 +255,28 @@ export function TraceReadyWorkbench() {
             </p>
             <a
               href={buyHref}
+              target={opensCheckout ? "_blank" : undefined}
+              rel={opensCheckout ? "noopener noreferrer" : undefined}
               className="mt-4 inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-amber-500 px-4 text-sm font-semibold text-zinc-950 transition hover:bg-amber-400"
             >
               <CreditCard className="size-4" aria-hidden="true" />
               Buy 24-hour cleanup
             </a>
+            <div className="mt-4 border-t border-zinc-100 pt-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-zinc-500">
+                After checkout
+              </p>
+              <p className="mt-2 text-sm leading-6 text-zinc-600">
+                Send the source file, Stripe receipt email, commodity, source country, and deadline.
+                We return the cleaned pack within 24 hours.
+              </p>
+              <a
+                href={orderHandoffHref}
+                className="mt-3 inline-flex h-10 w-full items-center justify-center rounded-md border border-zinc-300 bg-white px-3 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-50"
+              >
+                Send paid-cleanup file
+              </a>
+            </div>
           </section>
         </aside>
       </main>

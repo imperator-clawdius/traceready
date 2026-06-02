@@ -30,4 +30,6 @@ Custom domain: `traceready.online`
 
 `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` is configured in GitHub Actions variables for the live $149 cleanup Payment Link. If that variable is removed, the button opens a prefilled email to `NEXT_PUBLIC_CONTACT_EMAIL`.
 
+After checkout, the launch app prompts customers to email the source file, Stripe receipt email, commodity, source country, and deadline so the paid cleanup order can be fulfilled manually.
+
 See `docs/launch-status.md` for the current deployment and DNS checklist.
