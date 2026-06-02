@@ -16,6 +16,7 @@ Clean and validate messy farm CSV, KML, and GeoJSON files into EUDR-ready coffee
 npm install
 npm run lint
 npm run build
+npm run check
 npm run dev
 ```
 
@@ -24,3 +25,9 @@ npm run dev
 The site statically exports to `out/` with `output: "export"` and deploys through `.github/workflows/pages.yml`.
 
 Custom domain: `traceready.online`
+
+## Conversion
+
+Set `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` as a GitHub Actions variable to turn the cleanup CTA into a Stripe payment link. Until then, the button opens a prefilled email to `NEXT_PUBLIC_CONTACT_EMAIL`.
+
+See `docs/launch-status.md` for the current deployment and DNS checklist.
