@@ -8,7 +8,7 @@ Clean and validate messy farm CSV, KML, and GeoJSON files into EUDR-ready coffee
 - Built-in sample runners for CSV, KML, and GeoJSON launch demos.
 - Farm record normalization for supplier, country, commodity, batch, area, coordinates, and geometry.
 - EUDR readiness checks for missing traceability fields, invalid coordinates, duplicate farm IDs, and polygon requirements for plots over 4 hectares.
-- Downloadable ZIP pack with cleaned CSV, issue log, readiness report, normalized GeoJSON, and a paid-cleanup intake note.
+- Downloadable ZIP pack with cleaned CSV, issue log, readiness report, normalized GeoJSON, structured EUDR checklist, and a paid-cleanup intake note.
 - Paid cleanup CTA using `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` when configured, with email fallback.
 
 ## Local

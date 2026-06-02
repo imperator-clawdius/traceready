@@ -150,6 +150,7 @@ export async function createCompliancePack(analysis: TraceReadyAnalysis): Promis
   zip.file("traceready-readiness-report.txt", buildReport(analysis));
   zip.file("traceready-cleaned-farms.csv", buildCleanedCsv(analysis.records));
   zip.file("traceready-issues.csv", buildIssuesCsv(analysis.issues));
+  zip.file("traceready-eudr-checklist.json", JSON.stringify(buildEudrChecklist(analysis), null, 2));
   zip.file("traceready-geolocation.geojson", JSON.stringify(buildGeoJson(analysis.records), null, 2));
   zip.file("traceready-paid-cleanup-intake.txt", buildPaidCleanupIntake(analysis));
 
@@ -816,6 +817,107 @@ function buildPaidCleanupIntake(analysis: TraceReadyAnalysis): string {
     "Fulfillment target: return cleaned CSV, issues CSV, readiness report, and normalized GeoJSON within 24 hours.",
     "",
   ].join("\n");
+}
+
+function buildEudrChecklist(analysis: TraceReadyAnalysis) {
+  return {
+    product: "TraceReady",
+    artifact: "EUDR readiness checklist",
+    generatedAt: analysis.generatedAt,
+    sourceFile: analysis.fileName,
+    detectedFormat: analysis.format,
+    disclaimer: "Operational readiness check only. This is not legal certification.",
+    summary: analysis.summary,
+    checks: [
+      checklistItem(
+        "accepted_format",
+        "Source file uses a launch-supported format",
+        analysis.format === "csv" || analysis.format === "kml" || analysis.format === "geojson",
+        hasIssue(analysis, ["unsupported_format", "parse_error"]),
+        `${analysis.format}`,
+      ),
+      checklistItem(
+        "coffee_cocoa_scope",
+        "Commodity is coffee or cocoa",
+        analysis.records.length > 0 && analysis.records.every((record) => record.commodity !== "unknown"),
+        hasIssue(analysis, ["missing_commodity", "unsupported_commodity"]),
+        uniqueValues(analysis.records.map((record) => record.commodity === "unknown" ? record.rawCommodity : record.commodity)),
+      ),
+      checklistItem(
+        "supplier_identity",
+        "Supplier, producer, or farmer identity is present",
+        !hasIssue(analysis, ["missing_supplier", "missing_farmId"]),
+        hasIssue(analysis, ["missing_supplier", "missing_farmId"]),
+        `${analysis.summary.readyRecords}/${analysis.summary.totalRecords} records without blockers`,
+      ),
+      checklistItem(
+        "origin_country",
+        "Country of production is present",
+        !hasIssue(analysis, ["missing_country"]),
+        hasIssue(analysis, ["missing_country"]),
+        uniqueValues(analysis.records.map((record) => record.country)),
+      ),
+      checklistItem(
+        "lot_traceability",
+        "Batch, lot, or shipment reference is present",
+        !hasIssue(analysis, ["missing_batch"]),
+        hasIssue(analysis, ["missing_batch"]),
+        uniqueValues(analysis.records.map((record) => record.batchId)),
+      ),
+      checklistItem(
+        "geolocation_present",
+        "Geolocation is present and coordinates are valid",
+        !hasIssue(analysis, ["missing_geolocation", "invalid_coordinates"]),
+        hasIssue(analysis, ["missing_geolocation", "invalid_coordinates"]),
+        `${analysis.records.filter((record) => record.latitude !== null && record.longitude !== null).length}/${analysis.summary.totalRecords} records geolocated`,
+      ),
+      checklistItem(
+        "polygon_threshold",
+        "Plots over 4 hectares use polygon geometry",
+        !hasIssue(analysis, ["polygon_required", "open_polygon"]),
+        hasIssue(analysis, ["polygon_required", "open_polygon"]),
+        `${analysis.records.filter((record) => record.geometryType === "Polygon" || record.geometryType === "MultiPolygon").length} polygon records`,
+      ),
+      checklistItem(
+        "unique_farm_ids",
+        "Farm or plot IDs are unique",
+        !hasIssue(analysis, ["duplicate_farm_id"]),
+        hasIssue(analysis, ["duplicate_farm_id"]),
+        `${new Set(analysis.records.map((record) => record.farmId).filter(Boolean)).size} unique farm IDs`,
+      ),
+      {
+        id: "pack_contents",
+        label: "TraceReady pack includes operational export artifacts",
+        status: "pass",
+        evidence:
+          "cleaned CSV, issue CSV, readiness report, normalized GeoJSON, EUDR checklist, and paid-cleanup intake note",
+      },
+    ],
+  };
+}
+
+function checklistItem(
+  id: string,
+  label: string,
+  passes: boolean,
+  needsAttention: boolean,
+  evidence: string,
+) {
+  return {
+    id,
+    label,
+    status: passes ? "pass" : needsAttention ? "blocker_or_review" : "review",
+    evidence: evidence || "not detected",
+  };
+}
+
+function hasIssue(analysis: TraceReadyAnalysis, codes: string[]) {
+  return analysis.issues.some((issue) => codes.includes(issue.code));
+}
+
+function uniqueValues(values: string[]) {
+  const unique = Array.from(new Set(values.map((value) => value.trim()).filter(Boolean)));
+  return unique.join(", ") || "not detected";
 }
 
 function buildCleanedCsv(records: FarmRecord[]): string {

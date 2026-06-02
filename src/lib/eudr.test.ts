@@ -135,6 +135,7 @@ CSV-1,Ama Mensah,Ghana,coffee,LOT-1,2.2,6.2031,-1.7082
 
     expect(Object.keys(zip.files).sort()).toEqual([
       "traceready-cleaned-farms.csv",
+      "traceready-eudr-checklist.json",
       "traceready-geolocation.geojson",
       "traceready-issues.csv",
       "traceready-paid-cleanup-intake.txt",
@@ -145,6 +146,9 @@ CSV-1,Ama Mensah,Ghana,coffee,LOT-1,2.2,6.2031,-1.7082
     );
     await expect(zip.file("traceready-paid-cleanup-intake.txt")?.async("string")).resolves.toContain(
       "Stripe receipt email",
+    );
+    await expect(zip.file("traceready-eudr-checklist.json")?.async("string")).resolves.toContain(
+      '"artifact": "EUDR readiness checklist"',
     );
   });
 });
