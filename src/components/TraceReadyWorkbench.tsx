@@ -25,6 +25,94 @@ COF-002,Kofi Adu,Ghana,coffee,LOT-24-10,8.2,6.3344,-1.6129
 COC-114,Coop San Pedro,Peru,cocoa,,3.9,-6.6232,-78.4420
 `;
 
+const SAMPLE_GEOJSON = JSON.stringify(
+  {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        properties: {
+          farm_id: "GEO-101",
+          supplier_name: "Coop Rio Verde",
+          country: "Peru",
+          commodity: "cocoa",
+          batch_id: "PE-COCOA-77",
+          area_ha: "3.4",
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [-76.2412, -6.5821],
+        },
+      },
+      {
+        type: "Feature",
+        properties: {
+          farm_id: "GEO-102",
+          supplier_name: "Coop Rio Verde",
+          country: "Peru",
+          commodity: "cocoa",
+          batch_id: "PE-COCOA-77",
+          area_ha: "6.1",
+        },
+        geometry: {
+          type: "Polygon",
+          coordinates: [
+            [
+              [-76.2501, -6.5901],
+              [-76.2452, -6.5901],
+              [-76.2452, -6.5854],
+              [-76.2501, -6.5854],
+              [-76.2501, -6.5901],
+            ],
+          ],
+        },
+      },
+    ],
+  },
+  null,
+  2,
+);
+
+const SAMPLE_KML = `<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <Placemark>
+      <name>KML-201</name>
+      <ExtendedData>
+        <Data name="farm_id"><value>KML-201</value></Data>
+        <Data name="supplier_name"><value>Highlands Coffee Coop</value></Data>
+        <Data name="country"><value>Uganda</value></Data>
+        <Data name="commodity"><value>coffee</value></Data>
+        <Data name="batch_id"><value>UG-COFFEE-18</value></Data>
+        <Data name="area_ha"><value>2.8</value></Data>
+      </ExtendedData>
+      <Point>
+        <coordinates>30.2876,0.3476,0</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>KML-202</name>
+      <ExtendedData>
+        <Data name="farm_id"><value>KML-202</value></Data>
+        <Data name="supplier_name"><value>Highlands Coffee Coop</value></Data>
+        <Data name="country"><value>Uganda</value></Data>
+        <Data name="commodity"><value>coffee</value></Data>
+        <Data name="batch_id"><value>UG-COFFEE-18</value></Data>
+        <Data name="area_ha"><value>5.3</value></Data>
+      </ExtendedData>
+      <Polygon>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              30.2900,0.3500,0 30.2940,0.3500,0 30.2940,0.3540,0 30.2900,0.3540,0 30.2900,0.3500,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+  </Document>
+</kml>`;
+
 const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "founder@traceready.online";
 const PAYMENT_LINK = process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK || "";
 
@@ -92,8 +180,25 @@ export function TraceReadyWorkbench() {
     }
   }
 
-  async function loadSample() {
-    const file = new File([SAMPLE_CSV], "sample-coffee-export.csv", { type: "text/csv" });
+  async function loadSample(kind: "csv" | "geojson" | "kml") {
+    const sample = {
+      csv: {
+        body: SAMPLE_CSV,
+        name: "sample-coffee-export.csv",
+        type: "text/csv",
+      },
+      geojson: {
+        body: SAMPLE_GEOJSON,
+        name: "sample-cocoa-export.geojson",
+        type: "application/geo+json",
+      },
+      kml: {
+        body: SAMPLE_KML,
+        name: "sample-coffee-export.kml",
+        type: "application/vnd.google-earth.kml+xml",
+      },
+    }[kind];
+    const file = new File([sample.body], sample.name, { type: sample.type });
     await runAnalysis(file);
   }
 
@@ -187,10 +292,26 @@ export function TraceReadyWorkbench() {
                 <button
                   type="button"
                   className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-zinc-300 bg-white px-4 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-50"
-                  onClick={() => void loadSample()}
+                  onClick={() => void loadSample("csv")}
                 >
                   <FileCheck2 className="size-4" aria-hidden="true" />
-                  Load sample
+                  Sample CSV
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-zinc-300 bg-white px-4 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-50"
+                  onClick={() => void loadSample("kml")}
+                >
+                  <FileCheck2 className="size-4" aria-hidden="true" />
+                  Sample KML
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-zinc-300 bg-white px-4 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-50"
+                  onClick={() => void loadSample("geojson")}
+                >
+                  <FileCheck2 className="size-4" aria-hidden="true" />
+                  Sample GeoJSON
                 </button>
               </div>
             </div>
