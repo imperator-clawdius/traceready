@@ -134,6 +134,7 @@ CSV-1,Ama Mensah,Ghana,coffee,LOT-1,2.2,6.2031,-1.7082
     const zip = await JSZip.loadAsync(await pack.arrayBuffer());
 
     expect(Object.keys(zip.files).sort()).toEqual([
+      "traceready-buyer-summary.txt",
       "traceready-cleaned-farms.csv",
       "traceready-eudr-checklist.json",
       "traceready-geolocation.geojson",
@@ -143,6 +144,9 @@ CSV-1,Ama Mensah,Ghana,coffee,LOT-1,2.2,6.2031,-1.7082
     ]);
     await expect(zip.file("traceready-readiness-report.txt")?.async("string")).resolves.toContain(
       "TraceReady EUDR Readiness Report",
+    );
+    await expect(zip.file("traceready-buyer-summary.txt")?.async("string")).resolves.toContain(
+      "TraceReady Buyer / Importer Summary",
     );
     await expect(zip.file("traceready-paid-cleanup-intake.txt")?.async("string")).resolves.toContain(
       "Stripe receipt email",

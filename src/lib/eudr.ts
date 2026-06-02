@@ -148,6 +148,7 @@ export async function createCompliancePack(analysis: TraceReadyAnalysis): Promis
   const zip = new JSZip();
 
   zip.file("traceready-readiness-report.txt", buildReport(analysis));
+  zip.file("traceready-buyer-summary.txt", buildBuyerSummary(analysis));
   zip.file("traceready-cleaned-farms.csv", buildCleanedCsv(analysis.records));
   zip.file("traceready-issues.csv", buildIssuesCsv(analysis.issues));
   zip.file("traceready-eudr-checklist.json", JSON.stringify(buildEudrChecklist(analysis), null, 2));
@@ -772,6 +773,60 @@ function buildReport(analysis: TraceReadyAnalysis): string {
             `- [${issue.severity.toUpperCase()}] ${issue.sourceLabel} ${issue.field}: ${issue.message} ${issue.suggestion}`,
         )
       : ["- No blockers or warnings detected."]),
+    "",
+  ].join("\n");
+}
+
+function buildBuyerSummary(analysis: TraceReadyAnalysis): string {
+  const blockers = analysis.issues.filter((issue) => issue.severity === "blocker");
+  const warnings = analysis.issues.filter((issue) => issue.severity === "warning");
+  const commodities = uniqueValues(
+    analysis.records.map((record) => (record.commodity === "unknown" ? record.rawCommodity : record.commodity)),
+  );
+  const countries = uniqueValues(analysis.records.map((record) => record.country));
+  const status =
+    blockers.length > 0
+      ? "Needs cleanup before buyer/importer review"
+      : warnings.length > 0
+        ? "Ready for review with warnings"
+        : "No blockers or warnings detected";
+
+  return [
+    "TraceReady Buyer / Importer Summary",
+    "",
+    `Status: ${status}`,
+    `Readiness score: ${analysis.summary.readinessScore}/100`,
+    `Generated: ${analysis.generatedAt}`,
+    `Source file: ${analysis.fileName}`,
+    `Detected format: ${analysis.format}`,
+    "",
+    "Shipment context detected from file:",
+    `- Commodity: ${commodities}`,
+    `- Country of production: ${countries}`,
+    `- Farm records checked: ${analysis.summary.totalRecords}`,
+    `- Records without blockers: ${analysis.summary.readyRecords}`,
+    `- Blockers: ${analysis.summary.blockers}`,
+    `- Warnings: ${analysis.summary.warnings}`,
+    "",
+    "Pack contents:",
+    "- traceready-cleaned-farms.csv: normalized farm and plot table",
+    "- traceready-geolocation.geojson: normalized point and polygon geolocation layer",
+    "- traceready-issues.csv: blocker and warning register",
+    "- traceready-eudr-checklist.json: structured readiness checklist",
+    "- traceready-readiness-report.txt: detailed operational report",
+    "- traceready-paid-cleanup-intake.txt: fulfillment note for paid cleanup orders",
+    "",
+    "Top blockers:",
+    ...(blockers.length
+      ? blockers.slice(0, 5).map((issue) => `- ${issue.sourceLabel} ${issue.field}: ${issue.message}`)
+      : ["- None detected."]),
+    "",
+    "Top warnings:",
+    ...(warnings.length
+      ? warnings.slice(0, 5).map((issue) => `- ${issue.sourceLabel} ${issue.field}: ${issue.message}`)
+      : ["- None detected."]),
+    "",
+    "Caveat: TraceReady provides an operational readiness pack. It is not legal certification or a due diligence statement submission.",
     "",
   ].join("\n");
 }
