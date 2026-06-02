@@ -16,6 +16,7 @@ Clean and validate messy farm CSV, KML, and GeoJSON files into EUDR-ready coffee
 ```bash
 npm install
 npm run lint
+npm run test
 npm run build
 npm run check
 npm run dev

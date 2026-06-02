@@ -18,6 +18,7 @@
 
 ```powershell
 npm run lint
+npm run test
 npm run build
 gh run list --repo imperator-clawdius/traceready --workflow pages.yml --limit 3
 gh api repos/imperator-clawdius/traceready/pages
