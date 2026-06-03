@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8f7f3;
-  --foreground: #18181b;
+  --background: #f6efe1;
+  --foreground: #24150d;
 }
 
 @theme inline {
@@ -22,4 +22,109 @@ button,
 a,
 input {
   letter-spacing: 0;
+}
+
+.trace-botanical-shell {
+  background:
+    radial-gradient(circle at 16% 8%, rgb(255 249 234 / 0.92) 0 16rem, transparent 27rem),
+    radial-gradient(circle at 86% 16%, rgb(215 239 218 / 0.62) 0 13rem, transparent 25rem),
+    linear-gradient(135deg, #f7efe1 0%, #fffaf1 38%, #f0dfc3 100%);
+}
+
+.trace-botanical-shell::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background-image:
+    radial-gradient(ellipse 7px 12px at 18px 20px, rgb(89 50 27 / 0.12) 48%, transparent 52%),
+    radial-gradient(ellipse 6px 11px at 72px 58px, rgb(126 77 36 / 0.12) 48%, transparent 52%),
+    radial-gradient(circle at 46px 42px, rgb(8 127 115 / 0.08) 0 2px, transparent 3px);
+  background-size: 112px 96px;
+  mask-image: linear-gradient(90deg, black, transparent 24%, transparent 76%, black);
+  pointer-events: none;
+}
+
+.trace-card {
+  position: relative;
+}
+
+.trace-card::after {
+  position: absolute;
+  top: -32px;
+  right: -24px;
+  width: 130px;
+  height: 92px;
+  content: "";
+  background:
+    radial-gradient(ellipse 13px 22px at 78px 48px, #6f3f22 45%, transparent 48%),
+    radial-gradient(ellipse 10px 18px at 103px 62px, #87542c 45%, transparent 48%),
+    linear-gradient(130deg, transparent 0 44%, rgb(8 127 115 / 0.35) 45% 48%, transparent 49%);
+  border-radius: 999px;
+  opacity: 0.28;
+  pointer-events: none;
+  transform: rotate(-10deg);
+}
+
+.trace-vines {
+  position: absolute;
+  color: rgb(45 112 72 / 0.28);
+  filter: drop-shadow(0 10px 28px rgb(74 42 22 / 0.08));
+}
+
+.trace-vines-left {
+  top: -30px;
+  left: -34px;
+  width: min(22vw, 250px);
+  min-width: 140px;
+}
+
+.trace-vines-right {
+  top: -10px;
+  right: -40px;
+  width: min(24vw, 280px);
+  min-width: 150px;
+}
+
+.trace-bean-fill {
+  fill: rgb(103 59 31 / 0.48);
+}
+
+.trace-bean-scatter {
+  position: absolute;
+  width: 34px;
+  height: 54px;
+  background:
+    radial-gradient(ellipse at center, #6d3d22 0 56%, transparent 59%),
+    linear-gradient(92deg, transparent 0 45%, #4a2a16 46% 51%, transparent 52%);
+  border-radius: 999px;
+  opacity: 0.18;
+  transform: rotate(28deg);
+}
+
+.trace-bean-scatter-a {
+  top: 144px;
+  left: 38%;
+}
+
+.trace-bean-scatter-b {
+  right: 19%;
+  bottom: 120px;
+  transform: rotate(-24deg);
+}
+
+.trace-bean-scatter-c {
+  bottom: 236px;
+  left: 7%;
+  transform: rotate(54deg);
+}
+
+@media (max-width: 760px) {
+  .trace-vines-left,
+  .trace-vines-right {
+    opacity: 0.45;
+  }
+
+  .trace-botanical-shell::before {
+    mask-image: linear-gradient(180deg, black, transparent 36%, transparent 74%, black);
+  }
 }

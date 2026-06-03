@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import {
   AlertTriangle,
   CheckCircle2,
@@ -223,15 +224,34 @@ export function TraceReadyWorkbench() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f7f3] text-zinc-950">
-      <header className="border-b border-zinc-200 bg-white">
+    <div className="trace-botanical-shell relative min-h-screen overflow-hidden bg-[#f6efe1] text-[#24150d]">
+      <CoffeeBotanicalFrame />
+
+      <header className="relative z-10 border-b border-[#dec8a6] bg-[#fffaf1]/90 shadow-sm backdrop-blur">
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.14em] text-emerald-700">TraceReady</p>
-            <h1 className="mt-2 max-w-3xl text-3xl font-semibold leading-tight sm:text-4xl">
+            <div className="flex items-center gap-3">
+              <span className="flex size-14 shrink-0 items-center justify-center rounded-md border border-[#d7bd95] bg-white shadow-sm">
+                <Image
+                  src="/traceready-logo-icon.png"
+                  alt=""
+                  width={44}
+                  height={44}
+                  className="size-11 object-contain"
+                  aria-hidden="true"
+                />
+              </span>
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.14em] text-[#087f73]">TraceReady</p>
+                <p className="mt-1 text-xs font-medium uppercase tracking-[0.12em] text-[#7d5d32]">
+                  Farm data cleanup
+                </p>
+              </div>
+            </div>
+            <h1 className="mt-4 max-w-3xl text-3xl font-semibold leading-tight text-[#2b190f] sm:text-4xl">
               Clean farm files into EUDR-ready packs.
             </h1>
-            <p className="mt-3 max-w-3xl text-base leading-7 text-zinc-700">
+            <p className="mt-3 max-w-3xl text-base leading-7 text-[#62472e]">
               Upload messy CSV, KML, or GeoJSON files for coffee and cocoa. Get cleaned farm records,
               geolocation output, issue logs, and a readiness report in one ZIP.
             </p>
@@ -241,7 +261,7 @@ export function TraceReadyWorkbench() {
             href={buyHref}
             target={opensCheckout ? "_blank" : undefined}
             rel={opensCheckout ? "noopener noreferrer" : undefined}
-            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-md bg-zinc-950 px-5 text-sm font-semibold text-white transition hover:bg-zinc-800"
+            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-md bg-[#2d1a10] px-5 text-sm font-semibold text-[#fff7e8] shadow-sm transition hover:bg-[#4a2a16]"
           >
             <CreditCard className="size-4" aria-hidden="true" />
             Buy cleanup - $149
@@ -249,25 +269,25 @@ export function TraceReadyWorkbench() {
         </div>
       </header>
 
-      <main className="mx-auto grid w-full max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:px-8">
+      <main className="relative z-10 mx-auto grid w-full max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:px-8">
         <section className="space-y-6">
           <div
-            className="border border-dashed border-zinc-300 bg-white p-6"
+            className="trace-card relative overflow-hidden border border-dashed border-[#c8a56f] bg-[#fffaf2]/95 p-6 shadow-sm"
             onDragOver={(event) => event.preventDefault()}
             onDrop={handleDrop}
           >
             <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
               <div className="max-w-2xl">
-                <div className="flex size-11 items-center justify-center rounded-md bg-emerald-50 text-emerald-700">
+                <div className="flex size-11 items-center justify-center rounded-md bg-[#dff5e8] text-[#087f73]">
                   <UploadCloud className="size-5" aria-hidden="true" />
                 </div>
-                <h2 className="mt-4 text-xl font-semibold">Upload farm source file</h2>
-                <p className="mt-2 text-sm leading-6 text-zinc-600">
+                <h2 className="mt-4 text-xl font-semibold text-[#2b190f]">Upload farm source file</h2>
+                <p className="mt-2 text-sm leading-6 text-[#6a5137]">
                   Accepted launch formats: CSV, KML, GeoJSON, JSON GeoJSON. Files are processed in
                   your browser for the MVP.
                 </p>
                 {activeFile ? (
-                  <p className="mt-3 text-sm font-medium text-zinc-800">
+                  <p className="mt-3 text-sm font-medium text-[#3f2a1b]">
                     Selected: {activeFile.name} ({formatBytes(activeFile.size)})
                   </p>
                 ) : null}
@@ -283,7 +303,7 @@ export function TraceReadyWorkbench() {
                 />
                 <button
                   type="button"
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-emerald-700 px-4 text-sm font-semibold text-white transition hover:bg-emerald-800"
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-[#087f73] px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#05665d]"
                   onClick={() => inputRef.current?.click()}
                 >
                   <UploadCloud className="size-4" aria-hidden="true" />
@@ -291,7 +311,7 @@ export function TraceReadyWorkbench() {
                 </button>
                 <button
                   type="button"
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-zinc-300 bg-white px-4 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-50"
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-[#d3b887] bg-white px-4 text-sm font-semibold whitespace-nowrap text-[#3a2517] transition hover:bg-[#fff3dd] sm:min-w-40"
                   onClick={() => void loadSample("csv")}
                 >
                   <FileCheck2 className="size-4" aria-hidden="true" />
@@ -299,7 +319,7 @@ export function TraceReadyWorkbench() {
                 </button>
                 <button
                   type="button"
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-zinc-300 bg-white px-4 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-50"
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-[#d3b887] bg-white px-4 text-sm font-semibold whitespace-nowrap text-[#3a2517] transition hover:bg-[#fff3dd] sm:min-w-40"
                   onClick={() => void loadSample("kml")}
                 >
                   <FileCheck2 className="size-4" aria-hidden="true" />
@@ -307,7 +327,7 @@ export function TraceReadyWorkbench() {
                 </button>
                 <button
                   type="button"
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-zinc-300 bg-white px-4 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-50"
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-[#d3b887] bg-white px-4 text-sm font-semibold whitespace-nowrap text-[#3a2517] transition hover:bg-[#fff3dd] sm:min-w-40"
                   onClick={() => void loadSample("geojson")}
                 >
                   <FileCheck2 className="size-4" aria-hidden="true" />
@@ -317,7 +337,7 @@ export function TraceReadyWorkbench() {
             </div>
 
             {isAnalyzing ? (
-              <div className="mt-6 flex items-center gap-2 border-t border-zinc-100 pt-5 text-sm font-medium text-zinc-700">
+              <div className="mt-6 flex items-center gap-2 border-t border-[#eadcc8] pt-5 text-sm font-medium text-[#5d432b]">
                 <Loader2 className="size-4 animate-spin" aria-hidden="true" />
                 Analyzing file
               </div>
@@ -335,9 +355,9 @@ export function TraceReadyWorkbench() {
         </section>
 
         <aside className="space-y-6">
-          <section className="border border-zinc-200 bg-white p-5">
+          <section className="trace-card border border-[#d9bf92] bg-[#fffaf2]/95 p-5 shadow-sm">
             <div className="flex items-center justify-between gap-3">
-              <h2 className="text-lg font-semibold">Readiness</h2>
+              <h2 className="text-lg font-semibold text-[#2b190f]">Readiness</h2>
               <StatusBadge analysis={analysis} />
             </div>
 
@@ -351,7 +371,7 @@ export function TraceReadyWorkbench() {
             <button
               type="button"
               disabled={!analysis || isPacking}
-              className="mt-5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-zinc-950 px-4 text-sm font-semibold text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-300"
+              className="mt-5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[#2d1a10] px-4 text-sm font-semibold text-[#fff7e8] transition hover:bg-[#4a2a16] disabled:cursor-not-allowed disabled:bg-[#c9b79c]"
               onClick={() => void downloadPack()}
             >
               {isPacking ? (
@@ -362,15 +382,15 @@ export function TraceReadyWorkbench() {
               Download compliance pack
             </button>
 
-            <p className="mt-4 text-xs leading-5 text-zinc-500">
+            <p className="mt-4 text-xs leading-5 text-[#7a6144]">
               Operational readiness check only. Final EUDR due diligence remains the operator or
               trader responsibility.
             </p>
           </section>
 
-          <section className="border border-zinc-200 bg-white p-5">
-            <h2 className="text-lg font-semibold">Launch conversion</h2>
-            <p className="mt-2 text-sm leading-6 text-zinc-600">
+          <section className="trace-card border border-[#d9bf92] bg-[#fffaf2]/95 p-5 shadow-sm">
+            <h2 className="text-lg font-semibold text-[#2b190f]">Launch conversion</h2>
+            <p className="mt-2 text-sm leading-6 text-[#6a5137]">
               For teams that need the messy file fixed, packaged, and returned instead of self-serve
               diagnosis.
             </p>
@@ -378,22 +398,22 @@ export function TraceReadyWorkbench() {
               href={buyHref}
               target={opensCheckout ? "_blank" : undefined}
               rel={opensCheckout ? "noopener noreferrer" : undefined}
-              className="mt-4 inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-amber-500 px-4 text-sm font-semibold text-zinc-950 transition hover:bg-amber-400"
+              className="mt-4 inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[#c6782a] px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#a86222]"
             >
               <CreditCard className="size-4" aria-hidden="true" />
               Buy 24-hour cleanup
             </a>
-            <div className="mt-4 border-t border-zinc-100 pt-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-zinc-500">
+            <div className="mt-4 border-t border-[#eadcc8] pt-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#7d5d32]">
                 After checkout
               </p>
-              <p className="mt-2 text-sm leading-6 text-zinc-600">
+              <p className="mt-2 text-sm leading-6 text-[#6a5137]">
                 Send the source file, Stripe receipt email, commodity, source country, and deadline.
                 We return the cleaned pack within 24 hours.
               </p>
               <a
                 href={orderHandoffHref}
-                className="mt-3 inline-flex h-10 w-full items-center justify-center rounded-md border border-zinc-300 bg-white px-3 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-50"
+                className="mt-3 inline-flex h-10 w-full items-center justify-center rounded-md border border-[#d3b887] bg-white px-3 text-sm font-semibold text-[#3a2517] transition hover:bg-[#fff3dd]"
               >
                 Send paid-cleanup file
               </a>
@@ -402,17 +422,17 @@ export function TraceReadyWorkbench() {
         </aside>
       </main>
 
-      <footer className="border-t border-zinc-200 bg-white">
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-5 text-sm text-zinc-600 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+      <footer className="relative z-10 border-t border-[#dec8a6] bg-[#fffaf1]/90 backdrop-blur">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-5 text-sm text-[#6a5137] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <p>Browser-side validation for launch. Paid cleanup files are submitted by email after checkout.</p>
-          <nav className="flex gap-4 font-semibold text-zinc-800" aria-label="Trust links">
-            <a href="/privacy/" className="hover:text-emerald-700">
+          <nav className="flex gap-4 font-semibold text-[#3a2517]" aria-label="Trust links">
+            <a href="/privacy/" className="hover:text-[#087f73]">
               Privacy
             </a>
-            <a href="/terms/" className="hover:text-emerald-700">
+            <a href="/terms/" className="hover:text-[#087f73]">
               Terms
             </a>
-            <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-emerald-700">
+            <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-[#087f73]">
               Contact
             </a>
           </nav>
@@ -422,13 +442,61 @@ export function TraceReadyWorkbench() {
   );
 }
 
+function CoffeeBotanicalFrame() {
+  return (
+    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
+      <svg className="trace-vines trace-vines-left" viewBox="0 0 260 720" fill="none">
+        <path
+          d="M30 12C87 82 89 141 50 204C9 270 33 330 108 384C184 440 191 504 116 575C78 611 76 654 116 708"
+          stroke="currentColor"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+        <path d="M65 134C103 111 136 114 164 143C124 166 91 163 65 134Z" fill="currentColor" />
+        <path d="M42 296C77 261 112 255 148 278C116 311 81 317 42 296Z" fill="currentColor" />
+        <path d="M115 452C153 429 186 432 214 461C174 484 141 481 115 452Z" fill="currentColor" />
+        <path d="M55 602C89 573 125 571 162 598C126 627 91 628 55 602Z" fill="currentColor" />
+        <g className="trace-bean-fill">
+          <ellipse cx="158" cy="218" rx="18" ry="29" transform="rotate(-30 158 218)" />
+          <path d="M149 195C155 211 159 225 166 241" stroke="#5a341f" strokeWidth="3" strokeLinecap="round" />
+          <ellipse cx="88" cy="520" rx="17" ry="27" transform="rotate(22 88 520)" />
+          <path d="M94 497C89 514 84 527 78 542" stroke="#5a341f" strokeWidth="3" strokeLinecap="round" />
+        </g>
+      </svg>
+
+      <svg className="trace-vines trace-vines-right" viewBox="0 0 280 740" fill="none">
+        <path
+          d="M226 6C166 76 160 132 201 203C246 281 217 348 135 399C57 447 52 512 128 583C166 620 168 672 124 731"
+          stroke="currentColor"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+        <path d="M198 130C158 108 123 113 96 145C138 166 171 162 198 130Z" fill="currentColor" />
+        <path d="M222 312C184 279 149 276 114 302C150 334 185 337 222 312Z" fill="currentColor" />
+        <path d="M128 474C90 451 55 454 28 487C70 508 102 504 128 474Z" fill="currentColor" />
+        <path d="M209 616C173 589 139 591 102 620C140 647 174 644 209 616Z" fill="currentColor" />
+        <g className="trace-bean-fill">
+          <ellipse cx="96" cy="232" rx="18" ry="29" transform="rotate(31 96 232)" />
+          <path d="M106 209C99 225 95 239 88 254" stroke="#5a341f" strokeWidth="3" strokeLinecap="round" />
+          <ellipse cx="183" cy="528" rx="17" ry="27" transform="rotate(-22 183 528)" />
+          <path d="M176 505C181 522 187 535 193 550" stroke="#5a341f" strokeWidth="3" strokeLinecap="round" />
+        </g>
+      </svg>
+
+      <div className="trace-bean-scatter trace-bean-scatter-a" />
+      <div className="trace-bean-scatter trace-bean-scatter-b" />
+      <div className="trace-bean-scatter trace-bean-scatter-c" />
+    </div>
+  );
+}
+
 function Metric({ label, value, suffix = "" }: { label: string; value: string; suffix?: string }) {
   return (
-    <div className="border border-zinc-200 bg-zinc-50 p-4">
-      <p className="text-xs font-medium uppercase tracking-[0.12em] text-zinc-500">{label}</p>
-      <p className="mt-2 text-2xl font-semibold tabular-nums text-zinc-950">
+    <div className="border border-[#e0c79d] bg-[#fff4df] p-4">
+      <p className="text-xs font-medium uppercase tracking-[0.12em] text-[#7d5d32]">{label}</p>
+      <p className="mt-2 text-2xl font-semibold tabular-nums text-[#2b190f]">
         {value}
-        <span className="text-sm text-zinc-500">{suffix}</span>
+        <span className="text-sm text-[#7d5d32]">{suffix}</span>
       </p>
     </div>
   );
@@ -436,7 +504,7 @@ function Metric({ label, value, suffix = "" }: { label: string; value: string; s
 
 function StatusBadge({ analysis }: { analysis: TraceReadyAnalysis | null }) {
   if (!analysis) {
-    return <span className="rounded-md bg-zinc-100 px-2.5 py-1 text-xs font-semibold text-zinc-600">No file</span>;
+    return <span className="rounded-md bg-[#efe1c9] px-2.5 py-1 text-xs font-semibold text-[#725439]">No file</span>;
   }
 
   if (analysis.summary.blockers > 0) {
@@ -467,21 +535,21 @@ function StatusBadge({ analysis }: { analysis: TraceReadyAnalysis | null }) {
 
 function IssueTable({ issues }: { issues: ValidationIssue[] }) {
   return (
-    <section className="border border-zinc-200 bg-white">
-      <div className="flex items-center justify-between gap-4 border-b border-zinc-200 px-5 py-4">
-        <h2 className="text-lg font-semibold">Issue log</h2>
-        <span className="text-sm text-zinc-500">{issues.length} found</span>
+    <section className="trace-card overflow-hidden border border-[#d9bf92] bg-[#fffaf2]/95 shadow-sm">
+      <div className="flex items-center justify-between gap-4 border-b border-[#eadcc8] px-5 py-4">
+        <h2 className="text-lg font-semibold text-[#2b190f]">Issue log</h2>
+        <span className="text-sm text-[#7a6144]">{issues.length} found</span>
       </div>
 
       {issues.length === 0 ? (
-        <div className="flex items-center gap-3 px-5 py-8 text-sm text-zinc-600">
-          <CheckCircle2 className="size-5 text-emerald-700" aria-hidden="true" />
+        <div className="flex items-center gap-3 px-5 py-8 text-sm text-[#6a5137]">
+          <CheckCircle2 className="size-5 text-[#087f73]" aria-hidden="true" />
           Upload a file to see blockers, warnings, and cleanup suggestions.
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full text-left text-sm">
-            <thead className="bg-zinc-50 text-xs uppercase tracking-[0.1em] text-zinc-500">
+            <thead className="bg-[#fff4df] text-xs uppercase tracking-[0.1em] text-[#7d5d32]">
               <tr>
                 <th className="px-4 py-3 font-semibold">Severity</th>
                 <th className="px-4 py-3 font-semibold">Source</th>
@@ -490,7 +558,7 @@ function IssueTable({ issues }: { issues: ValidationIssue[] }) {
                 <th className="px-4 py-3 font-semibold">Fix</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-100">
+            <tbody className="divide-y divide-[#eadcc8]">
               {issues.map((issue, index) => (
                 <tr key={`${issue.code}-${issue.sourceLabel}-${index}`}>
                   <td className="px-4 py-3 align-top">
@@ -504,10 +572,10 @@ function IssueTable({ issues }: { issues: ValidationIssue[] }) {
                       {issue.severity}
                     </span>
                   </td>
-                  <td className="max-w-44 px-4 py-3 align-top font-medium text-zinc-800">{issue.sourceLabel}</td>
-                  <td className="px-4 py-3 align-top text-zinc-600">{issue.field}</td>
-                  <td className="min-w-64 px-4 py-3 align-top text-zinc-800">{issue.message}</td>
-                  <td className="min-w-64 px-4 py-3 align-top text-zinc-600">{issue.suggestion}</td>
+                  <td className="max-w-44 px-4 py-3 align-top font-medium text-[#3f2a1b]">{issue.sourceLabel}</td>
+                  <td className="px-4 py-3 align-top text-[#6a5137]">{issue.field}</td>
+                  <td className="min-w-64 px-4 py-3 align-top text-[#3f2a1b]">{issue.message}</td>
+                  <td className="min-w-64 px-4 py-3 align-top text-[#6a5137]">{issue.suggestion}</td>
                 </tr>
               ))}
             </tbody>
