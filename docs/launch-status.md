@@ -5,7 +5,9 @@
 - Repository: https://github.com/imperator-clawdius/traceready
 - Deployment target: GitHub Pages
 - Custom domain configured in GitHub Pages: `traceready.online`
+- Last verified launch state: 2026-06-03
 - Static export output: `out/`
+- HTTPS: GitHub Pages certificate approved for `traceready.online` and `www.traceready.online`; HTTPS enforcement enabled.
 - Launch feature: browser-side CSV, KML, and GeoJSON validator that creates a downloadable EUDR readiness pack for coffee and cocoa farm files.
 - Downloaded pack includes cleaned CSV, issue log, buyer/importer summary, readiness report, normalized GeoJSON, structured EUDR checklist, and paid-cleanup intake note.
 - Launch demo coverage: built-in sample runners for CSV, KML, and GeoJSON.
@@ -31,11 +33,11 @@ Resolve-DnsName www.traceready.online
 gh variable list --repo imperator-clawdius/traceready
 ```
 
-`npm run verify:launch` checks the deployed GitHub Pages artifact directly through a GitHub Pages IP with the `traceready.online` host header. It verifies the app root, `/privacy/`, `/terms/`, and the live Stripe Payment Link. DNS is reported separately so the app artifact can be validated while registrar records are still pending.
+`npm run verify:launch` checks the deployed GitHub Pages artifact directly through a GitHub Pages IP with the `traceready.online` host header. It also checks live HTTPS pages when DNS is ready, verifies the `www` HTTPS redirect to the apex domain, and verifies the live Stripe Payment Link. DNS is still reported separately so the app artifact can be validated while registrar records are pending.
 
-## DNS Required For Claimed Domain
+## DNS And HTTPS
 
-Namecheap is still serving URL forwarding/parking until these records are changed:
+Current required DNS records:
 
 ```text
 A     @     185.199.108.153
@@ -45,15 +47,25 @@ A     @     185.199.111.153
 CNAME www   imperator-clawdius.github.io
 ```
 
-Remove the Namecheap URL forward and parking records:
+Expected GitHub Pages API state:
 
-```text
-A/CNAME/URL forward @   192.64.119.43
-CNAME www              parkingpage.namecheap.com
+```json
+{
+  "cname": "traceready.online",
+  "html_url": "https://traceready.online/",
+  "https_certificate": {
+    "state": "approved",
+    "domains": ["traceready.online", "www.traceready.online"]
+  },
+  "https_enforced": true
+}
 ```
 
-After DNS resolves to GitHub Pages, enable HTTPS enforcement:
+If GitHub Pages ever serves the site over HTTP but `curl.exe -I https://traceready.online/` fails with a certificate principal/SNI error, re-trigger certificate provisioning by removing and restoring the Pages custom domain, then enable HTTPS enforcement:
 
 ```powershell
+gh api --method PUT repos/imperator-clawdius/traceready/pages -F cname=null
+gh api --method PUT repos/imperator-clawdius/traceready/pages -f cname=traceready.online
+gh api repos/imperator-clawdius/traceready/pages
 gh api --method PUT repos/imperator-clawdius/traceready/pages -F https_enforced=true
 ```

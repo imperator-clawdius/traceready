@@ -29,34 +29,61 @@ const requiredPages = [
 ];
 
 async function main() {
-  const [apexRecords, wwwCname, pageResults, stripeLink] = await Promise.all([
+  const [apexRecords, wwwCname, artifactResults, liveResults, stripeLink, wwwHttps] = await Promise.all([
     resolveA(DOMAIN),
     resolveCnameRecord(WWW_DOMAIN),
     Promise.all(requiredPages.map((page) => fetchGitHubPagesArtifact(page))),
+    Promise.all(requiredPages.map((page) => fetchLiveHttpsPage(page))),
     head(STRIPE_LINK),
+    head(`https://${WWW_DOMAIN}/`),
   ]);
 
   const apexReady = EXPECTED_APEX_A.every((ip) => apexRecords.includes(ip));
   const wwwReady = wwwCname.includes(EXPECTED_WWW_CNAME);
   const dnsReady = apexReady && wwwReady;
-  const pageChecks = pageResults.map((result) => ({
+  const artifactChecks = artifactResults.map((result) => ({
     ...result,
     ready: result.status === 200 && result.content.every((text) => result.body.includes(text)),
     missing: result.content.filter((text) => !result.body.includes(text)),
   }));
-  const appReady = pageChecks.every((check) => check.ready);
+  const liveChecks = liveResults.map((result) => ({
+    ...result,
+    ready: result.status === 200 && result.content.every((text) => result.body.includes(text)),
+    missing: result.content.filter((text) => !result.body.includes(text)),
+  }));
+  const artifactReady = artifactChecks.every((check) => check.ready);
+  const liveHttpsReady = liveChecks.every((check) => check.ready);
   const stripeReady = stripeLink.status >= 200 && stripeLink.status < 400;
+  const wwwHttpsReady =
+    wwwHttps.status >= 300 &&
+    wwwHttps.status < 400 &&
+    typeof wwwHttps.location === "string" &&
+    wwwHttps.location.startsWith(`https://${DOMAIN}/`);
+  const liveHttpsRequired = dnsReady || STRICT_DNS;
 
-  for (const check of pageChecks) {
+  for (const check of artifactChecks) {
     printStatus(check.label, check.ready, `status=${check.status} path=${check.path} host=${DOMAIN} via=${GITHUB_PAGES_IP}`);
   }
 
+  for (const check of liveChecks) {
+    const detail = [
+      `status=${check.status}`,
+      `url=https://${DOMAIN}${check.path}`,
+      check.error ? `error=${check.error}` : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+    printStatus(`HTTPS_${check.label}`, check.ready, detail);
+  }
+
   printStatus("STRIPE_LINK", stripeReady, `status=${stripeLink.status} url=${STRIPE_LINK}`);
+  printStatus("HTTPS_WWW_REDIRECT", wwwHttpsReady, `status=${wwwHttps.status} location=${wwwHttps.location || "none"}`);
   printStatus("DNS_APEX", apexReady, `current=${apexRecords.join(",") || "none"}`);
   printStatus("DNS_WWW", wwwReady, `current=${wwwCname.join(",") || "none"}`);
   console.log(`CLAIMED_DOMAIN_READY=${dnsReady}`);
+  console.log(`LIVE_HTTPS_REQUIRED=${liveHttpsRequired}`);
 
-  for (const check of pageChecks) {
+  for (const check of [...artifactChecks, ...liveChecks]) {
     if (!check.ready) {
       console.log(`${check.label}_MISSING=${check.missing.join(",") || "none"}`);
     }
@@ -71,7 +98,7 @@ async function main() {
     console.log("  CNAME www   imperator-clawdius.github.io");
   }
 
-  if (!appReady || !stripeReady || (STRICT_DNS && !dnsReady)) {
+  if (!artifactReady || !stripeReady || (STRICT_DNS && !dnsReady) || (liveHttpsRequired && (!liveHttpsReady || !wwwHttpsReady))) {
     process.exitCode = 1;
   }
 }
@@ -128,18 +155,51 @@ async function fetchGitHubPagesArtifact(page) {
   });
 }
 
+async function fetchLiveHttpsPage(page) {
+  return new Promise((resolve) => {
+    const request = https.request(
+      {
+        hostname: DOMAIN,
+        path: page.path,
+        method: "GET",
+        timeout: 15000,
+      },
+      (response) => {
+        let body = "";
+
+        response.setEncoding("utf8");
+        response.on("data", (chunk) => {
+          body += chunk;
+        });
+        response.on("end", () => {
+          resolve({ ...page, status: response.statusCode ?? 0, body, error: "" });
+        });
+      },
+    );
+
+    request.on("timeout", () => {
+      request.destroy();
+      resolve({ ...page, status: 0, body: "", error: "timeout" });
+    });
+    request.on("error", (error) => {
+      resolve({ ...page, status: 0, body: "", error: error.code || error.message });
+    });
+    request.end();
+  });
+}
+
 async function head(url) {
   return new Promise((resolve) => {
     const request = https.request(url, { method: "HEAD", timeout: 15000 }, (response) => {
-      resolve({ status: response.statusCode ?? 0 });
+      resolve({ status: response.statusCode ?? 0, location: response.headers.location || "" });
     });
 
     request.on("timeout", () => {
       request.destroy();
-      resolve({ status: 0 });
+      resolve({ status: 0, location: "" });
     });
     request.on("error", () => {
-      resolve({ status: 0 });
+      resolve({ status: 0, location: "" });
     });
     request.end();
   });
