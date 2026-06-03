@@ -38,4 +38,6 @@ After checkout, the launch app prompts customers to email the source file, Strip
 
 See `docs/launch-status.md` for the current deployment and DNS checklist.
 
+See `docs/product-plan.md` for future commodity presets, expansion options, and pivot paths.
+
 Use `npm run verify:launch -- --strict-dns` after the registrar records are changed to fail fast until `traceready.online` resolves to GitHub Pages.
