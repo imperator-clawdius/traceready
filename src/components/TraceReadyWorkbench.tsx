@@ -194,12 +194,31 @@ const SAMPLE_RECEIPT = [
   ["Pack files", "7"],
 ];
 
+const COMMERCIAL_PATHS = [
+  {
+    price: "Free",
+    title: "Self-serve file check",
+    detail: "Qualifies messy farm files and shows whether cleanup is worth paying for.",
+  },
+  {
+    price: "$149",
+    title: "Single-file cleanup",
+    detail: "A paid 24-hour pass for one source file or one clearly related shipment pack.",
+  },
+  {
+    price: "$749",
+    title: "5-file importer pilot",
+    detail: "A repeat-use pilot for buyers who need a small supplier batch cleaned and compared.",
+  },
+];
+
 export function TraceReadyWorkbench() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [analysis, setAnalysis] = useState<TraceReadyAnalysis | null>(null);
   const [activeFile, setActiveFile] = useState<File | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isPacking, setIsPacking] = useState(false);
+  const [copiedBrief, setCopiedBrief] = useState(false);
   const [error, setError] = useState("");
 
   const buyHref = useMemo(() => {
@@ -215,13 +234,19 @@ export function TraceReadyWorkbench() {
     return `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
   }, []);
   const orderHandoffHref = useMemo(() => {
+    if (analysis) {
+      return buildPaidCleanupHandoffHref(analysis);
+    }
+
     const subject = encodeURIComponent("TraceReady paid cleanup file");
     const body = encodeURIComponent(
       `I bought TraceReady cleanup and need to submit my file.\n\nStripe receipt email:\nCommodity:\nSource country:\nDeadline:\nNotes:`,
     );
 
     return `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
-  }, []);
+  }, [analysis]);
+  const pilotHref = useMemo(() => buildPilotHref(), []);
+  const buyerBrief = useMemo(() => (analysis ? buildBuyerBrief(analysis) : ""), [analysis]);
   const opensCheckout = Boolean(PAYMENT_LINK);
 
   async function runAnalysis(file: File) {
@@ -297,6 +322,20 @@ export function TraceReadyWorkbench() {
       URL.revokeObjectURL(url);
     } finally {
       setIsPacking(false);
+    }
+  }
+
+  async function copyBuyerBrief() {
+    if (!buyerBrief) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(buyerBrief);
+      setCopiedBrief(true);
+      window.setTimeout(() => setCopiedBrief(false), 1800);
+    } catch {
+      setError("TraceReady could not copy the buyer brief. Download the pack instead.");
     }
   }
 
@@ -459,6 +498,16 @@ export function TraceReadyWorkbench() {
               Download compliance pack
             </button>
 
+            <button
+              type="button"
+              disabled={!analysis}
+              className="mt-3 inline-flex h-10 w-full items-center justify-center gap-2 rounded-md border border-[#d3b887] bg-white px-4 text-sm font-semibold text-[#3a2517] transition hover:bg-[#fff3dd] disabled:cursor-not-allowed disabled:bg-[#efe1c9] disabled:text-[#9a8060]"
+              onClick={() => void copyBuyerBrief()}
+            >
+              <FileCheck2 className="size-4" aria-hidden="true" />
+              {copiedBrief ? "Buyer brief copied" : "Copy buyer brief"}
+            </button>
+
             <p className="mt-4 text-xs leading-5 text-[#7a6144]">
               Operational readiness check only. Final EUDR due diligence remains the operator or
               trader responsibility.
@@ -480,13 +529,20 @@ export function TraceReadyWorkbench() {
               <CreditCard className="size-4" aria-hidden="true" />
               Buy 24-hour cleanup
             </a>
+            <a
+              href={pilotHref}
+              className="mt-3 inline-flex h-11 w-full items-center justify-center gap-2 rounded-md border border-[#c6782a] bg-white px-4 text-sm font-semibold text-[#8a4d1f] shadow-sm transition hover:bg-[#fff3dd]"
+            >
+              <FileCheck2 className="size-4" aria-hidden="true" />
+              Request 5-file pilot - $749
+            </a>
             <div className="mt-4 border-t border-[#eadcc8] pt-4">
               <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#7d5d32]">
                 After checkout
               </p>
               <p className="mt-2 text-sm leading-6 text-[#6a5137]">
-                Send the source file, Stripe receipt email, commodity, source country, and deadline.
-                We return the cleaned pack within 24 hours.
+                Send the source file, Stripe receipt email, commodity, source country, deadline, and
+                the buyer brief if you generated one. We return the cleaned pack within 24 hours.
               </p>
               <a
                 href={orderHandoffHref}
@@ -571,6 +627,16 @@ function MarketProofSections() {
               ))}
             </div>
           </div>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          {COMMERCIAL_PATHS.map((path) => (
+            <section key={path.title} className="border border-[#d9bf92] bg-[#fffaf2]/88 p-5 shadow-sm">
+              <p className="text-2xl font-semibold tabular-nums text-[#2b190f]">{path.price}</p>
+              <h3 className="mt-2 text-base font-semibold text-[#2b190f]">{path.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-[#6a5137]">{path.detail}</p>
+            </section>
+          ))}
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3">
@@ -761,6 +827,101 @@ function IssueTable({ issues }: { issues: ValidationIssue[] }) {
       )}
     </section>
   );
+}
+
+function buildBuyerBrief(analysis: TraceReadyAnalysis): string {
+  const blockers = analysis.issues.filter((issue) => issue.severity === "blocker");
+  const warnings = analysis.issues.filter((issue) => issue.severity === "warning");
+  const status =
+    blockers.length > 0
+      ? "Needs cleanup before buyer/importer review"
+      : warnings.length > 0
+        ? "Ready for review with warnings"
+        : "No blockers or warnings detected";
+  const commodities = detectedValues(
+    analysis,
+    (record) => (record.commodity === "unknown" ? record.rawCommodity : record.commodity),
+  );
+  const countries = detectedValues(analysis, (record) => record.country);
+  const topIssues = analysis.issues.slice(0, 6);
+
+  return [
+    "TraceReady Buyer Brief",
+    "",
+    `Status: ${status}`,
+    `Source file: ${analysis.fileName}`,
+    `Detected format: ${analysis.format}`,
+    `Readiness score: ${analysis.summary.readinessScore}/100`,
+    `Records checked: ${analysis.summary.totalRecords}`,
+    `Records without blockers: ${analysis.summary.readyRecords}`,
+    `Blockers: ${analysis.summary.blockers}`,
+    `Warnings: ${analysis.summary.warnings}`,
+    `Commodity: ${commodities}`,
+    `Country: ${countries}`,
+    "",
+    "Top issues:",
+    ...(topIssues.length
+      ? topIssues.map((issue) => `- [${issue.severity}] ${issue.sourceLabel} ${issue.field}: ${issue.message}`)
+      : ["- No blockers or warnings detected."]),
+    "",
+    "Recommended next step:",
+    blockers.length > 0
+      ? "Buy the 24-hour cleanup pass or request a 5-file pilot before sending this pack to an importer."
+      : "Download the compliance pack and attach it to the buyer/importer review record.",
+    "",
+    "Caveat: TraceReady is an operational readiness pack, not legal certification.",
+  ].join("\n");
+}
+
+function buildPaidCleanupHandoffHref(analysis: TraceReadyAnalysis): string {
+  const subject = encodeURIComponent(`TraceReady paid cleanup file - ${analysis.fileName}`);
+  const body = encodeURIComponent(
+    [
+      "I bought TraceReady cleanup and need to submit my file.",
+      "",
+      "Stripe receipt email:",
+      "Company:",
+      "Contact name:",
+      "Deadline:",
+      "",
+      buildBuyerBrief(analysis),
+      "",
+      "Notes:",
+    ].join("\n"),
+  );
+
+  return `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+}
+
+function buildPilotHref(): string {
+  const subject = encodeURIComponent("TraceReady 5-file importer pilot");
+  const body = encodeURIComponent(
+    [
+      "I want to run a TraceReady 5-file importer pilot.",
+      "",
+      "Company:",
+      "Role: importer / exporter / coop / consultant",
+      "Commodity:",
+      "Countries:",
+      "Number of supplier files:",
+      "Target deadline:",
+      "Buyer-specific requirements:",
+    ].join("\n"),
+  );
+
+  return `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+}
+
+function detectedValues(analysis: TraceReadyAnalysis, selector: (record: TraceReadyAnalysis["records"][number]) => string) {
+  const values = Array.from(
+    new Set(
+      analysis.records
+        .map((record) => selector(record).trim())
+        .filter((value) => value.length > 0 && value !== "unknown"),
+    ),
+  );
+
+  return values.join(", ") || "not detected";
 }
 
 function formatBytes(bytes: number): string {

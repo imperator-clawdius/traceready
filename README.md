@@ -40,4 +40,6 @@ See `docs/launch-status.md` for the current deployment and DNS checklist.
 
 See `docs/product-plan.md` for future commodity presets, expansion options, and pivot paths.
 
+See `docs/investor-readiness.md` for the buyability gates, commercial ladder, and evidence to capture before treating TraceReady as more than an MVP asset.
+
 Use `npm run verify:launch -- --strict-dns` after the registrar records are changed to fail fast until `traceready.online` resolves to GitHub Pages.
