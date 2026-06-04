@@ -39,6 +39,7 @@ jobs:
         env:
           NEXT_PUBLIC_CONTACT_EMAIL: ${{ vars.NEXT_PUBLIC_CONTACT_EMAIL }}
           NEXT_PUBLIC_STRIPE_PAYMENT_LINK: ${{ vars.NEXT_PUBLIC_STRIPE_PAYMENT_LINK }}
+          NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK: ${{ vars.NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK }}
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

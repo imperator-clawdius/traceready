@@ -10,7 +10,7 @@ Clean and validate messy farm CSV, KML, and GeoJSON files into EUDR-ready coffee
 - Farm record normalization for supplier, country, commodity, batch, area, coordinates, and geometry.
 - EUDR readiness checks for missing traceability fields, invalid coordinates, duplicate farm IDs, and polygon requirements for plots over 4 hectares.
 - Downloadable ZIP pack with cleaned CSV, issue log, buyer summary, readiness report, normalized GeoJSON, structured EUDR checklist, and a paid-cleanup intake note.
-- Paid cleanup CTA using `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` when configured, with email fallback.
+- Paid cleanup CTA using `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` when configured, plus a checkout-backed 5-file pilot using `NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK` or the public fallback link.
 - Minimal privacy and terms pages linked from the product footer for buyer trust before checkout.
 
 ## Local
@@ -34,6 +34,8 @@ Custom domain: `traceready.online`
 ## Conversion
 
 `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` is configured in GitHub Actions variables for the live $149 cleanup Payment Link. If that variable is removed, the button opens a prefilled email to `NEXT_PUBLIC_CONTACT_EMAIL`.
+
+The 5-file importer pilot uses `NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK` when configured. The app also includes the public fallback Payment Link created from five $149 cleanup passes: `https://buy.stripe.com/8x24gz0i70SEgBVgSE8IU02`.
 
 After checkout, the launch app prompts customers to email the source file, Stripe receipt email, commodity, source country, and deadline so the paid cleanup order can be fulfilled manually.
 

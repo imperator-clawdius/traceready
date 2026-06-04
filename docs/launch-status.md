@@ -11,12 +11,13 @@
 - Launch feature: browser-side CSV, KML, and GeoJSON validator that creates a downloadable EUDR readiness pack for coffee and cocoa farm files.
 - Downloaded pack includes cleaned CSV, issue log, buyer/importer summary, readiness report, normalized GeoJSON, structured EUDR checklist, and paid-cleanup intake note.
 - Launch demo coverage: built-in sample runners for CSV, KML, and GeoJSON.
-- Conversion action: `Buy 24-hour cleanup` CTA. `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` is configured to a live Stripe Payment Link; email fallback remains available in code if the variable is removed.
+- Conversion actions: `Buy 24-hour cleanup` CTA and `Buy 5-file pilot` CTA. `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` is configured to a live Stripe Payment Link; the pilot CTA uses `NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK` if configured and otherwise uses the public fallback Payment Link.
 - Paid-order handoff: after checkout, customers are prompted to email the source file, Stripe receipt email, commodity, source country, and deadline to `founder@traceready.online`.
 - Trust pages: `/privacy/` and `/terms/` explain browser-side validation, paid-cleanup handling, Stripe checkout, and the no-legal-certification boundary.
 - Live Stripe product: `TraceReady 24-hour cleanup`
 - Live Stripe price: `price_1TdyJyEB0YO5IZfZmyF6kC2L`
 - Live Stripe payment link: `https://buy.stripe.com/4gMbJ1d4Tate2L531O8IU01`
+- Live Stripe pilot payment link: `https://buy.stripe.com/8x24gz0i70SEgBVgSE8IU02` (quantity 5 of the $149 cleanup price, total $745)
 
 ## Verification Commands
 

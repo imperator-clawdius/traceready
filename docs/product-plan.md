@@ -57,7 +57,7 @@ Keep the self-serve checker free or lightweight. Monetize by selling 24-hour cle
 
 Why it fits: many suppliers will not want software. They want the file fixed before a buyer deadline.
 
-The 5-file importer pilot should be used to test repeat behavior before building account management. A buyer can upload several supplier files, compare readiness, copy the pilot brief, and request cleanup for the batch.
+The $745 5-file importer pilot should be used to test repeat behavior before building account management. A buyer can upload several supplier files, compare readiness, copy the pilot brief, buy the pilot checkout, and submit the batch for cleanup.
 
 ### 3. Importer Pre-Screen
 

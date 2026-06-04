@@ -2,6 +2,8 @@ import Link from "next/link";
 
 const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "founder@traceready.online";
 const PAYMENT_LINK = process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK || "";
+const PILOT_PAYMENT_LINK =
+  process.env.NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK || "https://buy.stripe.com/8x24gz0i70SEgBVgSE8IU02";
 
 export const metadata = {
   title: "Terms | TraceReady",
@@ -51,6 +53,11 @@ export default function TermsPage() {
               order context. If the file is outside the launch scope, we may request clarification, propose a
               custom quote, or refund the order before work begins.
             </p>
+            <p className="mt-2">
+              The 5-file importer pilot covers up to five supplier files submitted together for batch triage
+              and cleanup. The pilot is fulfilled manually after payment, receipt of usable source files, and
+              any buyer-specific requirements needed to prepare the returned pack.
+            </p>
           </section>
 
           <section>
@@ -78,6 +85,14 @@ export default function TermsPage() {
               className="mt-4 inline-flex h-11 items-center justify-center rounded-md bg-zinc-950 px-4 text-sm font-semibold text-white transition hover:bg-zinc-800"
             >
               Buy cleanup - $149
+            </a>
+            <a
+              href={PILOT_PAYMENT_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-0 mt-3 inline-flex h-11 items-center justify-center rounded-md border border-zinc-300 bg-white px-4 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-100 sm:ml-3"
+            >
+              Buy 5-file pilot - $745
             </a>
           </section>
         </div>

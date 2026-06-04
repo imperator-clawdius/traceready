@@ -116,6 +116,8 @@ const SAMPLE_KML = `<?xml version="1.0" encoding="UTF-8"?>
 
 const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "founder@traceready.online";
 const PAYMENT_LINK = process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK || "";
+const PILOT_PAYMENT_LINK =
+  process.env.NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK || "https://buy.stripe.com/8x24gz0i70SEgBVgSE8IU02";
 
 const FIX_CATEGORIES = [
   {
@@ -206,7 +208,7 @@ const COMMERCIAL_PATHS = [
     detail: "A paid 24-hour pass for one source file or one clearly related shipment pack.",
   },
   {
-    price: "$749",
+    price: "$745",
     title: "5-file importer pilot",
     detail: "A repeat-use pilot for buyers who need a small supplier batch cleaned and compared.",
   },
@@ -259,8 +261,10 @@ export function TraceReadyWorkbench() {
     () => (batchResults.length > 1 ? buildBatchPilotBrief(batchResults) : ""),
     [batchResults],
   );
-  const pilotHref = useMemo(() => buildPilotHref(batchBrief), [batchBrief]);
+  const pilotHref = useMemo(() => PILOT_PAYMENT_LINK || buildPilotHref(batchBrief), [batchBrief]);
+  const pilotHandoffHref = useMemo(() => buildPilotHandoffHref(batchBrief), [batchBrief]);
   const opensCheckout = Boolean(PAYMENT_LINK);
+  const opensPilotCheckout = Boolean(PILOT_PAYMENT_LINK);
 
   async function runAnalysis(files: File[]) {
     const selectedFiles = files.slice(0, 5);
@@ -617,10 +621,12 @@ export function TraceReadyWorkbench() {
             </a>
             <a
               href={pilotHref}
+              target={opensPilotCheckout ? "_blank" : undefined}
+              rel={opensPilotCheckout ? "noopener noreferrer" : undefined}
               className="mt-3 inline-flex h-11 w-full items-center justify-center gap-2 rounded-md border border-[#c6782a] bg-white px-4 text-sm font-semibold text-[#8a4d1f] shadow-sm transition hover:bg-[#fff3dd]"
             >
               <FileCheck2 className="size-4" aria-hidden="true" />
-              Request 5-file pilot - $749
+              Buy 5-file pilot - $745
             </a>
             <div className="mt-4 border-t border-[#eadcc8] pt-4">
               <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#7d5d32]">
@@ -631,10 +637,10 @@ export function TraceReadyWorkbench() {
                 the buyer brief if you generated one. We return the cleaned pack within 24 hours.
               </p>
               <a
-                href={orderHandoffHref}
+                href={batchResults.length > 1 ? pilotHandoffHref : orderHandoffHref}
                 className="mt-3 inline-flex h-10 w-full items-center justify-center rounded-md border border-[#d3b887] bg-white px-3 text-sm font-semibold text-[#3a2517] transition hover:bg-[#fff3dd]"
               >
-                Send paid-cleanup file
+                {batchResults.length > 1 ? "Send pilot files" : "Send paid-cleanup file"}
               </a>
             </div>
           </section>
@@ -1026,7 +1032,7 @@ function buildBuyerBrief(analysis: TraceReadyAnalysis): string {
     "",
     "Recommended next step:",
     blockers.length > 0
-      ? "Buy the 24-hour cleanup pass or request a 5-file pilot before sending this pack to an importer."
+      ? "Buy the 24-hour cleanup pass or 5-file pilot before sending this pack to an importer."
       : "Download the compliance pack and attach it to the buyer/importer review record.",
     "",
     "Caveat: TraceReady is an operational readiness pack, not legal certification.",
@@ -1073,7 +1079,7 @@ function buildBatchPilotBrief(results: BatchResult[]): string {
     "",
     "Recommended next step:",
     cleanupFiles.length > 0 || failedFiles.length > 0
-      ? "Request the $749 5-file importer pilot and attach the original supplier files for manual cleanup."
+      ? "Buy the $745 5-file importer pilot and attach the original supplier files for manual cleanup."
       : "Download individual compliance packs and use the pilot brief as the importer review cover note.",
     "",
     "Caveat: TraceReady is an operational readiness pack, not legal certification.",
@@ -1092,6 +1098,27 @@ function buildPaidCleanupHandoffHref(analysis: TraceReadyAnalysis): string {
       "Deadline:",
       "",
       buildBuyerBrief(analysis),
+      "",
+      "Notes:",
+    ].join("\n"),
+  );
+
+  return `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+}
+
+function buildPilotHandoffHref(batchBrief = ""): string {
+  const subject = encodeURIComponent("TraceReady pilot files after checkout");
+  const body = encodeURIComponent(
+    [
+      "I bought the TraceReady 5-file importer pilot and need to submit files.",
+      "",
+      "Stripe receipt email:",
+      "Company:",
+      "Contact name:",
+      "Target deadline:",
+      "Buyer-specific requirements:",
+      "",
+      batchBrief || "Paste the TraceReady Importer Pilot Brief here if you generated one.",
       "",
       "Notes:",
     ].join("\n"),

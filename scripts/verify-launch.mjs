@@ -8,13 +8,23 @@ const GITHUB_PAGES_IP = "185.199.108.153";
 const DOMAIN = "traceready.online";
 const WWW_DOMAIN = `www.${DOMAIN}`;
 const STRIPE_LINK = "https://buy.stripe.com/4gMbJ1d4Tate2L531O8IU01";
+const PILOT_STRIPE_LINK = "https://buy.stripe.com/8x24gz0i70SEgBVgSE8IU02";
 const STRICT_DNS = process.argv.includes("--strict-dns");
 
 const requiredPages = [
   {
     label: "APP_ROOT",
     path: "/",
-    content: ["TraceReady", "Sample CSV", "Sample KML", "Sample GeoJSON", STRIPE_LINK, "Send paid-cleanup file"],
+    content: [
+      "TraceReady",
+      "Sample CSV",
+      "Sample KML",
+      "Sample GeoJSON",
+      STRIPE_LINK,
+      PILOT_STRIPE_LINK,
+      "Buy 5-file pilot - $745",
+      "Send paid-cleanup file",
+    ],
   },
   {
     label: "PRIVACY_PAGE",
@@ -24,17 +34,18 @@ const requiredPages = [
   {
     label: "TERMS_PAGE",
     path: "/terms/",
-    content: ["Terms", "No legal certification", "Paid cleanup", "Buy cleanup - $149"],
+    content: ["Terms", "No legal certification", "Paid cleanup", "Buy cleanup - $149", "Buy 5-file pilot - $745"],
   },
 ];
 
 async function main() {
-  const [apexRecords, wwwCname, artifactResults, liveResults, stripeLink, wwwHttps] = await Promise.all([
+  const [apexRecords, wwwCname, artifactResults, liveResults, stripeLink, pilotStripeLink, wwwHttps] = await Promise.all([
     resolveA(DOMAIN),
     resolveCnameRecord(WWW_DOMAIN),
     Promise.all(requiredPages.map((page) => fetchGitHubPagesArtifact(page))),
     Promise.all(requiredPages.map((page) => fetchLiveHttpsPage(page))),
     head(STRIPE_LINK),
+    head(PILOT_STRIPE_LINK),
     head(`https://${WWW_DOMAIN}/`),
   ]);
 
@@ -60,6 +71,7 @@ async function main() {
   const artifactReady = artifactChecks.every((check) => check.ready);
   const liveHttpsReady = liveChecks.every((check) => check.ready);
   const stripeReady = stripeLink.status >= 200 && stripeLink.status < 400;
+  const pilotStripeReady = pilotStripeLink.status >= 200 && pilotStripeLink.status < 400;
   const wwwHttpsReady =
     wwwHttps.status >= 300 &&
     wwwHttps.status < 400 &&
@@ -91,6 +103,7 @@ async function main() {
   }
 
   printStatus("STRIPE_LINK", stripeReady, `status=${stripeLink.status} url=${STRIPE_LINK}`);
+  printStatus("PILOT_STRIPE_LINK", pilotStripeReady, `status=${pilotStripeLink.status} url=${PILOT_STRIPE_LINK}`);
   printStatus("HTTPS_WWW_REDIRECT", wwwHttpsReady, `status=${wwwHttps.status} location=${wwwHttps.location || "none"}`);
   printStatus("DNS_APEX", apexReady, `current=${apexRecords.join(",") || "none"}`);
   printStatus("DNS_WWW", wwwReady, `current=${wwwCname.join(",") || "none"}`);
@@ -112,7 +125,13 @@ async function main() {
     console.log("  CNAME www   imperator-clawdius.github.io");
   }
 
-  if (!artifactReady || !stripeReady || (STRICT_DNS && !dnsReady) || (liveHttpsRequired && (!liveHttpsReady || !wwwHttpsReady))) {
+  if (
+    !artifactReady ||
+    !stripeReady ||
+    !pilotStripeReady ||
+    (STRICT_DNS && !dnsReady) ||
+    (liveHttpsRequired && (!liveHttpsReady || !wwwHttpsReady))
+  ) {
     process.exitCode = 1;
   }
 }

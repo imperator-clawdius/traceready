@@ -22,10 +22,10 @@ Use the live site to test demand in this order:
 
 1. Free self-serve checker qualifies the pain and generates a buyer brief.
 2. $149 single-file cleanup converts urgent one-off problems.
-3. $749 5-file importer pilot tests repeat workflow and higher contract value with batch triage across supplier files.
+3. $745 5-file importer pilot tests repeat workflow and higher contract value with batch triage across supplier files.
 4. Repeat pilots become monthly cleanup retainers or an importer pre-screen portal.
 
-Do not build SaaS account management, white-label dashboards, or APIs before the $149 and $749 offers produce real demand.
+Do not build SaaS account management, white-label dashboards, or APIs before the $149 and $745 offers produce real demand.
 
 ## Evidence To Capture
 
@@ -56,7 +56,7 @@ These are directional startup-asset ranges, not formal financial advice.
 
 - Make every analysis produce a buyer brief that can be copied into email.
 - Keep the paid-cleanup handoff tied to the analyzed file summary.
-- Make the 5-file pilot easy to request and mechanically real through batch triage.
+- Make the 5-file pilot checkout-backed and mechanically real through batch triage.
 - Improve the pack quality before adding more commodity pages.
 - Add proof only when it is true: paid orders, turnaround time, repeat customers, anonymized before/after examples.
 
