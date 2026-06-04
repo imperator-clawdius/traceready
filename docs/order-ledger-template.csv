@@ -1,0 +1,2 @@
+order_date,source,company,contact_role,commodity,countries,file_count,records_checked,blockers,warnings,offer,payment_status,stripe_receipt_email,turnaround_hours,buyer_result,repeat_customer,notes
+YYYY-MM-DD,manual/email/stripe/linkedin,,importer/exporter/coop/consultant,coffee/cocoa,,1,0,0,0,$149 cleanup,unpaid/paid/refunded,,0,accepted/rejected/more-data/unknown,no,

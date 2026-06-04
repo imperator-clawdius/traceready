@@ -40,6 +40,8 @@ For every serious lead or order, record:
 
 Do not publish customer names, source files, or farm data without permission.
 
+Use `docs/order-ledger-template.csv` as the starting structure. Keep the real customer copy private and commit only anonymized proof with permission.
+
 ## Valuation Milestones
 
 | Stage | Evidence | Rough Value Range |
