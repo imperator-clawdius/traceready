@@ -6,6 +6,7 @@ Clean and validate messy farm CSV, KML, and GeoJSON files into EUDR-ready coffee
 
 - Browser-side file analysis for CSV, KML, GeoJSON, and JSON GeoJSON.
 - Built-in sample runners for CSV, KML, and GeoJSON launch demos.
+- Multi-file importer pilot triage for up to 5 supplier files, with a batch readiness summary and copyable pilot brief.
 - Farm record normalization for supplier, country, commodity, batch, area, coordinates, and geometry.
 - EUDR readiness checks for missing traceability fields, invalid coordinates, duplicate farm IDs, and polygon requirements for plots over 4 hectares.
 - Downloadable ZIP pack with cleaned CSV, issue log, buyer summary, readiness report, normalized GeoJSON, structured EUDR checklist, and a paid-cleanup intake note.

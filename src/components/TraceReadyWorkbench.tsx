@@ -212,13 +212,22 @@ const COMMERCIAL_PATHS = [
   },
 ];
 
+type BatchResult = {
+  fileName: string;
+  fileSize: number;
+  analysis: TraceReadyAnalysis | null;
+  error: string;
+};
+
 export function TraceReadyWorkbench() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [analysis, setAnalysis] = useState<TraceReadyAnalysis | null>(null);
   const [activeFile, setActiveFile] = useState<File | null>(null);
+  const [batchResults, setBatchResults] = useState<BatchResult[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isPacking, setIsPacking] = useState(false);
   const [copiedBrief, setCopiedBrief] = useState(false);
+  const [copiedBatchBrief, setCopiedBatchBrief] = useState(false);
   const [error, setError] = useState("");
 
   const buyHref = useMemo(() => {
@@ -245,41 +254,76 @@ export function TraceReadyWorkbench() {
 
     return `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
   }, [analysis]);
-  const pilotHref = useMemo(() => buildPilotHref(), []);
   const buyerBrief = useMemo(() => (analysis ? buildBuyerBrief(analysis) : ""), [analysis]);
+  const batchBrief = useMemo(
+    () => (batchResults.length > 1 ? buildBatchPilotBrief(batchResults) : ""),
+    [batchResults],
+  );
+  const pilotHref = useMemo(() => buildPilotHref(batchBrief), [batchBrief]);
   const opensCheckout = Boolean(PAYMENT_LINK);
 
-  async function runAnalysis(file: File) {
+  async function runAnalysis(files: File[]) {
+    const selectedFiles = files.slice(0, 5);
+
+    if (selectedFiles.length === 0) {
+      return;
+    }
+
     setError("");
-    setActiveFile(file);
+    setCopiedBrief(false);
+    setCopiedBatchBrief(false);
+    setActiveFile(selectedFiles[0]);
     setIsAnalyzing(true);
 
     try {
-      const nextAnalysis = await analyzeTraceReadyFile(file);
-      setAnalysis(nextAnalysis);
-    } catch (nextError) {
-      const message = nextError instanceof Error ? nextError.message : "TraceReady could not analyze that file.";
-      setError(message);
-      setAnalysis(null);
+      const nextResults: BatchResult[] = [];
+
+      for (const file of selectedFiles) {
+        try {
+          const nextAnalysis = await analyzeTraceReadyFile(file);
+          nextResults.push({
+            fileName: file.name,
+            fileSize: file.size,
+            analysis: nextAnalysis,
+            error: "",
+          });
+        } catch (nextError) {
+          nextResults.push({
+            fileName: file.name,
+            fileSize: file.size,
+            analysis: null,
+            error: nextError instanceof Error ? nextError.message : "TraceReady could not analyze that file.",
+          });
+        }
+      }
+
+      setBatchResults(nextResults);
+      setAnalysis(nextResults.find((result) => result.analysis)?.analysis ?? null);
+
+      if (files.length > selectedFiles.length) {
+        setError("TraceReady analyzed the first 5 files. Request a pilot for larger supplier batches.");
+      } else if (nextResults.every((result) => !result.analysis)) {
+        setError("TraceReady could not analyze any of those files.");
+      }
     } finally {
       setIsAnalyzing(false);
     }
   }
 
   function handleInput(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
+    const files = Array.from(event.target.files ?? []);
 
-    if (file) {
-      void runAnalysis(file);
+    if (files.length > 0) {
+      void runAnalysis(files);
     }
   }
 
   function handleDrop(event: DragEvent<HTMLDivElement>) {
     event.preventDefault();
-    const file = event.dataTransfer.files[0];
+    const files = Array.from(event.dataTransfer.files);
 
-    if (file) {
-      void runAnalysis(file);
+    if (files.length > 0) {
+      void runAnalysis(files);
     }
   }
 
@@ -302,7 +346,17 @@ export function TraceReadyWorkbench() {
       },
     }[kind];
     const file = new File([sample.body], sample.name, { type: sample.type });
-    await runAnalysis(file);
+    await runAnalysis([file]);
+  }
+
+  async function loadPilotSample() {
+    const files = [
+      new File([SAMPLE_CSV], "pilot-ghana-coffee.csv", { type: "text/csv" }),
+      new File([SAMPLE_GEOJSON], "pilot-peru-cocoa.geojson", { type: "application/geo+json" }),
+      new File([SAMPLE_KML], "pilot-uganda-coffee.kml", { type: "application/vnd.google-earth.kml+xml" }),
+    ];
+
+    await runAnalysis(files);
   }
 
   async function downloadPack() {
@@ -336,6 +390,20 @@ export function TraceReadyWorkbench() {
       window.setTimeout(() => setCopiedBrief(false), 1800);
     } catch {
       setError("TraceReady could not copy the buyer brief. Download the pack instead.");
+    }
+  }
+
+  async function copyBatchBrief() {
+    if (!batchBrief) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(batchBrief);
+      setCopiedBatchBrief(true);
+      window.setTimeout(() => setCopiedBatchBrief(false), 1800);
+    } catch {
+      setError("TraceReady could not copy the pilot brief. Use the pilot request email instead.");
     }
   }
 
@@ -399,10 +467,14 @@ export function TraceReadyWorkbench() {
                 </div>
                 <h2 className="mt-4 text-xl font-semibold text-[#2b190f]">Upload farm source file</h2>
                 <p className="mt-2 text-sm leading-6 text-[#6a5137]">
-                  Accepted launch formats: CSV, KML, GeoJSON, JSON GeoJSON. Files are processed in
-                  your browser for the MVP.
+                  Accepted launch formats: CSV, KML, GeoJSON, JSON GeoJSON. Select up to 5 files for
+                  importer pilot triage. Files are processed in your browser for the MVP.
                 </p>
-                {activeFile ? (
+                {batchResults.length > 1 ? (
+                  <p className="mt-3 text-sm font-medium text-[#3f2a1b]">
+                    Selected: {batchResults.length} files ({formatBytes(totalBatchBytes(batchResults))})
+                  </p>
+                ) : activeFile ? (
                   <p className="mt-3 text-sm font-medium text-[#3f2a1b]">
                     Selected: {activeFile.name} ({formatBytes(activeFile.size)})
                   </p>
@@ -415,6 +487,7 @@ export function TraceReadyWorkbench() {
                   type="file"
                   accept=".csv,.kml,.geojson,.json,text/csv,application/geo+json,application/vnd.google-earth.kml+xml"
                   className="hidden"
+                  multiple
                   onChange={handleInput}
                 />
                 <button
@@ -449,6 +522,14 @@ export function TraceReadyWorkbench() {
                   <FileCheck2 className="size-4" aria-hidden="true" />
                   Sample GeoJSON
                 </button>
+                <button
+                  type="button"
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-[#087f73] bg-[#effaf4] px-4 text-sm font-semibold whitespace-nowrap text-[#05665d] transition hover:bg-[#dff5e8] sm:min-w-40"
+                  onClick={() => void loadPilotSample()}
+                >
+                  <FileCheck2 className="size-4" aria-hidden="true" />
+                  Pilot sample
+                </button>
               </div>
             </div>
 
@@ -467,13 +548,17 @@ export function TraceReadyWorkbench() {
             ) : null}
           </div>
 
+          <BatchPilotSummary results={batchResults} copied={copiedBatchBrief} onCopy={() => void copyBatchBrief()} />
+
           <IssueTable issues={analysis?.issues ?? []} />
         </section>
 
         <aside className="space-y-6">
           <section className="trace-card border border-[#d9bf92] bg-[#fffaf2]/95 p-5 shadow-sm">
             <div className="flex items-center justify-between gap-3">
-              <h2 className="text-lg font-semibold text-[#2b190f]">Readiness</h2>
+              <h2 className="text-lg font-semibold text-[#2b190f]">
+                {batchResults.length > 1 ? "Active file readiness" : "Readiness"}
+              </h2>
               <StatusBadge analysis={analysis} />
             </div>
 
@@ -495,7 +580,7 @@ export function TraceReadyWorkbench() {
               ) : (
                 <Download className="size-4" aria-hidden="true" />
               )}
-              Download compliance pack
+              {batchResults.length > 1 ? "Download active-file pack" : "Download compliance pack"}
             </button>
 
             <button
@@ -509,8 +594,9 @@ export function TraceReadyWorkbench() {
             </button>
 
             <p className="mt-4 text-xs leading-5 text-[#7a6144]">
-              Operational readiness check only. Final EUDR due diligence remains the operator or
-              trader responsibility.
+              {batchResults.length > 1
+                ? "The batch summary compares all analyzed files. This card and ZIP download use the first successful file."
+                : "Operational readiness check only. Final EUDR due diligence remains the operator or trader responsibility."}
             </p>
           </section>
 
@@ -829,6 +915,80 @@ function IssueTable({ issues }: { issues: ValidationIssue[] }) {
   );
 }
 
+function BatchPilotSummary({
+  results,
+  copied,
+  onCopy,
+}: {
+  results: BatchResult[];
+  copied: boolean;
+  onCopy: () => void;
+}) {
+  if (results.length <= 1) {
+    return null;
+  }
+
+  const summary = summarizeBatch(results);
+
+  return (
+    <section className="trace-card border border-[#d9bf92] bg-[#fffaf2]/95 p-5 shadow-sm">
+      <div className="flex flex-col gap-3 border-b border-[#eadcc8] pb-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#087f73]">
+            Importer pilot triage
+          </p>
+          <h2 className="mt-2 text-lg font-semibold text-[#2b190f]">
+            Batch view for supplier file cleanup.
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-[#6a5137]">
+            Compare up to 5 supplier files, spot which ones need cleanup, and copy a pilot brief for
+            the buyer or importer.
+          </p>
+        </div>
+        <button
+          type="button"
+          className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-md bg-[#087f73] px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#05665d]"
+          onClick={onCopy}
+        >
+          <FileCheck2 className="size-4" aria-hidden="true" />
+          {copied ? "Pilot brief copied" : "Copy pilot brief"}
+        </button>
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <Metric label="Files" value={`${summary.analyzedFiles}`} suffix={`/${summary.fileCount}`} />
+        <Metric label="Records" value={String(summary.totalRecords)} />
+        <Metric label="Blockers" value={String(summary.blockers)} />
+        <Metric label="Avg score" value={summary.analyzedFiles ? String(summary.averageScore) : "-"} suffix="/100" />
+      </div>
+
+      <div className="mt-4 divide-y divide-[#eadcc8] border border-[#e0c79d] bg-white/70">
+        {results.map((result) => {
+          const status = batchFileStatus(result);
+
+          return (
+            <div key={result.fileName} className="grid gap-3 px-4 py-3 text-sm sm:grid-cols-[minmax(0,1fr)_120px_120px]">
+              <div>
+                <p className="font-semibold text-[#2b190f]">{result.fileName}</p>
+                <p className="mt-1 text-xs text-[#7a6144]">
+                  {result.error ||
+                    `${result.analysis?.summary.totalRecords ?? 0} records, ${
+                      result.analysis?.summary.blockers ?? 0
+                    } blockers, ${result.analysis?.summary.warnings ?? 0} warnings`}
+                </p>
+              </div>
+              <span className={status.className}>{status.label}</span>
+              <p className="text-right font-semibold tabular-nums text-[#3f2a1b] sm:text-left">
+                {result.analysis ? `${result.analysis.summary.readinessScore}/100` : "-"}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 function buildBuyerBrief(analysis: TraceReadyAnalysis): string {
   const blockers = analysis.issues.filter((issue) => issue.severity === "blocker");
   const warnings = analysis.issues.filter((issue) => issue.severity === "warning");
@@ -873,6 +1033,53 @@ function buildBuyerBrief(analysis: TraceReadyAnalysis): string {
   ].join("\n");
 }
 
+function buildBatchPilotBrief(results: BatchResult[]): string {
+  const summary = summarizeBatch(results);
+  const cleanupFiles = results.filter((result) => (result.analysis?.summary.blockers ?? 0) > 0);
+  const reviewFiles = results.filter(
+    (result) => result.analysis && result.analysis.summary.blockers === 0 && result.analysis.summary.warnings > 0,
+  );
+  const readyFiles = results.filter(
+    (result) => result.analysis && result.analysis.summary.blockers === 0 && result.analysis.summary.warnings === 0,
+  );
+  const failedFiles = results.filter((result) => result.error);
+
+  return [
+    "TraceReady Importer Pilot Brief",
+    "",
+    `Files submitted: ${summary.fileCount}`,
+    `Files analyzed: ${summary.analyzedFiles}`,
+    `Analyze errors: ${summary.failedFiles}`,
+    `Records checked: ${summary.totalRecords}`,
+    `Records without blockers: ${summary.readyRecords}`,
+    `Total blockers: ${summary.blockers}`,
+    `Total warnings: ${summary.warnings}`,
+    `Average readiness score: ${summary.analyzedFiles ? `${summary.averageScore}/100` : "not available"}`,
+    "",
+    "File breakdown:",
+    ...results.map((result) => {
+      if (!result.analysis) {
+        return `- ${result.fileName}: analyze error - ${result.error}`;
+      }
+
+      return `- ${result.fileName}: ${result.analysis.summary.readinessScore}/100, ${result.analysis.summary.totalRecords} records, ${result.analysis.summary.blockers} blockers, ${result.analysis.summary.warnings} warnings`;
+    }),
+    "",
+    "Pilot buckets:",
+    `- Needs cleanup: ${cleanupFiles.length}`,
+    `- Ready with warnings: ${reviewFiles.length}`,
+    `- Ready files: ${readyFiles.length}`,
+    `- Analyze errors: ${failedFiles.length}`,
+    "",
+    "Recommended next step:",
+    cleanupFiles.length > 0 || failedFiles.length > 0
+      ? "Request the $749 5-file importer pilot and attach the original supplier files for manual cleanup."
+      : "Download individual compliance packs and use the pilot brief as the importer review cover note.",
+    "",
+    "Caveat: TraceReady is an operational readiness pack, not legal certification.",
+  ].join("\n");
+}
+
 function buildPaidCleanupHandoffHref(analysis: TraceReadyAnalysis): string {
   const subject = encodeURIComponent(`TraceReady paid cleanup file - ${analysis.fileName}`);
   const body = encodeURIComponent(
@@ -893,7 +1100,7 @@ function buildPaidCleanupHandoffHref(analysis: TraceReadyAnalysis): string {
   return `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
 }
 
-function buildPilotHref(): string {
+function buildPilotHref(batchBrief = ""): string {
   const subject = encodeURIComponent("TraceReady 5-file importer pilot");
   const body = encodeURIComponent(
     [
@@ -906,10 +1113,59 @@ function buildPilotHref(): string {
       "Number of supplier files:",
       "Target deadline:",
       "Buyer-specific requirements:",
+      ...(batchBrief ? ["", batchBrief] : []),
     ].join("\n"),
   );
 
   return `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+}
+
+function summarizeBatch(results: BatchResult[]) {
+  const analyses = results.flatMap((result) => (result.analysis ? [result.analysis] : []));
+  const totalScore = analyses.reduce((sum, nextAnalysis) => sum + nextAnalysis.summary.readinessScore, 0);
+
+  return {
+    fileCount: results.length,
+    analyzedFiles: analyses.length,
+    failedFiles: results.length - analyses.length,
+    totalRecords: analyses.reduce((sum, nextAnalysis) => sum + nextAnalysis.summary.totalRecords, 0),
+    readyRecords: analyses.reduce((sum, nextAnalysis) => sum + nextAnalysis.summary.readyRecords, 0),
+    blockers: analyses.reduce((sum, nextAnalysis) => sum + nextAnalysis.summary.blockers, 0),
+    warnings: analyses.reduce((sum, nextAnalysis) => sum + nextAnalysis.summary.warnings, 0),
+    averageScore: analyses.length ? Math.round(totalScore / analyses.length) : 0,
+  };
+}
+
+function batchFileStatus(result: BatchResult) {
+  if (!result.analysis) {
+    return {
+      label: "Error",
+      className:
+        "inline-flex h-7 items-center justify-center rounded-md bg-red-50 px-2 text-xs font-semibold text-red-700",
+    };
+  }
+
+  if (result.analysis.summary.blockers > 0) {
+    return {
+      label: "Needs cleanup",
+      className:
+        "inline-flex h-7 items-center justify-center rounded-md bg-red-50 px-2 text-xs font-semibold text-red-700",
+    };
+  }
+
+  if (result.analysis.summary.warnings > 0) {
+    return {
+      label: "Review",
+      className:
+        "inline-flex h-7 items-center justify-center rounded-md bg-amber-50 px-2 text-xs font-semibold text-amber-700",
+    };
+  }
+
+  return {
+    label: "Ready",
+    className:
+      "inline-flex h-7 items-center justify-center rounded-md bg-emerald-50 px-2 text-xs font-semibold text-emerald-700",
+  };
 }
 
 function detectedValues(analysis: TraceReadyAnalysis, selector: (record: TraceReadyAnalysis["records"][number]) => string) {
@@ -922,6 +1178,10 @@ function detectedValues(analysis: TraceReadyAnalysis, selector: (record: TraceRe
   );
 
   return values.join(", ") || "not detected";
+}
+
+function totalBatchBytes(results: BatchResult[]): number {
+  return results.reduce((sum, result) => sum + result.fileSize, 0);
 }
 
 function formatBytes(bytes: number): string {
