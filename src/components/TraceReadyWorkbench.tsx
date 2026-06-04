@@ -117,6 +117,83 @@ const SAMPLE_KML = `<?xml version="1.0" encoding="UTF-8"?>
 const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "founder@traceready.online";
 const PAYMENT_LINK = process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK || "";
 
+const FIX_CATEGORIES = [
+  {
+    title: "Coordinate defects",
+    detail:
+      "Flags impossible latitude/longitude values, zero points, swapped coordinate order, and missing geolocation fields.",
+    mode: "Auto-detect",
+  },
+  {
+    title: "Plot geometry gaps",
+    detail:
+      "Checks point-only records, polygon closure, over-4ha farm warnings, and GeoJSON/KML geometry structure.",
+    mode: "Buyer follow-up",
+  },
+  {
+    title: "Supplier field mess",
+    detail:
+      "Normalizes farm IDs, supplier names, batch IDs, commodity labels, area values, and duplicate farm records.",
+    mode: "Clean + log",
+  },
+  {
+    title: "Import-ready output",
+    detail:
+      "Packages cleaned CSV, issue CSV, normalized GeoJSON, buyer summary, readiness report, and EUDR checklist.",
+    mode: "ZIP pack",
+  },
+];
+
+const CLEANUP_STEPS = [
+  {
+    label: "Upload",
+    title: "Drop in the messy supplier file",
+    detail: "CSV, KML, GeoJSON, or JSON GeoJSON can be checked in the browser without sending the file first.",
+  },
+  {
+    label: "Validate",
+    title: "TraceReady scores and explains the blockers",
+    detail: "The workbench separates hard blockers from warnings and writes the suggested repair next to each issue.",
+  },
+  {
+    label: "Package",
+    title: "Download the buyer-ready handoff",
+    detail: "Export the compliance pack yourself, or buy the 24-hour cleanup pass when the file needs manual repair.",
+  },
+];
+
+const PACK_ITEMS = [
+  "Cleaned farm CSV",
+  "Issue log CSV",
+  "Normalized GeoJSON",
+  "Buyer summary",
+  "Readiness report",
+  "EUDR checklist",
+  "Paid-cleanup intake note",
+];
+
+const AUDIENCE_GROUPS = [
+  {
+    title: "Exporters and coops",
+    detail: "Find bad farm rows before a buyer or importer rejects a shipment file.",
+  },
+  {
+    title: "EU importers",
+    detail: "Screen supplier data before it enters a larger EUDR workflow or due diligence system.",
+  },
+  {
+    title: "Compliance consultants",
+    detail: "Turn repeated file cleanup into a consistent, explainable handoff for clients.",
+  },
+];
+
+const SAMPLE_RECEIPT = [
+  ["Records checked", "1,248"],
+  ["Auto-detected issues", "73"],
+  ["Supplier follow-ups", "11"],
+  ["Pack files", "7"],
+];
+
 export function TraceReadyWorkbench() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [analysis, setAnalysis] = useState<TraceReadyAnalysis | null>(null);
@@ -422,6 +499,8 @@ export function TraceReadyWorkbench() {
         </aside>
       </main>
 
+      <MarketProofSections />
+
       <footer className="relative z-10 border-t border-[#dec8a6] bg-[#fffaf1]/90 backdrop-blur">
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-5 text-sm text-[#6a5137] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <p>Browser-side validation for launch. Paid cleanup files are submitted by email after checkout.</p>
@@ -439,6 +518,104 @@ export function TraceReadyWorkbench() {
         </div>
       </footer>
     </div>
+  );
+}
+
+function MarketProofSections() {
+  return (
+    <section className="relative z-10 border-y border-[#dec8a6] bg-[#fff7e8]/86 py-8 backdrop-blur">
+      <div className="mx-auto w-full max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#087f73]">
+              What TraceReady fixes
+            </p>
+            <h2 className="mt-2 text-2xl font-semibold leading-tight text-[#2b190f]">
+              Clean the farm data before it reaches the buyer.
+            </h2>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-[#6a5137]">
+              TraceReady turns the common EUDR file problems into visible repair work: what can be
+              normalized, what needs supplier follow-up, and what is ready to pack.
+            </p>
+
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              {FIX_CATEGORIES.map((item) => (
+                <div key={item.title} className="border border-[#e0c79d] bg-white/78 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="text-base font-semibold text-[#2b190f]">{item.title}</h3>
+                    <span className="shrink-0 rounded-md bg-[#dff5e8] px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#087f73]">
+                      {item.mode}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-sm leading-6 text-[#6a5137]">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="trace-card border border-[#d9bf92] bg-[#2d1a10] p-5 text-[#fff7e8] shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#f3b365]">
+              Sample cleanup receipt
+            </p>
+            <h2 className="mt-2 text-2xl font-semibold leading-tight">The output is a documented handoff.</h2>
+            <p className="mt-3 text-sm leading-6 text-[#ecd8b8]">
+              The pack gives operators a concise record of what was checked, what was fixed, and what
+              still needs a supplier answer.
+            </p>
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              {SAMPLE_RECEIPT.map(([label, value]) => (
+                <div key={label} className="border border-[#6f4b2b] bg-[#3d2416] p-4">
+                  <p className="text-xs font-medium uppercase tracking-[0.1em] text-[#d3aa73]">{label}</p>
+                  <p className="mt-2 text-2xl font-semibold tabular-nums text-white">{value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-3">
+          <section className="lg:col-span-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#087f73]">
+              Cleanup pipeline
+            </p>
+            <div className="mt-5 grid gap-4 md:grid-cols-3">
+              {CLEANUP_STEPS.map((step) => (
+                <div key={step.label} className="border-l-4 border-[#087f73] bg-white/72 p-4">
+                  <span className="inline-flex size-8 items-center justify-center rounded-md bg-[#dff5e8] text-sm font-semibold text-[#087f73]">
+                    {step.label.slice(0, 1)}
+                  </span>
+                  <h3 className="mt-3 text-base font-semibold text-[#2b190f]">{step.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-[#6a5137]">{step.detail}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="trace-card border border-[#d9bf92] bg-[#fffaf2]/96 p-5 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#087f73]">
+              Buyer pack contents
+            </p>
+            <ul className="mt-4 space-y-2">
+              {PACK_ITEMS.map((item) => (
+                <li key={item} className="flex items-center gap-2 text-sm font-medium text-[#3f2a1b]">
+                  <CheckCircle2 className="size-4 shrink-0 text-[#087f73]" aria-hidden="true" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </section>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          {AUDIENCE_GROUPS.map((group) => (
+            <section key={group.title} className="border border-[#d9bf92] bg-[#fffaf2]/88 p-5 shadow-sm">
+              <h3 className="text-base font-semibold text-[#2b190f]">{group.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-[#6a5137]">{group.detail}</p>
+            </section>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
