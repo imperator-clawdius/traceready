@@ -196,6 +196,21 @@ const SAMPLE_RECEIPT = [
   ["Pack files", "7"],
 ];
 
+const SAMPLE_DIAGNOSIS_OUTPUT = [
+  {
+    label: "Messy file in",
+    detail: "CSV, KML, or GeoJSON with duplicate farms, missing fields, bad coordinates, or point-only plots.",
+  },
+  {
+    label: "TraceReady check",
+    detail: "A browser-side diagnosis separates blockers from warnings and writes the suggested fix next to each issue.",
+  },
+  {
+    label: "Cleaned buyer pack out",
+    detail: "Download a ZIP with cleaned CSV, issue log, GeoJSON, buyer summary, readiness report, and cleanup intake.",
+  },
+];
+
 const COMMERCIAL_PATHS = [
   {
     price: "Free",
@@ -415,45 +430,102 @@ export function TraceReadyWorkbench() {
     <div className="trace-botanical-shell relative min-h-screen overflow-hidden bg-[#f6efe1] text-[#24150d]">
       <CoffeeBotanicalFrame />
 
-      <header className="relative z-10 border-b border-[#dec8a6] bg-[#fffaf1]/90 shadow-sm backdrop-blur">
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-          <div>
+      <header className="relative z-10 overflow-hidden border-b border-[#d6dfd4] bg-[#10251f] text-white shadow-sm">
+        <Image
+          src="/trace-ready-hero-field.png"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="absolute inset-0 object-cover"
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(9,29,28,0.96)_0%,rgba(9,38,35,0.86)_37%,rgba(9,38,35,0.36)_68%,rgba(9,38,35,0.1)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_48%,rgba(255,250,238,0.15),transparent_28rem)]" />
+
+        <div className="relative mx-auto flex min-h-[620px] w-full max-w-7xl flex-col px-4 py-5 sm:px-6 lg:px-8">
+          <nav className="flex items-center justify-between gap-4" aria-label="Primary">
             <div className="flex items-center gap-3">
-              <span className="flex size-14 shrink-0 items-center justify-center rounded-md border border-[#d7bd95] bg-white shadow-sm">
+              <span className="flex size-12 shrink-0 items-center justify-center rounded-md border border-white/[0.18] bg-white/[0.94] shadow-sm">
                 <Image
                   src="/traceready-logo-icon.png"
                   alt=""
-                  width={44}
-                  height={44}
-                  className="size-11 object-contain"
+                  width={40}
+                  height={40}
+                  className="size-10 object-contain"
                   aria-hidden="true"
                 />
               </span>
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.14em] text-[#087f73]">TraceReady</p>
-                <p className="mt-1 text-xs font-medium uppercase tracking-[0.12em] text-[#7d5d32]">
-                  Farm data cleanup
-                </p>
+                <p className="text-sm font-semibold uppercase text-[#effdf4]">TraceReady</p>
+                <p className="mt-1 text-xs font-medium uppercase text-[#bcd6c4]">Farm file cleanup</p>
               </div>
             </div>
-            <h1 className="mt-4 max-w-3xl text-3xl font-semibold leading-tight text-[#2b190f] sm:text-4xl">
-              Clean farm files into EUDR-ready packs.
-            </h1>
-            <p className="mt-3 max-w-3xl text-base leading-7 text-[#62472e]">
-              Upload messy CSV, KML, or GeoJSON files for coffee and cocoa. Get cleaned farm records,
-              geolocation output, issue logs, and a readiness report in one ZIP.
-            </p>
-          </div>
+            <a
+              href="#sample-output"
+              className="hidden h-10 items-center justify-center rounded-md border border-white/[0.18] bg-white/[0.1] px-4 text-sm font-semibold text-[#effdf4] backdrop-blur transition hover:bg-white/[0.16] sm:inline-flex"
+            >
+              Sample output
+            </a>
+          </nav>
 
-          <a
-            href={buyHref}
-            target={opensCheckout ? "_blank" : undefined}
-            rel={opensCheckout ? "noopener noreferrer" : undefined}
-            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-md bg-[#2d1a10] px-5 text-sm font-semibold text-[#fff7e8] shadow-sm transition hover:bg-[#4a2a16]"
-          >
-            <CreditCard className="size-4" aria-hidden="true" />
-            Buy cleanup - $149
-          </a>
+          <div className="grid flex-1 items-center gap-8 py-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(340px,0.58fr)] lg:py-14">
+            <section className="max-w-3xl">
+              <h1 className="text-4xl font-semibold leading-[1.02] text-white sm:text-5xl lg:text-6xl">
+                Check a farm file before a buyer rejects it.
+              </h1>
+              <p className="mt-5 max-w-2xl text-base leading-7 text-[#d8eadf] sm:text-lg">
+                Upload a CSV, KML, or GeoJSON file for coffee or cocoa. TraceReady finds missing
+                fields, duplicate farms, bad coordinates, and cleanup blockers before the file reaches
+                an importer.
+              </p>
+              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                <button
+                  type="button"
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-[#0aa394] px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0b8f83]"
+                  onClick={() => inputRef.current?.click()}
+                >
+                  <UploadCloud className="size-4" aria-hidden="true" />
+                  Upload a farm file for free
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-md border border-white/[0.22] bg-white/[0.12] px-5 text-sm font-semibold text-[#effdf4] backdrop-blur transition hover:bg-white/[0.18]"
+                  onClick={() => void loadSample("csv")}
+                >
+                  <FileCheck2 className="size-4" aria-hidden="true" />
+                  Try a sample file
+                </button>
+              </div>
+              <p className="mt-4 max-w-xl text-sm leading-6 text-[#bcd6c4]">
+                No farm data leaves your browser during the free check. Paid cleanup is offered after
+                you can see what needs fixing.
+              </p>
+            </section>
+
+            <section
+              id="sample-output"
+              className="border border-white/[0.16] bg-[#071d1a]/[0.72] p-5 shadow-2xl backdrop-blur-md"
+            >
+              <p className="text-xs font-semibold uppercase text-[#74e0cd]">Sample diagnosis output</p>
+              <h2 className="mt-2 text-2xl font-semibold leading-tight text-white">
+                A real-looking handoff, not another vague compliance promise.
+              </h2>
+              <div className="mt-5 space-y-3">
+                {SAMPLE_DIAGNOSIS_OUTPUT.map((item) => (
+                  <div key={item.label} className="border border-white/[0.12] bg-white/[0.08] p-4">
+                    <p className="text-sm font-semibold text-[#fff9e8]">{item.label}</p>
+                    <p className="mt-2 text-sm leading-6 text-[#cfe3d7]">{item.detail}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-5 grid grid-cols-3 gap-2 text-center">
+                <MetricPill label="Blockers" value="73" />
+                <MetricPill label="Follow-ups" value="11" />
+                <MetricPill label="Files out" value="7" />
+              </div>
+            </section>
+          </div>
         </div>
       </header>
 
@@ -471,8 +543,8 @@ export function TraceReadyWorkbench() {
                 </div>
                 <h2 className="mt-4 text-xl font-semibold text-[#2b190f]">Upload farm source file</h2>
                 <p className="mt-2 text-sm leading-6 text-[#6a5137]">
-                  Accepted launch formats: CSV, KML, GeoJSON, JSON GeoJSON. Select up to 5 files for
-                  importer pilot triage. Files are processed in your browser for the MVP.
+                  Accepted formats: CSV, KML, GeoJSON, and JSON GeoJSON. Select one file for a quick
+                  diagnosis or up to 5 files when comparing a small supplier batch.
                 </p>
                 {batchResults.length > 1 ? (
                   <p className="mt-3 text-sm font-medium text-[#3f2a1b]">
@@ -605,10 +677,10 @@ export function TraceReadyWorkbench() {
           </section>
 
           <section className="trace-card border border-[#d9bf92] bg-[#fffaf2]/95 p-5 shadow-sm">
-            <h2 className="text-lg font-semibold text-[#2b190f]">Launch conversion</h2>
+            <h2 className="text-lg font-semibold text-[#2b190f]">After the diagnosis</h2>
             <p className="mt-2 text-sm leading-6 text-[#6a5137]">
-              For teams that need the messy file fixed, packaged, and returned instead of self-serve
-              diagnosis.
+              If the free check shows blockers, buy cleanup and send the source file plus the generated
+              buyer brief. We return the cleaned pack within 24 hours.
             </p>
             <a
               href={buyHref}
@@ -833,6 +905,15 @@ function Metric({ label, value, suffix = "" }: { label: string; value: string; s
         {value}
         <span className="text-sm text-[#7d5d32]">{suffix}</span>
       </p>
+    </div>
+  );
+}
+
+function MetricPill({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="border border-white/[0.12] bg-white/[0.08] p-3">
+      <p className="text-xl font-semibold tabular-nums text-white">{value}</p>
+      <p className="mt-1 text-[11px] font-semibold uppercase text-[#bcd6c4]">{label}</p>
     </div>
   );
 }
