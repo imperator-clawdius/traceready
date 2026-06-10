@@ -626,7 +626,7 @@ export function TraceReadyWorkbench() {
 
           <BatchPilotSummary results={batchResults} copied={copiedBatchBrief} onCopy={() => void copyBatchBrief()} />
 
-          <IssueTable issues={analysis?.issues ?? []} />
+          <IssueTable issues={analysis?.issues ?? []} hasAnalysis={Boolean(analysis)} />
         </section>
 
         <aside className="space-y-6">
@@ -949,7 +949,7 @@ function StatusBadge({ analysis }: { analysis: TraceReadyAnalysis | null }) {
   );
 }
 
-function IssueTable({ issues }: { issues: ValidationIssue[] }) {
+function IssueTable({ issues, hasAnalysis }: { issues: ValidationIssue[]; hasAnalysis: boolean }) {
   return (
     <section className="trace-card overflow-hidden border border-[#d9bf92] bg-[#fffaf2]/95 shadow-sm">
       <div className="flex items-center justify-between gap-4 border-b border-[#eadcc8] px-5 py-4">
@@ -960,7 +960,9 @@ function IssueTable({ issues }: { issues: ValidationIssue[] }) {
       {issues.length === 0 ? (
         <div className="flex items-center gap-3 px-5 py-8 text-sm text-[#6a5137]">
           <CheckCircle2 className="size-5 text-[#087f73]" aria-hidden="true" />
-          Upload a file to see blockers, warnings, and cleanup suggestions.
+          {hasAnalysis
+            ? "No issues found in this file."
+            : "Upload a file to see blockers, warnings, and cleanup suggestions."}
         </div>
       ) : (
         <div className="overflow-x-auto">

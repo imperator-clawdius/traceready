@@ -71,4 +71,29 @@ describe("TraceReady conversion surface", () => {
     expect(pageText).toContain("Cleaned buyer pack out");
     expect(pageText).toContain("No farm data leaves your browser during the free check.");
   });
+
+  it("does not ask for another upload after a clean file has been analyzed", async () => {
+    await act(async () => {
+      root.render(<TraceReadyWorkbench />);
+    });
+
+    const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+    const cleanCsv = `farm_id,supplier_name,country,commodity,batch_id,area_ha,latitude,longitude
+QA-1,Ama Mensah,Ghana,coffee,LOT-QA,2.2,6.2031,-1.7082
+QA-2,Kofi Adu,Ghana,coffee,LOT-QA,3.2,6.3344,-1.6129
+`;
+    const file = new File([cleanCsv], "qa-ready.csv", { type: "text/csv" });
+
+    Object.defineProperty(input, "files", {
+      configurable: true,
+      value: [file],
+    });
+
+    await act(async () => {
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+
+    expect(container.textContent).toContain("No issues found in this file.");
+    expect(container.textContent).not.toContain("Upload a file to see blockers, warnings, and cleanup suggestions.");
+  });
 });
