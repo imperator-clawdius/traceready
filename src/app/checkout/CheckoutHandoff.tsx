@@ -32,8 +32,8 @@ export function CheckoutHandoff({ title, price, description, stripeHref, nextSte
             <div className="mt-6 border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950">
               <p className="font-semibold">Stripe name check</p>
               <p className="mt-1">
-                TraceReady is operated by {LEGAL_OPERATOR}. Stripe checkout may show {LEGAL_OPERATOR} as
-                the legal operator for payment processing.
+                TraceReady checkout is branded as TraceReady. Payment operations, tax records, and support
+                are handled by {LEGAL_OPERATOR}.
               </p>
             </div>
 

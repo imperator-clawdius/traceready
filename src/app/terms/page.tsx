@@ -30,8 +30,8 @@ export default function TermsPage() {
               geolocation GeoJSON, issue logs, checklists, buyer summaries, and readiness reports.
             </p>
             <p className="mt-2">
-              TraceReady is operated by {LEGAL_OPERATOR}. Stripe checkout may show {LEGAL_OPERATOR} as the
-              legal operator for payment processing.
+              TraceReady is operated by {LEGAL_OPERATOR}. Stripe checkout is branded as TraceReady while
+              payment operations, tax records, and support stay under {LEGAL_OPERATOR}.
             </p>
           </section>
 

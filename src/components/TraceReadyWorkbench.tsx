@@ -703,7 +703,7 @@ export function TraceReadyWorkbench() {
             <div className="mt-4 border-t border-[#eadcc8] pt-4 text-xs leading-5 text-[#7a6144]">
               <p className="font-semibold text-[#3a2517]">Founder-operated cleanup desk</p>
               <p className="mt-1">
-                TraceReady is operated by {LEGAL_OPERATOR}. Stripe checkout may show {LEGAL_OPERATOR}.
+                TraceReady checkout is branded as TraceReady and operated by {LEGAL_OPERATOR}.
               </p>
               <a href={`mailto:${CONTACT_EMAIL}`} className="mt-2 inline-block font-semibold text-[#087f73] hover:text-[#05665d]">
                 {CONTACT_EMAIL}

@@ -85,8 +85,8 @@ describe("TraceReady conversion surface", () => {
       element.textContent?.includes("Buy 5-file pilot"),
     );
 
-    expect(pageText).toContain("TraceReady is operated by Passive Print Labs LLC");
-    expect(pageText).toContain("Stripe checkout may show Passive Print Labs LLC");
+    expect(pageText).toContain("TraceReady checkout is branded as TraceReady");
+    expect(pageText).toContain("operated by Passive Print Labs LLC");
     expect(pageText).toContain("Founder-operated cleanup desk");
     expect(cleanupLink?.getAttribute("href")).toBe("/checkout/cleanup/");
     expect(pilotLink?.getAttribute("href")).toBe("/checkout/pilot/");
