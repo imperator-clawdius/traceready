@@ -16,11 +16,11 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://traceready.online"),
   title: "TraceReady",
   description:
-    "Clean and validate messy farm CSV, KML, and GeoJSON files into EUDR-ready coffee and cocoa compliance packs.",
+    "Clean and validate messy farm CSV, KML, and GeoJSON files into buyer-ready coffee and cocoa handoff packs.",
   openGraph: {
     title: "TraceReady",
     description:
-      "Clean and validate messy farm CSV, KML, and GeoJSON files into EUDR-ready coffee and cocoa compliance packs.",
+      "Clean and validate messy farm CSV, KML, and GeoJSON files into buyer-ready coffee and cocoa handoff packs.",
     url: "https://traceready.online",
     siteName: "TraceReady",
     type: "website",

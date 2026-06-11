@@ -20,6 +20,7 @@ For every order, capture these fields in `docs/order-ledger-template.csv` or a p
 - Whether this is a repeat customer.
 
 Do not commit private customer names, source files, farm data, or Stripe receipt emails to the public repo.
+Treat paid cleanup files as confidential order material. Keep them only as long as needed for fulfillment, support, and payment/accounting records. Delete them on request after delivery unless retention is legally required.
 
 ## Fulfillment Steps
 
@@ -31,7 +32,8 @@ Do not commit private customer names, source files, farm data, or Stripe receipt
 6. Do not invent farm locations, supplier identity, polygons, or legal conclusions.
 7. Return the cleaned pack, issue log, buyer brief, and a short plain-English summary.
 8. Ask whether the buyer/importer accepted the pack or requested more data.
-9. Update the order ledger.
+9. Offer deletion of source files after delivery.
+10. Update the order ledger.
 
 ## Cleanup Boundaries
 
@@ -48,6 +50,7 @@ TraceReady must not:
 - Invent missing farm data.
 - Guarantee buyer acceptance.
 - Publish customer proof without permission.
+- Use paid cleanup files to train AI or machine-learning models.
 
 ## Turnaround Targets
 

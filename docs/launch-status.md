@@ -5,15 +5,17 @@
 - Repository: https://github.com/imperator-clawdius/traceready
 - Deployment target: GitHub Pages
 - Custom domain configured in GitHub Pages: `traceready.online`
-- Last verified launch state: 2026-06-03
+- Last verified launch state: 2026-06-11
 - Static export output: `out/`
 - HTTPS: GitHub Pages certificate approved for `traceready.online` and `www.traceready.online`; HTTPS enforcement enabled.
-- Launch feature: browser-side CSV, KML, and GeoJSON validator that creates a downloadable EUDR readiness pack for coffee and cocoa farm files.
+- Launch feature: browser-side CSV, KML, and GeoJSON validator that creates a downloadable buyer-readiness pack for coffee and cocoa farm files.
 - Downloaded pack includes cleaned CSV, issue log, buyer/importer summary, readiness report, normalized GeoJSON, structured EUDR checklist, and paid-cleanup intake note.
 - Launch demo coverage: built-in sample runners for CSV, KML, and GeoJSON.
+- Public sample proof: `/traceready-sample-output.zip` contains an anonymized cleaned pack.
 - Conversion actions: `Buy 24-hour cleanup` CTA and `Buy 5-file pilot` CTA. `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` is configured to a live Stripe Payment Link; the pilot CTA uses `NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK` if configured and otherwise uses the public fallback Payment Link.
-- Paid-order handoff: after checkout, customers are prompted to email the source file, Stripe receipt email, commodity, source country, and deadline to `founder@traceready.online`.
-- Trust pages: `/privacy/` and `/terms/` explain browser-side validation, paid-cleanup handling, Stripe checkout, and the no-legal-certification boundary.
+- Paid-order handoff: after checkout, customers are prompted to email the source file, commodity, source country, deadline, and buyer brief to `founder@traceready.online`.
+- Trust pages: `/privacy/` and `/terms/` explain browser-side validation, paid-cleanup handling, Stripe checkout, retention, deletion, confidentiality, no model training, and the no-legal-certification boundary.
+- Legal operator bridge: TraceReady is operated by Passive Print Labs LLC, and the launch surface warns buyers that Stripe checkout may show Passive Print Labs LLC.
 - Live Stripe product: `TraceReady 24-hour cleanup`
 - Live Stripe price: `price_1TdyJyEB0YO5IZfZmyF6kC2L`
 - Live Stripe payment link: `https://buy.stripe.com/4gMbJ1d4Tate2L531O8IU01`
