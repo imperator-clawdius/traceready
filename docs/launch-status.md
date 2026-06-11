@@ -20,6 +20,7 @@
 - Live Stripe price: `price_1TdyJyEB0YO5IZfZmyF6kC2L`
 - Live Stripe payment link: `https://buy.stripe.com/4gMbJ1d4Tate2L531O8IU01`
 - Live Stripe pilot payment link: `https://buy.stripe.com/8x24gz0i70SEgBVgSE8IU02` (quantity 5 of the $149 cleanup price, total $745)
+- Stripe branding runbook: `docs/stripe-branding-runbook.md` is the remaining Dashboard checklist if the rendered Stripe page does not show TraceReady as the buyer-facing brand.
 
 ## Verification Commands
 

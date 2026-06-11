@@ -52,4 +52,6 @@ Use `docs/sales-sprint.md`, `docs/fulfillment-runbook.md`, and `docs/order-ledge
 
 Use `docs/competitive-undercut.md` for the current competitor map and undercut positioning.
 
+Use `docs/stripe-branding-runbook.md` for the external Stripe Dashboard branding checklist. The repo routes paid CTAs through TraceReady checkout handoff pages, but Stripe account branding still has to be verified in the rendered Stripe checkout UI.
+
 Use `npm run verify:launch -- --strict-dns` after the registrar records are changed to fail fast until `traceready.online` resolves to GitHub Pages.
