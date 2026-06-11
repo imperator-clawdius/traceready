@@ -117,9 +117,8 @@ const SAMPLE_KML = `<?xml version="1.0" encoding="UTF-8"?>
 const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "founder@traceready.online";
 const LEGAL_OPERATOR = "Passive Print Labs LLC";
 const SAMPLE_PACK_HREF = "/traceready-sample-output.zip";
-const PAYMENT_LINK = process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK || "";
-const PILOT_PAYMENT_LINK =
-  process.env.NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK || "https://buy.stripe.com/8x24gz0i70SEgBVgSE8IU02";
+const CHECKOUT_CLEANUP_HREF = "/checkout/cleanup/";
+const CHECKOUT_PILOT_HREF = "/checkout/pilot/";
 
 const FIX_CATEGORIES = [
   {
@@ -249,18 +248,6 @@ export function TraceReadyWorkbench() {
   const [copiedBatchBrief, setCopiedBatchBrief] = useState(false);
   const [error, setError] = useState("");
 
-  const buyHref = useMemo(() => {
-    if (PAYMENT_LINK) {
-      return PAYMENT_LINK;
-    }
-
-    const subject = encodeURIComponent("TraceReady 24-hour cleanup");
-    const body = encodeURIComponent(
-      `I want to buy a TraceReady cleanup pass.\n\nFile type:\nCommodity:\nShipment or lot size:\nDeadline:`,
-    );
-
-    return `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
-  }, []);
   const orderHandoffHref = useMemo(() => {
     if (analysis) {
       return buildPaidCleanupHandoffHref(analysis);
@@ -278,10 +265,7 @@ export function TraceReadyWorkbench() {
     () => (batchResults.length > 1 ? buildBatchPilotBrief(batchResults) : ""),
     [batchResults],
   );
-  const pilotHref = useMemo(() => PILOT_PAYMENT_LINK || buildPilotHref(batchBrief), [batchBrief]);
   const pilotHandoffHref = useMemo(() => buildPilotHandoffHref(batchBrief), [batchBrief]);
-  const opensCheckout = Boolean(PAYMENT_LINK);
-  const opensPilotCheckout = Boolean(PILOT_PAYMENT_LINK);
 
   async function runAnalysis(files: File[]) {
     const selectedFiles = files.slice(0, 5);
@@ -684,18 +668,14 @@ export function TraceReadyWorkbench() {
               If the free check shows blockers, buy cleanup only after you can see the issue list.
             </p>
             <a
-              href={buyHref}
-              target={opensCheckout ? "_blank" : undefined}
-              rel={opensCheckout ? "noopener noreferrer" : undefined}
+              href={CHECKOUT_CLEANUP_HREF}
               className="mt-4 inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[#c6782a] px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#a86222]"
             >
               <CreditCard className="size-4" aria-hidden="true" />
               Buy 24-hour cleanup
             </a>
             <a
-              href={pilotHref}
-              target={opensPilotCheckout ? "_blank" : undefined}
-              rel={opensPilotCheckout ? "noopener noreferrer" : undefined}
+              href={CHECKOUT_PILOT_HREF}
               className="mt-3 inline-flex h-11 w-full items-center justify-center gap-2 rounded-md border border-[#c6782a] bg-white px-4 text-sm font-semibold text-[#8a4d1f] shadow-sm transition hover:bg-[#fff3dd]"
             >
               <FileCheck2 className="size-4" aria-hidden="true" />
@@ -1228,26 +1208,6 @@ function buildPilotHandoffHref(batchBrief = ""): string {
       batchBrief || "Paste the TraceReady Importer Pilot Brief here if you generated one.",
       "",
       "Notes:",
-    ].join("\n"),
-  );
-
-  return `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
-}
-
-function buildPilotHref(batchBrief = ""): string {
-  const subject = encodeURIComponent("TraceReady 5-file importer pilot");
-  const body = encodeURIComponent(
-    [
-      "I want to run a TraceReady 5-file importer pilot.",
-      "",
-      "Company:",
-      "Role: importer / exporter / coop / consultant",
-      "Commodity:",
-      "Countries:",
-      "Number of supplier files:",
-      "Target deadline:",
-      "Buyer-specific requirements:",
-      ...(batchBrief ? ["", batchBrief] : []),
     ].join("\n"),
   );
 

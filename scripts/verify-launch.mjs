@@ -20,8 +20,8 @@ const requiredPages = [
       "Sample CSV",
       "Sample KML",
       "Sample GeoJSON",
-      STRIPE_LINK,
-      PILOT_STRIPE_LINK,
+      "/checkout/cleanup/",
+      "/checkout/pilot/",
       "Buy 5-file pilot - $745",
       "Send paid-cleanup file",
     ],
@@ -35,6 +35,28 @@ const requiredPages = [
     label: "TERMS_PAGE",
     path: "/terms/",
     content: ["Terms", "No legal certification", "Paid cleanup", "Buy cleanup - $149", "Buy 5-file pilot - $745"],
+  },
+  {
+    label: "CLEANUP_CHECKOUT_PAGE",
+    path: "/checkout/cleanup/",
+    content: [
+      "TraceReady 24-hour cleanup",
+      "Continue to Stripe checkout",
+      "Passive Print Labs LLC",
+      STRIPE_LINK,
+      "Download anonymized sample pack",
+    ],
+  },
+  {
+    label: "PILOT_CHECKOUT_PAGE",
+    path: "/checkout/pilot/",
+    content: [
+      "TraceReady 5-file importer pilot",
+      "Continue to Stripe checkout",
+      "Passive Print Labs LLC",
+      PILOT_STRIPE_LINK,
+      "Receive a batch triage summary and cleaned packs",
+    ],
   },
 ];
 

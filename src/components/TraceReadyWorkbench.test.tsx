@@ -78,10 +78,18 @@ describe("TraceReady conversion surface", () => {
     });
 
     const pageText = container.textContent ?? "";
+    const cleanupLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("Buy 24-hour cleanup"),
+    );
+    const pilotLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("Buy 5-file pilot"),
+    );
 
     expect(pageText).toContain("TraceReady is operated by Passive Print Labs LLC");
     expect(pageText).toContain("Stripe checkout may show Passive Print Labs LLC");
     expect(pageText).toContain("Founder-operated cleanup desk");
+    expect(cleanupLink?.getAttribute("href")).toBe("/checkout/cleanup/");
+    expect(pilotLink?.getAttribute("href")).toBe("/checkout/pilot/");
   });
 
   it("offers a downloadable anonymized sample pack", () => {

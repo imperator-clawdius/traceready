@@ -2,9 +2,8 @@ import Link from "next/link";
 
 const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "founder@traceready.online";
 const LEGAL_OPERATOR = "Passive Print Labs LLC";
-const PAYMENT_LINK = process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK || "";
-const PILOT_PAYMENT_LINK =
-  process.env.NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK || "https://buy.stripe.com/8x24gz0i70SEgBVgSE8IU02";
+const CHECKOUT_CLEANUP_HREF = "/checkout/cleanup/";
+const CHECKOUT_PILOT_HREF = "/checkout/pilot/";
 
 export const metadata = {
   title: "Terms | TraceReady",
@@ -12,10 +11,6 @@ export const metadata = {
 };
 
 export default function TermsPage() {
-  const buyHref =
-    PAYMENT_LINK ||
-    `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("TraceReady 24-hour cleanup")}`;
-
   return (
     <main className="min-h-screen bg-[#f8f7f3] px-4 py-10 text-zinc-950 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-3xl">
@@ -89,17 +84,13 @@ export default function TermsPage() {
               .
             </p>
             <a
-              href={buyHref}
-              target={PAYMENT_LINK ? "_blank" : undefined}
-              rel={PAYMENT_LINK ? "noopener noreferrer" : undefined}
+              href={CHECKOUT_CLEANUP_HREF}
               className="mt-4 inline-flex h-11 items-center justify-center rounded-md bg-zinc-950 px-4 text-sm font-semibold text-white transition hover:bg-zinc-800"
             >
               Buy cleanup - $149
             </a>
             <a
-              href={PILOT_PAYMENT_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={CHECKOUT_PILOT_HREF}
               className="ml-0 mt-3 inline-flex h-11 items-center justify-center rounded-md border border-zinc-300 bg-white px-4 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-100 sm:ml-3"
             >
               Buy 5-file pilot - $745

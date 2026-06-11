@@ -11,7 +11,7 @@ Clean and validate messy farm CSV, KML, and GeoJSON files into buyer-ready coffe
 - EUDR readiness checks for missing traceability fields, invalid coordinates, duplicate farm IDs, and polygon requirements for plots over 4 hectares.
 - Downloadable ZIP pack with cleaned CSV, issue log, buyer summary, readiness report, normalized GeoJSON, structured EUDR checklist, and a paid-cleanup intake note.
 - Public anonymized sample output pack at `/traceready-sample-output.zip`.
-- Paid cleanup CTA using `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` when configured, plus a checkout-backed 5-file pilot using `NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK` or the public fallback link.
+- Paid cleanup CTAs route through TraceReady checkout handoff pages before Stripe so buyers see the legal-operator disclosure before payment.
 - Privacy and terms pages linked from the product footer with retention, deletion, confidentiality, no-model-training, legal-operator, and no-certification language.
 
 ## Local
@@ -34,9 +34,11 @@ Custom domain: `traceready.online`
 
 ## Conversion
 
-`NEXT_PUBLIC_STRIPE_PAYMENT_LINK` is configured in GitHub Actions variables for the live $149 cleanup Payment Link. If that variable is removed, the button opens a prefilled email to `NEXT_PUBLIC_CONTACT_EMAIL`.
+The paid CTAs open `/checkout/cleanup/` and `/checkout/pilot/` first. Those pages keep the TraceReady name visible, explain that Stripe may show Passive Print Labs LLC as the legal operator, and then link to Stripe.
 
-The 5-file importer pilot uses `NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK` when configured. The app also includes the public fallback Payment Link created from five $149 cleanup passes: `https://buy.stripe.com/8x24gz0i70SEgBVgSE8IU02`.
+`NEXT_PUBLIC_STRIPE_PAYMENT_LINK` is configured in GitHub Actions variables for the live $149 cleanup Payment Link. The checkout page also includes the public fallback link: `https://buy.stripe.com/4gMbJ1d4Tate2L531O8IU01`.
+
+The 5-file importer pilot uses `NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK` when configured. The checkout page also includes the public fallback Payment Link created from five $149 cleanup passes: `https://buy.stripe.com/8x24gz0i70SEgBVgSE8IU02`.
 
 After checkout, the launch app prompts customers to email the source file, commodity, source country, deadline, and buyer brief so the paid cleanup order can be fulfilled manually. TraceReady is operated by Passive Print Labs LLC, and Stripe checkout may show Passive Print Labs LLC.
 
