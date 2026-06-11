@@ -7,8 +7,8 @@ const EXPECTED_WWW_CNAME = "imperator-clawdius.github.io";
 const GITHUB_PAGES_IP = "185.199.108.153";
 const DOMAIN = "traceready.online";
 const WWW_DOMAIN = `www.${DOMAIN}`;
-const STRIPE_LINK = "https://buy.stripe.com/4gMbJ1d4Tate2L531O8IU01";
-const PILOT_STRIPE_LINK = "https://buy.stripe.com/8x24gz0i70SEgBVgSE8IU02";
+const STRIPE_LINK = "https://buy.stripe.com/8x27sN6NW3qzb4d6df93y01";
+const PILOT_STRIPE_LINK = "https://buy.stripe.com/3cIdRbc8g9OX3BL1WZ93y02";
 const STRICT_DNS = process.argv.includes("--strict-dns");
 
 const requiredPages = [
