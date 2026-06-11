@@ -1,0 +1,27 @@
+{
+  "pack_type": "TraceReady sample readiness checklist",
+  "status": "needs_buyer_followup",
+  "checks": [
+    {
+      "name": "Required supplier fields",
+      "result": "pass_after_cleanup"
+    },
+    {
+      "name": "Duplicate farm records",
+      "result": "fixed"
+    },
+    {
+      "name": "Coordinate validity",
+      "result": "pass_after_cleanup"
+    },
+    {
+      "name": "Large farm geometry review",
+      "result": "warning"
+    },
+    {
+      "name": "Pack export completeness",
+      "result": "pass"
+    }
+  ],
+  "legal_boundary": "Operational cleanup and validation only; not legal advice, certification, or audit assurance."
+}

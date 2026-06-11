@@ -1,0 +1,44 @@
+{
+  "type": "FeatureCollection",
+  "name": "traceready_sample_geolocation",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "farm_id": "COF-001",
+        "supplier_name": "Ama Mensah Cooperative",
+        "country": "Ghana",
+        "commodity": "coffee",
+        "batch_id": "LOT-24-10",
+        "cleanup_status": "ready"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-1.7082, 6.2031]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "farm_id": "GEO-102",
+        "supplier_name": "Coop Rio Verde",
+        "country": "Peru",
+        "commodity": "cocoa",
+        "batch_id": "PE-COCOA-77",
+        "cleanup_status": "warning"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-76.2501, -6.5901],
+            [-76.2452, -6.5901],
+            [-76.2452, -6.5854],
+            [-76.2501, -6.5854],
+            [-76.2501, -6.5901]
+          ]
+        ]
+      }
+    }
+  ]
+}

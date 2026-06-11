@@ -1,0 +1,25 @@
+TraceReady readiness report
+
+Status: Needs buyer follow-up
+Score: 82/100
+
+Checks run:
+- Required fields present: pass after cleanup
+- Duplicate farm IDs: fixed
+- Coordinate format: pass after normalization
+- Impossible coordinates: pass
+- Geometry type: warning on point-only large farm
+- Area over 4 hectares: warning on 2 records
+- Pack completeness: pass
+
+Returned pack:
+- Cleaned farm CSV
+- Issue log CSV
+- Normalized GeoJSON
+- Buyer summary
+- Readiness report
+- EUDR checklist
+- Paid-cleanup intake note
+
+Recommended next action:
+Send the buyer summary and issue log to the buyer or importer before submitting the file into a larger EUDR due-diligence system.

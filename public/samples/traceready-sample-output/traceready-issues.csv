@@ -1,0 +1,5 @@
+severity,row,farm_id,field,issue,suggested_fix,status
+blocker,3,COF-002,farm_id,Duplicate farm row with identical shipment context,Keep one canonical row and log duplicate removal,fixed
+blocker,4,COC-114,batch_id,Missing batch or shipment ID,Fill from submitted lot context PE-COCOA-77,fixed
+warning,2,COF-002,area_ha,Farm area is over 4 hectares,Ask supplier whether point-only geometry is accepted or polygon is required,open_followup
+warning,4,GEO-102,area_ha,Farm area is over 4 hectares,Keep polygon and flag for buyer review,open_followup

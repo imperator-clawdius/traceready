@@ -1,0 +1,5 @@
+farm_id,supplier_name,country,commodity,batch_id,area_ha,latitude,longitude,geometry_type,cleanup_status,notes
+COF-001,Ama Mensah Cooperative,Ghana,coffee,LOT-24-10,2.60,6.203100,-1.708200,Point,ready,Coordinates normalized to decimal degrees
+COF-002,Kofi Adu Cooperative,Ghana,coffee,LOT-24-10,8.20,6.334400,-1.612900,Point,warning,Area over 4ha requires buyer confirmation or polygon boundary
+COC-114,Coop San Pedro,Peru,cocoa,PE-COCOA-77,3.90,-6.623200,-78.442000,Point,ready,Missing batch ID filled from shipment context
+GEO-102,Coop Rio Verde,Peru,cocoa,PE-COCOA-77,6.10,-6.587750,-76.247650,Polygon,warning,Polygon retained; area over 4ha flagged for buyer review

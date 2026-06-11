@@ -1,0 +1,22 @@
+TraceReady buyer summary
+
+File checked: anonymized-supplier-lot.csv
+Commodity scope: coffee and cocoa
+Source countries: Ghana, Peru
+Records checked: 4
+Readiness score: 82/100
+Blockers fixed: 2
+Warnings left for buyer/supplier review: 2
+
+What changed:
+- Removed one duplicate farm row.
+- Filled a missing batch ID from the submitted lot context.
+- Normalized coordinates to decimal degrees.
+- Preserved one polygon boundary and flagged large-area records for buyer review.
+
+Open follow-ups:
+- Confirm whether point-only geometry is accepted for COF-002 because the area is above 4 hectares.
+- Review GEO-102 with the buyer because the polygon is present but the declared area is above 4 hectares.
+
+Operational note:
+This is a file-quality handoff for due-diligence preparation. It is not legal advice, audit assurance, or shipment certification.
