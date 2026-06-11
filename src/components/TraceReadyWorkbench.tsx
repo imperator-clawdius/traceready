@@ -115,6 +115,8 @@ const SAMPLE_KML = `<?xml version="1.0" encoding="UTF-8"?>
 </kml>`;
 
 const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "founder@traceready.online";
+const LEGAL_OPERATOR = "Passive Print Labs LLC";
+const SAMPLE_PACK_HREF = "/traceready-sample-output.zip";
 const PAYMENT_LINK = process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK || "";
 const PILOT_PAYMENT_LINK =
   process.env.NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK || "https://buy.stripe.com/8x24gz0i70SEgBVgSE8IU02";
@@ -679,8 +681,7 @@ export function TraceReadyWorkbench() {
           <section className="trace-card border border-[#d9bf92] bg-[#fffaf2]/95 p-5 shadow-sm">
             <h2 className="text-lg font-semibold text-[#2b190f]">After the diagnosis</h2>
             <p className="mt-2 text-sm leading-6 text-[#6a5137]">
-              If the free check shows blockers, buy cleanup and send the source file plus the generated
-              buyer brief. We return the cleaned pack within 24 hours.
+              If the free check shows blockers, buy cleanup only after you can see the issue list.
             </p>
             <a
               href={buyHref}
@@ -702,17 +703,30 @@ export function TraceReadyWorkbench() {
             </a>
             <div className="mt-4 border-t border-[#eadcc8] pt-4">
               <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#7d5d32]">
-                After checkout
+                Fulfillment path
               </p>
-              <p className="mt-2 text-sm leading-6 text-[#6a5137]">
-                Send the source file, Stripe receipt email, commodity, source country, deadline, and
-                the buyer brief if you generated one. We return the cleaned pack within 24 hours.
+              <ol className="mt-2 space-y-2 text-sm leading-6 text-[#6a5137]">
+                <li>Buy cleanup in Stripe.</li>
+                <li>Email the source file, commodity, source country, deadline, and buyer brief.</li>
+                <li>Receive the cleaned ZIP pack within 24 hours after payment and usable file receipt.</li>
+              </ol>
+              <p className="mt-3 text-sm leading-6 text-[#6a5137]">
+                If the file is outside launch scope, we clarify or refund before work begins.
               </p>
               <a
                 href={batchResults.length > 1 ? pilotHandoffHref : orderHandoffHref}
                 className="mt-3 inline-flex h-10 w-full items-center justify-center rounded-md border border-[#d3b887] bg-white px-3 text-sm font-semibold text-[#3a2517] transition hover:bg-[#fff3dd]"
               >
                 {batchResults.length > 1 ? "Send pilot files" : "Send paid-cleanup file"}
+              </a>
+            </div>
+            <div className="mt-4 border-t border-[#eadcc8] pt-4 text-xs leading-5 text-[#7a6144]">
+              <p className="font-semibold text-[#3a2517]">Founder-operated cleanup desk</p>
+              <p className="mt-1">
+                TraceReady is operated by {LEGAL_OPERATOR}. Stripe checkout may show {LEGAL_OPERATOR}.
+              </p>
+              <a href={`mailto:${CONTACT_EMAIL}`} className="mt-2 inline-block font-semibold text-[#087f73] hover:text-[#05665d]">
+                {CONTACT_EMAIL}
               </a>
             </div>
           </section>
@@ -723,7 +737,10 @@ export function TraceReadyWorkbench() {
 
       <footer className="relative z-10 border-t border-[#dec8a6] bg-[#fffaf1]/90 backdrop-blur">
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-5 text-sm text-[#6a5137] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <p>Browser-side validation for launch. Paid cleanup files are submitted by email after checkout.</p>
+          <p>
+            Browser-side validation for launch. Paid cleanup files are submitted by email after checkout.
+            TraceReady is operated by {LEGAL_OPERATOR}.
+          </p>
           <nav className="flex gap-4 font-semibold text-[#3a2517]" aria-label="Trust links">
             <a href="/privacy/" className="hover:text-[#087f73]">
               Privacy
@@ -790,6 +807,13 @@ function MarketProofSections() {
                 </div>
               ))}
             </div>
+            <a
+              href={SAMPLE_PACK_HREF}
+              className="mt-5 inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-[#fff7e8] px-3 text-sm font-semibold text-[#2d1a10] transition hover:bg-white"
+            >
+              <Download className="size-4" aria-hidden="true" />
+              Download anonymized sample pack
+            </a>
           </div>
         </div>
 
