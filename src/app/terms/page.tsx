@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "founder@traceready.online";
+const LEGAL_OPERATOR = "Passive Print Labs LLC";
 const PAYMENT_LINK = process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK || "";
 const PILOT_PAYMENT_LINK =
   process.env.NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK || "https://buy.stripe.com/8x24gz0i70SEgBVgSE8IU02";
@@ -23,7 +24,7 @@ export default function TermsPage() {
         </Link>
 
         <h1 className="mt-6 text-3xl font-semibold">Terms</h1>
-        <p className="mt-3 text-sm text-zinc-500">Last updated June 2, 2026</p>
+        <p className="mt-3 text-sm text-zinc-500">Last updated June 11, 2026</p>
 
         <div className="mt-8 space-y-6 text-sm leading-7 text-zinc-700">
           <section>
@@ -32,6 +33,10 @@ export default function TermsPage() {
               TraceReady cleans and validates messy farm CSV, KML, GeoJSON, and JSON GeoJSON files for
               coffee and cocoa teams preparing EUDR due-diligence packs. Outputs may include cleaned CSV,
               geolocation GeoJSON, issue logs, checklists, buyer summaries, and readiness reports.
+            </p>
+            <p className="mt-2">
+              TraceReady is operated by {LEGAL_OPERATOR}. Stripe checkout may show {LEGAL_OPERATOR} as the
+              legal operator for payment processing.
             </p>
           </section>
 
@@ -58,6 +63,11 @@ export default function TermsPage() {
               and cleanup. The pilot is fulfilled manually after payment, receipt of usable source files, and
               any buyer-specific requirements needed to prepare the returned pack.
             </p>
+            <ol className="mt-3 list-decimal space-y-2 pl-5">
+              <li>Buy cleanup in Stripe.</li>
+              <li>Email the source file, commodity, source country, deadline, and buyer brief.</li>
+              <li>Receive the cleaned ZIP pack within 24 hours after payment and usable file receipt.</li>
+            </ol>
           </section>
 
           <section>

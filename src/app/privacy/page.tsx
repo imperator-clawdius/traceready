@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "founder@traceready.online";
+const LEGAL_OPERATOR = "Passive Print Labs LLC";
 
 export const metadata = {
   title: "Privacy | TraceReady",
@@ -16,7 +17,7 @@ export default function PrivacyPage() {
         </Link>
 
         <h1 className="mt-6 text-3xl font-semibold">Privacy</h1>
-        <p className="mt-3 text-sm text-zinc-500">Last updated June 2, 2026</p>
+        <p className="mt-3 text-sm text-zinc-500">Last updated June 11, 2026</p>
 
         <div className="mt-8 space-y-6 text-sm leading-7 text-zinc-700">
           <section>
@@ -34,13 +35,23 @@ export default function PrivacyPage() {
               compliance pack and communicate with you about the order. Do not send unrelated personal,
               financial, or sensitive information.
             </p>
+            <p className="mt-2">
+              Buyer files are treated as confidential order material. They are kept only as long as needed
+              to fulfill the order, support the customer, and maintain payment or accounting records, and
+              they can be deleted on request after delivery unless retention is legally required.
+            </p>
+            <p className="mt-2">
+              Paid cleanup files are not sold or published. They are not used to train AI or machine-learning
+              models.
+            </p>
           </section>
 
           <section>
             <h2 className="text-base font-semibold text-zinc-950">Payments and service providers</h2>
             <p className="mt-2">
-              Payments are handled by Stripe. Email, hosting, analytics, and other operational providers may
-              process limited data needed to run the service, receive orders, and respond to support requests.
+              Payments are handled by Stripe and TraceReady is operated by {LEGAL_OPERATOR}. Email,
+              hosting, analytics, and other operational providers may process limited data needed to run the
+              service, receive orders, and respond to support requests.
             </p>
           </section>
 
