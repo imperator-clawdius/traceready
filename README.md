@@ -34,13 +34,13 @@ Custom domain: `traceready.online`
 
 ## Conversion
 
-The paid CTAs open `/checkout/cleanup/` and `/checkout/pilot/` first. Those pages keep the TraceReady name visible, explain that Stripe may show Passive Print Labs LLC as the legal operator, and then link to Stripe.
+The paid CTAs open `/checkout/cleanup/` and `/checkout/pilot/` first. Those pages keep the TraceReady name visible, explain that Passive Print Labs LLC operates the payment workflow, and then link to TraceReady-branded Stripe checkout.
 
-`NEXT_PUBLIC_STRIPE_PAYMENT_LINK` is configured in GitHub Actions variables for the live $149 cleanup Payment Link. The checkout page also includes the public fallback link: `https://buy.stripe.com/4gMbJ1d4Tate2L531O8IU01`.
+`NEXT_PUBLIC_STRIPE_PAYMENT_LINK` is configured in GitHub Actions variables for the live $149 cleanup Payment Link. The checkout page also includes the public fallback link: `https://buy.stripe.com/8x27sN6NW3qzb4d6df93y01`.
 
-The 5-file importer pilot uses `NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK` when configured. The checkout page also includes the public fallback Payment Link created from five $149 cleanup passes: `https://buy.stripe.com/8x24gz0i70SEgBVgSE8IU02`.
+The 5-file importer pilot uses `NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK` when configured. The checkout page also includes the public fallback Payment Link: `https://buy.stripe.com/3cIdRbc8g9OX3BL1WZ93y02`.
 
-After checkout, the launch app prompts customers to email the source file, commodity, source country, deadline, and buyer brief so the paid cleanup order can be fulfilled manually. TraceReady is operated by Passive Print Labs LLC, and Stripe checkout may show Passive Print Labs LLC.
+After checkout, the launch app prompts customers to email the source file, commodity, source country, deadline, and buyer brief so the paid cleanup order can be fulfilled manually. TraceReady is operated by Passive Print Labs LLC, and the Stripe checkout surface is branded as TraceReady.
 
 See `docs/launch-status.md` for the current deployment and DNS checklist.
 
@@ -52,6 +52,6 @@ Use `docs/sales-sprint.md`, `docs/fulfillment-runbook.md`, and `docs/order-ledge
 
 Use `docs/competitive-undercut.md` for the current competitor map and undercut positioning.
 
-Use `docs/stripe-branding-runbook.md` for the external Stripe Dashboard branding checklist. The repo routes paid CTAs through TraceReady checkout handoff pages, but Stripe account branding still has to be verified in the rendered Stripe checkout UI.
+Use `docs/stripe-branding-runbook.md` for the external Stripe Dashboard branding record. The current cleanup and pilot Payment Links were visually verified in the rendered Stripe checkout UI on 2026-06-11.
 
 Use `npm run verify:launch -- --strict-dns` after the registrar records are changed to fail fast until `traceready.online` resolves to GitHub Pages.
