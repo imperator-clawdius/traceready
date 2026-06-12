@@ -59,17 +59,39 @@ describe("TraceReady conversion surface", () => {
     expect(cleanupSectionText).toContain("After the diagnosis");
   });
 
-  it("shows a concrete sample output proof on the launch surface", () => {
+  it("shows one concrete anonymized before-and-after proof example on the launch surface", () => {
     act(() => {
       root.render(<TraceReadyWorkbench />);
     });
 
     const pageText = container.textContent ?? "";
+    const sampleOutput = container.querySelector("#sample-output")?.textContent ?? "";
 
-    expect(pageText).toContain("Sample diagnosis output");
-    expect(pageText).toContain("Messy file in");
-    expect(pageText).toContain("Cleaned buyer pack out");
+    expect(sampleOutput).toContain("One anonymized before-and-after");
+    expect(sampleOutput).toContain("Before: messy supplier CSV");
+    expect(sampleOutput).toContain("COOP-018");
+    expect(sampleOutput).toContain("lat: 183.421");
+    expect(sampleOutput).toContain("Issues TraceReady catches");
+    expect(sampleOutput).toContain("3 blockers");
+    expect(sampleOutput).toContain("After: cleaned buyer pack");
+    expect(sampleOutput).toContain("cleaned_farms.csv");
+    expect(sampleOutput).toContain("issue_log.csv");
+    expect(sampleOutput).toContain("buyer_summary.md");
+    expect(sampleOutput).not.toContain("No issues found");
     expect(pageText).toContain("No farm data leaves your browser during the free check.");
+  });
+
+  it("places founder credibility directly under the hero CTA", () => {
+    act(() => {
+      root.render(<TraceReadyWorkbench />);
+    });
+
+    const headerText = container.querySelector("header")?.textContent ?? "";
+
+    expect(headerText).toContain("Founder proof");
+    expect(headerText).toContain("built and verified this cleanup workflow");
+    expect(headerText).toContain("not a legal certification");
+    expect(headerText).toContain("Passive Print Labs LLC");
   });
 
   it("discloses the legal operator before a buyer opens Stripe checkout", () => {
@@ -147,5 +169,47 @@ QA-2,Kofi Adu,Ghana,coffee,LOT-QA,3.2,6.3344,-1.6129
 
     expect(container.textContent).toContain("No issues found in this file.");
     expect(container.textContent).not.toContain("Upload a file to see blockers, warnings, and cleanup suggestions.");
+  });
+
+  it("uses the KML sample to demonstrate detected cleanup work", async () => {
+    await act(async () => {
+      root.render(<TraceReadyWorkbench />);
+    });
+
+    const sampleKmlButton = Array.from(container.querySelectorAll("button")).find((element) =>
+      element.textContent?.includes("Sample KML"),
+    ) as HTMLButtonElement | undefined;
+
+    await act(async () => {
+      sampleKmlButton?.click();
+    });
+
+    const pageText = container.textContent ?? "";
+
+    expect(pageText).toContain("Selected: sample-coffee-export.kml");
+    expect(pageText).toContain("Needs cleanup");
+    expect(pageText).toContain("Plots over 4 hectares need polygon geometry");
+    expect(pageText).not.toContain("No issues found in this file.");
+  });
+
+  it("uses the GeoJSON sample to demonstrate detected cleanup work", async () => {
+    await act(async () => {
+      root.render(<TraceReadyWorkbench />);
+    });
+
+    const sampleGeoJsonButton = Array.from(container.querySelectorAll("button")).find((element) =>
+      element.textContent?.includes("Sample GeoJSON"),
+    ) as HTMLButtonElement | undefined;
+
+    await act(async () => {
+      sampleGeoJsonButton?.click();
+    });
+
+    const pageText = container.textContent ?? "";
+
+    expect(pageText).toContain("Selected: sample-cocoa-export.geojson");
+    expect(pageText).toContain("Needs cleanup");
+    expect(pageText).toContain("Plots over 4 hectares need polygon geometry");
+    expect(pageText).not.toContain("No issues found in this file.");
   });
 });

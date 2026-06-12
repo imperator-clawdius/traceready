@@ -38,7 +38,7 @@ const SAMPLE_GEOJSON = JSON.stringify(
           country: "Peru",
           commodity: "cocoa",
           batch_id: "PE-COCOA-77",
-          area_ha: "3.4",
+          area_ha: "5.4",
         },
         geometry: {
           type: "Point",
@@ -101,15 +101,9 @@ const SAMPLE_KML = `<?xml version="1.0" encoding="UTF-8"?>
         <Data name="batch_id"><value>UG-COFFEE-18</value></Data>
         <Data name="area_ha"><value>5.3</value></Data>
       </ExtendedData>
-      <Polygon>
-        <outerBoundaryIs>
-          <LinearRing>
-            <coordinates>
-              30.2900,0.3500,0 30.2940,0.3500,0 30.2940,0.3540,0 30.2900,0.3540,0 30.2900,0.3500,0
-            </coordinates>
-          </LinearRing>
-        </outerBoundaryIs>
-      </Polygon>
+      <Point>
+        <coordinates>30.2900,0.3500,0</coordinates>
+      </Point>
     </Placemark>
   </Document>
 </kml>`;
@@ -147,21 +141,18 @@ const FIX_CATEGORIES = [
   },
 ];
 
-const CLEANUP_STEPS = [
+const BEFORE_AFTER_ROWS = [
   {
-    label: "Upload",
-    title: "Drop in the messy supplier file",
-    detail: "CSV, KML, GeoJSON, or JSON GeoJSON can be checked in the browser without sending the file first.",
+    value: "COOP-018, Ghana, coffee, LOT-7, 5.7 ha, lat: 183.421, lon: -1.612",
+    problem: "invalid latitude and point-only plot",
   },
   {
-    label: "Validate",
-    title: "TraceReady scores and explains the blockers",
-    detail: "The workbench separates hard blockers from warnings and writes the suggested repair next to each issue.",
+    value: "COOP-018, Ghana, coffee, LOT-7, 5.7 ha, lat: 6.334, lon: -1.613",
+    problem: "duplicate farm ID",
   },
   {
-    label: "Package",
-    title: "Download the buyer-ready handoff",
-    detail: "Export the compliance pack yourself, or buy the 24-hour cleanup pass when the file needs manual repair.",
+    value: "COOP-022, , cocoa, LOT-7, 2.1 ha, lat: 6.204, lon: -1.708",
+    problem: "missing supplier",
   },
 ];
 
@@ -175,58 +166,18 @@ const PACK_ITEMS = [
   "Paid-cleanup intake note",
 ];
 
-const AUDIENCE_GROUPS = [
+const PROOF_ISSUES = [
   {
-    title: "Exporters and coops",
-    detail: "Find bad farm rows before a buyer or importer rejects a shipment file.",
+    label: "3 blockers",
+    detail: "invalid coordinate, duplicate farm ID, and missing supplier identity",
   },
   {
-    title: "EU importers",
-    detail: "Screen supplier data before it enters a larger EUDR workflow or due diligence system.",
+    label: "1 geometry follow-up",
+    detail: "plot over 4 ha has only a point, so buyer likely needs polygon evidence",
   },
   {
-    title: "Compliance consultants",
-    detail: "Turn repeated file cleanup into a consistent, explainable handoff for clients.",
-  },
-];
-
-const SAMPLE_RECEIPT = [
-  ["Records checked", "1,248"],
-  ["Auto-detected issues", "73"],
-  ["Supplier follow-ups", "11"],
-  ["Pack files", "7"],
-];
-
-const SAMPLE_DIAGNOSIS_OUTPUT = [
-  {
-    label: "Messy file in",
-    detail: "CSV, KML, or GeoJSON with duplicate farms, missing fields, bad coordinates, or point-only plots.",
-  },
-  {
-    label: "TraceReady check",
-    detail: "A browser-side diagnosis separates blockers from warnings and writes the suggested fix next to each issue.",
-  },
-  {
-    label: "Cleaned buyer pack out",
-    detail: "Download a ZIP with cleaned CSV, issue log, GeoJSON, buyer summary, readiness report, and cleanup intake.",
-  },
-];
-
-const COMMERCIAL_PATHS = [
-  {
-    price: "Free",
-    title: "Self-serve file check",
-    detail: "Qualifies messy farm files and shows whether cleanup is worth paying for.",
-  },
-  {
-    price: "$149",
-    title: "Single-file cleanup",
-    detail: "A paid 24-hour pass for one source file or one clearly related shipment pack.",
-  },
-  {
-    price: "$745",
-    title: "5-file importer pilot",
-    detail: "A repeat-use pilot for buyers who need a small supplier batch cleaned and compared.",
+    label: "7 files out",
+    detail: "cleaned CSV, issue log, normalized GeoJSON, buyer summary, report, checklist, intake note",
   },
 ];
 
@@ -487,28 +438,58 @@ export function TraceReadyWorkbench() {
                 No farm data leaves your browser during the free check. Paid cleanup is offered after
                 you can see what needs fixing.
               </p>
+              <div className="mt-5 max-w-2xl border border-white/[0.18] bg-white/[0.1] p-4 text-sm leading-6 text-[#d8eadf] backdrop-blur">
+                <p className="font-semibold text-white">Founder proof</p>
+                <p className="mt-1">
+                  I built and verified this cleanup workflow around the failure modes buyers ask
+                  suppliers to fix: missing IDs, duplicate farms, bad coordinates, point-only plots
+                  over 4 ha, and incomplete shipment fields.
+                </p>
+                <p className="mt-2 text-xs leading-5 text-[#bcd6c4]">
+                  Operated by {LEGAL_OPERATOR}. This is operational file cleanup, not a legal
+                  certification or due diligence statement.
+                </p>
+              </div>
             </section>
 
             <section
               id="sample-output"
-              className="border border-white/[0.16] bg-[#071d1a]/[0.72] p-5 shadow-2xl backdrop-blur-md"
+              className="border border-white/[0.16] bg-[#071d1a]/[0.78] p-5 shadow-2xl backdrop-blur-md"
             >
-              <p className="text-xs font-semibold uppercase text-[#74e0cd]">Sample diagnosis output</p>
+              <p className="text-xs font-semibold uppercase text-[#74e0cd]">One anonymized before-and-after</p>
               <h2 className="mt-2 text-2xl font-semibold leading-tight text-white">
-                A real-looking handoff, not another vague compliance promise.
+                Messy rows become a visible issue list and cleaned pack.
               </h2>
-              <div className="mt-5 space-y-3">
-                {SAMPLE_DIAGNOSIS_OUTPUT.map((item) => (
-                  <div key={item.label} className="border border-white/[0.12] bg-white/[0.08] p-4">
-                    <p className="text-sm font-semibold text-[#fff9e8]">{item.label}</p>
-                    <p className="mt-2 text-sm leading-6 text-[#cfe3d7]">{item.detail}</p>
-                  </div>
-                ))}
+              <div className="mt-5 border border-white/[0.12] bg-white/[0.08] p-4">
+                <p className="text-sm font-semibold text-[#fff9e8]">Before: messy supplier CSV</p>
+                <div className="mt-3 space-y-2 font-mono text-[11px] leading-5 text-[#d8eadf]">
+                  {BEFORE_AFTER_ROWS.map((row) => (
+                    <div key={row.value} className="border-l-2 border-[#f3b365] pl-3">
+                      <p>{row.value}</p>
+                      <p className="text-[#f6c987]">{row.problem}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="mt-5 grid grid-cols-3 gap-2 text-center">
-                <MetricPill label="Blockers" value="73" />
-                <MetricPill label="Follow-ups" value="11" />
-                <MetricPill label="Files out" value="7" />
+              <div className="mt-3 border border-white/[0.12] bg-white/[0.08] p-4">
+                <p className="text-sm font-semibold text-[#fff9e8]">Issues TraceReady catches</p>
+                <ul className="mt-3 space-y-2 text-sm leading-5 text-[#cfe3d7]">
+                  {PROOF_ISSUES.map((issue) => (
+                    <li key={issue.label} className="flex gap-2">
+                      <AlertTriangle className="mt-0.5 size-4 shrink-0 text-[#f3b365]" aria-hidden="true" />
+                      <span>
+                        <span className="font-semibold text-white">{issue.label}:</span> {issue.detail}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="mt-3 border border-white/[0.12] bg-[#effaf4] p-4 text-[#17352d]">
+                <p className="text-sm font-semibold">After: cleaned buyer pack</p>
+                <p className="mt-2 text-sm leading-6">
+                  cleaned_farms.csv, issue_log.csv, geolocation.geojson, buyer_summary.md,
+                  readiness_report.txt, eudr_checklist.json, and paid_cleanup_intake.txt.
+                </p>
               </div>
             </section>
           </div>
@@ -741,113 +722,60 @@ export function TraceReadyWorkbench() {
 function MarketProofSections() {
   return (
     <section className="relative z-10 border-y border-[#dec8a6] bg-[#fff7e8]/86 py-8 backdrop-blur">
-      <div className="mx-auto w-full max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
-          <div>
+      <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 sm:px-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:px-8">
+        <section>
+          <div className="max-w-3xl">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#087f73]">
-              What TraceReady fixes
+              What the proof example represents
             </p>
             <h2 className="mt-2 text-2xl font-semibold leading-tight text-[#2b190f]">
-              Clean the farm data before it reaches the buyer.
+              The product is the issue log, cleaned file, and buyer handoff.
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-[#6a5137]">
-              TraceReady turns the common EUDR file problems into visible repair work: what can be
-              normalized, what needs supplier follow-up, and what is ready to pack.
+              The free check shows whether the source file is actually usable. Paid cleanup is only
+              for files where the issue list shows work that needs manual repair before buyer review.
             </p>
-
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              {FIX_CATEGORIES.map((item) => (
-                <div key={item.title} className="border border-[#e0c79d] bg-white/78 p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <h3 className="text-base font-semibold text-[#2b190f]">{item.title}</h3>
-                    <span className="shrink-0 rounded-md bg-[#dff5e8] px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#087f73]">
-                      {item.mode}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-sm leading-6 text-[#6a5137]">{item.detail}</p>
-                </div>
-              ))}
-            </div>
           </div>
 
-          <div className="trace-card border border-[#d9bf92] bg-[#2d1a10] p-5 text-[#fff7e8] shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#f3b365]">
-              Sample cleanup receipt
-            </p>
-            <h2 className="mt-2 text-2xl font-semibold leading-tight">The output is a documented handoff.</h2>
-            <p className="mt-3 text-sm leading-6 text-[#ecd8b8]">
-              The pack gives operators a concise record of what was checked, what was fixed, and what
-              still needs a supplier answer.
-            </p>
-            <div className="mt-5 grid grid-cols-2 gap-3">
-              {SAMPLE_RECEIPT.map(([label, value]) => (
-                <div key={label} className="border border-[#6f4b2b] bg-[#3d2416] p-4">
-                  <p className="text-xs font-medium uppercase tracking-[0.1em] text-[#d3aa73]">{label}</p>
-                  <p className="mt-2 text-2xl font-semibold tabular-nums text-white">{value}</p>
-                </div>
-              ))}
-            </div>
-            <a
-              href={SAMPLE_PACK_HREF}
-              className="mt-5 inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-[#fff7e8] px-3 text-sm font-semibold text-[#2d1a10] transition hover:bg-white"
-            >
-              <Download className="size-4" aria-hidden="true" />
-              Download anonymized sample pack
-            </a>
-          </div>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-3">
-          {COMMERCIAL_PATHS.map((path) => (
-            <section key={path.title} className="border border-[#d9bf92] bg-[#fffaf2]/88 p-5 shadow-sm">
-              <p className="text-2xl font-semibold tabular-nums text-[#2b190f]">{path.price}</p>
-              <h3 className="mt-2 text-base font-semibold text-[#2b190f]">{path.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-[#6a5137]">{path.detail}</p>
-            </section>
-          ))}
-        </div>
-
-        <div className="grid gap-6 lg:grid-cols-3">
-          <section className="lg:col-span-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#087f73]">
-              Cleanup pipeline
-            </p>
-            <div className="mt-5 grid gap-4 md:grid-cols-3">
-              {CLEANUP_STEPS.map((step) => (
-                <div key={step.label} className="border-l-4 border-[#087f73] bg-white/72 p-4">
-                  <span className="inline-flex size-8 items-center justify-center rounded-md bg-[#dff5e8] text-sm font-semibold text-[#087f73]">
-                    {step.label.slice(0, 1)}
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            {FIX_CATEGORIES.map((item) => (
+              <div key={item.title} className="border border-[#e0c79d] bg-white/78 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <h3 className="text-base font-semibold text-[#2b190f]">{item.title}</h3>
+                  <span className="shrink-0 rounded-md bg-[#dff5e8] px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#087f73]">
+                    {item.mode}
                   </span>
-                  <h3 className="mt-3 text-base font-semibold text-[#2b190f]">{step.title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-[#6a5137]">{step.detail}</p>
                 </div>
-              ))}
-            </div>
-          </section>
+                <p className="mt-2 text-sm leading-6 text-[#6a5137]">{item.detail}</p>
+              </div>
+            ))}
+          </div>
+        </section>
 
-          <section className="trace-card border border-[#d9bf92] bg-[#fffaf2]/96 p-5 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#087f73]">
-              Buyer pack contents
-            </p>
-            <ul className="mt-4 space-y-2">
-              {PACK_ITEMS.map((item) => (
-                <li key={item} className="flex items-center gap-2 text-sm font-medium text-[#3f2a1b]">
-                  <CheckCircle2 className="size-4 shrink-0 text-[#087f73]" aria-hidden="true" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </section>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-3">
-          {AUDIENCE_GROUPS.map((group) => (
-            <section key={group.title} className="border border-[#d9bf92] bg-[#fffaf2]/88 p-5 shadow-sm">
-              <h3 className="text-base font-semibold text-[#2b190f]">{group.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-[#6a5137]">{group.detail}</p>
-            </section>
-          ))}
-        </div>
+        <section className="trace-card border border-[#d9bf92] bg-[#fffaf2]/96 p-5 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#087f73]">
+            Cleaned pack contents
+          </p>
+          <h2 className="mt-2 text-xl font-semibold leading-tight text-[#2b190f]">What a buyer can inspect.</h2>
+          <ul className="mt-4 space-y-2">
+            {PACK_ITEMS.map((item) => (
+              <li key={item} className="flex items-center gap-2 text-sm font-medium text-[#3f2a1b]">
+                <CheckCircle2 className="size-4 shrink-0 text-[#087f73]" aria-hidden="true" />
+                {item}
+              </li>
+            ))}
+          </ul>
+          <a
+            href={SAMPLE_PACK_HREF}
+            className="mt-5 inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-[#087f73] px-3 text-sm font-semibold text-white transition hover:bg-[#05665d]"
+          >
+            <Download className="size-4" aria-hidden="true" />
+            Download anonymized sample pack
+          </a>
+          <p className="mt-3 text-xs leading-5 text-[#7a6144]">
+            Sample files are anonymized launch examples, not legal certification or buyer approval.
+          </p>
+        </section>
       </div>
     </section>
   );
@@ -909,15 +837,6 @@ function Metric({ label, value, suffix = "" }: { label: string; value: string; s
         {value}
         <span className="text-sm text-[#7d5d32]">{suffix}</span>
       </p>
-    </div>
-  );
-}
-
-function MetricPill({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="border border-white/[0.12] bg-white/[0.08] p-3">
-      <p className="text-xl font-semibold tabular-nums text-white">{value}</p>
-      <p className="mt-1 text-[11px] font-semibold uppercase text-[#bcd6c4]">{label}</p>
     </div>
   );
 }
