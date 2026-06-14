@@ -1,9 +1,13 @@
 import Link from "next/link";
 import { CreditCard, Download, Mail, ShieldCheck } from "lucide-react";
-
-const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "founder@traceready.online";
-const LEGAL_OPERATOR = "Passive Print Labs LLC";
-const SAMPLE_PACK_HREF = "/traceready-sample-output.zip";
+import {
+  CONTACT_EMAIL,
+  LEGAL_OPERATOR,
+  METHODOLOGY_HREF,
+  ORDER_INTAKE_HREF,
+  PROOF_HREF,
+  SAMPLE_PACK_HREF,
+} from "@/lib/site";
 
 type CheckoutHandoffProps = {
   title: string;
@@ -30,10 +34,10 @@ export function CheckoutHandoff({ title, price, description, stripeHref, nextSte
             <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-700">{description}</p>
 
             <div className="mt-6 border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950">
-              <p className="font-semibold">Stripe name check</p>
+              <p className="font-semibold">Operator and payment</p>
               <p className="mt-1">
-                TraceReady checkout is branded as TraceReady. Payment operations, tax records, and support
-                are handled by {LEGAL_OPERATOR}.
+                TraceReady checkout is labeled as TraceReady. Payment operations, tax records, and support
+                are handled by {LEGAL_OPERATOR}, the legal operator for this product.
               </p>
             </div>
 
@@ -54,6 +58,18 @@ export function CheckoutHandoff({ title, price, description, stripeHref, nextSte
                 <Mail className="size-4" aria-hidden="true" />
                 Ask a question first
               </a>
+            </div>
+
+            <div className="mt-5 grid gap-2 text-sm font-semibold text-emerald-800 sm:grid-cols-3">
+              <Link href={ORDER_INTAKE_HREF} className="hover:text-emerald-900">
+                Review order intake checklist
+              </Link>
+              <Link href={METHODOLOGY_HREF} className="hover:text-emerald-900">
+                Read methodology
+              </Link>
+              <Link href={PROOF_HREF} className="hover:text-emerald-900">
+                View proof status
+              </Link>
             </div>
           </div>
 
@@ -82,7 +98,7 @@ export function CheckoutHandoff({ title, price, description, stripeHref, nextSte
               className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md border border-[#d9bf92] bg-white px-4 text-sm font-semibold text-[#2b190f] transition hover:bg-[#fff3dd]"
             >
               <Download className="size-4" aria-hidden="true" />
-              Download anonymized sample pack
+              Download representative sample pack
             </a>
           </aside>
         </section>
