@@ -1124,7 +1124,7 @@ function buildPilotHandoffHref(batchBrief = ""): string {
       "Target deadline:",
       "Buyer-specific requirements:",
       "",
-      batchBrief || "Paste the TraceReady Importer Pilot Brief here if you generated one.",
+      batchBrief || "Paste the TraceReady Importer Pilot Summary here if you generated one.",
       "",
       "Notes:",
     ].join("\n"),
