@@ -487,8 +487,8 @@ export function TraceReadyWorkbench() {
               <div className="mt-3 border border-white/[0.12] bg-[#effaf4] p-4 text-[#17352d]">
                 <p className="text-sm font-semibold">After: cleaned buyer pack</p>
                 <p className="mt-2 text-sm leading-6">
-                  cleaned_farms.csv, issue_log.csv, geolocation.geojson, buyer_summary.md,
-                  readiness_report.txt, eudr_checklist.json, and paid_cleanup_intake.txt.
+                  Cleaned farm CSV, issue log, normalized GeoJSON, buyer summary, readiness
+                  report, EUDR checklist, and paid-cleanup intake note.
                 </p>
               </div>
             </section>

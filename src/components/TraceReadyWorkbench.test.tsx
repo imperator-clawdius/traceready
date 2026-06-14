@@ -74,9 +74,12 @@ describe("TraceReady conversion surface", () => {
     expect(sampleOutput).toContain("Issues TraceReady catches");
     expect(sampleOutput).toContain("3 blockers");
     expect(sampleOutput).toContain("After: cleaned buyer pack");
-    expect(sampleOutput).toContain("cleaned_farms.csv");
-    expect(sampleOutput).toContain("issue_log.csv");
-    expect(sampleOutput).toContain("buyer_summary.md");
+    expect(sampleOutput).toContain(
+      "Cleaned farm CSV, issue log, normalized GeoJSON, buyer summary, readiness report, EUDR checklist, and paid-cleanup intake note.",
+    );
+    expect(sampleOutput).not.toContain("cleaned_farms.csv");
+    expect(sampleOutput).not.toContain("issue_log.csv");
+    expect(sampleOutput).not.toContain("buyer_summary.md");
     expect(sampleOutput).not.toContain("No issues found");
     expect(pageText).toContain("No farm data leaves your browser during the free check.");
   });
