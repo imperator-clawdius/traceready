@@ -30,7 +30,7 @@ Treat paid cleanup files as confidential order material. Keep them only as long 
 4. Read the issue log before editing anything.
 5. Fix only operational data problems the customer can authorize: field names, missing batch references supplied by the customer, duplicate IDs, coordinate formatting, and buyer-specific naming.
 6. Do not invent farm locations, supplier identity, polygons, or legal conclusions.
-7. Return the cleaned pack, issue log, buyer brief, and a short plain-English summary.
+7. Return the cleaned pack, issue log, buyer summary, and a short plain-English summary.
 8. Ask whether the buyer/importer accepted the pack or requested more data.
 9. Offer deletion of source files after delivery.
 10. Update the order ledger.

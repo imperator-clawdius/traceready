@@ -345,7 +345,7 @@ export function TraceReadyWorkbench() {
       setCopiedBrief(true);
       window.setTimeout(() => setCopiedBrief(false), 1800);
     } catch {
-      setError("TraceReady could not copy the buyer brief. Download the pack instead.");
+      setError("TraceReady could not copy the buyer summary. Download the pack instead.");
     }
   }
 
@@ -359,7 +359,7 @@ export function TraceReadyWorkbench() {
       setCopiedBatchBrief(true);
       window.setTimeout(() => setCopiedBatchBrief(false), 1800);
     } catch {
-      setError("TraceReady could not copy the pilot brief. Use the pilot request email instead.");
+      setError("TraceReady could not copy the pilot summary. Use the pilot request email instead.");
     }
   }
 
@@ -633,7 +633,7 @@ export function TraceReadyWorkbench() {
               onClick={() => void copyBuyerBrief()}
             >
               <FileCheck2 className="size-4" aria-hidden="true" />
-              {copiedBrief ? "Buyer brief copied" : "Copy buyer brief"}
+              {copiedBrief ? "Buyer summary copied" : "Copy buyer summary"}
             </button>
 
             <p className="mt-4 text-xs leading-5 text-[#7a6144]">
@@ -668,7 +668,7 @@ export function TraceReadyWorkbench() {
               </p>
               <ol className="mt-2 space-y-2 text-sm leading-6 text-[#6a5137]">
                 <li>Buy cleanup in Stripe.</li>
-                <li>Email the source file, commodity, source country, deadline, and buyer brief.</li>
+                <li>Email the source file, commodity, source country, deadline, and buyer summary.</li>
                 <li>Receive the cleaned ZIP pack within 24 hours after payment and usable file receipt.</li>
               </ol>
               <p className="mt-3 text-sm leading-6 text-[#6a5137]">
@@ -947,13 +947,13 @@ function BatchPilotSummary({
       <div className="flex flex-col gap-3 border-b border-[#eadcc8] pb-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#087f73]">
-            Importer pilot triage
+            Multi-file cleanup check
           </p>
           <h2 className="mt-2 text-lg font-semibold text-[#2b190f]">
             Batch view for supplier file cleanup.
           </h2>
           <p className="mt-2 text-sm leading-6 text-[#6a5137]">
-            Compare up to 5 supplier files, spot which ones need cleanup, and copy a pilot brief for
+            Compare up to 5 supplier files, spot which ones need cleanup, and copy a pilot summary for
             the buyer or importer.
           </p>
         </div>
@@ -963,7 +963,7 @@ function BatchPilotSummary({
           onClick={onCopy}
         >
           <FileCheck2 className="size-4" aria-hidden="true" />
-          {copied ? "Pilot brief copied" : "Copy pilot brief"}
+          {copied ? "Pilot summary copied" : "Copy pilot summary"}
         </button>
       </div>
 
@@ -1018,7 +1018,7 @@ function buildBuyerBrief(analysis: TraceReadyAnalysis): string {
   const topIssues = analysis.issues.slice(0, 6);
 
   return [
-    "TraceReady Buyer Brief",
+    "TraceReady Buyer Summary",
     "",
     `Status: ${status}`,
     `Source file: ${analysis.fileName}`,
@@ -1057,7 +1057,7 @@ function buildBatchPilotBrief(results: BatchResult[]): string {
   const failedFiles = results.filter((result) => result.error);
 
   return [
-    "TraceReady Importer Pilot Brief",
+    "TraceReady Importer Pilot Summary",
     "",
     `Files submitted: ${summary.fileCount}`,
     `Files analyzed: ${summary.analyzedFiles}`,
@@ -1085,8 +1085,8 @@ function buildBatchPilotBrief(results: BatchResult[]): string {
     "",
     "Recommended next step:",
     cleanupFiles.length > 0 || failedFiles.length > 0
-      ? "Buy the $745 5-file importer pilot and attach the original supplier files for manual cleanup."
-      : "Download individual compliance packs and use the pilot brief as the importer review cover note.",
+      ? "Buy the $745 5-file pilot and attach the original supplier files for manual cleanup."
+      : "Download individual compliance packs and use the pilot summary as the importer review cover note.",
     "",
     "Caveat: TraceReady is an operational readiness pack, not legal certification.",
   ].join("\n");
@@ -1116,7 +1116,7 @@ function buildPilotHandoffHref(batchBrief = ""): string {
   const subject = encodeURIComponent("TraceReady pilot files after checkout");
   const body = encodeURIComponent(
     [
-      "I bought the TraceReady 5-file importer pilot and need to submit files.",
+      "I bought the TraceReady 5-file pilot and need to submit files.",
       "",
       "Stripe receipt email:",
       "Company:",

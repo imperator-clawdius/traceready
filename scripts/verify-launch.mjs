@@ -51,11 +51,11 @@ const requiredPages = [
     label: "PILOT_CHECKOUT_PAGE",
     path: "/checkout/pilot/",
     content: [
-      "TraceReady 5-file importer pilot",
+      "TraceReady 5-file pilot",
       "Continue to Stripe checkout",
       "Passive Print Labs LLC",
       PILOT_STRIPE_LINK,
-      "Receive a batch triage summary and cleaned packs",
+      "Receive a batch cleanup summary and cleaned packs",
     ],
   },
 ];

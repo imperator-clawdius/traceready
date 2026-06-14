@@ -2,7 +2,7 @@
 
 ## Goal
 
-Get the first 10 paid cleanup orders or one paid 5-file importer pilot. Do not optimize the product again until this sprint has real evidence.
+Get the first 10 paid cleanup orders or one paid 5-file pilot. Do not optimize the product again until this sprint has real evidence.
 
 ## Ideal Customers
 
@@ -16,7 +16,7 @@ Get the first 10 paid cleanup orders or one paid 5-file importer pilot. Do not o
 Use two offers only:
 
 - `$149` single-file cleanup: one messy source file or one clearly related shipment pack.
-- `$745` 5-file importer pilot: up to five supplier files triaged together, with cleaned packs and a batch pilot brief.
+- `$745` 5-file pilot: up to five supplier files checked together, with cleaned packs and a batch pilot summary.
 
 ## Qualification Questions
 
@@ -68,7 +68,7 @@ For 10 business days:
 The sprint succeeds if TraceReady gets any of these:
 
 - 10 paid single-file cleanup orders.
-- 1 paid 5-file importer pilot.
+- 1 paid 5-file pilot.
 - 3 repeat users or referrals from one customer.
 - A permissioned anonymized before/after case study.
 

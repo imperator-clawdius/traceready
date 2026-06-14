@@ -6,7 +6,7 @@ To submit a paid cleanup order, email:
 - Commodity
 - Source country
 - Deadline
-- Buyer brief or buyer requirements, if available
+- Buyer summary or buyer requirements, if available
 
 Fulfillment:
 TraceReady returns the cleaned ZIP pack within 24 hours after payment and receipt of a usable file. If the file is outside launch scope, TraceReady clarifies or refunds before work begins.

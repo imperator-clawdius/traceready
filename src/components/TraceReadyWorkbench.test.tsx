@@ -141,7 +141,7 @@ describe("TraceReady conversion surface", () => {
 
     expect(cleanupSectionText).toContain("Buy cleanup in Stripe.");
     expect(cleanupSectionText).toContain(
-      "Email the source file, commodity, source country, deadline, and buyer brief.",
+      "Email the source file, commodity, source country, deadline, and buyer summary.",
     );
     expect(cleanupSectionText).toContain(
       "Receive the cleaned ZIP pack within 24 hours after payment and usable file receipt.",

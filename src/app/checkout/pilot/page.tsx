@@ -5,20 +5,20 @@ const STRIPE_PILOT_LINK =
 
 export const metadata = {
   title: "Pilot Checkout | TraceReady",
-  description: "TraceReady 5-file importer pilot checkout handoff before Stripe payment.",
+  description: "TraceReady 5-file pilot checkout handoff before Stripe payment.",
 };
 
 export default function PilotCheckoutPage() {
   return (
     <CheckoutHandoff
-      title="TraceReady 5-file importer pilot"
+      title="TraceReady 5-file pilot"
       price="$745"
-      description="Triage and clean up to five related supplier files for an importer, exporter, cooperative, or compliance consultant."
+      description="Check and clean up to five related supplier files for an importer, exporter, cooperative, or compliance consultant."
       stripeHref={STRIPE_PILOT_LINK}
       nextSteps={[
         "Pay through the TraceReady Stripe checkout operated by Passive Print Labs LLC.",
         "Email up to five source files with commodity, source countries, deadline, and buyer requirements.",
-        "Receive a batch triage summary and cleaned packs after payment and usable file receipt.",
+        "Receive a batch cleanup summary and cleaned packs after payment and usable file receipt.",
       ]}
     />
   );

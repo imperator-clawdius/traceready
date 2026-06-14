@@ -8,7 +8,7 @@ The launch product is intentionally narrow:
 
 - Browser-side upload for CSV, KML, GeoJSON, and JSON GeoJSON farm files.
 - Readiness checks for missing traceability fields, invalid coordinates, duplicate farm IDs, and polygon requirements for plots over 4 hectares.
-- Importer pilot triage for up to 5 supplier files, including a batch readiness summary and copyable pilot brief.
+- Multi-file cleanup check for up to 5 supplier files, including a batch readiness summary and copyable pilot summary.
 - Downloadable ZIP pack with cleaned CSV, issue log, buyer/importer summary, readiness report, normalized GeoJSON, structured EUDR checklist, and paid-cleanup intake note.
 - Paid cleanup CTA for teams that want TraceReady to fix and return the pack manually.
 
@@ -57,7 +57,7 @@ Keep the self-serve checker free or lightweight. Monetize by selling 24-hour cle
 
 Why it fits: many suppliers will not want software. They want the file fixed before a buyer deadline.
 
-The $745 5-file importer pilot should be used to test repeat behavior before building account management. A buyer can upload several supplier files, compare readiness, copy the pilot brief, buy the pilot checkout, and submit the batch for cleanup.
+The $745 5-file pilot should be used to test repeat behavior before building account management. A buyer can upload several supplier files, compare readiness, copy the pilot summary, buy the pilot checkout, and submit the batch for cleanup.
 
 ### 3. Importer Pre-Screen
 

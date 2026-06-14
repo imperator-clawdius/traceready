@@ -8,7 +8,7 @@ Current undercut offer:
 
 - Free browser-side file check.
 - $149 single-file 24-hour cleanup.
-- $745 5-file importer pilot.
+- $745 5-file pilot.
 - Plain ZIP output that can be forwarded to a buyer or uploaded into a larger EUDR workflow.
 
 The recurring market gap is that most competitors sell a full compliance operating system: supplier portals, satellite risk scoring, legality checks, ERP integrations, TRACES/DDS submission, and audit workflows. Those are useful, but they are heavy when the immediate buyer problem is "my farm file is messy and I need to know what will fail."
@@ -47,7 +47,7 @@ Offer:
 
 - $0 instant file diagnosis.
 - $149 cleaned file and issue log.
-- $745 5-file importer pilot.
+- $745 5-file pilot.
 - Export naming that sounds platform-friendly: `cleaned-farms.csv`, `issues.csv`, `geolocation.geojson`, `buyer-summary.txt`.
 
 ### Satellite/risk-platform complement
@@ -83,7 +83,7 @@ Keep prices radically simple:
 | --- | ---: | --- |
 | Free file check | $0 | Proves value before trust is earned. |
 | Single-file cleanup | $149 | Cheapest credible paid fix for one urgent buyer file. |
-| 5-file importer pilot | $745 | Same unit price, enough volume to prove repeatability. |
+| 5-file pilot | $745 | Same unit price, enough volume to prove repeatability. |
 | 25-file buyer sprint | $2,975 recommended next tier | Undercuts enterprise implementation while giving TraceReady enough margin for manual QA. |
 
 Do not lead with "EUDR compliance platform." Lead with "farm file cleanup before buyer rejection." Let the enterprise tools own final DDS/TRACES/audit workflows; TraceReady owns the dirty-data layer feeding them.

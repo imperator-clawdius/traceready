@@ -70,7 +70,7 @@ describe("TraceReady trust pages", () => {
     expect(pageText).toContain("TraceReady is operated by Passive Print Labs LLC");
     expect(pageText).toContain("Stripe checkout is branded as TraceReady");
     expect(pageText).toContain("Buy cleanup in Stripe");
-    expect(pageText).toContain("Email the source file, commodity, source country, deadline, and buyer brief");
+    expect(pageText).toContain("Email the source file, commodity, source country, deadline, and buyer summary");
     expect(pageText).toContain("Receive the cleaned ZIP pack within 24 hours after payment and usable file receipt");
     expect(cleanupLink?.getAttribute("href")).toBe("/checkout/cleanup/");
     expect(pilotLink?.getAttribute("href")).toBe("/checkout/pilot/");
@@ -103,10 +103,10 @@ describe("TraceReady trust pages", () => {
       element.textContent?.includes("Continue to Stripe checkout"),
     );
 
-    expect(pageText).toContain("TraceReady 5-file importer pilot");
+    expect(pageText).toContain("TraceReady 5-file pilot");
     expect(pageText).toContain("TraceReady checkout is branded as TraceReady");
     expect(pageText).toContain("Passive Print Labs LLC");
-    expect(pageText).toContain("Receive a batch triage summary and cleaned packs");
+    expect(pageText).toContain("Receive a batch cleanup summary and cleaned packs");
     expect(stripeLink?.getAttribute("href")).toContain("https://buy.stripe.com/");
   });
 });

@@ -11,7 +11,7 @@ A buyer or investor should value the current asset as a working launch package u
 TraceReady becomes meaningfully buyable when it has evidence for all of these:
 
 - 10 paid single-file cleanup orders at $149.
-- 3 repeat customers or one importer pilot that sends multiple supplier files.
+- 3 repeat customers or one paid pilot that sends multiple supplier files.
 - At least one before/after customer file example that can be anonymized.
 - A clear fulfillment log: source file received, issues found, cleanup returned, turnaround time, buyer result.
 - One acquisition channel that can produce orders without founder heroics.
@@ -20,9 +20,9 @@ TraceReady becomes meaningfully buyable when it has evidence for all of these:
 
 Use the live site to test demand in this order:
 
-1. Free self-serve checker qualifies the pain and generates a buyer brief.
+1. Free self-serve checker qualifies the pain and generates a buyer summary.
 2. $149 single-file cleanup converts urgent one-off problems.
-3. $745 5-file importer pilot tests repeat workflow and higher contract value with batch triage across supplier files.
+3. $745 5-file pilot tests repeat workflow and higher contract value with batch cleanup review across supplier files.
 4. Repeat pilots become monthly cleanup retainers or an importer pre-screen portal.
 
 Do not build SaaS account management, white-label dashboards, or APIs before the $149 and $745 offers produce real demand.
@@ -56,9 +56,9 @@ These are directional startup-asset ranges, not formal financial advice.
 
 ## Product Work That Helps Valuation
 
-- Make every analysis produce a buyer brief that can be copied into email.
+- Make every analysis produce a buyer summary that can be copied into email.
 - Keep the paid-cleanup handoff tied to the analyzed file summary.
-- Make the 5-file pilot checkout-backed and mechanically real through batch triage.
+- Make the 5-file pilot checkout-backed and mechanically real through batch cleanup review.
 - Improve the pack quality before adding more commodity pages.
 - Add proof only when it is true: paid orders, turnaround time, repeat customers, anonymized before/after examples.
 

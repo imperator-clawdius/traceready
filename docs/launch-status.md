@@ -13,12 +13,12 @@
 - Launch demo coverage: built-in sample runners for CSV, KML, and GeoJSON.
 - Public sample proof: `/traceready-sample-output.zip` contains an anonymized cleaned pack.
 - Conversion actions: `Buy 24-hour cleanup` CTA and `Buy 5-file pilot` CTA route to `/checkout/cleanup/` and `/checkout/pilot/` before TraceReady-branded Stripe checkout.
-- Paid-order handoff: after checkout, customers are prompted to email the source file, commodity, source country, deadline, and buyer brief to `founder@traceready.online`.
+- Paid-order handoff: after checkout, customers are prompted to email the source file, commodity, source country, deadline, and buyer summary to `founder@traceready.online`.
 - Trust pages: `/privacy/` and `/terms/` explain browser-side validation, paid-cleanup handling, Stripe checkout, retention, deletion, confidentiality, no model training, and the no-legal-certification boundary.
 - Legal operator bridge: TraceReady is operated by Passive Print Labs LLC; the verified Stripe checkout pages now show `TraceReady` as the buyer-facing header.
 - Live Stripe cleanup product: `TraceReady 24-hour cleanup`
 - Live Stripe cleanup payment link: `https://buy.stripe.com/8x27sN6NW3qzb4d6df93y01`
-- Live Stripe pilot product: `TraceReady 5-file importer pilot`
+- Live Stripe pilot Payment Link: configured for the 5-file pilot checkout.
 - Live Stripe pilot payment link: `https://buy.stripe.com/3cIdRbc8g9OX3BL1WZ93y02`
 - Stripe branding record: `docs/stripe-branding-runbook.md` documents the verified Dashboard and rendered-checkout state.
 

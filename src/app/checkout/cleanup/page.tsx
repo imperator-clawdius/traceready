@@ -17,7 +17,7 @@ export default function CleanupCheckoutPage() {
       stripeHref={STRIPE_CLEANUP_LINK}
       nextSteps={[
         "Pay through the TraceReady Stripe checkout operated by Passive Print Labs LLC.",
-        "Email the source file, commodity, source country, deadline, and buyer brief.",
+        "Email the source file, commodity, source country, deadline, and buyer summary.",
         "Receive the cleaned ZIP pack within 24 hours after payment and usable file receipt.",
       ]}
     />

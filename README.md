@@ -6,7 +6,7 @@ Clean and validate messy farm CSV, KML, and GeoJSON files into buyer-ready coffe
 
 - Browser-side file analysis for CSV, KML, GeoJSON, and JSON GeoJSON.
 - Built-in sample runners for CSV, KML, and GeoJSON launch demos.
-- Multi-file importer pilot triage for up to 5 supplier files, with a batch readiness summary and copyable pilot brief.
+- Multi-file cleanup check for up to 5 supplier files, with a batch readiness summary and copyable pilot summary.
 - Farm record normalization for supplier, country, commodity, batch, area, coordinates, and geometry.
 - EUDR readiness checks for missing traceability fields, invalid coordinates, duplicate farm IDs, and polygon requirements for plots over 4 hectares.
 - Downloadable ZIP pack with cleaned CSV, issue log, buyer summary, readiness report, normalized GeoJSON, structured EUDR checklist, and a paid-cleanup intake note.
@@ -38,9 +38,9 @@ The paid CTAs open `/checkout/cleanup/` and `/checkout/pilot/` first. Those page
 
 `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` is configured in GitHub Actions variables for the live $149 cleanup Payment Link. The checkout page also includes the public fallback link: `https://buy.stripe.com/8x27sN6NW3qzb4d6df93y01`.
 
-The 5-file importer pilot uses `NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK` when configured. The checkout page also includes the public fallback Payment Link: `https://buy.stripe.com/3cIdRbc8g9OX3BL1WZ93y02`.
+The 5-file pilot uses `NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK` when configured. The checkout page also includes the public fallback Payment Link: `https://buy.stripe.com/3cIdRbc8g9OX3BL1WZ93y02`.
 
-After checkout, the launch app prompts customers to email the source file, commodity, source country, deadline, and buyer brief so the paid cleanup order can be fulfilled manually. TraceReady is operated by Passive Print Labs LLC, and the Stripe checkout surface is branded as TraceReady.
+After checkout, the launch app prompts customers to email the source file, commodity, source country, deadline, and buyer summary so the paid cleanup order can be fulfilled manually. TraceReady is operated by Passive Print Labs LLC, and the Stripe checkout surface is branded as TraceReady.
 
 See `docs/launch-status.md` for the current deployment and DNS checklist.
 

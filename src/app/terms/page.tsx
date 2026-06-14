@@ -54,13 +54,13 @@ export default function TermsPage() {
               custom quote, or refund the order before work begins.
             </p>
             <p className="mt-2">
-              The 5-file importer pilot covers up to five supplier files submitted together for batch triage
+              The 5-file pilot covers up to five supplier files submitted together for batch cleanup review
               and cleanup. The pilot is fulfilled manually after payment, receipt of usable source files, and
               any buyer-specific requirements needed to prepare the returned pack.
             </p>
             <ol className="mt-3 list-decimal space-y-2 pl-5">
               <li>Buy cleanup in Stripe.</li>
-              <li>Email the source file, commodity, source country, deadline, and buyer brief.</li>
+              <li>Email the source file, commodity, source country, deadline, and buyer summary.</li>
               <li>Receive the cleaned ZIP pack within 24 hours after payment and usable file receipt.</li>
             </ol>
           </section>
