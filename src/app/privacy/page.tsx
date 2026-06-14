@@ -1,7 +1,5 @@
 import Link from "next/link";
-
-const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "founder@traceready.online";
-const LEGAL_OPERATOR = "Passive Print Labs LLC";
+import { CONTACT_EMAIL, CONTACT_HREF, LEGAL_OPERATOR, ORDER_INTAKE_HREF } from "@/lib/site";
 
 export const metadata = {
   title: "Privacy | TraceReady",
@@ -17,7 +15,7 @@ export default function PrivacyPage() {
         </Link>
 
         <h1 className="mt-6 text-3xl font-semibold">Privacy</h1>
-        <p className="mt-3 text-sm text-zinc-500">Last updated June 11, 2026</p>
+        <p className="mt-3 text-sm text-zinc-500">Last updated June 14, 2026</p>
 
         <div className="mt-8 space-y-6 text-sm leading-7 text-zinc-700">
           <section>
@@ -44,6 +42,10 @@ export default function PrivacyPage() {
               Paid cleanup files are not sold or published. They are not used to train AI or machine-learning
               models.
             </p>
+            <p className="mt-2">
+              The order intake checklist asks only for the receipt email, source files, commodity, source
+              country, deadline, and buyer requirements needed to complete the cleanup.
+            </p>
           </section>
 
           <section>
@@ -64,6 +66,20 @@ export default function PrivacyPage() {
               </a>
               .
             </p>
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href={ORDER_INTAKE_HREF}
+                className="inline-flex h-10 items-center justify-center rounded-md border border-zinc-300 bg-white px-4 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-100"
+              >
+                Order intake checklist
+              </Link>
+              <Link
+                href={CONTACT_HREF}
+                className="inline-flex h-10 items-center justify-center rounded-md border border-zinc-300 bg-white px-4 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-100"
+              >
+                Contact TraceReady
+              </Link>
+            </div>
           </section>
         </div>
       </div>

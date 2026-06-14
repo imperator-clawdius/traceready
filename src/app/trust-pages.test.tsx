@@ -4,6 +4,10 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import CleanupCheckoutPage from "./checkout/cleanup/page";
 import PilotCheckoutPage from "./checkout/pilot/page";
+import ContactPage from "./contact/page";
+import MethodologyPage from "./methodology/page";
+import OrderIntakePage from "./order-intake/page";
+import ProofPage from "./proof/page";
 import PrivacyPage from "./privacy/page";
 import TermsPage from "./terms/page";
 
@@ -68,9 +72,10 @@ describe("TraceReady trust pages", () => {
     );
 
     expect(pageText).toContain("TraceReady is operated by Passive Print Labs LLC");
-    expect(pageText).toContain("Stripe checkout is branded as TraceReady");
+    expect(pageText).toContain("Stripe checkout is labeled as TraceReady");
     expect(pageText).toContain("Buy cleanup in Stripe");
-    expect(pageText).toContain("Email the source file, commodity, source country, deadline, and buyer summary");
+    expect(pageText).toContain("Use the order intake checklist");
+    expect(pageText).toContain("Email the source file, receipt email, commodity, source country, deadline, and buyer requirements");
     expect(pageText).toContain("Receive the cleaned ZIP pack within 24 hours after payment and usable file receipt");
     expect(cleanupLink?.getAttribute("href")).toBe("/checkout/cleanup/");
     expect(pilotLink?.getAttribute("href")).toBe("/checkout/pilot/");
@@ -87,9 +92,11 @@ describe("TraceReady trust pages", () => {
     );
 
     expect(pageText).toContain("TraceReady 24-hour cleanup");
-    expect(pageText).toContain("TraceReady checkout is branded as TraceReady");
+    expect(pageText).toContain("Operator and payment");
+    expect(pageText).toContain("TraceReady checkout is labeled as TraceReady");
     expect(pageText).toContain("Passive Print Labs LLC");
-    expect(pageText).toContain("Download anonymized sample pack");
+    expect(pageText).toContain("Download representative sample pack");
+    expect(pageText).toContain("Review order intake checklist");
     expect(stripeLink?.getAttribute("href")).toContain("https://buy.stripe.com/");
   });
 
@@ -104,9 +111,76 @@ describe("TraceReady trust pages", () => {
     );
 
     expect(pageText).toContain("TraceReady 5-file pilot");
-    expect(pageText).toContain("TraceReady checkout is branded as TraceReady");
+    expect(pageText).toContain("Operator and payment");
+    expect(pageText).toContain("TraceReady checkout is labeled as TraceReady");
     expect(pageText).toContain("Passive Print Labs LLC");
     expect(pageText).toContain("Receive a batch cleanup summary and cleaned packs");
-    expect(stripeLink?.getAttribute("href")).toContain("https://buy.stripe.com/");
+    expect(pageText).toContain("Review order intake checklist");
+    expect(stripeLink?.getAttribute("href")).toBe("https://buy.stripe.com/dRm6oH9SH8l671l59W8IU03");
+  });
+
+  it("explains the deterministic cleanup methodology and limits", () => {
+    act(() => {
+      root.render(<MethodologyPage />);
+    });
+
+    const pageText = container.textContent ?? "";
+
+    expect(pageText).toContain("Deterministic checks");
+    expect(pageText).toContain("What TraceReady never invents");
+    expect(pageText).toContain("invalid latitude/longitude");
+    expect(pageText).toContain("duplicate farm IDs");
+    expect(pageText).toContain("plots over 4 hectares");
+    expect(pageText).toContain("No model training");
+    expect(pageText).toContain("not legal certification");
+  });
+
+  it("publishes proof status without pretending the sample is customer proof", () => {
+    act(() => {
+      root.render(<ProofPage />);
+    });
+
+    const pageText = container.textContent ?? "";
+    const sampleLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("Download representative sample pack"),
+    );
+
+    expect(pageText).toContain("Representative sample fixture");
+    expect(pageText).toContain("not customer proof");
+    expect(pageText).toContain("not transaction proof");
+    expect(pageText).toContain("messy file in");
+    expect(pageText).toContain("issue list");
+    expect(pageText).toContain("cleaned pack out");
+    expect(sampleLink?.getAttribute("href")).toBe("/traceready-sample-output.zip");
+  });
+
+  it("provides a tighter paid-order intake handoff", () => {
+    act(() => {
+      root.render(<OrderIntakePage />);
+    });
+
+    const pageText = container.textContent ?? "";
+
+    expect(pageText).toContain("Order intake checklist");
+    expect(pageText).toContain("Stripe receipt email");
+    expect(pageText).toContain("source files");
+    expect(pageText).toContain("commodity and source country");
+    expect(pageText).toContain("buyer requirements");
+    expect(pageText).toContain("clarify or refund before work begins");
+    expect(pageText).toContain("not used to train AI or machine-learning models");
+  });
+
+  it("adds a contact surface for order, scope, and privacy questions", () => {
+    act(() => {
+      root.render(<ContactPage />);
+    });
+
+    const pageText = container.textContent ?? "";
+
+    expect(pageText).toContain("founder@traceready.online");
+    expect(pageText).toContain("order questions");
+    expect(pageText).toContain("file-scope questions");
+    expect(pageText).toContain("privacy or deletion requests");
+    expect(pageText).toContain("Passive Print Labs LLC");
   });
 });

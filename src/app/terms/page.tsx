@@ -1,9 +1,11 @@
 import Link from "next/link";
-
-const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "founder@traceready.online";
-const LEGAL_OPERATOR = "Passive Print Labs LLC";
-const CHECKOUT_CLEANUP_HREF = "/checkout/cleanup/";
-const CHECKOUT_PILOT_HREF = "/checkout/pilot/";
+import {
+  CHECKOUT_CLEANUP_HREF,
+  CHECKOUT_PILOT_HREF,
+  CONTACT_EMAIL,
+  LEGAL_OPERATOR,
+  ORDER_INTAKE_HREF,
+} from "@/lib/site";
 
 export const metadata = {
   title: "Terms | TraceReady",
@@ -19,7 +21,7 @@ export default function TermsPage() {
         </Link>
 
         <h1 className="mt-6 text-3xl font-semibold">Terms</h1>
-        <p className="mt-3 text-sm text-zinc-500">Last updated June 11, 2026</p>
+        <p className="mt-3 text-sm text-zinc-500">Last updated June 14, 2026</p>
 
         <div className="mt-8 space-y-6 text-sm leading-7 text-zinc-700">
           <section>
@@ -30,7 +32,7 @@ export default function TermsPage() {
               geolocation GeoJSON, issue logs, checklists, buyer summaries, and readiness reports.
             </p>
             <p className="mt-2">
-              TraceReady is operated by {LEGAL_OPERATOR}. Stripe checkout is branded as TraceReady while
+              TraceReady is operated by {LEGAL_OPERATOR}. Stripe checkout is labeled as TraceReady while
               payment operations, tax records, and support stay under {LEGAL_OPERATOR}.
             </p>
           </section>
@@ -60,9 +62,17 @@ export default function TermsPage() {
             </p>
             <ol className="mt-3 list-decimal space-y-2 pl-5">
               <li>Buy cleanup in Stripe.</li>
-              <li>Email the source file, commodity, source country, deadline, and buyer summary.</li>
+              <li>
+                Use the order intake checklist. Email the source file, receipt email, commodity, source country, deadline, and buyer requirements.
+              </li>
               <li>Receive the cleaned ZIP pack within 24 hours after payment and usable file receipt.</li>
             </ol>
+            <Link
+              href={ORDER_INTAKE_HREF}
+              className="mt-4 inline-flex h-10 items-center justify-center rounded-md border border-zinc-300 bg-white px-4 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-100"
+            >
+              Review order intake checklist
+            </Link>
           </section>
 
           <section>
