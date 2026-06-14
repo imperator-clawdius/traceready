@@ -18,6 +18,17 @@ import {
   type TraceReadyAnalysis,
   type ValidationIssue,
 } from "@/lib/eudr";
+import {
+  CHECKOUT_CLEANUP_HREF,
+  CHECKOUT_PILOT_HREF,
+  CONTACT_EMAIL,
+  CONTACT_HREF,
+  LEGAL_OPERATOR,
+  METHODOLOGY_HREF,
+  ORDER_INTAKE_HREF,
+  PROOF_HREF,
+  SAMPLE_PACK_HREF,
+} from "@/lib/site";
 
 const SAMPLE_CSV = `farm_id,supplier_name,country,commodity,batch_id,area_ha,latitude,longitude
 COF-001,Ama Mensah,Ghana,coffee,LOT-24-10,2.6,6.2031,-1.7082
@@ -108,12 +119,6 @@ const SAMPLE_KML = `<?xml version="1.0" encoding="UTF-8"?>
   </Document>
 </kml>`;
 
-const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "founder@traceready.online";
-const LEGAL_OPERATOR = "Passive Print Labs LLC";
-const SAMPLE_PACK_HREF = "/traceready-sample-output.zip";
-const CHECKOUT_CLEANUP_HREF = "/checkout/cleanup/";
-const CHECKOUT_PILOT_HREF = "/checkout/pilot/";
-
 const FIX_CATEGORIES = [
   {
     title: "Coordinate defects",
@@ -190,6 +195,7 @@ type BatchResult = {
 
 export function TraceReadyWorkbench() {
   const inputRef = useRef<HTMLInputElement>(null);
+  const issueLogRef = useRef<HTMLDivElement>(null);
   const [analysis, setAnalysis] = useState<TraceReadyAnalysis | null>(null);
   const [activeFile, setActiveFile] = useState<File | null>(null);
   const [batchResults, setBatchResults] = useState<BatchResult[]>([]);
@@ -303,6 +309,7 @@ export function TraceReadyWorkbench() {
     }[kind];
     const file = new File([sample.body], sample.name, { type: sample.type });
     await runAnalysis([file]);
+    scrollToIssueLog();
   }
 
   async function loadPilotSample() {
@@ -313,6 +320,11 @@ export function TraceReadyWorkbench() {
     ];
 
     await runAnalysis(files);
+    scrollToIssueLog();
+  }
+
+  function scrollToIssueLog() {
+    issueLogRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   async function downloadPack() {
@@ -398,12 +410,20 @@ export function TraceReadyWorkbench() {
                 <p className="mt-1 text-xs font-medium uppercase text-[#bcd6c4]">Farm file cleanup</p>
               </div>
             </div>
-            <a
-              href="#sample-output"
-              className="hidden h-10 items-center justify-center rounded-md border border-white/[0.18] bg-white/[0.1] px-4 text-sm font-semibold text-[#effdf4] backdrop-blur transition hover:bg-white/[0.16] sm:inline-flex"
-            >
-              Sample output
-            </a>
+            <div className="hidden items-center gap-2 sm:flex">
+              <a
+                href="#sample-output"
+                className="h-10 items-center justify-center rounded-md border border-white/[0.18] bg-white/[0.1] px-4 text-sm font-semibold text-[#effdf4] backdrop-blur transition hover:bg-white/[0.16] sm:inline-flex"
+              >
+                Sample output
+              </a>
+              <a
+                href={METHODOLOGY_HREF}
+                className="h-10 items-center justify-center rounded-md border border-white/[0.18] bg-white/[0.1] px-4 text-sm font-semibold text-[#effdf4] backdrop-blur transition hover:bg-white/[0.16] sm:inline-flex"
+              >
+                Method
+              </a>
+            </div>
           </nav>
 
           <div className="grid flex-1 items-center gap-8 py-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(340px,0.58fr)] lg:py-14">
@@ -439,11 +459,14 @@ export function TraceReadyWorkbench() {
                 you can see what needs fixing.
               </p>
               <div className="mt-5 max-w-2xl border border-white/[0.18] bg-white/[0.1] p-4 text-sm leading-6 text-[#d8eadf] backdrop-blur">
-                <p className="font-semibold text-white">Founder proof</p>
+                <p className="font-semibold text-white">Operator proof</p>
                 <p className="mt-1">
-                  I built and verified this cleanup workflow around the failure modes buyers ask
-                  suppliers to fix: missing IDs, duplicate farms, bad coordinates, point-only plots
-                  over 4 ha, and incomplete shipment fields.
+                  TraceReady is founder-operated by Passive Print Labs LLC through{" "}
+                  <a href={`mailto:${CONTACT_EMAIL}`} className="font-semibold text-white underline-offset-4 hover:underline">
+                    {CONTACT_EMAIL}
+                  </a>
+                  . The workflow uses deterministic checks for missing IDs, duplicate farms, bad
+                  coordinates, point-only plots over 4 ha, and incomplete shipment fields.
                 </p>
                 <p className="mt-2 text-xs leading-5 text-[#bcd6c4]">
                   Operated by {LEGAL_OPERATOR}. This is operational file cleanup, not a legal
@@ -456,10 +479,16 @@ export function TraceReadyWorkbench() {
               id="sample-output"
               className="border border-white/[0.16] bg-[#071d1a]/[0.78] p-5 shadow-2xl backdrop-blur-md"
             >
-              <p className="text-xs font-semibold uppercase text-[#74e0cd]">One anonymized before-and-after</p>
+              <p className="text-xs font-semibold uppercase text-[#74e0cd]">
+                Representative before-and-after
+              </p>
               <h2 className="mt-2 text-2xl font-semibold leading-tight text-white">
                 Messy rows become a visible issue list and cleaned pack.
               </h2>
+              <p className="mt-2 text-xs leading-5 text-[#bcd6c4]">
+                A fictional sample fixture, not customer proof, so the mechanics are inspectable without
+                exposing buyer files.
+              </p>
               <div className="mt-5 border border-white/[0.12] bg-white/[0.08] p-4">
                 <p className="text-sm font-semibold text-[#fff9e8]">Before: messy supplier CSV</p>
                 <div className="mt-3 space-y-2 font-mono text-[11px] leading-5 text-[#d8eadf]">
@@ -593,7 +622,10 @@ export function TraceReadyWorkbench() {
 
           <BatchPilotSummary results={batchResults} copied={copiedBatchBrief} onCopy={() => void copyBatchBrief()} />
 
-          <IssueTable issues={analysis?.issues ?? []} hasAnalysis={Boolean(analysis)} />
+          <div ref={issueLogRef}>
+            <IssueEvidence analysis={analysis} />
+            <IssueTable issues={analysis?.issues ?? []} hasAnalysis={Boolean(analysis)} />
+          </div>
         </section>
 
         <aside className="space-y-6">
@@ -668,7 +700,10 @@ export function TraceReadyWorkbench() {
               </p>
               <ol className="mt-2 space-y-2 text-sm leading-6 text-[#6a5137]">
                 <li>Buy cleanup in Stripe.</li>
-                <li>Email the source file, commodity, source country, deadline, and buyer summary.</li>
+                <li>
+                  Use the order intake checklist to send the source file, receipt email, commodity,
+                  source country, deadline, and buyer requirements.
+                </li>
                 <li>Receive the cleaned ZIP pack within 24 hours after payment and usable file receipt.</li>
               </ol>
               <p className="mt-3 text-sm leading-6 text-[#6a5137]">
@@ -680,11 +715,17 @@ export function TraceReadyWorkbench() {
               >
                 {batchResults.length > 1 ? "Send pilot files" : "Send paid-cleanup file"}
               </a>
+              <a
+                href={ORDER_INTAKE_HREF}
+                className="mt-3 inline-flex h-10 w-full items-center justify-center rounded-md border border-[#d3b887] bg-white px-3 text-sm font-semibold text-[#3a2517] transition hover:bg-[#fff3dd]"
+              >
+                Review order intake checklist
+              </a>
             </div>
             <div className="mt-4 border-t border-[#eadcc8] pt-4 text-xs leading-5 text-[#7a6144]">
               <p className="font-semibold text-[#3a2517]">Founder-operated cleanup desk</p>
               <p className="mt-1">
-                TraceReady checkout is branded as TraceReady and operated by {LEGAL_OPERATOR}.
+                TraceReady checkout is labeled as TraceReady and operated by {LEGAL_OPERATOR}.
               </p>
               <a href={`mailto:${CONTACT_EMAIL}`} className="mt-2 inline-block font-semibold text-[#087f73] hover:text-[#05665d]">
                 {CONTACT_EMAIL}
@@ -709,7 +750,16 @@ export function TraceReadyWorkbench() {
             <a href="/terms/" className="hover:text-[#087f73]">
               Terms
             </a>
-            <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-[#087f73]">
+            <a href={METHODOLOGY_HREF} className="hover:text-[#087f73]">
+              Methodology
+            </a>
+            <a href={PROOF_HREF} className="hover:text-[#087f73]">
+              Proof
+            </a>
+            <a href={ORDER_INTAKE_HREF} className="hover:text-[#087f73]">
+              Order intake
+            </a>
+            <a href={CONTACT_HREF} className="hover:text-[#087f73]">
               Contact
             </a>
           </nav>
@@ -770,10 +820,11 @@ function MarketProofSections() {
             className="mt-5 inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-[#087f73] px-3 text-sm font-semibold text-white transition hover:bg-[#05665d]"
           >
             <Download className="size-4" aria-hidden="true" />
-            Download anonymized sample pack
+            Download representative sample pack
           </a>
           <p className="mt-3 text-xs leading-5 text-[#7a6144]">
-            Sample files are anonymized launch examples, not legal certification or buyer approval.
+            Sample files are a fictional fixture, not customer proof, transaction proof, buyer approval,
+            or legal certification.
           </p>
         </section>
       </div>
@@ -869,6 +920,29 @@ function StatusBadge({ analysis }: { analysis: TraceReadyAnalysis | null }) {
       <CheckCircle2 className="size-3.5" aria-hidden="true" />
       Ready
     </span>
+  );
+}
+
+function IssueEvidence({ analysis }: { analysis: TraceReadyAnalysis | null }) {
+  if (!analysis) {
+    return null;
+  }
+
+  return (
+    <section className="trace-card mb-4 border border-[#d9bf92] bg-[#fffaf2]/95 p-5 shadow-sm">
+      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#087f73]">Issue evidence</p>
+      <h2 className="mt-2 text-lg font-semibold text-[#2b190f]">
+        {analysis.summary.blockers > 0
+          ? `${analysis.summary.blockers} blockers found before buyer review.`
+          : analysis.summary.warnings > 0
+            ? `${analysis.summary.warnings} warnings need review.`
+            : "No blockers or warnings found in this file."}
+      </h2>
+      <p className="mt-2 text-sm leading-6 text-[#6a5137]">
+        The issue log below is the product proof: it shows the exact row, field, buyer-facing issue, and
+        suggested fix before any paid cleanup purchase.
+      </p>
+    </section>
   );
 }
 

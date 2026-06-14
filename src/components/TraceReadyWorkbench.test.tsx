@@ -18,6 +18,7 @@ vi.mock("next/image", () => ({
 describe("TraceReady conversion surface", () => {
   let container: HTMLDivElement;
   let root: Root;
+  let scrollIntoView: ReturnType<typeof vi.fn>;
 
   beforeAll(() => {
     globalThis.IS_REACT_ACT_ENVIRONMENT = true;
@@ -27,6 +28,8 @@ describe("TraceReady conversion surface", () => {
     container = document.createElement("div");
     document.body.append(container);
     root = createRoot(container);
+    scrollIntoView = vi.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
   });
 
   afterEach(() => {
@@ -59,7 +62,7 @@ describe("TraceReady conversion surface", () => {
     expect(cleanupSectionText).toContain("After the diagnosis");
   });
 
-  it("shows one concrete anonymized before-and-after proof example on the launch surface", () => {
+  it("shows one concrete representative before-and-after proof example on the launch surface", () => {
     act(() => {
       root.render(<TraceReadyWorkbench />);
     });
@@ -67,7 +70,8 @@ describe("TraceReady conversion surface", () => {
     const pageText = container.textContent ?? "";
     const sampleOutput = container.querySelector("#sample-output")?.textContent ?? "";
 
-    expect(sampleOutput).toContain("One anonymized before-and-after");
+    expect(sampleOutput).toContain("Representative before-and-after");
+    expect(sampleOutput).toContain("fictional sample fixture, not customer proof");
     expect(sampleOutput).toContain("Before: messy supplier CSV");
     expect(sampleOutput).toContain("COOP-018");
     expect(sampleOutput).toContain("lat: 183.421");
@@ -84,15 +88,17 @@ describe("TraceReady conversion surface", () => {
     expect(pageText).toContain("No farm data leaves your browser during the free check.");
   });
 
-  it("places founder credibility directly under the hero CTA", () => {
+  it("places operator credibility directly under the hero CTA", () => {
     act(() => {
       root.render(<TraceReadyWorkbench />);
     });
 
     const headerText = container.querySelector("header")?.textContent ?? "";
 
-    expect(headerText).toContain("Founder proof");
-    expect(headerText).toContain("built and verified this cleanup workflow");
+    expect(headerText).toContain("Operator proof");
+    expect(headerText).toContain("founder-operated by Passive Print Labs LLC");
+    expect(headerText).toContain("founder@traceready.online");
+    expect(headerText).toContain("deterministic checks");
     expect(headerText).toContain("not a legal certification");
     expect(headerText).toContain("Passive Print Labs LLC");
   });
@@ -110,23 +116,25 @@ describe("TraceReady conversion surface", () => {
       element.textContent?.includes("Buy 5-file pilot"),
     );
 
-    expect(pageText).toContain("TraceReady checkout is branded as TraceReady");
+    expect(pageText).toContain("TraceReady checkout is labeled as TraceReady");
     expect(pageText).toContain("operated by Passive Print Labs LLC");
     expect(pageText).toContain("Founder-operated cleanup desk");
+    expect(pageText).toContain("Review order intake checklist");
     expect(cleanupLink?.getAttribute("href")).toBe("/checkout/cleanup/");
     expect(pilotLink?.getAttribute("href")).toBe("/checkout/pilot/");
   });
 
-  it("offers a downloadable anonymized sample pack", () => {
+  it("offers a downloadable representative sample pack", () => {
     act(() => {
       root.render(<TraceReadyWorkbench />);
     });
 
     const samplePackLink = Array.from(container.querySelectorAll("a")).find((element) =>
-      element.textContent?.includes("Download anonymized sample pack"),
+      element.textContent?.includes("Download representative sample pack"),
     );
 
     expect(samplePackLink?.getAttribute("href")).toBe("/traceready-sample-output.zip");
+    expect(container.textContent).toContain("not customer proof, transaction proof, buyer approval, or legal certification");
   });
 
   it("frames paid cleanup as a precise three-step handoff", () => {
@@ -141,7 +149,7 @@ describe("TraceReady conversion surface", () => {
 
     expect(cleanupSectionText).toContain("Buy cleanup in Stripe.");
     expect(cleanupSectionText).toContain(
-      "Email the source file, commodity, source country, deadline, and buyer summary.",
+      "Use the order intake checklist to send the source file, receipt email, commodity, source country, deadline, and buyer requirements.",
     );
     expect(cleanupSectionText).toContain(
       "Receive the cleaned ZIP pack within 24 hours after payment and usable file receipt.",
@@ -191,8 +199,10 @@ QA-2,Kofi Adu,Ghana,coffee,LOT-QA,3.2,6.3344,-1.6129
 
     expect(pageText).toContain("Selected: sample-coffee-export.kml");
     expect(pageText).toContain("Needs cleanup");
+    expect(pageText).toContain("Issue evidence");
     expect(pageText).toContain("Plots over 4 hectares need polygon geometry");
     expect(pageText).not.toContain("No issues found in this file.");
+    expect(scrollIntoView).toHaveBeenCalled();
   });
 
   it("uses the GeoJSON sample to demonstrate detected cleanup work", async () => {
@@ -212,7 +222,9 @@ QA-2,Kofi Adu,Ghana,coffee,LOT-QA,3.2,6.3344,-1.6129
 
     expect(pageText).toContain("Selected: sample-cocoa-export.geojson");
     expect(pageText).toContain("Needs cleanup");
+    expect(pageText).toContain("Issue evidence");
     expect(pageText).toContain("Plots over 4 hectares need polygon geometry");
     expect(pageText).not.toContain("No issues found in this file.");
+    expect(scrollIntoView).toHaveBeenCalled();
   });
 });
