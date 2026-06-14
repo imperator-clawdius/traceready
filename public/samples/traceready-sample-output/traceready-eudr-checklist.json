@@ -1,5 +1,6 @@
 {
   "pack_type": "TraceReady sample readiness checklist",
+  "sample_status": "fictional fixture; not customer proof, transaction proof, buyer approval, or legal certification",
   "status": "needs_buyer_followup",
   "checks": [
     {

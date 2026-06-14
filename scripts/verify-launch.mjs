@@ -8,7 +8,7 @@ const GITHUB_PAGES_IP = "185.199.108.153";
 const DOMAIN = "traceready.online";
 const WWW_DOMAIN = `www.${DOMAIN}`;
 const STRIPE_LINK = "https://buy.stripe.com/8x27sN6NW3qzb4d6df93y01";
-const PILOT_STRIPE_LINK = "https://buy.stripe.com/3cIdRbc8g9OX3BL1WZ93y02";
+const PILOT_STRIPE_LINK = "https://buy.stripe.com/dRm6oH9SH8l671l59W8IU03";
 const STRICT_DNS = process.argv.includes("--strict-dns");
 
 const requiredPages = [
@@ -22,6 +22,10 @@ const requiredPages = [
       "Sample GeoJSON",
       "/checkout/cleanup/",
       "/checkout/pilot/",
+      "/methodology/",
+      "/proof/",
+      "/order-intake/",
+      "/contact/",
       "Buy 5-file pilot - $745",
       "Send paid-cleanup file",
     ],
@@ -44,7 +48,8 @@ const requiredPages = [
       "Continue to Stripe checkout",
       "Passive Print Labs LLC",
       STRIPE_LINK,
-      "Download anonymized sample pack",
+      "Download representative sample pack",
+      "Review order intake checklist",
     ],
   },
   {
@@ -56,6 +61,37 @@ const requiredPages = [
       "Passive Print Labs LLC",
       PILOT_STRIPE_LINK,
       "Receive a batch cleanup summary and cleaned packs",
+      "Review order intake checklist",
+    ],
+  },
+  {
+    label: "METHODOLOGY_PAGE",
+    path: "/methodology/",
+    content: ["Deterministic checks", "What TraceReady never invents", "No model training"],
+  },
+  {
+    label: "PROOF_PAGE",
+    path: "/proof/",
+    content: ["Representative sample fixture", "not customer proof", "not transaction proof"],
+  },
+  {
+    label: "ORDER_INTAKE_PAGE",
+    path: "/order-intake/",
+    content: ["Order intake checklist", "Stripe receipt email", "buyer requirements"],
+  },
+  {
+    label: "CONTACT_PAGE",
+    path: "/contact/",
+    content: ["founder@traceready.online", "file-scope questions", "privacy or deletion requests"],
+  },
+  {
+    label: "CHECKOUT_SUCCESS_PAGE",
+    path: "/checkout/success/",
+    content: [
+      "Checkout received",
+      "Send your cleanup files",
+      "Review order intake checklist",
+      "Passive Print Labs LLC",
     ],
   },
 ];

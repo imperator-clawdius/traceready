@@ -23,3 +23,6 @@ Returned pack:
 
 Recommended next action:
 Send the buyer summary and issue log to the buyer or importer before submitting the file into a larger EUDR due-diligence system.
+
+Sample caveat:
+This is a fictional sample fixture for inspection. It is not customer proof, transaction proof, buyer approval, legal advice, audit assurance, or shipment certification.

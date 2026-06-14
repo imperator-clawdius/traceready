@@ -70,6 +70,6 @@ The sprint succeeds if TraceReady gets any of these:
 - 10 paid single-file cleanup orders.
 - 1 paid 5-file pilot.
 - 3 repeat users or referrals from one customer.
-- A permissioned anonymized before/after case study.
+- A permissioned de-identified before/after case study.
 
 If none of those happen, the next decision is not more UI polish. Change the segment, the offer, or the channel.

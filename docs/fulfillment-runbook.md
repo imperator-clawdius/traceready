@@ -55,13 +55,13 @@ TraceReady must not:
 ## Turnaround Targets
 
 - Single-file cleanup: return within 24 hours after payment and usable file receipt.
-- 5-file pilot: return an initial triage summary within 24 hours and cleaned files within the agreed deadline.
+- 5-file pilot: return an initial cleanup summary within 24 hours and cleaned files within the agreed deadline.
 
 If a file is unusable or outside launch scope, send a clarification request or refund before doing unpaid custom work.
 
 ## Proof To Collect
 
-For anonymized case studies, collect:
+For permissioned de-identified case studies, collect:
 
 - Before: file count, record count, issue count, and issue types.
 - After: cleaned pack contents, remaining supplier follow-ups, turnaround time, and buyer result.

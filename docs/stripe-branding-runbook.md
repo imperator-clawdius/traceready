@@ -1,27 +1,27 @@
 # Stripe branding runbook
 
-Reviewed: 2026-06-11
+Reviewed: 2026-06-14
 
 The TraceReady site now routes paid CTAs through TraceReady-owned checkout handoff pages before sending buyers to Stripe:
 
 - `/checkout/cleanup/`
 - `/checkout/pilot/`
 
-Those pages disclose that TraceReady is operated by Passive Print Labs LLC before the buyer continues to Stripe. The active TraceReady checkout links now live under the TraceReady-branded Stripe account rather than the shared SuiteScrape/PactLock account.
+Those pages disclose that TraceReady is operated by Passive Print Labs LLC before the buyer continues to Stripe. The active Payment Links use TraceReady product titles inside the Passive Print Labs LLC payment setup.
 
 ## Goal
 
-Stripe checkout should read as TraceReady first, with Passive Print Labs LLC only as the legal operator/payment entity where Stripe requires it.
+Stripe checkout should make the purchased TraceReady product clear, with Passive Print Labs LLC presented honestly as the legal operator/payment entity where Stripe requires it.
 
 ## Verified Dashboard state
 
 - Legal entity remains `Passive Print Labs LLC`.
-- Public business name is `TraceReady`.
+- Buyer-facing product titles are `TraceReady 24-hour cleanup` and `TraceReady 5-file pilot`.
 - Support email is `founder@traceready.online`.
 - Website is `https://traceready.online/`.
 - Statement descriptor is `TRACEREADY`.
 - Cleanup checkout link: `https://buy.stripe.com/8x27sN6NW3qzb4d6df93y01`.
-- Pilot checkout link: `https://buy.stripe.com/3cIdRbc8g9OX3BL1WZ93y02`.
+- Pilot checkout link: `https://buy.stripe.com/dRm6oH9SH8l671l59W8IU03`.
 - Optional Stripe logo/wordmark asset for later upload: `/traceready-stripe-wordmark.png`.
 
 Do not change shared legal-entity fields. Passive Print Labs LLC remains the legal operator.
@@ -35,9 +35,9 @@ Use an incognito browser or a clean browser profile and verify this exact path:
 3. Confirm `/checkout/cleanup/` shows:
    - `TraceReady 24-hour cleanup`
    - `TraceReady is operated by Passive Print Labs LLC`
-   - `TraceReady checkout is branded as TraceReady`
+   - `TraceReady checkout is labeled as TraceReady`
 4. Click `Continue to Stripe checkout`.
-5. Confirm the Stripe page header is `TraceReady`.
+5. Confirm the Stripe page shows `TraceReady 24-hour cleanup` or `TraceReady 5-file pilot`, with Passive Print Labs LLC shown as the legal/payment operator where Stripe presents it.
 6. Repeat for `Buy 5-file pilot - $745`.
 
 Run the repo gate after the Dashboard update:
@@ -56,4 +56,4 @@ Keep the TraceReady checkout handoff pages as the primary paid path and do not l
 - Explicit legal-operator disclosure before payment.
 - Stripe only after the buyer understands that Passive Print Labs LLC is the payment/legal operator.
 
-Do not revert to direct homepage-to-Stripe CTAs unless the Stripe account branding is visibly aligned with TraceReady.
+Do not revert to direct homepage-to-Stripe CTAs unless the Stripe product title and legal-operator disclosure are visibly aligned with the handoff page.

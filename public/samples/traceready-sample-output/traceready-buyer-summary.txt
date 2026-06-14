@@ -1,6 +1,6 @@
 TraceReady buyer summary
 
-File checked: anonymized-supplier-lot.csv
+File checked: representative-supplier-lot.csv
 Commodity scope: coffee and cocoa
 Source countries: Ghana, Peru
 Records checked: 4
@@ -19,4 +19,4 @@ Open follow-ups:
 - Review GEO-102 with the buyer because the polygon is present but the declared area is above 4 hectares.
 
 Operational note:
-This is a file-quality handoff for due-diligence preparation. It is not legal advice, audit assurance, or shipment certification.
+This is a fictional sample fixture for file-quality inspection. It is not customer proof, transaction proof, buyer approval, legal advice, audit assurance, or shipment certification.

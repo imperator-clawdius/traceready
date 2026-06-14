@@ -12,7 +12,7 @@ TraceReady becomes meaningfully buyable when it has evidence for all of these:
 
 - 10 paid single-file cleanup orders at $149.
 - 3 repeat customers or one paid pilot that sends multiple supplier files.
-- At least one before/after customer file example that can be anonymized.
+- At least one before/after customer file example that can be de-identified with written permission.
 - A clear fulfillment log: source file received, issues found, cleanup returned, turnaround time, buyer result.
 - One acquisition channel that can produce orders without founder heroics.
 
@@ -40,7 +40,7 @@ For every serious lead or order, record:
 
 Do not publish customer names, source files, or farm data without permission.
 
-Use `docs/order-ledger-template.csv` as the starting structure. Keep the real customer copy private and commit only anonymized proof with permission.
+Use `docs/order-ledger-template.csv` as the starting structure. Keep the real customer copy private and commit only de-identified proof with written permission.
 
 ## Valuation Milestones
 
@@ -60,7 +60,7 @@ These are directional startup-asset ranges, not formal financial advice.
 - Keep the paid-cleanup handoff tied to the analyzed file summary.
 - Make the 5-file pilot checkout-backed and mechanically real through batch cleanup review.
 - Improve the pack quality before adding more commodity pages.
-- Add proof only when it is true: paid orders, turnaround time, repeat customers, anonymized before/after examples.
+- Add proof only when it is true: paid orders, turnaround time, repeat customers, permissioned de-identified before/after examples.
 
 ## Product Work That Does Not Help Yet
 
