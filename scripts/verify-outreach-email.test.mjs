@@ -17,6 +17,7 @@ const NAMECHEAP_MX = [
 describe("outreach email verifier", () => {
   it("passes only when forwarding MX, SPF, DMARC, and DKIM are present", () => {
     const report = evaluateOutreachEmailDns({
+      aliasTested: true,
       mxRecords: NAMECHEAP_MX,
       apexTxtRecords: [["v=spf1 include:spf.efwd.registrar-servers.com ~all"]],
       dmarcTxtRecords: [["v=DMARC1; p=none; rua=mailto:founder@traceready.online"]],
@@ -25,6 +26,7 @@ describe("outreach email verifier", () => {
     });
 
     expect(report.ready).toBe(true);
+    expect(report.dnsReady).toBe(true);
     expect(report.checks.find((check) => check.label === "OUTREACH_EMAIL_MX")?.ready).toBe(true);
     expect(report.checks.find((check) => check.label === "OUTREACH_EMAIL_DKIM")?.detail).toContain("default");
   });
@@ -40,9 +42,10 @@ describe("outreach email verifier", () => {
 
     const aliasCheck = report.checks.find((check) => check.label === "OUTREACH_EMAIL_ALIAS_TEST");
 
-    expect(report.ready).toBe(true);
+    expect(report.dnsReady).toBe(true);
+    expect(report.ready).toBe(false);
     expect(aliasCheck?.ready).toBe(false);
-    expect(aliasCheck?.detail).toContain("send and receive a test email");
+    expect(aliasCheck?.detail).toContain("rerun with --alias-tested");
   });
 
   it("flags the current pre-send failure mode when DMARC and DKIM are missing", () => {
@@ -59,7 +62,10 @@ describe("outreach email verifier", () => {
     expect(report.ready).toBe(false);
     expect(rendered).toContain("OUTREACH_EMAIL_DMARC=pending records=none");
     expect(rendered).toContain("OUTREACH_EMAIL_DKIM=pending selectors=none");
+    expect(rendered).toContain("OUTREACH_EMAIL_DNS_READY=false");
     expect(rendered).toContain("OUTREACH_EMAIL_READY=false");
+    expect(rendered).toContain("OUTREACH_EMAIL_DMARC_STARTER=TXT _dmarc");
+    expect(rendered).toContain("OUTREACH_EMAIL_ALIAS_NEXT=create Namecheap Redirect Email alias founder");
   });
 
   it("supports injected DNS resolution for deterministic checks", async () => {
@@ -67,6 +73,7 @@ describe("outreach email verifier", () => {
       domain: "example.test",
       contactEmail: "founder@example.test",
       dkimSelectors: ["selector-a"],
+      aliasTested: true,
       resolver: {
         async mx() {
           return NAMECHEAP_MX;
@@ -97,11 +104,13 @@ describe("outreach email verifier", () => {
         "desk@example.test",
         "--dkim-selector",
         "mailgun",
+        "--alias-tested",
       ]),
     ).toEqual({
       domain: "example.test",
       contactEmail: "desk@example.test",
       dkimSelectors: ["default", "google", "selector1", "selector2", "mailgun"],
+      aliasTested: true,
     });
   });
 });

@@ -18,6 +18,7 @@ export function parseOutreachEmailArgs(argv) {
     domain: DEFAULT_DOMAIN,
     contactEmail: DEFAULT_CONTACT_EMAIL,
     dkimSelectors: [...DEFAULT_DKIM_SELECTORS],
+    aliasTested: false,
   };
 
   for (let index = 0; index < argv.length; index += 1) {
@@ -33,6 +34,8 @@ export function parseOutreachEmailArgs(argv) {
     } else if (arg === "--dkim-selector" && next) {
       options.dkimSelectors.push(next);
       index += 1;
+    } else if (arg === "--alias-tested") {
+      options.aliasTested = true;
     }
   }
 
@@ -43,6 +46,7 @@ export async function inspectOutreachEmailDns(options = {}) {
   const domain = options.domain ?? DEFAULT_DOMAIN;
   const contactEmail = options.contactEmail ?? `founder@${domain}`;
   const dkimSelectors = options.dkimSelectors ?? DEFAULT_DKIM_SELECTORS;
+  const aliasTested = options.aliasTested ?? false;
   const resolver = options.resolver ?? defaultResolver;
 
   const [mxRecords, apexTxtRecords, dmarcTxtRecords, ...dkimTxtRecordSets] = await Promise.all([
@@ -56,6 +60,7 @@ export async function inspectOutreachEmailDns(options = {}) {
     domain,
     contactEmail,
     dkimSelectors,
+    aliasTested,
     mxRecords,
     apexTxtRecords,
     dmarcTxtRecords,
@@ -67,6 +72,7 @@ export function evaluateOutreachEmailDns({
   domain = DEFAULT_DOMAIN,
   contactEmail = DEFAULT_CONTACT_EMAIL,
   dkimSelectors = DEFAULT_DKIM_SELECTORS,
+  aliasTested = false,
   mxRecords = [],
   apexTxtRecords = [],
   dmarcTxtRecords = [],
@@ -91,11 +97,13 @@ export function evaluateOutreachEmailDns({
   const dmarcReady = dmarcRecords.length > 0;
   const dkimReady = dkimReadySelectors.length > 0;
   const outboundReady = spfReady && dmarcReady && dkimReady;
-  const ready = mxReady && spfReady && outboundReady;
+  const dnsReady = mxReady && spfReady && outboundReady;
+  const ready = dnsReady && aliasTested;
 
   return {
     domain,
     contactEmail,
+    dnsReady,
     checks: [
       {
         label: "OUTREACH_EMAIL_MX",
@@ -127,8 +135,10 @@ export function evaluateOutreachEmailDns({
       },
       {
         label: "OUTREACH_EMAIL_ALIAS_TEST",
-        ready: false,
-        detail: `DNS cannot prove ${contactEmail} forwards to a controlled mailbox; send and receive a test email`,
+        ready: aliasTested,
+        detail: aliasTested
+          ? `manual send/receive test acknowledged for ${contactEmail}`
+          : `DNS cannot prove ${contactEmail} forwards to a controlled mailbox; send and receive a test email, then rerun with --alias-tested`,
       },
     ],
     ready,
@@ -140,11 +150,15 @@ export function renderOutreachEmailReport(report) {
     `OUTREACH_EMAIL_DOMAIN=${report.domain}`,
     `OUTREACH_EMAIL_CONTACT=${report.contactEmail}`,
     ...report.checks.map((check) => `${check.label}=${check.ready ? "pass" : "pending"} ${check.detail}`),
+    `OUTREACH_EMAIL_DNS_READY=${report.dnsReady}`,
     `OUTREACH_EMAIL_READY=${report.ready}`,
   ];
 
   if (!report.ready) {
     lines.push("OUTREACH_EMAIL_NEXT=verify alias delivery, configure authenticated outbound sender, publish DKIM and DMARC");
+    lines.push("OUTREACH_EMAIL_DMARC_STARTER=TXT _dmarc v=DMARC1; p=none; rua=mailto:founder@traceready.online; adkim=r; aspf=r");
+    lines.push("OUTREACH_EMAIL_DKIM_NEXT=add the DKIM TXT/CNAME records from the outbound mail provider");
+    lines.push("OUTREACH_EMAIL_ALIAS_NEXT=create Namecheap Redirect Email alias founder -> controlled inbox, send a test to founder@traceready.online, then rerun with --alias-tested");
   }
 
   return `${lines.join("\n")}\n`;
