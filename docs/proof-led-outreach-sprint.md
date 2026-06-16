@@ -8,7 +8,7 @@ The page to send is `https://traceready.online/proof/`. The supporting write-up 
 
 The first executable batch is `docs/proof-led-outreach-batch-01.csv`. The copy-pasteable send packet is `docs/proof-led-outreach-send-pack-01.md`. They are intentionally company-level only: public route URLs, no employee names, no personal emails, no personal profile URLs, and every row starts from the public audit numbers. Run `npm run render:outreach` after editing the CSV, then `npm run verify:outreach` before using or modifying the batch.
 
-After sending, copy `docs/proof-led-outreach-results-template.csv` to a private working file and run `npm run summarize:outreach -- path/to/private-results.csv`. Do not commit private replies, personal contact details, customer files, or order evidence.
+After sending, copy `docs/proof-led-outreach-results-batch-01.csv` to a private working file and run `npm run summarize:outreach -- path/to/private-results.csv`. Do not commit private replies, personal contact details, customer files, or order evidence.
 
 ## Positioning
 

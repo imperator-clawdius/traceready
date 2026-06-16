@@ -172,7 +172,7 @@ function isNonNegativeInteger(value) {
 }
 
 async function main() {
-  const sourcePath = process.argv[2] ?? "docs/proof-led-outreach-results-template.csv";
+  const sourcePath = process.argv[2] ?? "docs/proof-led-outreach-results-batch-01.csv";
   const csv = await fs.readFile(sourcePath, "utf8");
   const rows = parseOutreachResults(csv);
   const errors = validateOutreachResults(rows);

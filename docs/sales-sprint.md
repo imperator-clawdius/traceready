@@ -37,7 +37,7 @@ Use `docs/proof-led-outreach-sprint.md` for the company-level target tiers, publ
 
 Start with `docs/proof-led-outreach-batch-01.csv` for the first 20 public company/channel routes and `docs/proof-led-outreach-send-pack-01.md` for copy-pasteable first messages and follow-ups. Run `npm run render:outreach` after editing the CSV, then `npm run verify:outreach` before sending from that batch.
 
-After sending, copy `docs/proof-led-outreach-results-template.csv` to a private file and run `npm run summarize:outreach -- path/to/private-results.csv` to measure reply rate, file-check rate, pilot requests, and paid cleanup orders.
+After sending, copy `docs/proof-led-outreach-results-batch-01.csv` to a private file and run `npm run summarize:outreach -- path/to/private-results.csv` to measure reply rate, file-check rate, pilot requests, and paid cleanup orders.
 
 Subject: Quick cleanup for EUDR farm files
 
