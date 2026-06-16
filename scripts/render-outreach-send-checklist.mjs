@@ -19,13 +19,18 @@ export function renderOutreachSendChecklist(batchRows, resultRows, options = {})
   const sendLimit = options.sendLimit ?? DEFAULT_SEND_LIMIT;
   const sendTier = options.sendTier;
   const routeAudit = options.routeAudit;
+  const sendabilityAudit = options.sendabilityAudit;
   const queue = buildOutreachActionQueue(resultRows, {
     today,
-    sendLimit: routeAudit ? resultRows.length : sendLimit,
+    sendLimit: routeAudit || sendabilityAudit ? resultRows.length : sendLimit,
     sendTier,
   });
-  const sendGate = routeAudit ? applyRouteAuditGate(queue.sendRows, routeAudit, sendLimit) : undefined;
-  const sendRows = sendGate?.sendRows ?? queue.sendRows;
+  const routeGate = routeAudit
+    ? applyRouteAuditGate(queue.sendRows, routeAudit, sendabilityAudit ? resultRows.length : sendLimit)
+    : undefined;
+  const routeGatedRows = routeGate?.sendRows ?? queue.sendRows;
+  const sendabilityGate = sendabilityAudit ? applySendabilityAuditGate(routeGatedRows, sendabilityAudit, sendLimit) : undefined;
+  const sendRows = sendabilityGate?.sendRows ?? routeGatedRows;
   const batchByRoute = new Map(batchRows.map((row) => [row.route_id, row]));
 
   return [
@@ -36,6 +41,7 @@ export function renderOutreachSendChecklist(batchRows, resultRows, options = {})
     `Today: ${today}`,
     ...(sendTier ? [`Send tier filter: ${sendTier}`] : []),
     ...(options.routeAuditPath ? [`Route audit: \`${options.routeAuditPath}\``] : []),
+    ...(options.sendabilityAuditPath ? [`Sendability audit: \`${options.sendabilityAuditPath}\``] : []),
     "",
     "Use this as the send console. Work top to bottom. Only mark a route sent after a real company-level public form or company-level public route has been used.",
     ...(routeAudit
@@ -43,10 +49,17 @@ export function renderOutreachSendChecklist(batchRows, resultRows, options = {})
           "Route health gate is active: only audited routes marked reachable are queued for sending.",
         ]
       : []),
+    ...(sendabilityAudit
+      ? [
+          "Sendability gate is active: only audited routes marked browser_form_ready are queued for browser-form sending.",
+        ]
+      : []),
     "",
-    ...renderSendTasks(sendRows, batchByRoute, resultsPath, today, routeAudit),
+    ...renderSendTasks(sendRows, batchByRoute, resultsPath, today, routeAudit, sendabilityAudit),
     "",
-    ...renderSkippedByRouteHealth(sendGate?.skippedRows ?? [], batchByRoute),
+    ...renderSkippedByRouteHealth(routeGate?.skippedRows ?? [], batchByRoute),
+    "",
+    ...renderSkippedBySendability(sendabilityGate?.skippedRows ?? [], batchByRoute),
     "",
     "## End-of-block checks",
     "",
@@ -93,6 +106,8 @@ export function parseOutreachSendChecklistArgs(argv) {
       parsed.sendTier = value;
     } else if (flag === "--route-audit") {
       parsed.routeAuditPath = value;
+    } else if (flag === "--sendability-audit") {
+      parsed.sendabilityAuditPath = value;
     } else {
       throw new Error(`unknown flag: ${flag}`);
     }
@@ -103,22 +118,30 @@ export function parseOutreachSendChecklistArgs(argv) {
   return parsed;
 }
 
-function renderSendTasks(sendRows, batchByRoute, resultsPath, today, routeAudit) {
+function renderSendTasks(sendRows, batchByRoute, resultsPath, today, routeAudit, sendabilityAudit) {
   if (sendRows.length === 0) {
     return ["No unsent routes are queued for this checklist."];
   }
 
   const routeHealthById = routeAudit ? routeAuditMap(routeAudit) : new Map();
+  const sendabilityById = sendabilityAudit ? sendabilityAuditMap(sendabilityAudit) : new Map();
 
   return sendRows.flatMap((resultRow, index) => {
     const batchRow = batchByRoute.get(resultRow.route_id);
     const routeHealth = routeHealthById.get(resultRow.route_id);
+    const sendability = sendabilityById.get(resultRow.route_id);
+    const sourceUrl = sendability?.route_url ?? batchRow.source_url;
 
     return [
       `## ${index + 1}. ${resultRow.route_id} - ${resultRow.company_or_channel}`,
       "",
       ...(routeHealth ? [`- Route audit health: ${routeHealth.health}${routeHealth.status ? ` (${routeHealth.status})` : ""}`] : []),
-      `- [ ] Open company-level route: ${batchRow.source_url}`,
+      ...(sendability
+        ? [
+            `- Sendability: ${sendability.sendability}${sendability.contact_method ? ` via ${sendability.contact_method}` : ""}`,
+          ]
+        : []),
+      `- [ ] Open company-level route: ${sourceUrl}`,
       `- [ ] Confirm this is still company-level, not a personal profile or direct personal email.`,
       "- [ ] Paste the subject and body exactly as shown below.",
       "- [ ] Submit once. Do not send duplicates from multiple channels on the same day.",
@@ -126,7 +149,7 @@ function renderSendTasks(sendRows, batchByRoute, resultsPath, today, routeAudit)
         date_sent: today,
         status: "sent",
         response_type: "none",
-        reply_notes: "sent via public route",
+        reply_notes: sendability?.contact_method === "public_browser_form" ? "sent via public browser form" : "sent via public route",
         next_action: "follow up in 4 business days",
       })}\``,
       `- [ ] Prepare reply handling: \`npm run render:outreach-replies -- --results ${resultsPath} --route ${resultRow.route_id} --output private/replies-${resultRow.route_id}.md\``,
@@ -139,6 +162,23 @@ function renderSendTasks(sendRows, batchByRoute, resultsPath, today, routeAudit)
       "",
     ];
   });
+}
+
+function applySendabilityAuditGate(sendRows, sendabilityAudit, sendLimit) {
+  const sendabilityById = sendabilityAuditMap(sendabilityAudit);
+  const auditedRows = sendRows.filter((row) => sendabilityById.has(row.route_id));
+  const sendableRows = auditedRows.filter((row) => sendabilityById.get(row.route_id)?.sendability === "browser_form_ready");
+  const skippedRows = auditedRows
+    .filter((row) => sendabilityById.get(row.route_id)?.sendability !== "browser_form_ready")
+    .map((row) => ({
+      ...row,
+      sendability: sendabilityById.get(row.route_id),
+    }));
+
+  return {
+    sendRows: sendableRows.slice(0, sendLimit),
+    skippedRows,
+  };
 }
 
 function applyRouteAuditGate(sendRows, routeAudit, sendLimit) {
@@ -175,8 +215,30 @@ function renderSkippedByRouteHealth(skippedRows, batchByRoute) {
   ];
 }
 
+function renderSkippedBySendability(skippedRows, batchByRoute) {
+  if (skippedRows.length === 0) {
+    return [];
+  }
+
+  return [
+    "## Skipped By Sendability",
+    "",
+    ...skippedRows.map((row) => {
+      const batchRow = batchByRoute.get(row.route_id);
+      const blocker = row.sendability?.blocker ? `, ${row.sendability.blocker}` : "";
+      const sourceUrl = row.sendability?.route_url ?? batchRow?.source_url ?? row.source_url;
+
+      return `- ${row.route_id} - ${row.company_or_channel}: ${row.sendability?.sendability ?? "unknown"}${blocker}. Manual check before sending: ${sourceUrl}`;
+    }),
+  ];
+}
+
 function routeAuditMap(routeAudit) {
   return new Map((routeAudit.routes ?? []).map((route) => [route.route_id, route]));
+}
+
+function sendabilityAuditMap(sendabilityAudit) {
+  return new Map((sendabilityAudit.routes ?? []).map((route) => [route.route_id, route]));
 }
 
 function updateCommand(resultsPath, routeId, patch) {
@@ -215,14 +277,16 @@ function todayIsoDate() {
 
 async function main() {
   const options = parseOutreachSendChecklistArgs(process.argv.slice(2));
-  const [batchCsv, resultsCsv, routeAuditJson] = await Promise.all([
+  const [batchCsv, resultsCsv, routeAuditJson, sendabilityAuditJson] = await Promise.all([
     fs.readFile(options.batchPath, "utf8"),
     fs.readFile(options.resultsPath, "utf8"),
     options.routeAuditPath ? fs.readFile(options.routeAuditPath, "utf8") : Promise.resolve(""),
+    options.sendabilityAuditPath ? fs.readFile(options.sendabilityAuditPath, "utf8") : Promise.resolve(""),
   ]);
   const batchRows = parseOutreachLedger(batchCsv);
   const resultRows = parseOutreachResults(resultsCsv);
   const routeAudit = routeAuditJson ? JSON.parse(routeAuditJson) : undefined;
+  const sendabilityAudit = sendabilityAuditJson ? JSON.parse(sendabilityAuditJson) : undefined;
   const errors = [
     ...validateOutreachLedger(batchRows),
     ...validateOutreachResults(resultRows),
@@ -237,7 +301,7 @@ async function main() {
     return;
   }
 
-  const markdown = `${renderOutreachSendChecklist(batchRows, resultRows, { ...options, routeAudit })}\n`;
+  const markdown = `${renderOutreachSendChecklist(batchRows, resultRows, { ...options, routeAudit, sendabilityAudit })}\n`;
   await fs.mkdir(path.dirname(options.outputPath), { recursive: true });
   await fs.writeFile(options.outputPath, markdown, "utf8");
   console.log(`OUTREACH_SEND_CHECKLIST=pass path=${options.outputPath}`);

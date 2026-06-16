@@ -23,7 +23,7 @@ npm run audit:outreach-routes -- --tier importer --limit 15 --json-output privat
 npm run prepare:outreach -- --today 2026-06-16 --send-limit 8 --send-tier importer
 npm run next:outreach -- --results path/to/private-results.csv --send-limit 8 --send-tier importer --follow-up-after-days 4
 npm run render:outreach-day -- --results path/to/private-results.csv --send-limit 8 --send-tier importer --follow-up-after-days 4 --today 2026-06-16 --output path/to/day-pack.md
-npm run render:outreach-send-checklist -- --results path/to/private-results.csv --send-limit 3 --send-tier importer --today 2026-06-16 --route-audit private/outreach-route-audit-importer.json --output path/to/send-checklist.md
+npm run render:outreach-send-checklist -- --results path/to/private-results.csv --send-limit 3 --send-tier importer --today 2026-06-16 --route-audit private/outreach-route-audit-importer.json --sendability-audit private/outreach-sendability-audit-importer.json --output path/to/send-checklist.md
 npm run render:outreach-replies -- --results path/to/private-results.csv --route b01-r06 --output path/to/replies-b01-r06.md
 npm run update:outreach-result -- --results path/to/private-results.csv --route b01-r06 --date-sent 2026-06-16 --status sent --response-type none --notes "sent via company contact form" --next-action "follow up in 4 business days"
 npm run update:outreach-result -- --results path/to/private-results.csv --route b01-r06 --field-note-clicks 1 --notes "routed field-note visit seen in analytics" --next-action "watch for file check or reply"
@@ -31,7 +31,31 @@ npm run update:outreach-result -- --results path/to/private-results.csv --route 
 npm run update:outreach-result -- --results path/to/private-results.csv --route b01-r06 --status paid_order --response-type paid_order --file-checks 1 --paid-orders 1 --notes "paid cleanup ordered" --next-action "fulfill 24-hour cleanup"
 ```
 
-`audit:outreach-routes` probes the public source URLs in the committed batch so stale or bot-blocked routes do not get mistaken for a product problem; use `--json-output` so the private checklist can gate sends to audited reachable routes. `prepare:outreach` creates `private/outreach-results-batch-01.csv` if it does not already exist, reuses it if it does, and renders `private/outreach-day-pack.md` for the current block. Use `--send-tier importer` when the block is meant to create direct buyer traction before association education. `next:outreach` prints the next unsent routes, follow-ups due by date, and active file-check/reply opportunities. `render:outreach-day` joins that queue back to the committed batch copy and writes only the first messages, due follow-ups, active opportunities, and private-safe update commands needed for the current send block. `render:outreach-send-checklist` converts that send block into one-by-one tasks with source URLs, exact copy, route audit health, mark-sent commands, and reply-playbook commands; skipped unreachable or manual-check routes are listed separately and should not count as market traction. `render:outreach-replies` writes route-specific objection and file-check reply copy with generic private-safe logging commands, so a reply can be classified without committing private text. The updater refuses `docs/proof-led-outreach-results-batch-01.csv` by default and re-runs the private-safe result validation before writing.
+`audit:outreach-routes` probes the public source URLs in the committed batch so stale or bot-blocked routes do not get mistaken for a product problem; use `--json-output` so the private checklist can gate sends to audited reachable routes. Keep browser/UI route-fit findings in an ignored sendability audit and pass it with `--sendability-audit` so the private checklist queues only audited `browser_form_ready` routes for browser-form sending, while listing CAPTCHA-heavy, mail-only, or wrong-fit forms separately. `prepare:outreach` creates `private/outreach-results-batch-01.csv` if it does not already exist, reuses it if it does, and renders `private/outreach-day-pack.md` for the current block. Use `--send-tier importer` when the block is meant to create direct buyer traction before association education. `next:outreach` prints the next unsent routes, follow-ups due by date, and active file-check/reply opportunities. `render:outreach-day` joins that queue back to the committed batch copy and writes only the first messages, due follow-ups, active opportunities, and private-safe update commands needed for the current send block. `render:outreach-send-checklist` converts that send block into one-by-one tasks with source URLs, exact copy, route audit health, sendability evidence, mark-sent commands, and reply-playbook commands; skipped unreachable, manual-check, or not-sendable routes are listed separately and should not count as market traction. `render:outreach-replies` writes route-specific objection and file-check reply copy with generic private-safe logging commands, so a reply can be classified without committing private text. The updater refuses `docs/proof-led-outreach-results-batch-01.csv` by default and re-runs the private-safe result validation before writing.
+
+The ignored sendability audit is JSON so the public send checklist script can consume it without committing target-specific inboxes or browser screenshots:
+
+```json
+{
+  "routes": [
+    {
+      "route_id": "b01-r11",
+      "sendability": "browser_form_ready",
+      "contact_method": "public_browser_form",
+      "route_url": "https://example.com/contact/",
+      "note": "general company contact form",
+      "requires_action_time_confirmation": true
+    },
+    {
+      "route_id": "b01-r06",
+      "sendability": "blocked",
+      "contact_method": "public_browser_form",
+      "route_url": "https://example.com/contact/",
+      "blocker": "requires phone and CAPTCHA"
+    }
+  ]
+}
+```
 
 ## Positioning
 
@@ -153,7 +177,7 @@ For 10 business days:
 - Audit public route health before each importer send block with `npm run audit:outreach-routes -- --tier importer --limit 15 --json-output private/outreach-route-audit-importer.json`.
 - Generate the next direct-buyer route queue before each importer send block with `npm run next:outreach -- --results path/to/private-results.csv --send-limit 8 --send-tier importer`.
 - Render the exact importer send-block copy with `npm run render:outreach-day -- --results path/to/private-results.csv --send-limit 8 --send-tier importer --output path/to/day-pack.md`.
-- Render the execution checklist with `npm run render:outreach-send-checklist -- --results path/to/private-results.csv --send-limit 3 --send-tier importer --route-audit private/outreach-route-audit-importer.json --output path/to/send-checklist.md`, then work the checklist top to bottom.
+- Render the execution checklist with `npm run render:outreach-send-checklist -- --results path/to/private-results.csv --send-limit 3 --send-tier importer --route-audit private/outreach-route-audit-importer.json --sendability-audit private/outreach-sendability-audit-importer.json --output path/to/send-checklist.md`, then work the checklist top to bottom.
 - Render route-specific objection replies with `npm run render:outreach-replies -- --results path/to/private-results.csv --route b01-r06 --output path/to/replies-b01-r06.md` before responding to private objections.
 - Summarize the private results ledger daily with `npm run summarize:outreach -- path/to/private-results.csv`.
 

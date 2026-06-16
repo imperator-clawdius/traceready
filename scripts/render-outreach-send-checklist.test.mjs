@@ -11,6 +11,7 @@ const BATCH_CSV = `priority,route_id,tier,company_or_channel,segment,why_it_fits
 2,b01-r06,importer,Cafe Imports Europe,specialty green coffee importer,Public Europe contact route,public contact page,https://www.cafeimports.com/europe/blog/general-contact/,https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r06,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r06,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r06,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r06,importer,"Lead with 57,658-row public audit and 46,134 point-only over-4ha plots",Ask them to run one supplier file browser-side,not_started,Send importer variant
 3,b01-r07,importer,Sucafina Specialty Europe,green coffee network,Public EMEA route,public EMEA page,https://sucafina.com/emea,https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r07,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r07,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r07,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r07,importer,"Lead with 57,658-row public audit and 46,134 point-only over-4ha plots",Ask for the team that handles supplier file readiness,not_started,Send importer variant
 4,b01-r08,importer,Falcon Coffees Europe,specialty green coffee trader,Public Europe route,public Europe page,https://falconcoffees.com/falcon-europe/,https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r08,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r08,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r08,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r08,importer,"Lead with 57,658-row public audit and 46,134 point-only over-4ha plots",Ask whether one messy EU supplier file is worth checking,not_started,Send importer variant
+5,b01-r11,importer,InterAmerican Coffee Europe,specialty green coffee importer,Public Europe contact route,public website,https://interamericancoffee.de/,https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r11,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r11,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r11,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r11,importer,"Lead with 57,658-row public audit and 46,134 point-only over-4ha plots",Ask for a referral to the person handling supplier geolocation files,not_started,Send importer variant
 `;
 
 const RESULTS_CSV = `route_id,date_sent,company_or_channel,tier,proof_url,field_note_url,file_check_url,pilot_proof_url,status,response_type,field_note_click_count,file_check_count,paid_order_count,pilot_requested,reply_notes,next_action
@@ -18,6 +19,7 @@ b01-r01,,European Coffee Federation,association,https://traceready.online/proof/
 b01-r06,,Cafe Imports Europe,importer,https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r06,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r06,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r06,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r06,not_sent,none,0,0,0,no,,send first message from proof-led packet
 b01-r07,,Sucafina Specialty Europe,importer,https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r07,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r07,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r07,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r07,not_sent,none,0,0,0,no,,send first message from proof-led packet
 b01-r08,,Falcon Coffees Europe,importer,https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r08,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r08,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r08,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r08,not_sent,none,0,0,0,no,,send first message from proof-led packet
+b01-r11,,InterAmerican Coffee Europe,importer,https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r11,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r11,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r11,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r11,not_sent,none,0,0,0,no,,send first message from proof-led packet
 `;
 
 describe("outreach send checklist", () => {
@@ -100,6 +102,45 @@ describe("outreach send checklist", () => {
     expect(markdown).toContain("- b01-r07 - Sucafina Specialty Europe: unreachable, timed out after 4000ms");
   });
 
+  it("uses sendability audit evidence to queue browser-form-ready routes before merely reachable routes", () => {
+    const markdown = renderOutreachSendChecklist(parseOutreachLedger(BATCH_CSV), parseOutreachResults(RESULTS_CSV), {
+      batchPath: "docs/proof-led-outreach-batch-01.csv",
+      resultsPath: "private/outreach-results-batch-01.csv",
+      sendabilityAuditPath: "private/outreach-sendability-audit-importer.json",
+      sendabilityAudit: {
+        routes: [
+          {
+            route_id: "b01-r06",
+            sendability: "blocked",
+            contact_method: "public_browser_form",
+            route_url: "https://www.cafeimports.com/europe/blog/general-contact/",
+            blocker: "requires phone and reCAPTCHA",
+          },
+          {
+            route_id: "b01-r11",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://interamericancoffee.de/contact/",
+            note: "general coffee/account/contact form",
+          },
+        ],
+      },
+      today: "2026-06-16",
+      sendLimit: 1,
+      sendTier: "importer",
+    });
+
+    expect(markdown).toContain("Sendability audit: `private/outreach-sendability-audit-importer.json`");
+    expect(markdown).toContain("Sendability gate is active: only audited routes marked browser_form_ready are queued for browser-form sending.");
+    expect(markdown).toContain("## 1. b01-r11 - InterAmerican Coffee Europe");
+    expect(markdown).toContain("- Sendability: browser_form_ready via public_browser_form");
+    expect(markdown).toContain("- [ ] Open company-level route: https://interamericancoffee.de/contact/");
+    expect(markdown).toContain("--route b01-r11 --date-sent 2026-06-16 --status sent");
+    expect(markdown).not.toContain("## 1. b01-r06 - Cafe Imports Europe");
+    expect(markdown).toContain("## Skipped By Sendability");
+    expect(markdown).toContain("- b01-r06 - Cafe Imports Europe: blocked, requires phone and reCAPTCHA");
+  });
+
   it("parses a route audit input for private checklist rendering", () => {
     expect(
       parseOutreachSendChecklistArgs([
@@ -111,6 +152,20 @@ describe("outreach send checklist", () => {
     ).toMatchObject({
       resultsPath: "private/results.csv",
       routeAuditPath: "private/outreach-route-audit.json",
+    });
+  });
+
+  it("parses a sendability audit input for private checklist rendering", () => {
+    expect(
+      parseOutreachSendChecklistArgs([
+        "--results",
+        "private/results.csv",
+        "--sendability-audit",
+        "private/outreach-sendability-audit-importer.json",
+      ]),
+    ).toMatchObject({
+      resultsPath: "private/results.csv",
+      sendabilityAuditPath: "private/outreach-sendability-audit-importer.json",
     });
   });
 });
