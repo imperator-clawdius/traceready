@@ -5,6 +5,7 @@ import {
   routeIdForRowNumber,
   trackedFieldNoteUrl,
   trackedFileCheckUrl,
+  trackedPilotProofUrl,
   trackedProofUrl,
 } from "./outreach-tracking.mjs";
 
@@ -20,6 +21,7 @@ export const REQUIRED_COLUMNS = [
   "proof_url",
   "field_note_url",
   "file_check_url",
+  "pilot_proof_url",
   "message_variant",
   "proof_hook",
   "ask",
@@ -91,6 +93,12 @@ export function validateOutreachLedger(rows, options = {}) {
     if (row.file_check_url && row.file_check_url !== trackedFileCheckUrl(expectedRouteId)) {
       errors.push(
         `row ${rowNumber} file_check_url must be tracked TraceReady file-check URL for ${expectedRouteId}`,
+      );
+    }
+
+    if (row.pilot_proof_url && row.pilot_proof_url !== trackedPilotProofUrl(expectedRouteId)) {
+      errors.push(
+        `row ${rowNumber} pilot_proof_url must be tracked TraceReady documented-pilot URL for ${expectedRouteId}`,
       );
     }
 

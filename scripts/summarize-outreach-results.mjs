@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import Papa from "papaparse";
-import { trackedFieldNoteUrl, trackedFileCheckUrl, trackedProofUrl } from "./outreach-tracking.mjs";
+import { trackedFieldNoteUrl, trackedFileCheckUrl, trackedPilotProofUrl, trackedProofUrl } from "./outreach-tracking.mjs";
 
 export const RESULT_COLUMNS = [
   "route_id",
@@ -11,6 +11,7 @@ export const RESULT_COLUMNS = [
   "proof_url",
   "field_note_url",
   "file_check_url",
+  "pilot_proof_url",
   "status",
   "response_type",
   "field_note_click_count",
@@ -94,6 +95,10 @@ export function validateOutreachResults(rows) {
 
     if (row.file_check_url !== trackedFileCheckUrl(row.route_id)) {
       errors.push(`row ${rowNumber} file_check_url must be a tracked TraceReady file-check URL`);
+    }
+
+    if (row.pilot_proof_url !== trackedPilotProofUrl(row.route_id)) {
+      errors.push(`row ${rowNumber} pilot_proof_url must be a tracked TraceReady documented-pilot URL`);
     }
 
     if (!ALLOWED_STATUSES.has(row.status)) {

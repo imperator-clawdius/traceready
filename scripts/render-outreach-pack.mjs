@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { parseOutreachLedger, validateOutreachLedger } from "./verify-outreach-ledger.mjs";
-import { FIELD_NOTE_BASE_URL, FILE_CHECK_BASE_URL, PROOF_BASE_URL } from "./outreach-tracking.mjs";
+import { FIELD_NOTE_BASE_URL, FILE_CHECK_BASE_URL, PILOT_PROOF_BASE_URL, PROOF_BASE_URL } from "./outreach-tracking.mjs";
 
 const DEFAULT_BATCH_PATH = "docs/proof-led-outreach-batch-01.csv";
 const DEFAULT_OUTPUT_PATH = "docs/proof-led-outreach-send-pack-01.md";
@@ -23,6 +23,7 @@ export function renderOutreachPacket(rows, options = {}) {
     `Base proof page: ${PROOF_BASE_URL}`,
     `Base field note: ${FIELD_NOTE_BASE_URL}`,
     `Base browser-side file check: ${FILE_CHECK_BASE_URL}`,
+    `Base documented pilot request: ${PILOT_PROOF_BASE_URL}`,
     "Use the tracked links inside each route section so replies, field-note clicks, and file checks can be tied back to a route ID.",
     "",
     "Guardrail: TraceReady is operational file cleanup and readiness checking, not legal certification, not a TRACES submission service, and not deforestation-free proof.",
@@ -74,6 +75,10 @@ export function validateRenderedOutreachPacket(markdown, rows) {
     if (!markdown.includes(row.file_check_url)) {
       errors.push(`packet must include tracked file-check URL for ${row.company_or_channel}`);
     }
+
+    if (!markdown.includes(row.pilot_proof_url)) {
+      errors.push(`packet must include tracked documented-pilot URL for ${row.company_or_channel}`);
+    }
   }
 
   return [...new Set(errors)];
@@ -95,6 +100,7 @@ function renderRow(row) {
     `- Proof URL: ${row.proof_url}`,
     `- Field note URL: ${row.field_note_url}`,
     `- File check URL: ${row.file_check_url}`,
+    `- Documented pilot URL: ${row.pilot_proof_url}`,
     `- Ask: ${row.ask}`,
     "",
     "### First Message",
@@ -139,6 +145,7 @@ export function bodyFor(row) {
       "",
       `Public proof page: ${row.proof_url}`,
       `Shareable field note: ${row.field_note_url}`,
+      `Documented pilot request: ${row.pilot_proof_url}`,
       "",
       "This is not legal certification and not a TRACES submission tool. It is a free operational example of file defects that create buyer-review rework.",
       "",
@@ -156,6 +163,7 @@ export function bodyFor(row) {
       "",
       `Public proof page: ${row.proof_url}`,
       `Shareable field note: ${row.field_note_url}`,
+      `Documented pilot request: ${row.pilot_proof_url}`,
       "",
       "If a client sends you a malformed farm file, I can handle the first-pass cleanup so your team is not stuck fixing coordinates, missing plot IDs, duplicate farm IDs, and point-only over-4ha records by hand.",
     ].join("\n");
@@ -172,6 +180,7 @@ export function bodyFor(row) {
     `Shareable field note: ${row.field_note_url}`,
     "",
     `You can run one file in the browser first, before sending me anything: ${row.file_check_url}`,
+    `Documented pilot request if you want a permissioned anonymized before/after case instead of a generic demo: ${row.pilot_proof_url}`,
     "",
     "If the issue list is useful, I can turn one file into a cleaned pack and row-level issue log. Worth testing one messy supplier file?",
   ].join("\n");
@@ -185,6 +194,8 @@ export function followUpFor(row) {
       "The narrow value is showing common EUDR handoff defects before members send files into a buyer or platform workflow: missing plot IDs, missing supplier identity, and point-only plots over 4 hectares.",
       "",
       `If this is not the right route, is there a better public member-resource channel for a practical example? ${row.proof_url}`,
+      "",
+      `If one member wants to document a real anonymized before/after case, the issue-count-first request is here: ${row.pilot_proof_url}`,
     ].join("\n");
   }
 
@@ -194,6 +205,8 @@ export function followUpFor(row) {
     "The low-friction path is just one file checked in the browser first. Coordinates do not need to leave your machine for the initial issue list.",
     "",
     `If the issue list is useful, the paid cleanup offer is one cleaned buyer pack and row-level issue log. ${row.file_check_url}`,
+    "",
+    `If you want the first documented pilot case instead, start with issue counts here: ${row.pilot_proof_url}`,
   ].join("\n");
 }
 

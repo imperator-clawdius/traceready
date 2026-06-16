@@ -4,6 +4,7 @@ export const TRACKING_CAMPAIGN = "eudr_file_readiness";
 export const PROOF_BASE_URL = "https://traceready.online/proof/";
 export const FIELD_NOTE_BASE_URL = "https://traceready.online/field-notes/eudr-file-errors/";
 export const FILE_CHECK_BASE_URL = "https://traceready.online/";
+export const PILOT_PROOF_BASE_URL = "https://traceready.online/pilot-proof/";
 
 export function routeIdForRowNumber(rowNumber) {
   return `b01-r${String(rowNumber).padStart(2, "0")}`;
@@ -19,6 +20,10 @@ export function trackedFieldNoteUrl(routeId) {
 
 export function trackedFileCheckUrl(routeId) {
   return trackedUrl(FILE_CHECK_BASE_URL, routeId);
+}
+
+export function trackedPilotProofUrl(routeId) {
+  return trackedUrl(PILOT_PROOF_BASE_URL, routeId);
 }
 
 function trackedUrl(baseUrl, routeId) {

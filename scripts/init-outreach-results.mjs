@@ -16,6 +16,7 @@ export function buildInitialOutreachResults(batchRows) {
     proof_url: row.proof_url,
     field_note_url: row.field_note_url,
     file_check_url: row.file_check_url,
+    pilot_proof_url: row.pilot_proof_url,
     status: "not_sent",
     response_type: "none",
     field_note_click_count: "0",
@@ -69,6 +70,10 @@ export function validateInitialResultsAgainstBatch(resultRows, batchRows) {
 
     if (resultRow.file_check_url !== batchRow.file_check_url) {
       errors.push(`row ${rowNumber} file_check_url must match batch route ${batchRow.route_id}`);
+    }
+
+    if (resultRow.pilot_proof_url !== batchRow.pilot_proof_url) {
+      errors.push(`row ${rowNumber} pilot_proof_url must match batch route ${batchRow.route_id}`);
     }
 
     if (resultRow.status !== "not_sent") {
