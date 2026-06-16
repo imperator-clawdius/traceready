@@ -1,0 +1,161 @@
+# TraceReady proof-led outreach sprint
+
+## Goal
+
+Turn the public dataset mini-audit into the first 10 serious file conversations without asking strangers to trust a new SaaS brand.
+
+The page to send is `https://traceready.online/proof/`. The supporting write-up is `docs/public-dataset-mini-audit.md`.
+
+## Positioning
+
+Do not lead with "buy my tool." Lead with proof:
+
+> I ran a public cocoa farm-location dataset through TraceReady. It had 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity. If you have one supplier CSV, KML, or GeoJSON file, I can run the same readiness check and send back the exact rows that need cleanup.
+
+The founder angle is useful only after the proof lands: small team, hands-on cleanup, browser-side first pass, no procurement cycle.
+
+## Contact Rules
+
+- Use company-level routes only: public contact forms, general sales inboxes, association inquiry forms, public company LinkedIn pages, and event/community channels.
+- Do not scrape employee emails, personal phone numbers, or private social profiles.
+- Do not imply certification, legal due diligence, TRACES submission, or deforestation-free proof.
+- Do not ask for confidential coordinates in the first message. Ask them to run the browser-side check first, then offer concierge cleanup if useful.
+- Log prospects and replies in a private copy of `docs/order-ledger-template.csv`; do not commit customer files or private replies.
+
+## Target Tiers
+
+### Tier 1: Association and Community Channels
+
+These are not direct buyers, but they can validate the pain and point smaller members toward the free proof page.
+
+| Priority | Channel | Why it fits | Public route | Source |
+| --- | --- | --- | --- | --- |
+| 1 | European Coffee Federation | Represents the European coffee sector and publishes EUDR-related industry material. | Website/contact route or public LinkedIn company page. | https://www.ecf-coffee.org/ |
+| 2 | EUDR Coffee / German Coffee Association | Public EUDR coffee tooling and member education channel. | Website/contact route or public association channels. | https://eudr-coffee.eu/ |
+| 3 | Deutscher Kaffeeverband | German coffee association with EUDR tools and guidance for members. | Website/contact route. | https://www.kaffeeverband.de/en |
+| 4 | Specialty Coffee Association | Published sector education on EUDR coffee supply-chain challenges. | Article comments, event/community route, or public LinkedIn company page. | https://sca.coffee/sca-news/25/issue-22/cracking-coffee-regulation |
+
+### Tier 2: Green Coffee Importers and Buyers
+
+Start here for direct commercial traction. The best-fit buyer is a small or mid-sized specialty importer that already handles supplier files but does not want an enterprise compliance platform.
+
+| Priority | Company | Why it fits | Public route | Source |
+| --- | --- | --- | --- | --- |
+| 1 | Cafe Imports Europe | Specialty green coffee importer with Berlin office and public Europe sales route. | Public Europe contact page. | https://www.cafeimports.com/europe/blog/general-contact/ |
+| 2 | Sucafina Specialty Europe | Green coffee network serving roasters across Europe, Middle East, and Africa. | Public EMEA contact route. | https://sucafina.com/emea |
+| 3 | Falcon Coffees Europe | Specialty green coffee trader with a dedicated EU service and Berlin office. | Public Falcon Europe/contact route. | https://falconcoffees.com/falcon-europe/ |
+| 4 | Nordic Approach | Specialty green coffee importer serving roasters and buyers from Belgium warehouse stock and direct shipments. | Public website/contact route. | https://www.nordicapproach.no/ |
+| 5 | Trabocca | Specialty coffee importer emphasizing traceable coffees and end-to-end supply chains. | Public contact form or company inbox. | https://www.trabocca.com/about-us/ |
+| 6 | InterAmerican Coffee Europe | Specialty green coffee importer based in Europe, part of Neumann Kaffee Gruppe. | Public website/contact route. | https://interamericancoffee.de/ |
+| 7 | EFICO | Belgian green coffee specialist connecting farmers and roasters. | Public website/contact route. | https://efico.com/ |
+| 8 | Daarnhouwer & Co | Dutch trader/importer active in coffee and cocoa, useful because TraceReady covers both. | Public coffee trading route. | https://daarnhouwer.com/coffee/ |
+| 9 | Ally Coffee Europe | Green coffee company with European specialty contact route. | Public contact page. | https://www.allycoffee.com/contact-us/ |
+| 10 | Covoya Specialty Coffee Europe | Wholesale green coffee importer with public Europe office contact information. | Public contact page. | https://www.covoyacoffee.com/contact |
+| 11 | Belco | Sources, imports, and distributes green coffee in France and Europe. | Public company route. | https://salpa.fr/en/the-group/belco/ |
+| 12 | List + Beisler | Hamburg green coffee importer focused on specialty roasters. | Public website/contact route. | https://www.list-beisler.coffee/en/ |
+
+### Tier 3: Overflow Partners
+
+These can refer messy-file work even when they are not the end buyer.
+
+| Partner Type | Why it fits | Message angle |
+| --- | --- | --- |
+| EUDR consultants | They may not want to clean malformed CSV/KML/GeoJSON files by hand. | "I can be the first-pass file cleanup desk before your due diligence work." |
+| Certification and audit firms | They see broken supplier evidence before review. | "I do not certify; I normalize files and produce row-level issue logs." |
+| Coffee/cocoa trade educators | They need practical examples for members. | "Can I share a public mini-audit showing common file defects?" |
+| Roaster associations | Smaller roasters may get importer requests they do not understand. | "This is a free first check for supplier files, not a platform migration." |
+
+## Message Variants
+
+### Association or Community Channel
+
+Subject: Free EUDR file-readiness example for coffee members
+
+Hi {{organization}},
+
+I built TraceReady as a narrow cleanup desk for coffee and cocoa CSV/KML/GeoJSON files before buyer review.
+
+I just published a public mini-audit using a 57,658-row cocoa farm-location dataset. The useful part for members is practical: even with latitude, longitude, and area fields, the file still surfaced 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+
+Public proof page: https://traceready.online/proof/
+
+This is not legal certification and not a TRACES submission tool. It is a free operational example of the file defects that create buyer-review rework. Is there a member education channel where this would be useful?
+
+### Importer or Green Coffee Buyer
+
+Subject: Row-level check for messy EUDR farm files
+
+Hi {{company}},
+
+Quick, specific note. I ran a public cocoa farm-location dataset through TraceReady, a file-readiness checker for coffee and cocoa handoff files. Even after assuming the file was Colombian cocoa, it still had 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+
+That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
+
+You can run one file in the browser first, before sending me anything: https://traceready.online/proof/
+
+If the issue list is useful, I can turn one file into a cleaned pack and row-level issue log. Worth testing one messy supplier file?
+
+### Consultant or Overflow Partner
+
+Subject: First-pass cleanup desk for EUDR supplier files
+
+Hi {{company}},
+
+I am looking for EUDR consultants and advisors who run into broken coffee/cocoa supplier files before the real due diligence work can even start.
+
+TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.
+
+Public proof page: https://traceready.online/proof/
+
+If a client sends you a malformed farm file, I can handle the first-pass cleanup so your team is not stuck fixing coordinates, missing plot IDs, duplicate farm IDs, and point-only over-4ha records by hand.
+
+## 10-Day Operating Cadence
+
+For 10 business days:
+
+- Contact 8 importer/buyer targets per day.
+- Contact 4 consultant or overflow targets per day.
+- Contact 2 association/community channels per day.
+- Post one public proof-led note per day on a relevant professional channel.
+- Ask for one of three outcomes only: run the browser-side check, send a non-sensitive sample structure, or refer the person who owns supplier-file cleanup.
+- Log every send, reply, objection, file run, and paid cleanup opportunity.
+
+Do not count likes, compliments, or "interesting" replies as traction. Count real files, paid cleanup orders, pilot requests, referrals to data/compliance owners, and permissioned de-identified before/after evidence.
+
+## Qualification and Disqualification
+
+Qualify when:
+
+- They work with coffee or cocoa files connected to EU buyer/importer review.
+- They receive CSV, KML, GeoJSON, Excel, or mixed supplier packs.
+- The immediate pain is malformed farm/plot data, missing IDs, bad coordinates, duplicate records, or unclear geometry.
+- They want a quick readiness check or cleaned buyer pack before a formal compliance workflow.
+
+Disqualify when:
+
+- They want legal certification, DDS filing, TRACES submission, deforestation-free proof, or satellite-risk scoring.
+- They only want a long enterprise platform evaluation.
+- They cannot share even a sanitized file structure and will not run the browser-side check.
+- They are outside coffee/cocoa and have no near-term EU buyer pressure.
+
+## Objection Handling
+
+| Objection | Response |
+| --- | --- |
+| "Who are you?" | "A software operator running a narrow cleanup desk. I am not asking you to trust credentials; start with the public proof page or run one file browser-side." |
+| "We already use an EUDR platform." | "That is fine. TraceReady sits before the platform when supplier files are malformed and need row-level cleanup." |
+| "We cannot send coordinates." | "Run the file in your browser first. Coordinates do not need to leave your machine for the initial issue list." |
+| "Can you certify this?" | "No. TraceReady is operational cleanup and readiness checking, not legal certification or due diligence." |
+| "We only have Excel." | "Send or export the relevant sheet structure. The paid cleanup workflow can normalize common spreadsheet exports, but the browser MVP currently checks CSV/KML/GeoJSON/JSON GeoJSON." |
+
+## Success Criteria
+
+The sprint succeeds if it produces any of these:
+
+- 10 paid single-file cleanup orders.
+- 1 paid 5-file pilot.
+- 5 real browser-side file checks from target companies.
+- 3 consultant or association referrals to actual file owners.
+- 1 permissioned de-identified before/after case study.
+
+If none of those happen after 10 business days, stop polishing the product. Change the segment, offer, or channel.

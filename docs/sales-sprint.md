@@ -33,6 +33,8 @@ Ask these before selling:
 
 Proof-led variant: use `docs/public-dataset-mini-audit.md` when the prospect has not shown trust yet. Lead with the public-dataset defect numbers before asking for a file.
 
+Use `docs/proof-led-outreach-sprint.md` for the company-level target tiers, public contact-route rules, association/importer/consultant message variants, and 10-day operating cadence.
+
 Subject: Quick cleanup for EUDR farm files
 
 Hi {{name}},
@@ -59,7 +61,7 @@ I am looking for the first 10 paid cleanup orders and can prioritize coffee/coco
 
 For 10 business days:
 
-- Contact 20 targeted people per day.
+- Contact 20 targeted company or channel routes per day.
 - Send every prospect the live link.
 - Ask for one real file or one referral to the compliance/data person.
 - Log every reply, objection, and order.
