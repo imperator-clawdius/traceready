@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import Papa from "papaparse";
-import { trackedFileCheckUrl, trackedProofUrl } from "./outreach-tracking.mjs";
+import { trackedFieldNoteUrl, trackedFileCheckUrl, trackedProofUrl } from "./outreach-tracking.mjs";
 
 export const RESULT_COLUMNS = [
   "route_id",
@@ -9,9 +9,11 @@ export const RESULT_COLUMNS = [
   "company_or_channel",
   "tier",
   "proof_url",
+  "field_note_url",
   "file_check_url",
   "status",
   "response_type",
+  "field_note_click_count",
   "file_check_count",
   "paid_order_count",
   "pilot_requested",
@@ -86,6 +88,10 @@ export function validateOutreachResults(rows) {
       errors.push(`row ${rowNumber} proof_url must be a tracked TraceReady proof URL`);
     }
 
+    if (row.field_note_url !== trackedFieldNoteUrl(row.route_id)) {
+      errors.push(`row ${rowNumber} field_note_url must be a tracked TraceReady field-note URL`);
+    }
+
     if (row.file_check_url !== trackedFileCheckUrl(row.route_id)) {
       errors.push(`row ${rowNumber} file_check_url must be a tracked TraceReady file-check URL`);
     }
@@ -102,7 +108,7 @@ export function validateOutreachResults(rows) {
       );
     }
 
-    for (const column of ["file_check_count", "paid_order_count"]) {
+    for (const column of ["field_note_click_count", "file_check_count", "paid_order_count"]) {
       if (!isNonNegativeInteger(row[column])) {
         errors.push(`row ${rowNumber} ${column} must be a non-negative integer`);
       }
@@ -129,6 +135,8 @@ export function summarizeOutreachResults(rows) {
   const repliedRows = rows.filter((row) =>
     ["replied", "file_checked", "paid_order", "pilot_requested"].includes(row.status),
   );
+  const fieldNoteClicks = rows.reduce((sum, row) => sum + Number(row.field_note_click_count || 0), 0);
+  const fieldNoteClickedRows = rows.filter((row) => Number(row.field_note_click_count || 0) > 0);
   const fileChecks = rows.reduce((sum, row) => sum + Number(row.file_check_count || 0), 0);
   const paidOrders = rows.reduce((sum, row) => sum + Number(row.paid_order_count || 0), 0);
   const pilotRequests = rows.filter(
@@ -140,11 +148,13 @@ export function summarizeOutreachResults(rows) {
     totalRows: rows.length,
     sentOrBeyond: sentOrBeyondRows.length,
     replies: repliedRows.length,
+    fieldNoteClicks,
     fileChecks,
     paidOrders,
     pilotRequests,
     disqualified,
     replyRate: rate(repliedRows.length, sentOrBeyondRows.length),
+    fieldNoteClickRate: rate(fieldNoteClickedRows.length, sentOrBeyondRows.length),
     fileCheckRate: rate(fileChecks, sentOrBeyondRows.length),
     paidOrderRate: rate(paidOrders, sentOrBeyondRows.length),
   };
@@ -162,11 +172,13 @@ Source: \`${sourcePath}\`
 | Rows tracked | ${summary.totalRows} |
 | Sent or beyond | ${summary.sentOrBeyond} |
 | Replies | ${summary.replies} |
+| Field-note clicks | ${summary.fieldNoteClicks} |
 | Browser/file checks | ${summary.fileChecks} |
 | Paid cleanup orders | ${summary.paidOrders} |
 | Pilot requests | ${summary.pilotRequests} |
 | Disqualified | ${summary.disqualified} |
 | Reply rate | ${summary.replyRate} |
+| Field-note click rate | ${summary.fieldNoteClickRate} |
 | File-check rate | ${summary.fileCheckRate} |
 | Paid-order rate | ${summary.paidOrderRate} |
 

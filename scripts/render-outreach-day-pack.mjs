@@ -205,6 +205,7 @@ function renderActiveOpportunities(rows) {
     `### ${row.route_id} - ${row.company_or_channel}`,
     "",
     `- Status: ${row.status}`,
+    `- Field-note clicks: ${row.field_note_click_count}`,
     `- File checks: ${row.file_check_count}`,
     `- Pilot requested: ${row.pilot_requested}`,
     `- Next action: ${row.next_action || "ask for the next concrete file or paid cleanup step"}`,

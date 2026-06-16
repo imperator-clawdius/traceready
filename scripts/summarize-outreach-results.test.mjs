@@ -8,6 +8,24 @@ import {
 } from "./summarize-outreach-results.mjs";
 
 describe("outreach results summarizer", () => {
+  it("counts field-note clicks as a trust-building leading indicator", () => {
+    const rows = parseOutreachResults(`route_id,date_sent,company_or_channel,tier,proof_url,field_note_url,file_check_url,status,response_type,field_note_click_count,file_check_count,paid_order_count,pilot_requested,reply_notes,next_action
+b01-r01,2026-06-16,Cafe Imports Europe,importer,https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01,sent,none,1,0,0,no,,follow up
+b01-r02,2026-06-16,European Coffee Federation,association,https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02,replied,referral,2,0,0,no,shared member channel,follow referral
+b01-r03,2026-06-16,Nordic Approach,importer,https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r03,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r03,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r03,file_checked,file_check,1,2,0,no,ran browser-side check,ask for cleanup
+`);
+
+    const summary = summarizeOutreachResults(rows);
+    const markdown = renderOutreachResultsSummary(summary, {
+      sourcePath: "private/outreach-results.csv",
+    });
+
+    expect(summary.fieldNoteClicks).toBe(4);
+    expect(summary.fieldNoteClickRate).toBe("100.0%");
+    expect(markdown).toContain("| Field-note clicks | 4 |");
+    expect(markdown).toContain("| Field-note click rate | 100.0% |");
+  });
+
   it("calculates the proof-led outreach funnel from result rows", () => {
     const rows = parseOutreachResults(`route_id,date_sent,company_or_channel,tier,proof_url,file_check_url,status,response_type,file_check_count,paid_order_count,pilot_requested,reply_notes,next_action
 b01-r01,2026-06-16,Cafe Imports Europe,importer,https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01,sent,none,0,0,no,,follow up
@@ -31,18 +49,21 @@ b01-r05,2026-06-16,Falcon Coffees Europe,importer,https://traceready.online/proo
   });
 
   it("rejects invalid status values and private contact data", () => {
-    const rows = parseOutreachResults(`route_id,date_sent,company_or_channel,tier,proof_url,file_check_url,status,response_type,file_check_count,paid_order_count,pilot_requested,reply_notes,next_action
-bad-route,2026-06-16,Example Coffee,importer,https://traceready.online/proof/,https://traceready.online/,maybe,none,0,0,no,alice@example.com,follow up
-b01-r02,2026-06-16,Example Two,importer,https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02,sent,none,zero,0,no,https://www.linkedin.com/in/example-person,follow up
+    const rows = parseOutreachResults(`route_id,date_sent,company_or_channel,tier,proof_url,field_note_url,file_check_url,status,response_type,field_note_click_count,file_check_count,paid_order_count,pilot_requested,reply_notes,next_action
+bad-route,2026-06-16,Example Coffee,importer,https://traceready.online/proof/,https://traceready.online/field-notes/eudr-file-errors/,https://traceready.online/,maybe,none,one,0,0,no,alice@example.com,follow up
+b01-r02,2026-06-16,Example Two,importer,https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r99,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02,sent,none,0,zero,0,no,https://www.linkedin.com/in/example-person,follow up
 `);
 
     const errors = validateOutreachResults(rows);
 
     expect(errors).toContain("row 1 route_id must look like b01-r01");
     expect(errors).toContain("row 1 proof_url must be a tracked TraceReady proof URL");
+    expect(errors).toContain("row 1 field_note_url must be a tracked TraceReady field-note URL");
     expect(errors).toContain("row 1 file_check_url must be a tracked TraceReady file-check URL");
     expect(errors).toContain("row 1 status must be one of not_sent, sent, no_reply, replied, file_checked, paid_order, pilot_requested, disqualified");
     expect(errors).toContain("row 1 contains an email address; keep committed results templates private-safe");
+    expect(errors).toContain("row 1 field_note_click_count must be a non-negative integer");
+    expect(errors).toContain("row 2 field_note_url must be a tracked TraceReady field-note URL");
     expect(errors).toContain("row 2 file_check_count must be a non-negative integer");
     expect(errors).toContain("row 2 contains a personal-profile URL");
   });

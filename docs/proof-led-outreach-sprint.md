@@ -4,7 +4,7 @@
 
 Turn the public dataset mini-audit into the first 10 serious file conversations without asking strangers to trust a new SaaS brand.
 
-The base proof page is `https://traceready.online/proof/`. For outreach, send the tracked `proof_url` and `file_check_url` from the batch row so every reply and browser-side check can be tied back to a `b01-rNN` route ID. The supporting write-up is `docs/public-dataset-mini-audit.md`.
+The base proof page is `https://traceready.online/proof/`. For outreach, send the tracked `proof_url`, `field_note_url`, and `file_check_url` from the batch row so every reply, field-note click, and browser-side check can be tied back to a `b01-rNN` route ID. The supporting write-up is `docs/public-dataset-mini-audit.md`.
 
 The public field note at `https://traceready.online/field-notes/eudr-file-errors/` is the shareable credibility asset for LinkedIn, associations, and reply threads. Use it when the prospect needs a readable explanation of the seven file defects before running a file.
 
@@ -12,7 +12,7 @@ The first executable batch is `docs/proof-led-outreach-batch-01.csv`. The copy-p
 
 If a routed visitor lands on `/proof/`, the "Run a file in the browser" CTA keeps the same UTM route parameters. If they run the free checker from a routed URL, the copied buyer summary, downloaded ZIP artifacts, and paid-cleanup mailto handoff include the non-personal `Outreach route: b01-rNN` attribution line. Use that line to connect real file checks back to the private results ledger.
 
-After sending, copy `docs/proof-led-outreach-results-batch-01.csv` to a private working file, keep the route/link columns intact, and run `npm run summarize:outreach -- path/to/private-results.csv`. Do not commit private replies, personal contact details, customer files, or order evidence.
+After sending, copy `docs/proof-led-outreach-results-batch-01.csv` to a private working file, keep the route/link columns intact, update `field_note_click_count` from analytics when available, and run `npm run summarize:outreach -- path/to/private-results.csv`. Do not commit private replies, personal contact details, customer files, or order evidence.
 
 ## Private Results Updates
 
@@ -22,6 +22,7 @@ Do not edit the committed public initialized ledger after real outreach starts. 
 npm run next:outreach -- --results path/to/private-results.csv --send-limit 8 --follow-up-after-days 4
 npm run render:outreach-day -- --results path/to/private-results.csv --send-limit 8 --follow-up-after-days 4 --today 2026-06-16 --output path/to/day-pack.md
 npm run update:outreach-result -- --results path/to/private-results.csv --route b01-r06 --date-sent 2026-06-16 --status sent --response-type none --notes "sent via company contact form" --next-action "follow up in 4 business days"
+npm run update:outreach-result -- --results path/to/private-results.csv --route b01-r06 --field-note-clicks 1 --notes "routed field-note visit seen in analytics" --next-action "watch for file check or reply"
 npm run update:outreach-result -- --results path/to/private-results.csv --route b01-r06 --status file_checked --response-type file_check --file-checks 1 --notes "route-stamped buyer summary received" --next-action "ask whether they want the cleaned pack"
 npm run update:outreach-result -- --results path/to/private-results.csv --route b01-r06 --status paid_order --response-type paid_order --file-checks 1 --paid-orders 1 --notes "paid cleanup ordered" --next-action "fulfill 24-hour cleanup"
 ```
@@ -43,7 +44,7 @@ The founder angle is useful only after the proof lands: small team, hands-on cle
 - Do not imply certification, legal due diligence, TRACES submission, or deforestation-free proof.
 - Do not ask for confidential coordinates in the first message. Ask them to run the browser-side check first, then offer concierge cleanup if useful.
 - If they hesitate on file sharing, send `/file-triage/` and ask for non-sensitive issue counts, field names, commodity, source country, buyer deadline, and a sample row shape instead of raw farm coordinates.
-- Log sends, replies, file checks, route-stamped buyer summaries, and orders against the row's `route_id` in a private copy of `docs/proof-led-outreach-results-batch-01.csv`; do not commit customer files or private replies.
+- Log sends, field-note clicks, replies, file checks, route-stamped buyer summaries, and orders against the row's `route_id` in a private copy of `docs/proof-led-outreach-results-batch-01.csv`; do not commit customer files or private replies.
 
 ## Target Tiers
 
@@ -144,7 +145,7 @@ For 10 business days:
 - Contact 2 association/community channels per day.
 - Post one public proof-led note per day on a relevant professional channel.
 - Ask for one of three outcomes only: run the browser-side check, send a non-sensitive sample structure, or refer the person who owns supplier-file cleanup.
-- Log every send, reply, objection, file run, and paid cleanup opportunity by `route_id`.
+- Log every send, field-note click, reply, objection, file run, and paid cleanup opportunity by `route_id`.
 - Generate the next route queue before each send block with `npm run next:outreach -- --results path/to/private-results.csv --send-limit 8`.
 - Render the exact send-block copy with `npm run render:outreach-day -- --results path/to/private-results.csv --send-limit 8 --output path/to/day-pack.md`.
 - Summarize the private results ledger daily with `npm run summarize:outreach -- path/to/private-results.csv`.

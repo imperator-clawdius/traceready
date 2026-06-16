@@ -131,6 +131,7 @@ function renderSendRows(rows, resultsPath, today) {
     `${index + 1}. ${row.route_id} - ${row.company_or_channel}`,
     `   - Tier: ${row.tier}`,
     `   - Proof URL: ${row.proof_url}`,
+    `   - Field note URL: ${row.field_note_url}`,
     `   - File check URL: ${row.file_check_url}`,
     `   - Mark sent: \`${updateCommand(resultsPath, row.route_id, {
       date_sent: today,
@@ -151,6 +152,7 @@ function renderFollowUpRows(rows, resultsPath, today) {
     `${index + 1}. ${row.route_id} - ${row.company_or_channel} (sent ${daysBetween(row.date_sent, today)} days ago)`,
     `   - Current next action: ${row.next_action || "follow up"}`,
     `   - Follow-up URL: ${row.proof_url}`,
+    `   - Field note URL: ${row.field_note_url}`,
     `   - Mark followed up: \`${updateCommand(resultsPath, row.route_id, {
       status: "no_reply",
       response_type: "none",
@@ -168,6 +170,7 @@ function renderOpportunityRows(rows) {
   return rows.flatMap((row, index) => [
     `${index + 1}. ${row.route_id} - ${row.company_or_channel}`,
     `   - Status: ${row.status}`,
+    `   - Field-note clicks: ${row.field_note_click_count}`,
     `   - File checks: ${row.file_check_count}`,
     `   - Pilot requested: ${row.pilot_requested}`,
     `   - Next action: ${row.next_action || "ask for the next concrete file or paid cleanup step"}`,

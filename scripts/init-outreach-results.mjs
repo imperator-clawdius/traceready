@@ -14,9 +14,11 @@ export function buildInitialOutreachResults(batchRows) {
     company_or_channel: row.company_or_channel,
     tier: row.tier,
     proof_url: row.proof_url,
+    field_note_url: row.field_note_url,
     file_check_url: row.file_check_url,
     status: "not_sent",
     response_type: "none",
+    field_note_click_count: "0",
     file_check_count: "0",
     paid_order_count: "0",
     pilot_requested: "no",
@@ -59,6 +61,10 @@ export function validateInitialResultsAgainstBatch(resultRows, batchRows) {
 
     if (resultRow.proof_url !== batchRow.proof_url) {
       errors.push(`row ${rowNumber} proof_url must match batch route ${batchRow.route_id}`);
+    }
+
+    if (resultRow.field_note_url !== batchRow.field_note_url) {
+      errors.push(`row ${rowNumber} field_note_url must match batch route ${batchRow.route_id}`);
     }
 
     if (resultRow.file_check_url !== batchRow.file_check_url) {
