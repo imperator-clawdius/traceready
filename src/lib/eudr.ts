@@ -1,5 +1,6 @@
 import JSZip from "jszip";
 import Papa from "papaparse";
+import { formatOutreachAttributionLines, type OutreachAttribution } from "./outreach-attribution";
 
 export type SupportedFormat = "csv" | "geojson" | "kml";
 export type Severity = "blocker" | "warning";
@@ -144,16 +145,19 @@ export async function analyzeTraceReadyFile(file: File): Promise<TraceReadyAnaly
   }
 }
 
-export async function createCompliancePack(analysis: TraceReadyAnalysis): Promise<Blob> {
+export async function createCompliancePack(
+  analysis: TraceReadyAnalysis,
+  outreachAttribution?: OutreachAttribution | null,
+): Promise<Blob> {
   const zip = new JSZip();
 
-  zip.file("traceready-readiness-report.txt", buildReport(analysis));
-  zip.file("traceready-buyer-summary.txt", buildBuyerSummary(analysis));
+  zip.file("traceready-readiness-report.txt", buildReport(analysis, outreachAttribution));
+  zip.file("traceready-buyer-summary.txt", buildBuyerSummary(analysis, outreachAttribution));
   zip.file("traceready-cleaned-farms.csv", buildCleanedCsv(analysis.records));
   zip.file("traceready-issues.csv", buildIssuesCsv(analysis.issues));
-  zip.file("traceready-eudr-checklist.json", JSON.stringify(buildEudrChecklist(analysis), null, 2));
+  zip.file("traceready-eudr-checklist.json", JSON.stringify(buildEudrChecklist(analysis, outreachAttribution), null, 2));
   zip.file("traceready-geolocation.geojson", JSON.stringify(buildGeoJson(analysis.records), null, 2));
-  zip.file("traceready-paid-cleanup-intake.txt", buildPaidCleanupIntake(analysis));
+  zip.file("traceready-paid-cleanup-intake.txt", buildPaidCleanupIntake(analysis, outreachAttribution));
 
   return zip.generateAsync({ type: "blob" });
 }
@@ -749,12 +753,13 @@ function textFromFirstTag(element: Element, tagName: string): string {
   return element.getElementsByTagName(tagName)[0]?.textContent?.trim() ?? "";
 }
 
-function buildReport(analysis: TraceReadyAnalysis): string {
+function buildReport(analysis: TraceReadyAnalysis, outreachAttribution?: OutreachAttribution | null): string {
   return [
     "TraceReady EUDR Readiness Report",
     `Generated: ${analysis.generatedAt}`,
     `Source file: ${analysis.fileName}`,
     `Detected format: ${analysis.format}`,
+    ...formatOutreachAttributionLines(outreachAttribution),
     "",
     `Records checked: ${analysis.summary.totalRecords}`,
     `Ready records: ${analysis.summary.readyRecords}`,
@@ -777,7 +782,7 @@ function buildReport(analysis: TraceReadyAnalysis): string {
   ].join("\n");
 }
 
-function buildBuyerSummary(analysis: TraceReadyAnalysis): string {
+function buildBuyerSummary(analysis: TraceReadyAnalysis, outreachAttribution?: OutreachAttribution | null): string {
   const blockers = analysis.issues.filter((issue) => issue.severity === "blocker");
   const warnings = analysis.issues.filter((issue) => issue.severity === "warning");
   const commodities = uniqueValues(
@@ -799,6 +804,7 @@ function buildBuyerSummary(analysis: TraceReadyAnalysis): string {
     `Generated: ${analysis.generatedAt}`,
     `Source file: ${analysis.fileName}`,
     `Detected format: ${analysis.format}`,
+    ...formatOutreachAttributionLines(outreachAttribution),
     "",
     "Shipment context detected from file:",
     `- Commodity: ${commodities}`,
@@ -831,7 +837,7 @@ function buildBuyerSummary(analysis: TraceReadyAnalysis): string {
   ].join("\n");
 }
 
-function buildPaidCleanupIntake(analysis: TraceReadyAnalysis): string {
+function buildPaidCleanupIntake(analysis: TraceReadyAnalysis, outreachAttribution?: OutreachAttribution | null): string {
   const commodities = Array.from(
     new Set(
       analysis.records
@@ -845,6 +851,7 @@ function buildPaidCleanupIntake(analysis: TraceReadyAnalysis): string {
     "TraceReady Paid Cleanup Intake",
     "",
     "Send this note with the source file or generated ZIP after checkout.",
+    ...formatOutreachAttributionLines(outreachAttribution),
     "",
     "Customer details:",
     "- Stripe receipt email:",
@@ -874,13 +881,17 @@ function buildPaidCleanupIntake(analysis: TraceReadyAnalysis): string {
   ].join("\n");
 }
 
-function buildEudrChecklist(analysis: TraceReadyAnalysis) {
+function buildEudrChecklist(analysis: TraceReadyAnalysis, outreachAttribution?: OutreachAttribution | null) {
   return {
     product: "TraceReady",
     artifact: "EUDR readiness checklist",
     generatedAt: analysis.generatedAt,
     sourceFile: analysis.fileName,
     detectedFormat: analysis.format,
+    outreachRouteId: outreachAttribution?.routeId,
+    outreachSource: outreachAttribution?.source,
+    outreachMedium: outreachAttribution?.medium,
+    outreachCampaign: outreachAttribution?.campaign,
     disclaimer: "Operational readiness check only. This is not legal certification.",
     summary: analysis.summary,
     checks: [

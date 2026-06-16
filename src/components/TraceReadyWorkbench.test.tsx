@@ -37,6 +37,7 @@ describe("TraceReady conversion surface", () => {
       root.unmount();
     });
     container.remove();
+    window.history.pushState({}, "", "/");
   });
 
   it("leads cold visitors to a free upload diagnosis before paid cleanup", () => {
@@ -208,6 +209,49 @@ QA-2,Kofi Adu,Ghana,coffee,LOT-QA,3.2,6.3344,-1.6129
 
     expect(container.textContent).toContain("No issues found in this file.");
     expect(container.textContent).not.toContain("Upload a file to see blockers, warnings, and cleanup suggestions.");
+  });
+
+  it("carries proof-led route attribution into copied buyer summaries", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText },
+    });
+    window.history.pushState(
+      {},
+      "",
+      "/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r06",
+    );
+
+    await act(async () => {
+      root.render(<TraceReadyWorkbench />);
+    });
+
+    const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+    const cleanCsv = `farm_id,supplier_name,country,commodity,batch_id,area_ha,latitude,longitude
+QA-1,Ama Mensah,Ghana,coffee,LOT-QA,2.2,6.2031,-1.7082
+`;
+    const file = new File([cleanCsv], "qa-ready.csv", { type: "text/csv" });
+
+    Object.defineProperty(input, "files", {
+      configurable: true,
+      value: [file],
+    });
+
+    await act(async () => {
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+
+    const copyButton = Array.from(container.querySelectorAll("button")).find((element) =>
+      element.textContent?.includes("Copy buyer summary"),
+    ) as HTMLButtonElement | undefined;
+
+    await act(async () => {
+      copyButton?.click();
+    });
+
+    expect(writeText).toHaveBeenCalledWith(expect.stringContaining("Outreach route: b01-r06"));
+    expect(writeText).toHaveBeenCalledWith(expect.stringContaining("Outreach source: proof_led_batch_01"));
   });
 
   it("uses the KML sample to demonstrate detected cleanup work", async () => {

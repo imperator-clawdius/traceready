@@ -155,4 +155,30 @@ CSV-1,Ama Mensah,Ghana,coffee,LOT-1,2.2,6.2031,-1.7082
       '"artifact": "EUDR readiness checklist"',
     );
   });
+
+  it("stamps outreach route attribution into generated handoff artifacts", async () => {
+    const csv = `farm_id,supplier_name,country,commodity,batch_id,area_ha,latitude,longitude
+CSV-1,Ama Mensah,Ghana,coffee,LOT-1,2.2,6.2031,-1.7082
+`;
+    const analysis = await analyzeTraceReadyFile(makeFile(csv, "farms.csv", "text/csv"));
+    const pack = await createCompliancePack(analysis, {
+      routeId: "b01-r06",
+      source: "proof_led_batch_01",
+      campaign: "eudr_file_readiness",
+    });
+    const zip = await JSZip.loadAsync(await pack.arrayBuffer());
+
+    await expect(zip.file("traceready-readiness-report.txt")?.async("string")).resolves.toContain(
+      "Outreach route: b01-r06",
+    );
+    await expect(zip.file("traceready-buyer-summary.txt")?.async("string")).resolves.toContain(
+      "Outreach route: b01-r06",
+    );
+    await expect(zip.file("traceready-paid-cleanup-intake.txt")?.async("string")).resolves.toContain(
+      "Outreach route: b01-r06",
+    );
+    await expect(zip.file("traceready-eudr-checklist.json")?.async("string")).resolves.toContain(
+      '"outreachRouteId": "b01-r06"',
+    );
+  });
 });

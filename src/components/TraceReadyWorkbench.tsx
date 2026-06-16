@@ -19,6 +19,11 @@ import {
   type ValidationIssue,
 } from "@/lib/eudr";
 import {
+  formatOutreachAttributionLines,
+  parseOutreachAttribution,
+  type OutreachAttribution,
+} from "@/lib/outreach-attribution";
+import {
   CHECKOUT_CLEANUP_HREF,
   CHECKOUT_PILOT_HREF,
   CONTACT_EMAIL,
@@ -204,25 +209,47 @@ export function TraceReadyWorkbench() {
   const [copiedBrief, setCopiedBrief] = useState(false);
   const [copiedBatchBrief, setCopiedBatchBrief] = useState(false);
   const [error, setError] = useState("");
+  const outreachAttribution = useMemo(() => {
+    if (typeof window === "undefined") {
+      return null;
+    }
+
+    return parseOutreachAttribution(window.location.search);
+  }, []);
 
   const orderHandoffHref = useMemo(() => {
     if (analysis) {
-      return buildPaidCleanupHandoffHref(analysis);
+      return buildPaidCleanupHandoffHref(analysis, outreachAttribution);
     }
 
     const subject = encodeURIComponent("TraceReady paid cleanup file");
     const body = encodeURIComponent(
-      `I bought TraceReady cleanup and need to submit my file.\n\nStripe receipt email:\nCommodity:\nSource country:\nDeadline:\nNotes:`,
+      [
+        "I bought TraceReady cleanup and need to submit my file.",
+        "",
+        "Stripe receipt email:",
+        "Commodity:",
+        "Source country:",
+        "Deadline:",
+        ...formatOutreachAttributionLines(outreachAttribution),
+        "Notes:",
+      ].join("\n"),
     );
 
     return `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
-  }, [analysis]);
-  const buyerBrief = useMemo(() => (analysis ? buildBuyerBrief(analysis) : ""), [analysis]);
-  const batchBrief = useMemo(
-    () => (batchResults.length > 1 ? buildBatchPilotBrief(batchResults) : ""),
-    [batchResults],
+  }, [analysis, outreachAttribution]);
+  const buyerBrief = useMemo(
+    () => (analysis ? buildBuyerBrief(analysis, outreachAttribution) : ""),
+    [analysis, outreachAttribution],
   );
-  const pilotHandoffHref = useMemo(() => buildPilotHandoffHref(batchBrief), [batchBrief]);
+  const batchBrief = useMemo(
+    () => (batchResults.length > 1 ? buildBatchPilotBrief(batchResults, outreachAttribution) : ""),
+    [batchResults, outreachAttribution],
+  );
+  const pilotHandoffHref = useMemo(
+    () => buildPilotHandoffHref(batchBrief, outreachAttribution),
+    [batchBrief, outreachAttribution],
+  );
 
   async function runAnalysis(files: File[]) {
     const selectedFiles = files.slice(0, 5);
@@ -335,7 +362,7 @@ export function TraceReadyWorkbench() {
     setIsPacking(true);
 
     try {
-      const blob = await createCompliancePack(analysis);
+      const blob = await createCompliancePack(analysis, outreachAttribution);
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
@@ -1102,7 +1129,7 @@ function BatchPilotSummary({
   );
 }
 
-function buildBuyerBrief(analysis: TraceReadyAnalysis): string {
+function buildBuyerBrief(analysis: TraceReadyAnalysis, outreachAttribution?: OutreachAttribution | null): string {
   const blockers = analysis.issues.filter((issue) => issue.severity === "blocker");
   const warnings = analysis.issues.filter((issue) => issue.severity === "warning");
   const status =
@@ -1131,6 +1158,7 @@ function buildBuyerBrief(analysis: TraceReadyAnalysis): string {
     `Warnings: ${analysis.summary.warnings}`,
     `Commodity: ${commodities}`,
     `Country: ${countries}`,
+    ...formatOutreachAttributionLines(outreachAttribution),
     "",
     "Top issues:",
     ...(topIssues.length
@@ -1146,7 +1174,7 @@ function buildBuyerBrief(analysis: TraceReadyAnalysis): string {
   ].join("\n");
 }
 
-function buildBatchPilotBrief(results: BatchResult[]): string {
+function buildBatchPilotBrief(results: BatchResult[], outreachAttribution?: OutreachAttribution | null): string {
   const summary = summarizeBatch(results);
   const cleanupFiles = results.filter((result) => (result.analysis?.summary.blockers ?? 0) > 0);
   const reviewFiles = results.filter(
@@ -1168,6 +1196,7 @@ function buildBatchPilotBrief(results: BatchResult[]): string {
     `Total blockers: ${summary.blockers}`,
     `Total warnings: ${summary.warnings}`,
     `Average readiness score: ${summary.analyzedFiles ? `${summary.averageScore}/100` : "not available"}`,
+    ...formatOutreachAttributionLines(outreachAttribution),
     "",
     "File breakdown:",
     ...results.map((result) => {
@@ -1193,7 +1222,10 @@ function buildBatchPilotBrief(results: BatchResult[]): string {
   ].join("\n");
 }
 
-function buildPaidCleanupHandoffHref(analysis: TraceReadyAnalysis): string {
+function buildPaidCleanupHandoffHref(
+  analysis: TraceReadyAnalysis,
+  outreachAttribution?: OutreachAttribution | null,
+): string {
   const subject = encodeURIComponent(`TraceReady paid cleanup file - ${analysis.fileName}`);
   const body = encodeURIComponent(
     [
@@ -1204,7 +1236,7 @@ function buildPaidCleanupHandoffHref(analysis: TraceReadyAnalysis): string {
       "Contact name:",
       "Deadline:",
       "",
-      buildBuyerBrief(analysis),
+      buildBuyerBrief(analysis, outreachAttribution),
       "",
       "Notes:",
     ].join("\n"),
@@ -1213,8 +1245,9 @@ function buildPaidCleanupHandoffHref(analysis: TraceReadyAnalysis): string {
   return `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
 }
 
-function buildPilotHandoffHref(batchBrief = ""): string {
+function buildPilotHandoffHref(batchBrief = "", outreachAttribution?: OutreachAttribution | null): string {
   const subject = encodeURIComponent("TraceReady pilot files after checkout");
+  const attributionLines = batchBrief ? [] : formatOutreachAttributionLines(outreachAttribution);
   const body = encodeURIComponent(
     [
       "I bought the TraceReady 5-file pilot and need to submit files.",
@@ -1224,6 +1257,7 @@ function buildPilotHandoffHref(batchBrief = ""): string {
       "Contact name:",
       "Target deadline:",
       "Buyer-specific requirements:",
+      ...attributionLines,
       "",
       batchBrief || "Paste the TraceReady Importer Pilot Summary here if you generated one.",
       "",

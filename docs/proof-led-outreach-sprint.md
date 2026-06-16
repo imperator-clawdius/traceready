@@ -8,6 +8,8 @@ The base proof page is `https://traceready.online/proof/`. For outreach, send th
 
 The first executable batch is `docs/proof-led-outreach-batch-01.csv`. The copy-pasteable send packet is `docs/proof-led-outreach-send-pack-01.md`. They are intentionally company-level only: public route URLs, no employee names, no personal emails, no personal profile URLs, deterministic route IDs, tracked TraceReady URLs, and every row starts from the public audit numbers. Run `npm run render:outreach` after editing the CSV, then `npm run verify:outreach` before using or modifying the batch.
 
+If a routed visitor lands on `/proof/`, the "Run a file in the browser" CTA keeps the same UTM route parameters. If they run the free checker from a routed URL, the copied buyer summary, downloaded ZIP artifacts, and paid-cleanup mailto handoff include the non-personal `Outreach route: b01-rNN` attribution line. Use that line to connect real file checks back to the private results ledger.
+
 After sending, copy `docs/proof-led-outreach-results-batch-01.csv` to a private working file, keep the route/link columns intact, and run `npm run summarize:outreach -- path/to/private-results.csv`. Do not commit private replies, personal contact details, customer files, or order evidence.
 
 ## Positioning
@@ -24,7 +26,7 @@ The founder angle is useful only after the proof lands: small team, hands-on cle
 - Do not scrape employee emails, personal phone numbers, or private social profiles.
 - Do not imply certification, legal due diligence, TRACES submission, or deforestation-free proof.
 - Do not ask for confidential coordinates in the first message. Ask them to run the browser-side check first, then offer concierge cleanup if useful.
-- Log sends, replies, file checks, and orders against the row's `route_id` in a private copy of `docs/proof-led-outreach-results-batch-01.csv`; do not commit customer files or private replies.
+- Log sends, replies, file checks, route-stamped buyer summaries, and orders against the row's `route_id` in a private copy of `docs/proof-led-outreach-results-batch-01.csv`; do not commit customer files or private replies.
 
 ## Target Tiers
 

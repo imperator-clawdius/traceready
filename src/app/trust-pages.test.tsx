@@ -43,6 +43,7 @@ describe("TraceReady trust pages", () => {
       root.unmount();
     });
     container.remove();
+    window.history.pushState({}, "", "/");
   });
 
   it("states retention, deletion, confidentiality, and no-training handling for buyer files", () => {
@@ -202,6 +203,26 @@ describe("TraceReady trust pages", () => {
     expect(browserCheckLink?.getAttribute("href")).toBe("/");
     expect(cleanupLink?.getAttribute("href")).toBe("/checkout/cleanup/");
     expect(contactLink?.getAttribute("href")).toBe("/contact/");
+  });
+
+  it("preserves proof-led route tracking when proof visitors continue to the browser checker", () => {
+    window.history.pushState(
+      {},
+      "",
+      "/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04",
+    );
+
+    act(() => {
+      root.render(<ProofPage />);
+    });
+
+    const browserCheckLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("Run a file in the browser"),
+    );
+
+    expect(browserCheckLink?.getAttribute("href")).toBe(
+      "/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04",
+    );
   });
 
   it("provides a tighter paid-order intake handoff", () => {
