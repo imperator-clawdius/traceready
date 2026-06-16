@@ -8,6 +8,11 @@ const DEFAULT_OUTPUT_PATH = "docs/proof-led-outreach-send-pack-01.md";
 const EMAIL_PATTERN = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i;
 const PERSONAL_PROFILE_PATTERN =
   /(?:linkedin\.com\/in\/|facebook\.com\/people\/|instagram\.com\/p\/|x\.com\/[^/\s]+\/status\/)/i;
+const PROOF_FLOW_LINES = [
+  "Messy public file in: a public Colombian cocoa dataset with coordinates and area values.",
+  "Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.",
+  "Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.",
+];
 
 export function renderOutreachPacket(rows, options = {}) {
   const title = options.title ?? "TraceReady proof-led outreach send packet - batch 01";
@@ -19,6 +24,7 @@ export function renderOutreachPacket(rows, options = {}) {
     `Generated from \`${batchPath}\`. Use company-level public routes only. Do not add employee names, personal emails, or personal-profile URLs to the committed packet.`,
     "",
     "Core proof: TraceReady checked 57,658 public cocoa rows and found 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.",
+    "Proof flow: Messy public file in; Exact issue counts out; Cleaned pack boundary stated honestly instead of pretending missing IDs, suppliers, batches, or polygons can be invented.",
     "",
     `Base proof page: ${PROOF_BASE_URL}`,
     `Base field note: ${FIELD_NOTE_BASE_URL}`,
@@ -41,6 +47,18 @@ export function validateRenderedOutreachPacket(markdown, rows) {
 
   if (!markdown.includes("46,134")) {
     errors.push("packet must include 46,134 public-audit proof number");
+  }
+
+  if (!markdown.includes("Messy public file in")) {
+    errors.push("packet must include messy-file-in proof framing");
+  }
+
+  if (!markdown.includes("Exact issue counts out")) {
+    errors.push("packet must include exact-issues-out proof framing");
+  }
+
+  if (!markdown.includes("Cleaned pack boundary")) {
+    errors.push("packet must include cleaned-pack-boundary proof framing");
   }
 
   if (EMAIL_PATTERN.test(markdown)) {
@@ -143,6 +161,8 @@ export function bodyFor(row) {
       "",
       "I published a public mini-audit using a 57,658-row cocoa farm-location dataset. The useful part for members is practical: even with latitude, longitude, and area fields, the file still surfaced 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.",
       "",
+      ...PROOF_FLOW_LINES,
+      "",
       `Public proof page: ${row.proof_url}`,
       `Shareable field note: ${row.field_note_url}`,
       `Documented pilot request: ${row.pilot_proof_url}`,
@@ -161,6 +181,8 @@ export function bodyFor(row) {
       "",
       "TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.",
       "",
+      ...PROOF_FLOW_LINES,
+      "",
       `Public proof page: ${row.proof_url}`,
       `Shareable field note: ${row.field_note_url}`,
       `Documented pilot request: ${row.pilot_proof_url}`,
@@ -173,6 +195,8 @@ export function bodyFor(row) {
     `Hi ${row.company_or_channel},`,
     "",
     "Quick, specific note. I ran a public cocoa farm-location dataset through TraceReady, a file-readiness checker for coffee and cocoa handoff files. Even after assuming the file was Colombian cocoa, it still had 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.",
+    "",
+    ...PROOF_FLOW_LINES,
     "",
     "That is the narrow problem I am looking for: not \"buy software,\" just \"will this supplier CSV/KML/GeoJSON create buyer-review rework?\"",
     "",

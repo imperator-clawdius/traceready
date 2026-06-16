@@ -3,6 +3,7 @@
 Generated from `docs/proof-led-outreach-batch-01.csv`. Use company-level public routes only. Do not add employee names, personal emails, or personal-profile URLs to the committed packet.
 
 Core proof: TraceReady checked 57,658 public cocoa rows and found 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+Proof flow: Messy public file in; Exact issue counts out; Cleaned pack boundary stated honestly instead of pretending missing IDs, suppliers, batches, or polygons can be invented.
 
 Base proof page: https://traceready.online/proof/
 Base field note: https://traceready.online/field-notes/eudr-file-errors/
@@ -35,6 +36,10 @@ Hi European Coffee Federation,
 I built TraceReady as a narrow cleanup desk for coffee and cocoa CSV/KML/GeoJSON files before buyer review.
 
 I published a public mini-audit using a 57,658-row cocoa farm-location dataset. The useful part for members is practical: even with latitude, longitude, and area fields, the file still surfaced 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+
+Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
+Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
 
 Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01
@@ -83,6 +88,10 @@ I built TraceReady as a narrow cleanup desk for coffee and cocoa CSV/KML/GeoJSON
 
 I published a public mini-audit using a 57,658-row cocoa farm-location dataset. The useful part for members is practical: even with latitude, longitude, and area fields, the file still surfaced 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 
+Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
+Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+
 Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02
 Documented pilot request: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02
@@ -129,6 +138,10 @@ Hi Deutscher Kaffeeverband,
 I built TraceReady as a narrow cleanup desk for coffee and cocoa CSV/KML/GeoJSON files before buyer review.
 
 I published a public mini-audit using a 57,658-row cocoa farm-location dataset. The useful part for members is practical: even with latitude, longitude, and area fields, the file still surfaced 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+
+Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
+Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
 
 Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r03
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r03
@@ -177,6 +190,10 @@ I built TraceReady as a narrow cleanup desk for coffee and cocoa CSV/KML/GeoJSON
 
 I published a public mini-audit using a 57,658-row cocoa farm-location dataset. The useful part for members is practical: even with latitude, longitude, and area fields, the file still surfaced 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 
+Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
+Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+
 Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04
 Documented pilot request: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04
@@ -224,6 +241,10 @@ I built TraceReady as a narrow cleanup desk for coffee and cocoa CSV/KML/GeoJSON
 
 I published a public mini-audit using a 57,658-row cocoa farm-location dataset. The useful part for members is practical: even with latitude, longitude, and area fields, the file still surfaced 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 
+Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
+Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+
 Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r05
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r05
 Documented pilot request: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r05
@@ -268,6 +289,10 @@ Subject: Row-level check for messy EUDR farm files
 Hi Cafe Imports Europe,
 
 Quick, specific note. I ran a public cocoa farm-location dataset through TraceReady, a file-readiness checker for coffee and cocoa handoff files. Even after assuming the file was Colombian cocoa, it still had 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+
+Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
+Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
@@ -316,6 +341,10 @@ Hi Sucafina Specialty Europe,
 
 Quick, specific note. I ran a public cocoa farm-location dataset through TraceReady, a file-readiness checker for coffee and cocoa handoff files. Even after assuming the file was Colombian cocoa, it still had 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 
+Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
+Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
 Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r07
@@ -362,6 +391,10 @@ Subject: Row-level check for messy EUDR farm files
 Hi Falcon Coffees Europe,
 
 Quick, specific note. I ran a public cocoa farm-location dataset through TraceReady, a file-readiness checker for coffee and cocoa handoff files. Even after assuming the file was Colombian cocoa, it still had 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+
+Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
+Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
@@ -410,6 +443,10 @@ Hi Nordic Approach,
 
 Quick, specific note. I ran a public cocoa farm-location dataset through TraceReady, a file-readiness checker for coffee and cocoa handoff files. Even after assuming the file was Colombian cocoa, it still had 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 
+Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
+Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
 Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r09
@@ -456,6 +493,10 @@ Subject: Row-level check for messy EUDR farm files
 Hi Trabocca,
 
 Quick, specific note. I ran a public cocoa farm-location dataset through TraceReady, a file-readiness checker for coffee and cocoa handoff files. Even after assuming the file was Colombian cocoa, it still had 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+
+Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
+Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
@@ -504,6 +545,10 @@ Hi InterAmerican Coffee Europe,
 
 Quick, specific note. I ran a public cocoa farm-location dataset through TraceReady, a file-readiness checker for coffee and cocoa handoff files. Even after assuming the file was Colombian cocoa, it still had 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 
+Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
+Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
 Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r11
@@ -550,6 +595,10 @@ Subject: Row-level check for messy EUDR farm files
 Hi EFICO,
 
 Quick, specific note. I ran a public cocoa farm-location dataset through TraceReady, a file-readiness checker for coffee and cocoa handoff files. Even after assuming the file was Colombian cocoa, it still had 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+
+Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
+Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
@@ -598,6 +647,10 @@ Hi Daarnhouwer & Co,
 
 Quick, specific note. I ran a public cocoa farm-location dataset through TraceReady, a file-readiness checker for coffee and cocoa handoff files. Even after assuming the file was Colombian cocoa, it still had 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 
+Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
+Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
 Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r13
@@ -644,6 +697,10 @@ Subject: Row-level check for messy EUDR farm files
 Hi Ally Coffee Europe,
 
 Quick, specific note. I ran a public cocoa farm-location dataset through TraceReady, a file-readiness checker for coffee and cocoa handoff files. Even after assuming the file was Colombian cocoa, it still had 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+
+Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
+Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
@@ -692,6 +749,10 @@ Hi Covoya Specialty Coffee Europe,
 
 Quick, specific note. I ran a public cocoa farm-location dataset through TraceReady, a file-readiness checker for coffee and cocoa handoff files. Even after assuming the file was Colombian cocoa, it still had 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 
+Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
+Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
 Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r15
@@ -738,6 +799,10 @@ Subject: Row-level check for messy EUDR farm files
 Hi Belco,
 
 Quick, specific note. I ran a public cocoa farm-location dataset through TraceReady, a file-readiness checker for coffee and cocoa handoff files. Even after assuming the file was Colombian cocoa, it still had 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+
+Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
+Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
@@ -786,6 +851,10 @@ Hi List + Beisler,
 
 Quick, specific note. I ran a public cocoa farm-location dataset through TraceReady, a file-readiness checker for coffee and cocoa handoff files. Even after assuming the file was Colombian cocoa, it still had 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 
+Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
+Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
 Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r17
@@ -832,6 +901,10 @@ Subject: Row-level check for messy EUDR farm files
 Hi DRWakefield,
 
 Quick, specific note. I ran a public cocoa farm-location dataset through TraceReady, a file-readiness checker for coffee and cocoa handoff files. Even after assuming the file was Colombian cocoa, it still had 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+
+Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
+Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
@@ -880,6 +953,10 @@ Hi Hamburg Coffee Company HACOFCO,
 
 Quick, specific note. I ran a public cocoa farm-location dataset through TraceReady, a file-readiness checker for coffee and cocoa handoff files. Even after assuming the file was Colombian cocoa, it still had 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 
+Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
+Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
 Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r19
@@ -926,6 +1003,10 @@ Subject: Row-level check for messy EUDR farm files
 Hi Volcafe UK and Ireland,
 
 Quick, specific note. I ran a public cocoa farm-location dataset through TraceReady, a file-readiness checker for coffee and cocoa handoff files. Even after assuming the file was Colombian cocoa, it still had 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+
+Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
+Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 

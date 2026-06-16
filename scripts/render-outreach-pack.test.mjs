@@ -16,12 +16,18 @@ describe("proof-led outreach send packet renderer", () => {
 
     expect(markdown).toContain("# Fixture packet");
     expect(markdown).toContain("Generated from `docs/proof-led-outreach-batch-01.csv`");
+    expect(markdown).toContain("Messy public file in");
+    expect(markdown).toContain("Exact issue counts out");
+    expect(markdown).toContain("Cleaned pack boundary");
     expect(markdown).toContain("## 1. European Coffee Federation");
     expect(markdown).toContain("Subject: Free EUDR file-readiness example for coffee members");
     expect(markdown).toContain("Is there a member education channel where this would be useful?");
     expect(markdown).toContain("## 2. Cafe Imports Europe");
     expect(markdown).toContain("- Route ID: b01-r02");
     expect(markdown).toContain("Subject: Row-level check for messy EUDR farm files");
+    expect(markdown).toContain("Messy public file in: a public Colombian cocoa dataset");
+    expect(markdown).toContain("Exact issue counts out: 46,134 point-only plots over 4 hectares");
+    expect(markdown).toContain("Cleaned pack boundary: TraceReady did not invent missing plot IDs");
     expect(markdown).toContain("You can run one file in the browser first");
     expect(markdown).toContain("Documented pilot request:");
     expect(markdown).toContain(
@@ -53,6 +59,9 @@ describe("proof-led outreach send packet renderer", () => {
 
     expect(errors).toContain("packet must include 57,658 public-audit proof number");
     expect(errors).toContain("packet must include 46,134 public-audit proof number");
+    expect(errors).toContain("packet must include messy-file-in proof framing");
+    expect(errors).toContain("packet must include exact-issues-out proof framing");
+    expect(errors).toContain("packet must include cleaned-pack-boundary proof framing");
     expect(errors).toContain("packet must include tracked proof URL for Cafe Imports Europe");
     expect(errors).toContain("packet must include tracked field-note URL for Cafe Imports Europe");
     expect(errors).toContain("packet must include tracked file-check URL for Cafe Imports Europe");
