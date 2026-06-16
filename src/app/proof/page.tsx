@@ -5,24 +5,11 @@ import {
   CONTACT_HREF,
   FIELD_NOTE_EUDR_FILE_ERRORS_HREF,
   LEGAL_OPERATOR,
-  METHODOLOGY_HREF,
-  ORDER_INTAKE_HREF,
   PUBLIC_PILOT_PACK_HREF,
-  SAMPLE_PACK_HREF,
 } from "@/lib/site";
 import { TrackedHomeLink } from "./TrackedHomeLink";
 import { TrackedPilotProofLink } from "./TrackedPilotProofLink";
 import { TrackedTriageLink } from "./TrackedTriageLink";
-
-const OUTPUTS = [
-  "traceready-cleaned-farms.csv",
-  "traceready-issues.csv",
-  "traceready-geolocation.geojson",
-  "traceready-buyer-summary.txt",
-  "traceready-readiness-report.txt",
-  "traceready-eudr-checklist.json",
-  "traceready-paid-cleanup-intake.txt",
-];
 
 const AUDIT_STATS = [
   {
@@ -77,26 +64,26 @@ export default function ProofPage() {
         <div className="mt-6 grid gap-4 lg:grid-cols-3">
           <section className="border border-[#d9bf92] bg-white p-5 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#7d5d32]">Before</p>
-            <h2 className="mt-2 text-lg font-semibold text-[#2b190f]">Public source rows</h2>
+            <h2 className="mt-2 text-lg font-semibold text-[#2b190f]">Messy public file in</h2>
             <p className="mt-3 text-sm leading-6 text-zinc-700">
-              57,658 rows with latitude, longitude, and area values, but no plot IDs, supplier identity,
-              batch linkage, or polygon geometry in the buyer-handoff view.
+              Public source rows: 57,658 rows with latitude, longitude, and area values, but no plot
+              IDs, supplier identity, batch linkage, or polygon geometry in the buyer-handoff view.
             </p>
           </section>
           <section className="border border-[#d9bf92] bg-white p-5 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#7d5d32]">During</p>
-            <h2 className="mt-2 text-lg font-semibold text-[#2b190f]">Issue log</h2>
+            <h2 className="mt-2 text-lg font-semibold text-[#2b190f]">Exact issue counts out</h2>
             <p className="mt-3 text-sm leading-6 text-zinc-700">
-              TraceReady found 161,450 blockers, 57,658 warnings, and 46,134 point-only plots over
-              4 hectares that need polygon follow-up before buyer review.
+              Issue log: TraceReady found 161,450 blockers, 57,658 warnings, and 46,134 point-only
+              plots over 4 hectares that need polygon follow-up before buyer review.
             </p>
           </section>
           <section className="border border-[#d9bf92] bg-white p-5 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#7d5d32]">After</p>
-            <h2 className="mt-2 text-lg font-semibold text-[#2b190f]">Handoff out</h2>
+            <h2 className="mt-2 text-lg font-semibold text-[#2b190f]">Cleaned pack boundary</h2>
             <p className="mt-3 text-sm leading-6 text-zinc-700">
-              Output is a buyer/supplier follow-up list and issue evidence. TraceReady does not fabricate
-              missing supplier IDs, plot IDs, batch IDs, or polygon boundaries.
+              Handoff out: buyer/supplier follow-up list and issue evidence. TraceReady does not
+              fabricate missing supplier IDs, plot IDs, batch IDs, or polygon boundaries.
             </p>
           </section>
         </div>
@@ -119,41 +106,6 @@ export default function ProofPage() {
           >
             Download public pilot evidence pack
           </a>
-        </section>
-
-        <section className="mt-6 border border-[#d9bf92] bg-[#fffaf2] p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-[#2b190f]">Format example pack</h2>
-          <p className="mt-3 max-w-3xl text-sm leading-6 text-zinc-700">
-            The downloadable ZIP is still a fictional fixture. It shows the file names and handoff
-            format a paid cleanup can return when a source file has enough real data to repair.
-          </p>
-          <ul className="mt-4 grid gap-2 text-sm font-medium text-[#3f2a1b] sm:grid-cols-2">
-            {OUTPUTS.map((output) => (
-              <li key={output} className="border border-[#eadcc8] bg-white px-3 py-2">
-                {output}
-              </li>
-            ))}
-          </ul>
-          <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-            <a
-              href={SAMPLE_PACK_HREF}
-              className="inline-flex h-11 items-center justify-center rounded-md bg-zinc-950 px-4 text-sm font-semibold text-white transition hover:bg-zinc-800"
-            >
-              Download representative sample pack
-            </a>
-            <Link
-              href={METHODOLOGY_HREF}
-              className="inline-flex h-11 items-center justify-center rounded-md border border-zinc-300 bg-white px-4 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-100"
-            >
-              Read methodology
-            </Link>
-            <Link
-              href={ORDER_INTAKE_HREF}
-              className="inline-flex h-11 items-center justify-center rounded-md border border-zinc-300 bg-white px-4 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-100"
-            >
-              Order intake checklist
-            </Link>
-          </div>
         </section>
 
         <section className="mt-6 border border-[#d9bf92] bg-white p-6 shadow-sm">
@@ -260,8 +212,8 @@ export default function ProofPage() {
         <p className="mt-6 text-xs leading-5 text-zinc-500">
           Public proof will be upgraded only when it is true and permissioned: customer quote, company
           name, paid order count, turnaround metric, or de-identified customer before/after. Until then,
-          TraceReady is clear that the public-data pilot is not a customer case and the sample ZIP is
-          format-only. Operated by {LEGAL_OPERATOR}. Questions: {CONTACT_EMAIL}.
+          TraceReady is clear that the public-data pilot is not a customer case or buyer approval.
+          Operated by {LEGAL_OPERATOR}. Questions: {CONTACT_EMAIL}.
         </p>
       </div>
     </main>

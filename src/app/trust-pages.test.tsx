@@ -145,11 +145,11 @@ describe("TraceReady trust pages", () => {
     });
 
     const pageText = container.textContent ?? "";
-    const sampleLink = Array.from(container.querySelectorAll("a")).find((element) =>
-      element.textContent?.includes("Download representative sample pack"),
-    );
     const pilotPackLink = Array.from(container.querySelectorAll("a")).find((element) =>
       element.textContent?.includes("Download public pilot evidence pack"),
+    );
+    const sampleLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("Download representative sample pack"),
     );
 
     expect(pageText).toContain("Public-data pilot, exact limits");
@@ -163,10 +163,13 @@ describe("TraceReady trust pages", () => {
     expect(pageText).toContain("Evidence pack");
     expect(pageText).toContain("readiness report, issue-summary CSV, buyer/supplier follow-up list");
     expect(pageText).toContain("not raw source rows or coordinates");
-    expect(pageText).toContain("Format example pack");
-    expect(pageText).toContain("fictional fixture");
+    expect(pageText).toContain("Messy public file in");
+    expect(pageText).toContain("Exact issue counts out");
+    expect(pageText).toContain("Cleaned pack boundary");
+    expect(pageText).not.toContain("Format example pack");
+    expect(pageText).not.toContain("fictional fixture");
     expect(pilotPackLink?.getAttribute("href")).toBe("/traceready-public-cocoa-pilot-pack.zip");
-    expect(sampleLink?.getAttribute("href")).toBe("/traceready-sample-output.zip");
+    expect(sampleLink).toBeUndefined();
   });
 
   it("publishes the public cocoa dataset mini-audit as proof-led outreach evidence", () => {
