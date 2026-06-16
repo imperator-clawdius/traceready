@@ -76,12 +76,18 @@ describe("traction readiness scorecard", () => {
           { label: "OUTREACH_EMAIL_ALIAS_TEST", ready: false },
         ],
       },
+      sendReadyPackets: {
+        "b02-r03": "Confirm: submit b02-r03 to Control Union using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-b02-r03.md.",
+        "b02-r04": "Confirm: submit b02-r04 to Bureau Veritas using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-b02-r04.md.",
+      },
     });
 
     expect(score.publicProof.recordsAnalyzed).toBe(57658);
     expect(score.publicProof.pointOnlyOver4ha).toBe(46134);
     expect(score.publicProof.readinessScore).toBe("0/100");
     expect(score.outreach.readyBrowserFormRoutes).toBe(2);
+    expect(score.outreach.packetReadyRoutes).toBe(2);
+    expect(score.outreach.missingPacketRoutes).toEqual([]);
     expect(score.outreach.sentOrBeyond).toBe(0);
     expect(score.currentState).toBe("proof_ready_send_ready_traction_unmeasured");
     expect(score.nextGate).toBe("submit_verified_public_forms_after_action_time_confirmation");
@@ -90,9 +96,48 @@ describe("traction readiness scorecard", () => {
     expect(markdown).toContain("# TraceReady traction-readiness scorecard - 2026-06-16");
     expect(markdown).toContain("| Public rows analyzed | 57,658 |");
     expect(markdown).toContain("| Manually verified browser-form-ready routes | 2 |");
+    expect(markdown).toContain("| Send-ready packets with matching confirmation | 2 |");
     expect(markdown).toContain("| External submissions completed | 0 |");
     expect(markdown).toContain("OUTREACH_EMAIL_DMARC: pending");
     expect(markdown).toContain("Confirm: submit b02-r03 to Control Union");
     expect(markdown).toContain("Confirm: submit b02-r04 to Bureau Veritas");
+  });
+
+  it("changes the next gate when a browser-form-ready route is missing a matching send packet", () => {
+    const score = scoreTractionReadiness({
+      publicAuditMarkdown: PUBLIC_AUDIT,
+      batchRows: parseOutreachLedger(BATCH_CSV),
+      resultRows: parseOutreachResults(RESULTS_CSV),
+      sendabilityAudit: {
+        routes: [
+          {
+            route_id: "b02-r03",
+            company_or_channel: "Control Union",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://www.controlunion.com/eu-deforestation-regulation-eudr/",
+            requires_action_time_confirmation: true,
+          },
+          {
+            route_id: "b02-r04",
+            company_or_channel: "Bureau Veritas",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://news.bureauveritas.net/l/591681/2024-10-25/3t89vtv",
+            requires_action_time_confirmation: true,
+          },
+        ],
+      },
+      contactRecon: { summary: {} },
+      emailReport: { ready: false, dnsReady: false, checks: [] },
+      sendReadyPackets: {
+        "b02-r03": "Confirm: submit b02-r03 to Control Union using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-b02-r03.md.",
+      },
+    });
+
+    expect(score.outreach.packetReadyRoutes).toBe(1);
+    expect(score.outreach.missingPacketRoutes).toEqual(["b02-r04"]);
+    expect(score.currentState).toBe("proof_ready_routes_need_send_packets");
+    expect(score.nextGate).toBe("render_missing_send_ready_packets");
   });
 });

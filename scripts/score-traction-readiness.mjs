@@ -19,16 +19,25 @@ export function scoreTractionReadiness({
   sendabilityAudit,
   contactRecon,
   emailReport,
+  sendReadyPackets,
 }) {
   const publicProof = parsePublicProof(publicAuditMarkdown);
   const resultsSummary = summarizeOutreachResults(resultRows);
   const sendabilityRoutes = Array.isArray(sendabilityAudit?.routes) ? sendabilityAudit.routes : [];
   const readyRoutes = sendabilityRoutes.filter((route) => route.sendability === "browser_form_ready");
   const blockedRoutes = sendabilityRoutes.filter((route) => route.sendability === "blocked");
+  const readyRouteSummaries = readyRoutes.map((route) => ({
+    route_id: route.route_id,
+    company_or_channel: route.company_or_channel ?? batchRows.find((row) => row.route_id === route.route_id)?.company_or_channel ?? route.route_id,
+    route_url: route.route_url,
+  }));
+  const packetVerification = verifySendReadyPackets(readyRouteSummaries, sendReadyPackets);
   const reconSummary = contactRecon?.summary ?? {};
   const emailChecks = Object.fromEntries((emailReport?.checks ?? []).map((check) => [check.label, check.ready]));
   const currentState =
-    resultsSummary.sentOrBeyond === 0 && readyRoutes.length > 0
+    packetVerification.checked && packetVerification.missingPacketRoutes.length + packetVerification.missingConfirmationRoutes.length > 0
+      ? "proof_ready_routes_need_send_packets"
+      : resultsSummary.sentOrBeyond === 0 && readyRoutes.length > 0
       ? "proof_ready_send_ready_traction_unmeasured"
       : resultsSummary.sentOrBeyond > 0 && resultsSummary.replies + resultsSummary.fileChecks + resultsSummary.paidOrders + resultsSummary.pilotRequests === 0
         ? "outreach_sent_waiting_for_signal"
@@ -46,11 +55,10 @@ export function scoreTractionReadiness({
       sendabilityAuditRoutes: sendabilityRoutes.length,
       readyBrowserFormRoutes: readyRoutes.length,
       blockedSendabilityRoutes: blockedRoutes.length,
-      readyRoutes: readyRoutes.map((route) => ({
-        route_id: route.route_id,
-        company_or_channel: route.company_or_channel ?? batchRows.find((row) => row.route_id === route.route_id)?.company_or_channel ?? route.route_id,
-        route_url: route.route_url,
-      })),
+      readyRoutes: readyRouteSummaries,
+      packetReadyRoutes: packetVerification.packetReadyRoutes,
+      missingPacketRoutes: packetVerification.missingPacketRoutes,
+      missingConfirmationRoutes: packetVerification.missingConfirmationRoutes,
       sentOrBeyond: resultsSummary.sentOrBeyond,
       replies: resultsSummary.replies,
       fieldNoteClicks: resultsSummary.fieldNoteClicks,
@@ -65,7 +73,9 @@ export function scoreTractionReadiness({
     },
     currentState,
     nextGate:
-      resultsSummary.sentOrBeyond === 0 && readyRoutes.length > 0
+      packetVerification.checked && packetVerification.missingPacketRoutes.length + packetVerification.missingConfirmationRoutes.length > 0
+        ? "render_missing_send_ready_packets"
+        : resultsSummary.sentOrBeyond === 0 && readyRoutes.length > 0
         ? "submit_verified_public_forms_after_action_time_confirmation"
         : "measure_replies_file_checks_pilot_requests_and_paid_orders",
   };
@@ -116,6 +126,9 @@ Next gate: \`${score.nextGate}\`
 | Contact-link-only routes from recon | ${score.outreach.contactLinkOnlyRoutes} |
 | Unreachable routes from recon | ${score.outreach.unreachableRoutes} |
 | Manually verified browser-form-ready routes | ${score.outreach.readyBrowserFormRoutes} |
+| Send-ready packets with matching confirmation | ${score.outreach.packetReadyRoutes ?? "not checked"} |
+| Missing send-ready packets | ${(score.outreach.missingPacketRoutes ?? []).length} |
+| Send-ready packets missing confirmation | ${(score.outreach.missingConfirmationRoutes ?? []).length} |
 | Blocked sendability routes | ${score.outreach.blockedSendabilityRoutes} |
 | External submissions completed | ${score.outreach.sentOrBeyond} |
 | Replies | ${score.outreach.replies} |
@@ -129,6 +142,13 @@ Next gate: \`${score.nextGate}\`
 | Route | Target | Public route | Packet |
 | --- | --- | --- | --- |
 ${readyRouteLines.join("\n")}
+
+## Send Packet Guard
+
+| Check | Route IDs |
+| --- | --- |
+| Missing packet files | ${(score.outreach.missingPacketRoutes ?? []).length ? score.outreach.missingPacketRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
+| Missing confirmation text | ${(score.outreach.missingConfirmationRoutes ?? []).length ? score.outreach.missingConfirmationRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 
 ## Reply-Capture Risk
 
@@ -217,6 +237,22 @@ export function parseTractionReadinessArgs(argv) {
   return options;
 }
 
+export async function loadSendReadyPackets(readyRoutes) {
+  const entries = await Promise.all(
+    readyRoutes.map(async (route) => {
+      const packetPath = `private/send-ready-${route.route_id}.md`;
+
+      try {
+        return [route.route_id, await fs.readFile(packetPath, "utf8")];
+      } catch {
+        return [route.route_id, ""];
+      }
+    }),
+  );
+
+  return Object.fromEntries(entries);
+}
+
 function parsePublicProof(markdown) {
   return {
     recordsAnalyzed: extractNumber(markdown, "Records analyzed"),
@@ -227,6 +263,38 @@ function parsePublicProof(markdown) {
     polygonRecordsPresent: extractNumber(markdown, "Polygon records present"),
     readyRecords: extractNumber(markdown, "Ready records"),
     readinessScore: extractText(markdown, "Readiness score"),
+  };
+}
+
+function verifySendReadyPackets(readyRoutes, sendReadyPackets) {
+  if (sendReadyPackets === undefined) {
+    return {
+      checked: false,
+      packetReadyRoutes: undefined,
+      missingPacketRoutes: [],
+      missingConfirmationRoutes: [],
+    };
+  }
+
+  const missingPacketRoutes = [];
+  const missingConfirmationRoutes = [];
+
+  for (const route of readyRoutes) {
+    const packetText = sendReadyPackets[route.route_id] ?? sendReadyPackets[`private/send-ready-${route.route_id}.md`] ?? "";
+    const expectedConfirmation = `Confirm: submit ${route.route_id} to ${route.company_or_channel} using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-${route.route_id}.md.`;
+
+    if (!packetText.trim()) {
+      missingPacketRoutes.push(route.route_id);
+    } else if (!packetText.includes(expectedConfirmation)) {
+      missingConfirmationRoutes.push(route.route_id);
+    }
+  }
+
+  return {
+    checked: true,
+    packetReadyRoutes: readyRoutes.length - missingPacketRoutes.length - missingConfirmationRoutes.length,
+    missingPacketRoutes,
+    missingConfirmationRoutes,
   };
 }
 
@@ -279,6 +347,14 @@ async function main() {
   const emailReport = options.skipEmail
     ? { ready: false, dnsReady: false, checks: [] }
     : await inspectOutreachEmailDns();
+  const readyRoutesForPackets = (sendabilityAudit.routes ?? [])
+    .filter((route) => route.sendability === "browser_form_ready")
+    .map((route) => ({
+      route_id: route.route_id,
+      company_or_channel: route.company_or_channel ?? batchRows.find((row) => row.route_id === route.route_id)?.company_or_channel ?? route.route_id,
+      route_url: route.route_url,
+    }));
+  const sendReadyPackets = await loadSendReadyPackets(readyRoutesForPackets);
   const score = scoreTractionReadiness({
     publicAuditMarkdown,
     batchRows,
@@ -286,6 +362,7 @@ async function main() {
     sendabilityAudit,
     contactRecon,
     emailReport,
+    sendReadyPackets,
   });
   const markdown = renderTractionReadinessScorecard(score, { generatedAt: options.generatedAt });
 
@@ -301,6 +378,7 @@ async function main() {
       "TRACTION_READINESS=pass",
       `state=${score.currentState}`,
       `ready_routes=${score.outreach.readyBrowserFormRoutes}`,
+      `packet_ready=${score.outreach.packetReadyRoutes}`,
       `sent=${score.outreach.sentOrBeyond}`,
       `replies=${score.outreach.replies}`,
       `file_checks=${score.outreach.fileChecks}`,
