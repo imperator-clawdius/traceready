@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import Papa from "papaparse";
 import {
+  batchKeyForRouteId,
   routeIdForRowNumber,
   trackedFieldNoteUrl,
   trackedFileCheckUrl,
@@ -52,6 +53,7 @@ export function parseOutreachLedger(csv) {
 export function validateOutreachLedger(rows, options = {}) {
   const errors = [];
   const expectedRows = options.expectedRows ?? 20;
+  const batchKey = options.batchKey ?? batchKeyForRouteId(rows[0]?.route_id);
 
   if (rows.length !== expectedRows) {
     errors.push(`expected ${expectedRows} rows, found ${rows.length}`);
@@ -60,7 +62,7 @@ export function validateOutreachLedger(rows, options = {}) {
   rows.forEach((row, index) => {
     const rowNumber = index + 1;
     const rowText = Object.values(row).join(" ");
-    const expectedRouteId = routeIdForRowNumber(rowNumber);
+    const expectedRouteId = routeIdForRowNumber(rowNumber, batchKey);
 
     for (const column of REQUIRED_COLUMNS) {
       if (!(column in row)) {

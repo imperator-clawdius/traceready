@@ -47,7 +47,7 @@ const ALLOWED_RESPONSE_TYPES = new Set([
 const EMAIL_PATTERN = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i;
 const PERSONAL_PROFILE_PATTERN =
   /(?:linkedin\.com\/in\/|facebook\.com\/people\/|instagram\.com\/p\/|x\.com\/[^/\s]+\/status\/)/i;
-const ROUTE_ID_PATTERN = /^b01-r\d{2}$/;
+const ROUTE_ID_PATTERN = /^b\d{2}-r\d{2}$/;
 
 export function parseOutreachResults(csv) {
   const parsed = Papa.parse(csv, {

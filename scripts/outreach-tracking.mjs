@@ -6,8 +6,18 @@ export const FIELD_NOTE_BASE_URL = "https://traceready.online/field-notes/eudr-f
 export const FILE_CHECK_BASE_URL = "https://traceready.online/";
 export const PILOT_PROOF_BASE_URL = "https://traceready.online/pilot-proof/";
 
-export function routeIdForRowNumber(rowNumber) {
-  return `b01-r${String(rowNumber).padStart(2, "0")}`;
+export function routeIdForRowNumber(rowNumber, batchKey = "b01") {
+  return `${batchKey}-r${String(rowNumber).padStart(2, "0")}`;
+}
+
+export function batchKeyForRouteId(routeId) {
+  const match = String(routeId ?? "").match(/^(b\d{2})-r\d{2}$/);
+  return match?.[1] ?? "b01";
+}
+
+export function trackingSourceForRouteId(routeId) {
+  const batchNumber = batchKeyForRouteId(routeId).slice(1);
+  return `proof_led_batch_${batchNumber}`;
 }
 
 export function trackedProofUrl(routeId) {
@@ -28,7 +38,7 @@ export function trackedPilotProofUrl(routeId) {
 
 function trackedUrl(baseUrl, routeId) {
   const params = new URLSearchParams({
-    utm_source: TRACKING_SOURCE,
+    utm_source: trackingSourceForRouteId(routeId),
     utm_medium: TRACKING_MEDIUM,
     utm_campaign: TRACKING_CAMPAIGN,
     utm_content: routeId,

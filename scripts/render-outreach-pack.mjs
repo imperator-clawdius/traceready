@@ -15,8 +15,8 @@ const PROOF_FLOW_LINES = [
 ];
 
 export function renderOutreachPacket(rows, options = {}) {
-  const title = options.title ?? "TraceReady proof-led outreach send packet - batch 01";
   const batchPath = options.batchPath ?? DEFAULT_BATCH_PATH;
+  const title = options.title ?? `TraceReady proof-led outreach send packet - ${batchLabel(rows, batchPath)}`;
 
   return [
     `# ${title}`,
@@ -36,6 +36,16 @@ export function renderOutreachPacket(rows, options = {}) {
     "",
     ...rows.flatMap((row) => renderRow(row)),
   ].join("\n");
+}
+
+function batchLabel(rows, batchPath) {
+  const routeMatch = String(rows[0]?.route_id ?? "").match(/^b(\d{2})-r\d{2}$/);
+  if (routeMatch) {
+    return `batch ${routeMatch[1]}`;
+  }
+
+  const pathMatch = String(batchPath).match(/batch-(\d{2})/);
+  return pathMatch ? `batch ${pathMatch[1]}` : "batch 01";
 }
 
 export function validateRenderedOutreachPacket(markdown, rows) {

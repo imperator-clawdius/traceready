@@ -71,6 +71,19 @@ describe("proof-led outreach send packet renderer", () => {
     expect(errors).toContain("packet contains a personal-profile URL");
   });
 
+  it("labels second-batch packets from the route IDs", () => {
+    const rows = parseOutreachLedger(`priority,route_id,tier,company_or_channel,segment,why_it_fits,public_route,source_url,proof_url,field_note_url,file_check_url,pilot_proof_url,message_variant,proof_hook,ask,status,next_step
+1,b02-r01,overflow,Preferred by Nature,EUDR alignment services,Public EUDR service route,public EUDR service page,https://www.preferredbynature.org/certification/pbn-certification/eudr-alignment,https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r01,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r01,https://traceready.online/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r01,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r01,overflow,"Lead with 57,658-row public audit and 46,134 point-only over-4ha plots",Offer overflow file cleanup,not_started,Send overflow variant
+`);
+    const markdown = renderOutreachPacket(rows, {
+      batchPath: "docs/proof-led-outreach-batch-02.csv",
+    });
+
+    expect(markdown).toContain("# TraceReady proof-led outreach send packet - batch 02");
+    expect(markdown).toContain("utm_source=proof_led_batch_02");
+    expect(validateRenderedOutreachPacket(markdown, rows)).toEqual([]);
+  });
+
   it("keeps the committed send packet aligned with the committed batch", () => {
     const csv = fs.readFileSync("docs/proof-led-outreach-batch-01.csv", "utf8");
     const markdown = fs.readFileSync("docs/proof-led-outreach-send-pack-01.md", "utf8");

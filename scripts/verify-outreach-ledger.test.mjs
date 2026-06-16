@@ -12,6 +12,15 @@ describe("proof-led outreach ledger verifier", () => {
     expect(validateOutreachLedger(rows, { expectedRows: 2 })).toEqual([]);
   });
 
+  it("accepts a second tracked outreach batch without mixing route attribution", () => {
+    const rows = parseOutreachLedger(`priority,route_id,tier,company_or_channel,segment,why_it_fits,public_route,source_url,proof_url,field_note_url,file_check_url,pilot_proof_url,message_variant,proof_hook,ask,status,next_step
+1,b02-r01,overflow,Preferred by Nature,EUDR alignment services,Public EUDR service route with company contact form,public EUDR service page,https://www.preferredbynature.org/certification/pbn-certification/eudr-alignment,https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r01,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r01,https://traceready.online/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r01,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r01,overflow,"Lead with 57,658-row public audit and 46,134 point-only over-4ha plots",Offer first-pass file cleanup overflow,not_started,Send overflow variant
+2,b02-r02,overflow,SCS Global Services,EUDR geolocation quality reviews,Public EUDR support route mentions geolocation quality reviews,public EUDR support page,https://www.scsglobalservices.com/services/european-union-deforestation-regulation-eudr-support,https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r02,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r02,https://traceready.online/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r02,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r02,overflow,"Lead with 57,658-row public audit and 46,134 point-only over-4ha plots",Offer row-level file cleanup overflow,not_started,Send overflow variant
+`);
+
+    expect(validateOutreachLedger(rows, { expectedRows: 2 })).toEqual([]);
+  });
+
   it("rejects personal contact data and non-proof-led rows", () => {
     const rows = parseOutreachLedger(`priority,route_id,tier,company_or_channel,segment,why_it_fits,public_route,source_url,proof_url,field_note_url,file_check_url,pilot_proof_url,message_variant,proof_hook,ask,status,next_step
 1,b01-r99,importer,Example Coffee,green coffee importer,Example fit,person email,alice@example.com,https://traceready.online/proof/,https://traceready.online/field-notes/eudr-file-errors/,https://traceready.online/,https://traceready.online/pilot-proof/,importer,Generic SaaS pitch,Buy now,not_started,Send first message
