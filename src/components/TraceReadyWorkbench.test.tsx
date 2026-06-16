@@ -173,6 +173,36 @@ describe("TraceReady conversion surface", () => {
     expect(headerText).not.toContain("Florida");
   });
 
+  it("adds specific cleanup-desk credibility without personal bio details", () => {
+    act(() => {
+      root.render(<TraceReadyWorkbench />);
+    });
+
+    const operatorSection = Array.from(container.querySelectorAll("section")).find((section) =>
+      section.textContent?.includes("Cleanup-desk credibility"),
+    );
+    const operatorText = operatorSection?.textContent ?? "";
+
+    expect(operatorText).toContain("Built by a paperwork mechanic");
+    expect(operatorText).toContain("messy buyer handoffs");
+    expect(operatorText).toContain("regulated client operations");
+    expect(operatorText).toContain("AI tooling");
+    expect(operatorText).toContain("data QA");
+    expect(operatorText).toContain("privacy boundaries");
+    expect(operatorText).toContain("Regulated-workflow muscle memory");
+    expect(operatorText).toContain("Concierge cleanup, not seat licenses");
+    expect(operatorText).not.toContain("Founder proof");
+    expect(operatorText).not.toContain("teddyalston.com");
+    expect(operatorText).not.toContain("Teddy");
+    expect(operatorText).not.toContain("Orlando");
+    expect(operatorText).not.toContain("$1M");
+    expect(operatorText).not.toContain("500+");
+    expect(operatorText).not.toContain("12+");
+    expect(operatorText).not.toContain("theodore.alston@gmail.com");
+    expect(operatorText).not.toContain("IRS");
+    expect(operatorText).not.toContain("Florida");
+  });
+
   it("surfaces the public dataset audit on the main landing page", () => {
     act(() => {
       root.render(<TraceReadyWorkbench />);

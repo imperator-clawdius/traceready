@@ -190,6 +190,24 @@ const PUBLIC_PILOT_STATS = [
   },
 ];
 
+const OPERATOR_PROOF_POINTS = [
+  {
+    title: "Regulated-workflow muscle memory",
+    detail:
+      "Built from years of turning ambiguous client paperwork into clean logs, defensible next steps, and boringly clear handoffs.",
+  },
+  {
+    title: "AI systems plus file QA",
+    detail:
+      "The same operator bench covers automation, data parsing, browser-side privacy, launch QA, and documentation a buyer can actually inspect.",
+  },
+  {
+    title: "Concierge cleanup, not seat licenses",
+    detail:
+      "Small is the point: one weird CSV, KML, or GeoJSON can get a direct issue log and cleaned-pack boundary before anyone buys a platform.",
+  },
+];
+
 type BatchResult = {
   fileName: string;
   fileSize: number;
@@ -536,6 +554,34 @@ export function TraceReadyWorkbench() {
                 <p className="mt-1 text-xs font-medium uppercase leading-5 tracking-[0.08em] text-emerald-100">
                   {stat.label}
                 </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="relative z-10 border-b border-[#ead8bd] bg-[#fff7e8] px-4 py-7">
+        <div className="mx-auto grid w-full max-w-7xl gap-5 sm:px-2 lg:grid-cols-[minmax(0,0.74fr)_minmax(360px,0.58fr)] lg:items-start lg:px-6">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#087f73]">
+              Cleanup-desk credibility
+            </p>
+            <h2 className="mt-2 max-w-3xl text-2xl font-semibold leading-tight text-[#2b190f]">
+              Built by a paperwork mechanic, not a procurement committee.
+            </h2>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-[#6a5137]">
+              TraceReady is operated as a small systems desk for messy buyer handoffs. The useful
+              background is regulated client operations, AI tooling, data QA, privacy boundaries,
+              and launch documentation: all the unglamorous pieces between a broken-file diagnosis
+              and the exact cleanup pack a human can review.
+            </p>
+          </div>
+
+          <div className="grid gap-3">
+            {OPERATOR_PROOF_POINTS.map((point) => (
+              <div key={point.title} className="border-l-2 border-[#0aa394] pl-4">
+                <p className="text-sm font-semibold text-[#2b190f]">{point.title}</p>
+                <p className="mt-1 text-sm leading-6 text-[#6a5137]">{point.detail}</p>
               </div>
             ))}
           </div>
