@@ -53,6 +53,8 @@ Use `docs/sales-sprint.md`, `docs/fulfillment-runbook.md`, and `docs/order-ledge
 
 Use `docs/competitive-undercut.md` for the current competitor map and undercut positioning.
 
+Use `docs/public-dataset-mini-audit.md` for proof-led outreach based on a reproducible public cocoa dataset audit.
+
 Use `docs/stripe-branding-runbook.md` for the external Stripe Dashboard branding record. The current cleanup and pilot Payment Links were visually verified in the rendered Stripe checkout UI on 2026-06-14.
 
 Use `npm run verify:launch -- --strict-dns` after the registrar records are changed to fail fast until `traceready.online` resolves to GitHub Pages.

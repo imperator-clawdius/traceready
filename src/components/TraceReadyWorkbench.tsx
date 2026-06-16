@@ -459,14 +459,21 @@ export function TraceReadyWorkbench() {
                 you can see what needs fixing.
               </p>
               <div className="mt-5 max-w-2xl border border-white/[0.18] bg-white/[0.1] p-4 text-sm leading-6 text-[#d8eadf] backdrop-blur">
-                <p className="font-semibold text-white">Operator proof</p>
+                <p className="font-semibold text-white">Founder proof</p>
                 <p className="mt-1">
                   TraceReady is founder-operated by Passive Print Labs LLC through{" "}
                   <a href={`mailto:${CONTACT_EMAIL}`} className="font-semibold text-white underline-offset-4 hover:underline">
                     {CONTACT_EMAIL}
                   </a>
-                  . The workflow uses deterministic checks for missing IDs, duplicate farms, bad
-                  coordinates, point-only plots over 4 ha, and incomplete shipment fields.
+                  . Built by a founder-side operator who has shipped open-source services, SaaS
+                  prototypes, Android wrappers, automation workflows, regulated service operations,
+                  and multi-agent QA loops.
+                </p>
+                <p className="mt-2">
+                  The useful bit is not a mystery box with a checkout button: TraceReady shows the
+                  issue list first, keeps the free check browser-side, then sells cleanup only after
+                  scope is visible. The workflow uses deterministic checks for missing IDs, duplicate
+                  farms, bad coordinates, point-only plots over 4 ha, and incomplete shipment fields.
                 </p>
                 <p className="mt-2 text-xs leading-5 text-[#bcd6c4]">
                   Operated by {LEGAL_OPERATOR}. This is operational file cleanup, not a legal

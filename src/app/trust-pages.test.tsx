@@ -154,6 +154,31 @@ describe("TraceReady trust pages", () => {
     expect(sampleLink?.getAttribute("href")).toBe("/traceready-sample-output.zip");
   });
 
+  it("publishes the public cocoa dataset mini-audit as proof-led outreach evidence", () => {
+    act(() => {
+      root.render(<ProofPage />);
+    });
+
+    const pageText = container.textContent ?? "";
+    const sourceLinks = Array.from(container.querySelectorAll("a"));
+    const datasetLink = sourceLinks.find((element) =>
+      element.textContent?.includes("Colombian-Cocoa-Dataset"),
+    );
+    const cbiLink = sourceLinks.find((element) =>
+      element.textContent?.includes("CBI EUDR coffee guidance"),
+    );
+
+    expect(pageText).toContain("Public dataset mini-audit");
+    expect(pageText).toContain("57,658 public cocoa rows checked");
+    expect(pageText).toContain("46,134 point-only plots over 4 hectares");
+    expect(pageText).toContain("57,658 rows without plot IDs");
+    expect(pageText).toContain("57,658 rows without supplier identity");
+    expect(pageText).toContain("not a customer file");
+    expect(pageText).toContain("not legal certification");
+    expect(datasetLink?.getAttribute("href")).toBe("https://www.kaggle.com/datasets/lehetasa/colombian-cocoa-dataset");
+    expect(cbiLink?.getAttribute("href")).toBe("https://www.cbi.eu/market-information/coffee/tips-become-eudr-compliant");
+  });
+
   it("provides a tighter paid-order intake handoff", () => {
     act(() => {
       root.render(<OrderIntakePage />);

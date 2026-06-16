@@ -31,6 +31,8 @@ Ask these before selling:
 
 ## Outreach Message
 
+Proof-led variant: use `docs/public-dataset-mini-audit.md` when the prospect has not shown trust yet. Lead with the public-dataset defect numbers before asking for a file.
+
 Subject: Quick cleanup for EUDR farm files
 
 Hi {{name}},

@@ -17,6 +17,29 @@ const OUTPUTS = [
   "traceready-paid-cleanup-intake.txt",
 ];
 
+const AUDIT_STATS = [
+  {
+    label: "Public cocoa rows checked",
+    value: "57,658",
+    detail: "Rows downloaded from the public Colombian-Cocoa-Dataset and normalized for TraceReady checks.",
+  },
+  {
+    label: "Point-only plots over 4 hectares",
+    value: "46,134",
+    detail: "Rows where area exceeds the launch-readiness polygon threshold but only point coordinates are present.",
+  },
+  {
+    label: "Rows without plot IDs",
+    value: "57,658",
+    detail: "Coordinates existed, but row-level farm or plot identifiers were absent from the buyer-handoff view.",
+  },
+  {
+    label: "Rows without supplier identity",
+    value: "57,658",
+    detail: "No supplier, producer, farmer, or supplier ID field was available for traceability handoff.",
+  },
+];
+
 export const metadata = {
   title: "Proof | TraceReady",
   description: "TraceReady sample output, proof status, and buyer-facing limits.",
@@ -98,6 +121,57 @@ export default function ProofPage() {
             >
               Order intake checklist
             </Link>
+          </div>
+        </section>
+
+        <section className="mt-6 border border-[#d9bf92] bg-white p-6 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-700">
+            Public dataset mini-audit
+          </p>
+          <h2 className="mt-3 text-2xl font-semibold tracking-tight text-[#2b190f]">
+            Coordinates are not the same thing as a buyer-ready handoff.
+          </h2>
+          <p className="mt-4 max-w-3xl text-sm leading-7 text-zinc-700">
+            57,658 public cocoa rows checked: TraceReady found 46,134 point-only plots over 4
+            hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity. This
+            is not a customer file, not buyer approval, and not legal certification; it is proof that a
+            geolocation-heavy file can still fail basic handoff readiness.
+          </p>
+
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            {AUDIT_STATS.map((stat) => (
+              <article key={stat.label} className="border border-[#eadcc8] bg-[#fffaf2] p-4">
+                <p className="text-2xl font-semibold tabular-nums text-[#2b190f]">{stat.value}</p>
+                <h3 className="mt-2 text-sm font-semibold text-[#3f2a1b]">{stat.label}</h3>
+                <p className="mt-2 text-xs leading-5 text-zinc-600">{stat.detail}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-5 grid gap-3 border-t border-[#eadcc8] pt-5 text-sm leading-6 text-zinc-700 lg:grid-cols-2">
+            <p>
+              Source:{" "}
+              <a
+                href="https://www.kaggle.com/datasets/lehetasa/colombian-cocoa-dataset"
+                className="font-semibold text-emerald-700 hover:text-emerald-800"
+              >
+                Colombian-Cocoa-Dataset
+              </a>
+              . TraceReady supplied country and commodity from public metadata, then left plot IDs,
+              supplier identity, batch IDs, and polygon geometry blank when the row data did not
+              provide them.
+            </p>
+            <p>
+              Rule reference:{" "}
+              <a
+                href="https://www.cbi.eu/market-information/coffee/tips-become-eudr-compliant"
+                className="font-semibold text-emerald-700 hover:text-emerald-800"
+              >
+                CBI EUDR coffee guidance
+              </a>{" "}
+              states that polygon mapping is mandatory for coffee plots larger than 4 hectares.
+              TraceReady applies that launch-readiness threshold to coffee and cocoa file checks.
+            </p>
           </div>
         </section>
 

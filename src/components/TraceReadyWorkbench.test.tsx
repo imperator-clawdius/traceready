@@ -95,9 +95,18 @@ describe("TraceReady conversion surface", () => {
 
     const headerText = container.querySelector("header")?.textContent ?? "";
 
-    expect(headerText).toContain("Operator proof");
+    expect(headerText).toContain("Founder proof");
     expect(headerText).toContain("founder-operated by Passive Print Labs LLC");
     expect(headerText).toContain("founder@traceready.online");
+    expect(headerText).toContain("Built by a founder-side operator who has shipped");
+    expect(headerText).toContain("open-source services, SaaS prototypes, Android wrappers, automation workflows");
+    expect(headerText).toContain("regulated service operations");
+    expect(headerText).toContain("not a mystery box with a checkout button");
+    expect(headerText).not.toContain("teddyalston.com");
+    expect(headerText).not.toContain("Orlando");
+    expect(headerText).not.toContain("$1M");
+    expect(headerText).not.toContain("500+");
+    expect(headerText).not.toContain("theodore.alston@gmail.com");
     expect(headerText).toContain("deterministic checks");
     expect(headerText).toContain("not a legal certification");
     expect(headerText).toContain("Passive Print Labs LLC");

@@ -11,7 +11,7 @@
 - Launch feature: browser-side CSV, KML, and GeoJSON validator that creates a downloadable buyer-readiness pack for coffee and cocoa farm files.
 - Downloaded pack includes cleaned CSV, issue log, buyer/importer summary, readiness report, normalized GeoJSON, structured EUDR checklist, and paid-cleanup intake note.
 - Launch demo coverage: built-in sample runners for CSV, KML, and GeoJSON.
-- Public sample proof: `/traceready-sample-output.zip` contains a representative fictional cleaned pack for inspection.
+- Public proof: `/proof/` shows the representative fictional cleaned pack plus a public Colombian cocoa dataset mini-audit with reproducible defect counts.
 - Trust surfaces: `/methodology/`, `/proof/`, `/order-intake/`, and `/contact/` explain the checks, sample status, paid handoff, and operator contact path.
 - Conversion actions: `Buy 24-hour cleanup` CTA and `Buy 5-file pilot` CTA route to `/checkout/cleanup/` and `/checkout/pilot/` before TraceReady-labeled Stripe products.
 - Paid-order handoff: after checkout, customers are prompted to use `/order-intake/` and email the source file, receipt email, commodity, source country, deadline, and buyer requirements to `founder@traceready.online`.
