@@ -6,6 +6,8 @@ Turn the public dataset mini-audit into the first 10 serious file conversations 
 
 The base proof page is `https://traceready.online/proof/`. For outreach, send the tracked `proof_url` and `file_check_url` from the batch row so every reply and browser-side check can be tied back to a `b01-rNN` route ID. The supporting write-up is `docs/public-dataset-mini-audit.md`.
 
+The public field note at `https://traceready.online/field-notes/eudr-file-errors/` is the shareable credibility asset for LinkedIn, associations, and reply threads. Use it when the prospect needs a readable explanation of the seven file defects before running a file.
+
 The first executable batch is `docs/proof-led-outreach-batch-01.csv`. The copy-pasteable send packet is `docs/proof-led-outreach-send-pack-01.md`. They are intentionally company-level only: public route URLs, no employee names, no personal emails, no personal profile URLs, deterministic route IDs, tracked TraceReady URLs, and every row starts from the public audit numbers. Run `npm run render:outreach` after editing the CSV, then `npm run verify:outreach` before using or modifying the batch.
 
 If a routed visitor lands on `/proof/`, the "Run a file in the browser" CTA keeps the same UTM route parameters. If they run the free checker from a routed URL, the copied buyer summary, downloaded ZIP artifacts, and paid-cleanup mailto handoff include the non-personal `Outreach route: b01-rNN` attribution line. Use that line to connect real file checks back to the private results ledger.

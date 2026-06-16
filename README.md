@@ -56,6 +56,8 @@ Use `docs/competitive-undercut.md` for the current competitor map and undercut p
 
 Use `docs/public-dataset-mini-audit.md` for proof-led outreach based on a reproducible public cocoa dataset audit.
 
+Use `/field-notes/eudr-file-errors/` as the shareable public field note for LinkedIn, association, and reply-thread outreach when a prospect needs the practical issue list before trusting the tool.
+
 Use `docs/proof-led-outreach-sprint.md` for company-level target tiers, message variants, and the 10-day proof-led outreach cadence.
 
 Use `docs/proof-led-outreach-batch-01.csv` as the first 20 company/channel routes to contact. Each row has a `b01-rNN` route ID plus tracked proof and file-check URLs. Use `docs/proof-led-outreach-send-pack-01.md` for copy-pasteable first messages and follow-ups. The proof page preserves those UTM route IDs when visitors continue to the browser checker, and generated buyer summaries, ZIP packs, and cleanup handoffs stamp the route ID when present. Run `npm run render:outreach` after editing the CSV, then `npm run verify:outreach` so the committed batch and send packet stay sourced, proof-led, measurable, and free of personal contact data.

@@ -10,4 +10,13 @@ describe("launch verifier route manifest", () => {
     expect(script).toContain("Free issue-log triage");
     expect(script).toContain("Do not send raw farm coordinates first");
   });
+
+  it("checks the public EUDR file-errors field note in live launch verification", () => {
+    const script = fs.readFileSync("scripts/verify-launch.mjs", "utf8");
+
+    expect(script).toContain('label: "FIELD_NOTE_EUDR_FILE_ERRORS_PAGE"');
+    expect(script).toContain('path: "/field-notes/eudr-file-errors/"');
+    expect(script).toContain("7 EUDR file errors that create buyer-review rework");
+    expect(script).toContain("46,134 point-only plots over 4 hectares");
+  });
 });

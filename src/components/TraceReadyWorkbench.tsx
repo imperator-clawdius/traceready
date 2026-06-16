@@ -29,6 +29,7 @@ import {
   CHECKOUT_PILOT_HREF,
   CONTACT_EMAIL,
   CONTACT_HREF,
+  FIELD_NOTE_EUDR_FILE_ERRORS_HREF,
   FILE_TRIAGE_HREF,
   LEGAL_OPERATOR,
   METHODOLOGY_HREF,
@@ -528,12 +529,20 @@ export function TraceReadyWorkbench() {
                       Real public dataset stress test, not customer proof or legal certification.
                     </p>
                   </div>
-                  <a
-                    href={PROOF_HREF}
-                    className="inline-flex h-10 shrink-0 items-center justify-center rounded-md border border-[#74e0cd]/60 px-3 text-xs font-semibold text-[#effdf4] transition hover:bg-white/[0.12]"
-                  >
-                    View public audit proof
-                  </a>
+                  <div className="flex shrink-0 flex-col gap-2">
+                    <a
+                      href={PROOF_HREF}
+                      className="inline-flex h-10 items-center justify-center rounded-md border border-[#74e0cd]/60 px-3 text-xs font-semibold text-[#effdf4] transition hover:bg-white/[0.12]"
+                    >
+                      View public audit proof
+                    </a>
+                    <a
+                      href={FIELD_NOTE_EUDR_FILE_ERRORS_HREF}
+                      className="inline-flex h-10 items-center justify-center rounded-md border border-[#74e0cd]/60 px-3 text-xs font-semibold text-[#effdf4] transition hover:bg-white/[0.12]"
+                    >
+                      Read the field note
+                    </a>
+                  </div>
                 </div>
               </div>
             </section>

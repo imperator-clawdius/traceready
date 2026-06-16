@@ -6,6 +6,7 @@ import CleanupCheckoutPage from "./checkout/cleanup/page";
 import PilotCheckoutPage from "./checkout/pilot/page";
 import ContactPage from "./contact/page";
 import FileTriagePage from "./file-triage/page";
+import EudrFileErrorsPage from "./field-notes/eudr-file-errors/page";
 import MethodologyPage from "./methodology/page";
 import OrderIntakePage from "./order-intake/page";
 import ProofPage from "./proof/page";
@@ -181,6 +182,34 @@ describe("TraceReady trust pages", () => {
     expect(cbiLink?.getAttribute("href")).toBe("https://www.cbi.eu/market-information/coffee/tips-become-eudr-compliant");
   });
 
+  it("publishes a shareable field note that turns the public audit into outreach credibility", () => {
+    act(() => {
+      root.render(<EudrFileErrorsPage />);
+    });
+
+    const pageText = container.textContent ?? "";
+    const links = Array.from(container.querySelectorAll("a"));
+    const datasetLink = links.find((element) => element.textContent?.includes("Colombian-Cocoa-Dataset"));
+    const regulationLink = links.find((element) => element.textContent?.includes("EU EUDR FAQ"));
+    const triageLink = links.find((element) => element.textContent?.includes("Request free issue-log triage"));
+    const proofLink = links.find((element) => element.textContent?.includes("View public audit proof"));
+
+    expect(pageText).toContain("7 EUDR file errors that create buyer-review rework");
+    expect(pageText).toContain("57,658 public cocoa rows");
+    expect(pageText).toContain("46,134 point-only plots over 4 hectares");
+    expect(pageText).toContain("missing plot IDs");
+    expect(pageText).toContain("missing supplier identity");
+    expect(pageText).toContain("duplicate farm IDs");
+    expect(pageText).toContain("not legal certification");
+    expect(pageText).toContain("Post-ready summary");
+    expect(datasetLink?.getAttribute("href")).toBe("https://www.kaggle.com/datasets/lehetasa/colombian-cocoa-dataset");
+    expect(regulationLink?.getAttribute("href")).toBe(
+      "https://www.eeas.europa.eu/sites/default/files/documents/2024/240314_EN_FAQ%20EUDR%20%281%29_0.pdf",
+    );
+    expect(triageLink?.getAttribute("href")).toBe("/file-triage/");
+    expect(proofLink?.getAttribute("href")).toBe("/proof/");
+  });
+
   it("turns the proof page into a low-trust file-check landing path", () => {
     act(() => {
       root.render(<ProofPage />);
@@ -200,6 +229,9 @@ describe("TraceReady trust pages", () => {
     const triageLink = links.find((element) =>
       element.textContent?.includes("Request free issue-log triage"),
     );
+    const fieldNoteLink = links.find((element) =>
+      element.textContent?.includes("Read the field note"),
+    );
 
     expect(pageText).toContain("Run one supplier file before sending coordinates");
     expect(pageText).toContain("The first pass stays in your browser");
@@ -208,6 +240,7 @@ describe("TraceReady trust pages", () => {
     expect(cleanupLink?.getAttribute("href")).toBe("/checkout/cleanup/");
     expect(contactLink?.getAttribute("href")).toBe("/contact/");
     expect(triageLink?.getAttribute("href")).toBe("/file-triage/");
+    expect(fieldNoteLink?.getAttribute("href")).toBe("/field-notes/eudr-file-errors/");
   });
 
   it("preserves proof-led route tracking when proof visitors continue to the browser checker or triage handoff", () => {

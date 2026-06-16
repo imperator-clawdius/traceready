@@ -3,6 +3,7 @@ import {
   CHECKOUT_CLEANUP_HREF,
   CONTACT_EMAIL,
   CONTACT_HREF,
+  FIELD_NOTE_EUDR_FILE_ERRORS_HREF,
   LEGAL_OPERATOR,
   METHODOLOGY_HREF,
   ORDER_INTAKE_HREF,
@@ -177,6 +178,12 @@ export default function ProofPage() {
               TraceReady applies that launch-readiness threshold to coffee and cocoa file checks.
             </p>
           </div>
+          <Link
+            href={FIELD_NOTE_EUDR_FILE_ERRORS_HREF}
+            className="mt-5 inline-flex h-11 items-center justify-center rounded-md bg-zinc-950 px-4 text-sm font-semibold text-white transition hover:bg-zinc-800"
+          >
+            Read the field note
+          </Link>
         </section>
 
         <section className="mt-6 border border-emerald-800 bg-[#123f34] p-6 text-white shadow-sm">

@@ -9,6 +9,7 @@ export const METHODOLOGY_HREF = "/methodology/";
 export const PROOF_HREF = "/proof/";
 export const CONTACT_HREF = "/contact/";
 export const FILE_TRIAGE_HREF = "/file-triage/";
+export const FIELD_NOTE_EUDR_FILE_ERRORS_HREF = "/field-notes/eudr-file-errors/";
 
 export const STRIPE_CLEANUP_LINK =
   process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK || "https://buy.stripe.com/8x27sN6NW3qzb4d6df93y01";
