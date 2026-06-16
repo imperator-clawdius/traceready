@@ -36,6 +36,7 @@ import {
   ORDER_INTAKE_HREF,
   PILOT_PROOF_HREF,
   PROOF_HREF,
+  PUBLIC_PILOT_CASE_HREF,
   PUBLIC_PILOT_PACK_HREF,
   SAMPLE_PACK_HREF,
 } from "@/lib/site";
@@ -527,7 +528,7 @@ export function TraceReadyWorkbench() {
               </div>
               <div className="mt-5 flex flex-col gap-2 sm:flex-row">
                 <a
-                  href={PROOF_HREF}
+                  href={PUBLIC_PILOT_CASE_HREF}
                   className="inline-flex h-10 items-center justify-center rounded-md bg-[#0aa394] px-3 text-sm font-semibold text-white transition hover:bg-[#0b8f83]"
                 >
                   View pilot case

@@ -11,6 +11,7 @@ import MethodologyPage from "./methodology/page";
 import OrderIntakePage from "./order-intake/page";
 import PilotProofPage from "./pilot-proof/page";
 import ProofPage from "./proof/page";
+import PublicCocoaPilotPage from "./proof/public-cocoa-pilot/page";
 import PrivacyPage from "./privacy/page";
 import TermsPage from "./terms/page";
 
@@ -197,6 +198,34 @@ describe("TraceReady trust pages", () => {
     expect(pageText).toContain("not legal certification");
     expect(datasetLink?.getAttribute("href")).toBe("https://www.kaggle.com/datasets/lehetasa/colombian-cocoa-dataset");
     expect(cbiLink?.getAttribute("href")).toBe("https://www.cbi.eu/market-information/coffee/tips-become-eudr-compliant");
+  });
+
+  it("publishes a standalone public cocoa pilot case page for cold outreach proof", () => {
+    act(() => {
+      root.render(<PublicCocoaPilotPage />);
+    });
+
+    const pageText = container.textContent ?? "";
+    const links = Array.from(container.querySelectorAll("a"));
+    const packLink = links.find((element) =>
+      element.textContent?.includes("Download evidence pack"),
+    );
+    const triageLink = links.find((element) =>
+      element.textContent?.includes("Request free issue-log triage"),
+    );
+
+    expect(pageText).toContain("Public cocoa pilot case");
+    expect(pageText).toContain("Messy public file in");
+    expect(pageText).toContain("57,658 rows with coordinates and area values");
+    expect(pageText).toContain("Exact issues found");
+    expect(pageText).toContain("46,134 point-only plots over 4 hectares");
+    expect(pageText).toContain("Cleaned pack out");
+    expect(pageText).toContain("Decision: hold for source-owner repair");
+    expect(pageText).toContain("the cleaned output is a repair brief");
+    expect(pageText).toContain("not a customer case");
+    expect(pageText).not.toContain("fictional fixture");
+    expect(packLink?.getAttribute("href")).toBe("/traceready-public-cocoa-pilot-pack.zip");
+    expect(triageLink?.getAttribute("href")).toBe("/file-triage/");
   });
 
   it("publishes a shareable field note that turns the public audit into outreach credibility", () => {

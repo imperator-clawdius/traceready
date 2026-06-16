@@ -5,6 +5,7 @@ import {
   CONTACT_HREF,
   FIELD_NOTE_EUDR_FILE_ERRORS_HREF,
   LEGAL_OPERATOR,
+  PUBLIC_PILOT_CASE_HREF,
   PUBLIC_PILOT_PACK_HREF,
 } from "@/lib/site";
 import { TrackedHomeLink } from "./TrackedHomeLink";
@@ -102,8 +103,14 @@ export default function ProofPage() {
             source-owner follow-up questions, not raw source rows or coordinates.
           </p>
           <a
-            href={PUBLIC_PILOT_PACK_HREF}
+            href={PUBLIC_PILOT_CASE_HREF}
             className="mt-5 inline-flex h-11 items-center justify-center rounded-md bg-white px-4 text-sm font-semibold text-[#123f34] transition hover:bg-emerald-50"
+          >
+            View public pilot case
+          </a>
+          <a
+            href={PUBLIC_PILOT_PACK_HREF}
+            className="mt-3 inline-flex h-11 items-center justify-center rounded-md border border-emerald-100 px-4 text-sm font-semibold text-white transition hover:bg-emerald-900 sm:ml-3 sm:mt-5"
           >
             Download public pilot evidence pack
           </a>

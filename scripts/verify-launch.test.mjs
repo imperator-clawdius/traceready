@@ -23,6 +23,9 @@ describe("launch verifier route manifest", () => {
   it("checks the public pilot evidence pack CTA in live launch verification", () => {
     const script = fs.readFileSync("scripts/verify-launch.mjs", "utf8");
 
+    expect(script).toContain('label: "PUBLIC_COCOA_PILOT_CASE_PAGE"');
+    expect(script).toContain('path: "/proof/public-cocoa-pilot/"');
+    expect(script).toContain("Public cocoa pilot case");
     expect(script).toContain("Download evidence pack");
     expect(script).toContain("Download public pilot evidence pack");
     expect(script).toContain("/traceready-public-cocoa-pilot-pack.zip");

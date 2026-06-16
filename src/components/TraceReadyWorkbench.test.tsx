@@ -181,7 +181,7 @@ describe("TraceReady conversion surface", () => {
     expect(pageText).toContain("57,658 rows without plot IDs");
     expect(pageText).toContain("57,658 rows without supplier identity");
     expect(pageText).toContain("did not invent missing IDs, suppliers, batches, or polygons");
-    expect(proofLink?.getAttribute("href")).toBe("/proof/");
+    expect(proofLink?.getAttribute("href")).toBe("/proof/public-cocoa-pilot/");
     expect(evidencePackLink?.getAttribute("href")).toBe("/traceready-public-cocoa-pilot-pack.zip");
   });
 
