@@ -13,7 +13,8 @@ export function buildOutreachActionQueue(rows, options = {}) {
   const today = options.today ?? todayIsoDate();
   const sendLimit = options.sendLimit ?? DEFAULT_SEND_LIMIT;
   const followUpAfterDays = options.followUpAfterDays ?? DEFAULT_FOLLOW_UP_AFTER_DAYS;
-  const unsentRows = rows.filter((row) => row.status === "not_sent");
+  const sendTier = options.sendTier;
+  const unsentRows = rows.filter((row) => row.status === "not_sent" && (!sendTier || row.tier === sendTier));
   const followUpRows = rows.filter((row) => {
     if (!FOLLOW_UP_STATUSES.has(row.status) || !row.date_sent) {
       return false;
@@ -29,6 +30,7 @@ export function buildOutreachActionQueue(rows, options = {}) {
     today,
     sendLimit,
     followUpAfterDays,
+    sendTier,
     sendRows: unsentRows.slice(0, sendLimit),
     followUpRows,
     opportunityRows,
@@ -38,6 +40,7 @@ export function buildOutreachActionQueue(rows, options = {}) {
       sendShown: Math.min(unsentRows.length, sendLimit),
       followUpsDue: followUpRows.length,
       activeOpportunities: opportunityRows.length,
+      ...(sendTier ? { sendTier } : {}),
     },
   };
 }
@@ -53,6 +56,7 @@ export function renderOutreachActionQueue(queue, options = {}) {
     "",
     `Source: \`${resultsPath}\``,
     `Today: ${today}`,
+    ...(queue.sendTier ? [`Send tier filter: ${queue.sendTier}`] : []),
     ...(isPublicPreview
       ? [
           "",
@@ -112,6 +116,8 @@ export function parseNextActionArgs(argv) {
       parsed.sendLimit = parsePositiveInteger(value, flag);
     } else if (flag === "--follow-up-after-days") {
       parsed.followUpAfterDays = parsePositiveInteger(value, flag);
+    } else if (flag === "--send-tier") {
+      parsed.sendTier = value;
     } else {
       throw new Error(`unknown flag: ${flag}`);
     }

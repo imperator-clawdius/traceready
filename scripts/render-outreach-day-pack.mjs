@@ -23,10 +23,12 @@ export function renderOutreachDayPack(batchRows, resultRows, options = {}) {
   const today = options.today ?? todayIsoDate();
   const sendLimit = options.sendLimit ?? DEFAULT_SEND_LIMIT;
   const followUpAfterDays = options.followUpAfterDays ?? DEFAULT_FOLLOW_UP_AFTER_DAYS;
+  const sendTier = options.sendTier;
   const queue = buildOutreachActionQueue(resultRows, {
     today,
     sendLimit,
     followUpAfterDays,
+    sendTier,
   });
   const batchByRoute = new Map(batchRows.map((row) => [row.route_id, row]));
   const isPublicPreview = normalizePath(resultsPath) === DEFAULT_RESULTS_PATH;
@@ -38,6 +40,7 @@ export function renderOutreachDayPack(batchRows, resultRows, options = {}) {
     `Batch: \`${batchPath}\``,
     `Results: \`${resultsPath}\``,
     `Today: ${today}`,
+    ...(sendTier ? [`Send tier filter: ${sendTier}`] : []),
     ...(isPublicPreview
       ? [
           "",
@@ -119,6 +122,8 @@ export function parseOutreachDayPackArgs(argv) {
       parsed.sendLimit = parsePositiveInteger(value, flag);
     } else if (flag === "--follow-up-after-days") {
       parsed.followUpAfterDays = parsePositiveInteger(value, flag);
+    } else if (flag === "--send-tier") {
+      parsed.sendTier = value;
     } else {
       throw new Error(`unknown flag: ${flag}`);
     }

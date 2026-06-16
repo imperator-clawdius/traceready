@@ -71,6 +71,21 @@ describe("proof-led outreach day pack", () => {
     expect(markdown).not.toContain("--results docs/proof-led-outreach-results-batch-01.csv --route b01-r01");
   });
 
+  it("can render a send block focused on direct importer routes", () => {
+    const markdown = renderOutreachDayPack(parseOutreachLedger(BATCH_CSV), parseOutreachResults(RESULTS_CSV), {
+      resultsPath: "private/outreach-results.csv",
+      today: "2026-06-20",
+      sendLimit: 1,
+      followUpAfterDays: 4,
+      sendTier: "importer",
+    });
+
+    expect(markdown).toContain("Send tier filter: importer");
+    expect(markdown).toContain("### b01-r03 - Cafe Imports Europe");
+    expect(markdown).toContain("Subject: Row-level check for messy EUDR farm files");
+    expect(markdown).not.toContain("### b01-r01 - European Coffee Federation");
+  });
+
   it("rejects results rows that cannot be joined to committed batch copy", () => {
     const errors = validateOutreachDayPackInputs(parseOutreachLedger(BATCH_CSV), [
       {
@@ -98,6 +113,8 @@ describe("proof-led outreach day pack", () => {
         "3",
         "--follow-up-after-days",
         "5",
+        "--send-tier",
+        "importer",
       ]),
     ).toEqual({
       batchPath: "docs/proof-led-outreach-batch-01.csv",
@@ -106,6 +123,7 @@ describe("proof-led outreach day pack", () => {
       today: "2026-06-20",
       sendLimit: 3,
       followUpAfterDays: 5,
+      sendTier: "importer",
     });
   });
 });

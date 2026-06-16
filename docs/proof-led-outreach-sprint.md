@@ -19,16 +19,16 @@ After sending, copy `docs/proof-led-outreach-results-batch-01.csv` to a private 
 Do not edit the committed public initialized ledger after real outreach starts. Copy it to a private file first, then update one `route_id` at a time:
 
 ```bash
-npm run prepare:outreach -- --today 2026-06-16 --send-limit 8
-npm run next:outreach -- --results path/to/private-results.csv --send-limit 8 --follow-up-after-days 4
-npm run render:outreach-day -- --results path/to/private-results.csv --send-limit 8 --follow-up-after-days 4 --today 2026-06-16 --output path/to/day-pack.md
+npm run prepare:outreach -- --today 2026-06-16 --send-limit 8 --send-tier importer
+npm run next:outreach -- --results path/to/private-results.csv --send-limit 8 --send-tier importer --follow-up-after-days 4
+npm run render:outreach-day -- --results path/to/private-results.csv --send-limit 8 --send-tier importer --follow-up-after-days 4 --today 2026-06-16 --output path/to/day-pack.md
 npm run update:outreach-result -- --results path/to/private-results.csv --route b01-r06 --date-sent 2026-06-16 --status sent --response-type none --notes "sent via company contact form" --next-action "follow up in 4 business days"
 npm run update:outreach-result -- --results path/to/private-results.csv --route b01-r06 --field-note-clicks 1 --notes "routed field-note visit seen in analytics" --next-action "watch for file check or reply"
 npm run update:outreach-result -- --results path/to/private-results.csv --route b01-r06 --status file_checked --response-type file_check --file-checks 1 --notes "route-stamped buyer summary received" --next-action "ask whether they want the cleaned pack"
 npm run update:outreach-result -- --results path/to/private-results.csv --route b01-r06 --status paid_order --response-type paid_order --file-checks 1 --paid-orders 1 --notes "paid cleanup ordered" --next-action "fulfill 24-hour cleanup"
 ```
 
-`prepare:outreach` creates `private/outreach-results-batch-01.csv` if it does not already exist, reuses it if it does, and renders `private/outreach-day-pack.md` for the current block. `next:outreach` prints the next unsent routes, follow-ups due by date, and active file-check/reply opportunities. `render:outreach-day` joins that queue back to the committed batch copy and writes only the first messages, due follow-ups, active opportunities, and private-safe update commands needed for the current send block. The updater refuses `docs/proof-led-outreach-results-batch-01.csv` by default and re-runs the private-safe result validation before writing.
+`prepare:outreach` creates `private/outreach-results-batch-01.csv` if it does not already exist, reuses it if it does, and renders `private/outreach-day-pack.md` for the current block. Use `--send-tier importer` when the block is meant to create direct buyer traction before association education. `next:outreach` prints the next unsent routes, follow-ups due by date, and active file-check/reply opportunities. `render:outreach-day` joins that queue back to the committed batch copy and writes only the first messages, due follow-ups, active opportunities, and private-safe update commands needed for the current send block. The updater refuses `docs/proof-led-outreach-results-batch-01.csv` by default and re-runs the private-safe result validation before writing.
 
 ## Positioning
 
@@ -147,8 +147,8 @@ For 10 business days:
 - Post one public proof-led note per day on a relevant professional channel.
 - Ask for one of three outcomes only: run the browser-side check, send a non-sensitive sample structure, or refer the person who owns supplier-file cleanup.
 - Log every send, field-note click, reply, objection, file run, and paid cleanup opportunity by `route_id`.
-- Generate the next route queue before each send block with `npm run next:outreach -- --results path/to/private-results.csv --send-limit 8`.
-- Render the exact send-block copy with `npm run render:outreach-day -- --results path/to/private-results.csv --send-limit 8 --output path/to/day-pack.md`.
+- Generate the next direct-buyer route queue before each importer send block with `npm run next:outreach -- --results path/to/private-results.csv --send-limit 8 --send-tier importer`.
+- Render the exact importer send-block copy with `npm run render:outreach-day -- --results path/to/private-results.csv --send-limit 8 --send-tier importer --output path/to/day-pack.md`.
 - Summarize the private results ledger daily with `npm run summarize:outreach -- path/to/private-results.csv`.
 
 Do not count likes, compliments, or "interesting" replies as traction. Count real files, paid cleanup orders, pilot requests, referrals to data/compliance owners, and permissioned de-identified before/after evidence.

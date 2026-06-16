@@ -43,6 +43,7 @@ export async function prepareOutreachWorkspace(options = {}) {
     today: preparedOptions.today,
     sendLimit: preparedOptions.sendLimit,
     followUpAfterDays: preparedOptions.followUpAfterDays,
+    sendTier: preparedOptions.sendTier,
   })}\n`;
 
   await ensureParentDir(preparedOptions.dayPackPath);
@@ -88,6 +89,8 @@ export function parsePrepareOutreachWorkspaceArgs(argv) {
       parsed.sendLimit = parsePositiveInteger(value, flag);
     } else if (flag === "--follow-up-after-days") {
       parsed.followUpAfterDays = parsePositiveInteger(value, flag);
+    } else if (flag === "--send-tier") {
+      parsed.sendTier = value;
     } else {
       throw new Error(`unknown flag: ${flag}`);
     }
@@ -140,6 +143,7 @@ function normalizeOptions(options) {
     today: options.today ?? todayIsoDate(),
     sendLimit: options.sendLimit ?? DEFAULT_SEND_LIMIT,
     followUpAfterDays: options.followUpAfterDays ?? DEFAULT_FOLLOW_UP_AFTER_DAYS,
+    sendTier: options.sendTier,
   };
 }
 
@@ -180,6 +184,7 @@ async function main() {
       `day_pack=${result.dayPackPath}`,
       `today=${result.today}`,
       `send_limit=${result.sendLimit}`,
+      ...(options.sendTier ? [`send_tier=${options.sendTier}`] : []),
     ].join(" "),
   );
 }

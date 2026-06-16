@@ -12,6 +12,7 @@ b01-r02,2026-06-16,EUDR Coffee / German Coffee Association,association,https://t
 b01-r03,2026-06-18,Deutscher Kaffeeverband,association,https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r03,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r03,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r03,sent,none,0,0,0,no,sent via public form,follow up in 4 business days
 b01-r04,2026-06-16,Specialty Coffee Association,association,https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04,file_checked,file_check,2,1,0,no,route-stamped buyer summary received,ask whether they want the cleaned pack
 b01-r05,,Global Coffee Platform,association,https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r05,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r05,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r05,not_sent,none,0,0,0,no,,send first message from proof-led packet
+b01-r06,,Cafe Imports Europe,importer,https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r06,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r06,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r06,not_sent,none,0,0,0,no,,send first message from proof-led packet
 `;
 
 describe("next outreach actions", () => {
@@ -27,12 +28,39 @@ describe("next outreach actions", () => {
     expect(queue.followUpRows.map((row) => row.route_id)).toEqual(["b01-r02"]);
     expect(queue.opportunityRows.map((row) => row.route_id)).toEqual(["b01-r04"]);
     expect(queue.summary).toEqual({
-      totalRows: 5,
-      sendRemaining: 2,
+      totalRows: 6,
+      sendRemaining: 3,
       sendShown: 1,
       followUpsDue: 1,
       activeOpportunities: 1,
     });
+  });
+
+  it("can focus the first-send queue on a direct buyer tier", () => {
+    const rows = parseOutreachResults(RESULTS_CSV);
+    const queue = buildOutreachActionQueue(rows, {
+      sendLimit: 2,
+      today: "2026-06-20",
+      followUpAfterDays: 4,
+      sendTier: "importer",
+    });
+    const markdown = renderOutreachActionQueue(queue, {
+      resultsPath: "private/outreach-results.csv",
+      today: "2026-06-20",
+    });
+
+    expect(queue.sendRows.map((row) => row.route_id)).toEqual(["b01-r06"]);
+    expect(queue.summary).toEqual({
+      totalRows: 6,
+      sendRemaining: 1,
+      sendShown: 1,
+      followUpsDue: 1,
+      activeOpportunities: 1,
+      sendTier: "importer",
+    });
+    expect(markdown).toContain("Send tier filter: importer");
+    expect(markdown).toContain("b01-r06 - Cafe Imports Europe");
+    expect(markdown).not.toContain("b01-r01 - European Coffee Federation");
   });
 
   it("renders a copy-pasteable action queue with update commands", () => {
@@ -79,12 +107,15 @@ describe("next outreach actions", () => {
         "6",
         "--follow-up-after-days",
         "5",
+        "--send-tier",
+        "importer",
       ]),
     ).toEqual({
       resultsPath: "private/outreach-results.csv",
       today: "2026-06-20",
       sendLimit: 6,
       followUpAfterDays: 5,
+      sendTier: "importer",
     });
   });
 

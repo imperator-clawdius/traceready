@@ -71,6 +71,25 @@ describe("prepare outreach workspace", () => {
     expect(fs.existsSync(dayPackPath)).toBe(true);
   });
 
+  it("can render the private day pack from the first unsent importer route", async () => {
+    const tempDir = makeTempDir();
+    const resultsPath = path.join(tempDir, "private", "outreach-results.csv");
+    const dayPackPath = path.join(tempDir, "private", "outreach-day-pack.md");
+
+    await prepareOutreachWorkspace({
+      resultsPath,
+      dayPackPath,
+      today: "2026-06-16",
+      sendLimit: 1,
+      sendTier: "importer",
+    });
+
+    const dayPack = fs.readFileSync(dayPackPath, "utf8");
+    expect(dayPack).toContain("Send tier filter: importer");
+    expect(dayPack).toContain("### b01-r06 - Cafe Imports Europe");
+    expect(dayPack).not.toContain("### b01-r01 - European Coffee Federation");
+  });
+
   it("parses CLI flags for private workspace preparation", () => {
     expect(
       parsePrepareOutreachWorkspaceArgs([
@@ -84,6 +103,8 @@ describe("prepare outreach workspace", () => {
         "6",
         "--follow-up-after-days",
         "5",
+        "--send-tier",
+        "importer",
       ]),
     ).toEqual({
       batchPath: "docs/proof-led-outreach-batch-01.csv",
@@ -93,6 +114,7 @@ describe("prepare outreach workspace", () => {
       today: "2026-06-20",
       sendLimit: 6,
       followUpAfterDays: 5,
+      sendTier: "importer",
     });
   });
 
