@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 import Papa from "papaparse";
 import {
   routeIdForRowNumber,
+  trackedFieldNoteUrl,
   trackedFileCheckUrl,
   trackedProofUrl,
 } from "./outreach-tracking.mjs";
@@ -17,6 +18,7 @@ export const REQUIRED_COLUMNS = [
   "public_route",
   "source_url",
   "proof_url",
+  "field_note_url",
   "file_check_url",
   "message_variant",
   "proof_hook",
@@ -80,6 +82,10 @@ export function validateOutreachLedger(rows, options = {}) {
 
     if (row.proof_url && row.proof_url !== trackedProofUrl(expectedRouteId)) {
       errors.push(`row ${rowNumber} proof_url must be tracked TraceReady proof URL for ${expectedRouteId}`);
+    }
+
+    if (row.field_note_url && row.field_note_url !== trackedFieldNoteUrl(expectedRouteId)) {
+      errors.push(`row ${rowNumber} field_note_url must be tracked TraceReady field-note URL for ${expectedRouteId}`);
     }
 
     if (row.file_check_url && row.file_check_url !== trackedFileCheckUrl(expectedRouteId)) {

@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { parseOutreachLedger, validateOutreachLedger } from "./verify-outreach-ledger.mjs";
-import { FILE_CHECK_BASE_URL, PROOF_BASE_URL } from "./outreach-tracking.mjs";
+import { FIELD_NOTE_BASE_URL, FILE_CHECK_BASE_URL, PROOF_BASE_URL } from "./outreach-tracking.mjs";
 
 const DEFAULT_BATCH_PATH = "docs/proof-led-outreach-batch-01.csv";
 const DEFAULT_OUTPUT_PATH = "docs/proof-led-outreach-send-pack-01.md";
@@ -21,8 +21,9 @@ export function renderOutreachPacket(rows, options = {}) {
     "Core proof: TraceReady checked 57,658 public cocoa rows and found 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.",
     "",
     `Base proof page: ${PROOF_BASE_URL}`,
+    `Base field note: ${FIELD_NOTE_BASE_URL}`,
     `Base browser-side file check: ${FILE_CHECK_BASE_URL}`,
-    "Use the tracked links inside each route section so replies and file checks can be tied back to a route ID.",
+    "Use the tracked links inside each route section so replies, field-note clicks, and file checks can be tied back to a route ID.",
     "",
     "Guardrail: TraceReady is operational file cleanup and readiness checking, not legal certification, not a TRACES submission service, and not deforestation-free proof.",
     "",
@@ -66,6 +67,10 @@ export function validateRenderedOutreachPacket(markdown, rows) {
       errors.push(`packet must include tracked proof URL for ${row.company_or_channel}`);
     }
 
+    if (!markdown.includes(row.field_note_url)) {
+      errors.push(`packet must include tracked field-note URL for ${row.company_or_channel}`);
+    }
+
     if (!markdown.includes(row.file_check_url)) {
       errors.push(`packet must include tracked file-check URL for ${row.company_or_channel}`);
     }
@@ -88,6 +93,7 @@ function renderRow(row) {
     `- Public route: ${row.public_route}`,
     `- Source: ${row.source_url}`,
     `- Proof URL: ${row.proof_url}`,
+    `- Field note URL: ${row.field_note_url}`,
     `- File check URL: ${row.file_check_url}`,
     `- Ask: ${row.ask}`,
     "",
@@ -132,6 +138,7 @@ export function bodyFor(row) {
       "I published a public mini-audit using a 57,658-row cocoa farm-location dataset. The useful part for members is practical: even with latitude, longitude, and area fields, the file still surfaced 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.",
       "",
       `Public proof page: ${row.proof_url}`,
+      `Shareable field note: ${row.field_note_url}`,
       "",
       "This is not legal certification and not a TRACES submission tool. It is a free operational example of file defects that create buyer-review rework.",
       "",
@@ -148,6 +155,7 @@ export function bodyFor(row) {
       "TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.",
       "",
       `Public proof page: ${row.proof_url}`,
+      `Shareable field note: ${row.field_note_url}`,
       "",
       "If a client sends you a malformed farm file, I can handle the first-pass cleanup so your team is not stuck fixing coordinates, missing plot IDs, duplicate farm IDs, and point-only over-4ha records by hand.",
     ].join("\n");
@@ -161,6 +169,7 @@ export function bodyFor(row) {
     "That is the narrow problem I am looking for: not \"buy software,\" just \"will this supplier CSV/KML/GeoJSON create buyer-review rework?\"",
     "",
     `Public proof page: ${row.proof_url}`,
+    `Shareable field note: ${row.field_note_url}`,
     "",
     `You can run one file in the browser first, before sending me anything: ${row.file_check_url}`,
     "",

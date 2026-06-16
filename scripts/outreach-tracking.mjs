@@ -2,6 +2,7 @@ export const TRACKING_SOURCE = "proof_led_batch_01";
 export const TRACKING_MEDIUM = "outreach";
 export const TRACKING_CAMPAIGN = "eudr_file_readiness";
 export const PROOF_BASE_URL = "https://traceready.online/proof/";
+export const FIELD_NOTE_BASE_URL = "https://traceready.online/field-notes/eudr-file-errors/";
 export const FILE_CHECK_BASE_URL = "https://traceready.online/";
 
 export function routeIdForRowNumber(rowNumber) {
@@ -10,6 +11,10 @@ export function routeIdForRowNumber(rowNumber) {
 
 export function trackedProofUrl(routeId) {
   return trackedUrl(PROOF_BASE_URL, routeId);
+}
+
+export function trackedFieldNoteUrl(routeId) {
+  return trackedUrl(FIELD_NOTE_BASE_URL, routeId);
 }
 
 export function trackedFileCheckUrl(routeId) {
