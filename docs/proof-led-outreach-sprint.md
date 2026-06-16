@@ -10,7 +10,7 @@ The public field note at `https://traceready.online/field-notes/eudr-file-errors
 
 The first executable buyer/importer batch is `docs/proof-led-outreach-batch-01.csv`. The copy-pasteable send packet is `docs/proof-led-outreach-send-pack-01.md`. They are intentionally company-level only: public route URLs, no employee names, no personal emails, no personal profile URLs, deterministic route IDs, tracked TraceReady URLs, and every row starts from the public audit numbers. Each route carries a tracked documented-pilot URL so a buyer can move directly from public proof to the issue-count-first anonymized case request. Run `npm run render:outreach` after editing the CSV, then `npm run verify:outreach` before using or modifying the batch.
 
-If importer sendability becomes the bottleneck, switch to `docs/proof-led-outreach-batch-02.csv`. It is the overflow/provider batch: EUDR consultants, certification bodies, traceability platforms, and geospatial tools that can use TraceReady as first-pass cleanup before their formal review or platform workflow. It uses `b02-rNN` route IDs with `proof_led_batch_02` tracking, plus generated files at `docs/proof-led-outreach-send-pack-02.md` and `docs/proof-led-outreach-results-batch-02.csv`.
+If importer sendability becomes the bottleneck, switch to `docs/proof-led-outreach-batch-02.csv`. It is the overflow/provider batch: EUDR consultants, certification bodies, traceability platforms, and geospatial tools that can use TraceReady as first-pass cleanup before their formal review or platform workflow. It uses `b02-rNN` route IDs with `proof_led_batch_02` tracking, plus generated files at `docs/proof-led-outreach-send-pack-02.md` and `docs/proof-led-outreach-results-batch-02.csv`. Run `npm run recon:outreach-contact -- --batch docs/proof-led-outreach-batch-02.csv --tier overflow --limit 20 --json-output private/outreach-contact-recon-batch-02.json` before manual browser/UI inspection. That recon file is private working evidence only; it ranks candidate forms/contact links and does not certify any route as sendable.
 
 If a routed visitor lands on `/proof/`, the "Run a file in the browser" CTA keeps the same UTM route parameters. If they run the free checker from a routed URL, the copied buyer summary, downloaded ZIP artifacts, and paid-cleanup mailto handoff include the non-personal `Outreach route: b01-rNN` attribution line. Use that line to connect real file checks back to the private results ledger.
 
@@ -173,6 +173,7 @@ For 10 business days:
 
 - Use `docs/proof-led-outreach-batch-01.csv` as day one's first 20 public buyer/importer routes.
 - Use `docs/proof-led-outreach-batch-02.csv` for overflow/provider outreach if batch 01 route sendability blocks direct buyer traction.
+- Run the batch-02 contact recon command before browser/UI inspection so overflow forms, CAPTCHA routes, and contact-link-only pages are triaged before sendability review.
 - Contact 8 importer/buyer targets per day.
 - Contact 4 consultant or overflow targets per day.
 - Contact 2 association/community channels per day.

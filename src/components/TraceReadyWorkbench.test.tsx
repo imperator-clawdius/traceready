@@ -76,14 +76,15 @@ describe("TraceReady conversion surface", () => {
     expect(pilotProofLink?.getAttribute("href")).toBe("/pilot-proof/");
   });
 
-  it("does not clip vertical page scrolling at the app shell", () => {
+  it("does not turn the app shell into a vertical scroll container", () => {
     act(() => {
       root.render(<TraceReadyWorkbench />);
     });
 
     const shellClasses = container.querySelector(".trace-botanical-shell")?.className.split(/\s+/) ?? [];
 
-    expect(shellClasses).toContain("overflow-x-hidden");
+    expect(shellClasses).toContain("overflow-x-clip");
+    expect(shellClasses).not.toContain("overflow-x-hidden");
     expect(shellClasses).not.toContain("overflow-hidden");
   });
 

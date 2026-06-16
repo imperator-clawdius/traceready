@@ -13,6 +13,7 @@
     "init:outreach-results": "node scripts/init-outreach-results.mjs",
     "next:outreach": "node scripts/next-outreach-actions.mjs",
     "prepare:outreach": "node scripts/prepare-outreach-workspace.mjs",
+    "recon:outreach-contact": "node scripts/recon-outreach-contact-routes.mjs",
     "render:public-pilot-pack": "node scripts/render-public-pilot-pack.mjs",
     "render:outreach": "node scripts/render-outreach-pack.mjs",
     "render:outreach-day": "node scripts/render-outreach-day-pack.mjs",
