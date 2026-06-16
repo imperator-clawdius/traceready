@@ -10,6 +10,10 @@ describe("pilot proof mail helpers", () => {
     expect(body).toContain("anonymized TraceReady case study");
     expect(body).toContain("You may publish anonymized issue counts: yes/no");
     expect(body).toContain("You may quote one sentence from us without naming the company: yes/no");
+    expect(body).toContain("You may publish only with explicit yes:");
+    expect(body).toContain("What stays private even if the pilot is useful:");
+    expect(body).toContain("company name, supplier names, buyer names, coordinates, source rows");
+    expect(body).toContain("If permission is no, treat the cleanup as private work only: yes/no");
   });
 
   it("stamps outreach attribution into documented pilot mailto links", () => {

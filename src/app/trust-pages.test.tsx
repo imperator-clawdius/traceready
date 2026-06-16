@@ -377,6 +377,9 @@ describe("TraceReady trust pages", () => {
     expect(decodedHref).toContain("Outreach route: b01-r04");
     expect(decodedHref).toContain("Outreach source: proof_led_batch_01");
     expect(decodedHref).toContain("Outreach campaign: eudr_file_readiness");
+    expect(decodedHref).toContain("What stays private even if the pilot is useful");
+    expect(decodedHref).toContain("company name, supplier names, buyer names, coordinates, source rows");
+    expect(decodedHref).toContain("If permission is no, treat the cleanup as private work only");
   });
 
   it("offers a non-sensitive free triage handoff before asking for source files or payment", () => {
