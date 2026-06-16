@@ -1,15 +1,23 @@
 import fs from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import Papa from "papaparse";
+import {
+  routeIdForRowNumber,
+  trackedFileCheckUrl,
+  trackedProofUrl,
+} from "./outreach-tracking.mjs";
 
 export const REQUIRED_COLUMNS = [
   "priority",
+  "route_id",
   "tier",
   "company_or_channel",
   "segment",
   "why_it_fits",
   "public_route",
   "source_url",
+  "proof_url",
+  "file_check_url",
   "message_variant",
   "proof_hook",
   "ask",
@@ -48,6 +56,7 @@ export function validateOutreachLedger(rows, options = {}) {
   rows.forEach((row, index) => {
     const rowNumber = index + 1;
     const rowText = Object.values(row).join(" ");
+    const expectedRouteId = routeIdForRowNumber(rowNumber);
 
     for (const column of REQUIRED_COLUMNS) {
       if (!(column in row)) {
@@ -61,8 +70,22 @@ export function validateOutreachLedger(rows, options = {}) {
       errors.push(`row ${rowNumber} priority must match row order`);
     }
 
+    if (row.route_id && row.route_id !== expectedRouteId) {
+      errors.push(`row ${rowNumber} route_id must be ${expectedRouteId}`);
+    }
+
     if (row.source_url && !row.source_url.startsWith("https://")) {
       errors.push(`row ${rowNumber} source_url must be an https URL`);
+    }
+
+    if (row.proof_url && row.proof_url !== trackedProofUrl(expectedRouteId)) {
+      errors.push(`row ${rowNumber} proof_url must be tracked TraceReady proof URL for ${expectedRouteId}`);
+    }
+
+    if (row.file_check_url && row.file_check_url !== trackedFileCheckUrl(expectedRouteId)) {
+      errors.push(
+        `row ${rowNumber} file_check_url must be tracked TraceReady file-check URL for ${expectedRouteId}`,
+      );
     }
 
     if (EMAIL_PATTERN.test(rowText)) {

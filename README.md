@@ -57,9 +57,9 @@ Use `docs/public-dataset-mini-audit.md` for proof-led outreach based on a reprod
 
 Use `docs/proof-led-outreach-sprint.md` for company-level target tiers, message variants, and the 10-day proof-led outreach cadence.
 
-Use `docs/proof-led-outreach-batch-01.csv` as the first 20 company/channel routes to contact. Use `docs/proof-led-outreach-send-pack-01.md` for copy-pasteable first messages and follow-ups. Run `npm run render:outreach` after editing the CSV, then `npm run verify:outreach` so the committed batch and send packet stay sourced, proof-led, and free of personal contact data.
+Use `docs/proof-led-outreach-batch-01.csv` as the first 20 company/channel routes to contact. Each row has a `b01-rNN` route ID plus tracked proof and file-check URLs. Use `docs/proof-led-outreach-send-pack-01.md` for copy-pasteable first messages and follow-ups. Run `npm run render:outreach` after editing the CSV, then `npm run verify:outreach` so the committed batch and send packet stay sourced, proof-led, measurable, and free of personal contact data.
 
-Use `docs/proof-led-outreach-results-batch-01.csv` as the prefilled 20-route tracking ledger. Copy it to a private working file before editing. Run `npm run init:outreach-results` after changing the batch CSV, and run `npm run summarize:outreach -- path/to/private-results.csv` to calculate reply, file-check, pilot, and paid-order rates without committing private replies.
+Use `docs/proof-led-outreach-results-batch-01.csv` as the prefilled 20-route tracking ledger. Copy it to a private working file before editing and keep the `route_id`, `proof_url`, and `file_check_url` columns intact. Run `npm run init:outreach-results` after changing the batch CSV, and run `npm run summarize:outreach -- path/to/private-results.csv` to calculate reply, file-check, pilot, and paid-order rates without committing private replies.
 
 Use `docs/stripe-branding-runbook.md` for the external Stripe Dashboard branding record. The current cleanup and pilot Payment Links were visually verified in the rendered Stripe checkout UI on 2026-06-14.
 

@@ -1,11 +1,10 @@
 import fs from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { parseOutreachLedger, validateOutreachLedger } from "./verify-outreach-ledger.mjs";
+import { FILE_CHECK_BASE_URL, PROOF_BASE_URL } from "./outreach-tracking.mjs";
 
 const DEFAULT_BATCH_PATH = "docs/proof-led-outreach-batch-01.csv";
 const DEFAULT_OUTPUT_PATH = "docs/proof-led-outreach-send-pack-01.md";
-const PROOF_URL = "https://traceready.online/proof/";
-const HOME_URL = "https://traceready.online/";
 const EMAIL_PATTERN = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i;
 const PERSONAL_PROFILE_PATTERN =
   /(?:linkedin\.com\/in\/|facebook\.com\/people\/|instagram\.com\/p\/|x\.com\/[^/\s]+\/status\/)/i;
@@ -21,8 +20,9 @@ export function renderOutreachPacket(rows, options = {}) {
     "",
     "Core proof: TraceReady checked 57,658 public cocoa rows and found 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.",
     "",
-    `Proof page: ${PROOF_URL}`,
-    `Browser-side file check: ${HOME_URL}`,
+    `Base proof page: ${PROOF_BASE_URL}`,
+    `Base browser-side file check: ${FILE_CHECK_BASE_URL}`,
+    "Use the tracked links inside each route section so replies and file checks can be tied back to a route ID.",
     "",
     "Guardrail: TraceReady is operational file cleanup and readiness checking, not legal certification, not a TRACES submission service, and not deforestation-free proof.",
     "",
@@ -41,10 +41,6 @@ export function validateRenderedOutreachPacket(markdown, rows) {
     errors.push("packet must include 46,134 public-audit proof number");
   }
 
-  if (!markdown.includes(PROOF_URL)) {
-    errors.push("packet must include proof page URL");
-  }
-
   if (EMAIL_PATTERN.test(markdown)) {
     errors.push("packet contains an email address; keep committed send packet company-level");
   }
@@ -61,6 +57,18 @@ export function validateRenderedOutreachPacket(markdown, rows) {
     if (!markdown.includes(row.source_url)) {
       errors.push(`packet must include source URL for ${row.company_or_channel}`);
     }
+
+    if (!markdown.includes(row.route_id)) {
+      errors.push(`packet must include route ID for ${row.company_or_channel}`);
+    }
+
+    if (!markdown.includes(row.proof_url)) {
+      errors.push(`packet must include tracked proof URL for ${row.company_or_channel}`);
+    }
+
+    if (!markdown.includes(row.file_check_url)) {
+      errors.push(`packet must include tracked file-check URL for ${row.company_or_channel}`);
+    }
   }
 
   return [...new Set(errors)];
@@ -74,10 +82,13 @@ function renderRow(row) {
   return [
     `## ${row.priority}. ${row.company_or_channel}`,
     "",
+    `- Route ID: ${row.route_id}`,
     `- Tier: ${row.tier}`,
     `- Segment: ${row.segment}`,
     `- Public route: ${row.public_route}`,
     `- Source: ${row.source_url}`,
+    `- Proof URL: ${row.proof_url}`,
+    `- File check URL: ${row.file_check_url}`,
     `- Ask: ${row.ask}`,
     "",
     "### First Message",
@@ -120,7 +131,7 @@ function bodyFor(row) {
       "",
       "I published a public mini-audit using a 57,658-row cocoa farm-location dataset. The useful part for members is practical: even with latitude, longitude, and area fields, the file still surfaced 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.",
       "",
-      `Public proof page: ${PROOF_URL}`,
+      `Public proof page: ${row.proof_url}`,
       "",
       "This is not legal certification and not a TRACES submission tool. It is a free operational example of file defects that create buyer-review rework.",
       "",
@@ -136,7 +147,7 @@ function bodyFor(row) {
       "",
       "TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.",
       "",
-      `Public proof page: ${PROOF_URL}`,
+      `Public proof page: ${row.proof_url}`,
       "",
       "If a client sends you a malformed farm file, I can handle the first-pass cleanup so your team is not stuck fixing coordinates, missing plot IDs, duplicate farm IDs, and point-only over-4ha records by hand.",
     ].join("\n");
@@ -149,7 +160,9 @@ function bodyFor(row) {
     "",
     "That is the narrow problem I am looking for: not \"buy software,\" just \"will this supplier CSV/KML/GeoJSON create buyer-review rework?\"",
     "",
-    `You can run one file in the browser first, before sending me anything: ${PROOF_URL}`,
+    `Public proof page: ${row.proof_url}`,
+    "",
+    `You can run one file in the browser first, before sending me anything: ${row.file_check_url}`,
     "",
     "If the issue list is useful, I can turn one file into a cleaned pack and row-level issue log. Worth testing one messy supplier file?",
   ].join("\n");
@@ -162,7 +175,7 @@ function followUpFor(row) {
       "",
       "The narrow value is showing common EUDR handoff defects before members send files into a buyer or platform workflow: missing plot IDs, missing supplier identity, and point-only plots over 4 hectares.",
       "",
-      `If this is not the right route, is there a better public member-resource channel for a practical example? ${PROOF_URL}`,
+      `If this is not the right route, is there a better public member-resource channel for a practical example? ${row.proof_url}`,
     ].join("\n");
   }
 
@@ -171,7 +184,7 @@ function followUpFor(row) {
     "",
     "The low-friction path is just one file checked in the browser first. Coordinates do not need to leave your machine for the initial issue list.",
     "",
-    `If the issue list is useful, the paid cleanup offer is one cleaned buyer pack and row-level issue log. ${HOME_URL}`,
+    `If the issue list is useful, the paid cleanup offer is one cleaned buyer pack and row-level issue log. ${row.file_check_url}`,
   ].join("\n");
 }
 

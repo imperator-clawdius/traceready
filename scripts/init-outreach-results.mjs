@@ -9,9 +9,12 @@ const DEFAULT_OUTPUT_PATH = "docs/proof-led-outreach-results-batch-01.csv";
 
 export function buildInitialOutreachResults(batchRows) {
   return batchRows.map((row) => ({
+    route_id: row.route_id,
     date_sent: "",
     company_or_channel: row.company_or_channel,
     tier: row.tier,
+    proof_url: row.proof_url,
+    file_check_url: row.file_check_url,
     status: "not_sent",
     response_type: "none",
     file_check_count: "0",
@@ -42,12 +45,24 @@ export function validateInitialResultsAgainstBatch(resultRows, batchRows) {
     const resultRow = resultRows[index];
     const batchRow = batchRows[index];
 
+    if (resultRow.route_id !== batchRow.route_id) {
+      errors.push(`row ${rowNumber} route_id must match batch: ${batchRow.route_id}`);
+    }
+
     if (resultRow.company_or_channel !== batchRow.company_or_channel) {
       errors.push(`row ${rowNumber} company_or_channel must match batch: ${batchRow.company_or_channel}`);
     }
 
     if (resultRow.tier !== batchRow.tier) {
       errors.push(`row ${rowNumber} tier must match batch: ${batchRow.tier}`);
+    }
+
+    if (resultRow.proof_url !== batchRow.proof_url) {
+      errors.push(`row ${rowNumber} proof_url must match batch route ${batchRow.route_id}`);
+    }
+
+    if (resultRow.file_check_url !== batchRow.file_check_url) {
+      errors.push(`row ${rowNumber} file_check_url must match batch route ${batchRow.route_id}`);
     }
 
     if (resultRow.status !== "not_sent") {

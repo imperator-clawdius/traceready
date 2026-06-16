@@ -10,9 +10,9 @@ import {
 
 describe("outreach results initializer", () => {
   it("builds not-sent result rows from target batch rows", () => {
-    const batchRows = parseOutreachLedger(`priority,tier,company_or_channel,segment,why_it_fits,public_route,source_url,message_variant,proof_hook,ask,status,next_step
-1,association,European Coffee Federation,EU coffee association,Represents EU coffee sector,public website,https://www.ecf-coffee.org/,association,"Lead with 57,658-row public audit and 46,134 point-only over-4ha plots",Ask for member education route,not_started,Send association variant
-2,importer,Cafe Imports Europe,specialty green coffee importer,Public Europe contact route,public contact page,https://www.cafeimports.com/europe/blog/general-contact/,importer,"Lead with 57,658-row public audit and 46,134 point-only over-4ha plots",Ask them to run one supplier file browser-side,not_started,Send importer variant
+    const batchRows = parseOutreachLedger(`priority,route_id,tier,company_or_channel,segment,why_it_fits,public_route,source_url,proof_url,file_check_url,message_variant,proof_hook,ask,status,next_step
+1,b01-r01,association,European Coffee Federation,EU coffee association,Represents EU coffee sector,public website,https://www.ecf-coffee.org/,https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01,association,"Lead with 57,658-row public audit and 46,134 point-only over-4ha plots",Ask for member education route,not_started,Send association variant
+2,b01-r02,importer,Cafe Imports Europe,specialty green coffee importer,Public Europe contact route,public contact page,https://www.cafeimports.com/europe/blog/general-contact/,https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02,importer,"Lead with 57,658-row public audit and 46,134 point-only over-4ha plots",Ask them to run one supplier file browser-side,not_started,Send importer variant
 `);
 
     const resultRows = buildInitialOutreachResults(batchRows);
@@ -20,9 +20,14 @@ describe("outreach results initializer", () => {
 
     expect(resultRows).toEqual([
       {
+        route_id: "b01-r01",
         date_sent: "",
         company_or_channel: "European Coffee Federation",
         tier: "association",
+        proof_url:
+          "https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01",
+        file_check_url:
+          "https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01",
         status: "not_sent",
         response_type: "none",
         file_check_count: "0",
@@ -32,9 +37,14 @@ describe("outreach results initializer", () => {
         next_action: "send first message from proof-led packet",
       },
       {
+        route_id: "b01-r02",
         date_sent: "",
         company_or_channel: "Cafe Imports Europe",
         tier: "importer",
+        proof_url:
+          "https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02",
+        file_check_url:
+          "https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02",
         status: "not_sent",
         response_type: "none",
         file_check_count: "0",
@@ -44,19 +54,23 @@ describe("outreach results initializer", () => {
         next_action: "send first message from proof-led packet",
       },
     ]);
-    expect(csv).toContain("date_sent,company_or_channel,tier,status,response_type");
-    expect(csv).toContain("Cafe Imports Europe,importer,not_sent,none,0,0,no");
+    expect(csv).toContain("route_id,date_sent,company_or_channel,tier,proof_url,file_check_url,status");
+    expect(csv).toContain("b01-r02,,Cafe Imports Europe,importer,");
+    expect(csv).toContain("not_sent,none,0,0,no");
     expect(validateInitialResultsAgainstBatch(resultRows, batchRows)).toEqual([]);
   });
 
   it("detects stale initialized result rows", () => {
-    const batchRows = parseOutreachLedger(`priority,tier,company_or_channel,segment,why_it_fits,public_route,source_url,message_variant,proof_hook,ask,status,next_step
-1,association,European Coffee Federation,EU coffee association,Represents EU coffee sector,public website,https://www.ecf-coffee.org/,association,"Lead with 57,658-row public audit and 46,134 point-only over-4ha plots",Ask for member education route,not_started,Send association variant
+    const batchRows = parseOutreachLedger(`priority,route_id,tier,company_or_channel,segment,why_it_fits,public_route,source_url,proof_url,file_check_url,message_variant,proof_hook,ask,status,next_step
+1,b01-r01,association,European Coffee Federation,EU coffee association,Represents EU coffee sector,public website,https://www.ecf-coffee.org/,https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01,association,"Lead with 57,658-row public audit and 46,134 point-only over-4ha plots",Ask for member education route,not_started,Send association variant
 `);
-    const resultRows = parseOutreachResults(`date_sent,company_or_channel,tier,status,response_type,file_check_count,paid_order_count,pilot_requested,reply_notes,next_action
-,Wrong Company,association,not_sent,none,0,0,no,,send first message from proof-led packet
+    const resultRows = parseOutreachResults(`route_id,date_sent,company_or_channel,tier,proof_url,file_check_url,status,response_type,file_check_count,paid_order_count,pilot_requested,reply_notes,next_action
+b01-r99,,Wrong Company,association,https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r99,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r99,not_sent,none,0,0,no,,send first message from proof-led packet
 `);
 
+    expect(validateInitialResultsAgainstBatch(resultRows, batchRows)).toContain(
+      "row 1 route_id must match batch: b01-r01",
+    );
     expect(validateInitialResultsAgainstBatch(resultRows, batchRows)).toContain(
       "row 1 company_or_channel must match batch: European Coffee Federation",
     );

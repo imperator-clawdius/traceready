@@ -1,11 +1,15 @@
 import fs from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import Papa from "papaparse";
+import { trackedFileCheckUrl, trackedProofUrl } from "./outreach-tracking.mjs";
 
 export const RESULT_COLUMNS = [
+  "route_id",
   "date_sent",
   "company_or_channel",
   "tier",
+  "proof_url",
+  "file_check_url",
   "status",
   "response_type",
   "file_check_count",
@@ -40,6 +44,7 @@ const ALLOWED_RESPONSE_TYPES = new Set([
 const EMAIL_PATTERN = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i;
 const PERSONAL_PROFILE_PATTERN =
   /(?:linkedin\.com\/in\/|facebook\.com\/people\/|instagram\.com\/p\/|x\.com\/[^/\s]+\/status\/)/i;
+const ROUTE_ID_PATTERN = /^b01-r\d{2}$/;
 
 export function parseOutreachResults(csv) {
   const parsed = Papa.parse(csv, {
@@ -71,6 +76,18 @@ export function validateOutreachResults(rows) {
 
     if (!row.company_or_channel) {
       errors.push(`row ${rowNumber} company_or_channel is required`);
+    }
+
+    if (!ROUTE_ID_PATTERN.test(row.route_id)) {
+      errors.push(`row ${rowNumber} route_id must look like b01-r01`);
+    }
+
+    if (row.proof_url !== trackedProofUrl(row.route_id)) {
+      errors.push(`row ${rowNumber} proof_url must be a tracked TraceReady proof URL`);
+    }
+
+    if (row.file_check_url !== trackedFileCheckUrl(row.route_id)) {
+      errors.push(`row ${rowNumber} file_check_url must be a tracked TraceReady file-check URL`);
     }
 
     if (!ALLOWED_STATUSES.has(row.status)) {

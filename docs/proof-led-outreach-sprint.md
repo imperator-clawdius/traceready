@@ -4,11 +4,11 @@
 
 Turn the public dataset mini-audit into the first 10 serious file conversations without asking strangers to trust a new SaaS brand.
 
-The page to send is `https://traceready.online/proof/`. The supporting write-up is `docs/public-dataset-mini-audit.md`.
+The base proof page is `https://traceready.online/proof/`. For outreach, send the tracked `proof_url` and `file_check_url` from the batch row so every reply and browser-side check can be tied back to a `b01-rNN` route ID. The supporting write-up is `docs/public-dataset-mini-audit.md`.
 
-The first executable batch is `docs/proof-led-outreach-batch-01.csv`. The copy-pasteable send packet is `docs/proof-led-outreach-send-pack-01.md`. They are intentionally company-level only: public route URLs, no employee names, no personal emails, no personal profile URLs, and every row starts from the public audit numbers. Run `npm run render:outreach` after editing the CSV, then `npm run verify:outreach` before using or modifying the batch.
+The first executable batch is `docs/proof-led-outreach-batch-01.csv`. The copy-pasteable send packet is `docs/proof-led-outreach-send-pack-01.md`. They are intentionally company-level only: public route URLs, no employee names, no personal emails, no personal profile URLs, deterministic route IDs, tracked TraceReady URLs, and every row starts from the public audit numbers. Run `npm run render:outreach` after editing the CSV, then `npm run verify:outreach` before using or modifying the batch.
 
-After sending, copy `docs/proof-led-outreach-results-batch-01.csv` to a private working file and run `npm run summarize:outreach -- path/to/private-results.csv`. Do not commit private replies, personal contact details, customer files, or order evidence.
+After sending, copy `docs/proof-led-outreach-results-batch-01.csv` to a private working file, keep the route/link columns intact, and run `npm run summarize:outreach -- path/to/private-results.csv`. Do not commit private replies, personal contact details, customer files, or order evidence.
 
 ## Positioning
 
@@ -24,7 +24,7 @@ The founder angle is useful only after the proof lands: small team, hands-on cle
 - Do not scrape employee emails, personal phone numbers, or private social profiles.
 - Do not imply certification, legal due diligence, TRACES submission, or deforestation-free proof.
 - Do not ask for confidential coordinates in the first message. Ask them to run the browser-side check first, then offer concierge cleanup if useful.
-- Log prospects and replies in a private copy of `docs/order-ledger-template.csv`; do not commit customer files or private replies.
+- Log sends, replies, file checks, and orders against the row's `route_id` in a private copy of `docs/proof-led-outreach-results-batch-01.csv`; do not commit customer files or private replies.
 
 ## Target Tiers
 
@@ -81,7 +81,7 @@ I built TraceReady as a narrow cleanup desk for coffee and cocoa CSV/KML/GeoJSON
 
 I just published a public mini-audit using a 57,658-row cocoa farm-location dataset. The useful part for members is practical: even with latitude, longitude, and area fields, the file still surfaced 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 
-Public proof page: https://traceready.online/proof/
+Public proof page: {{proof_url}}
 
 This is not legal certification and not a TRACES submission tool. It is a free operational example of the file defects that create buyer-review rework. Is there a member education channel where this would be useful?
 
@@ -95,7 +95,9 @@ Quick, specific note. I ran a public cocoa farm-location dataset through TraceRe
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
-You can run one file in the browser first, before sending me anything: https://traceready.online/proof/
+Public proof page: {{proof_url}}
+
+You can run one file in the browser first, before sending me anything: {{file_check_url}}
 
 If the issue list is useful, I can turn one file into a cleaned pack and row-level issue log. Worth testing one messy supplier file?
 
@@ -109,7 +111,7 @@ I am looking for EUDR consultants and advisors who run into broken coffee/cocoa 
 
 TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.
 
-Public proof page: https://traceready.online/proof/
+Public proof page: {{proof_url}}
 
 If a client sends you a malformed farm file, I can handle the first-pass cleanup so your team is not stuck fixing coordinates, missing plot IDs, duplicate farm IDs, and point-only over-4ha records by hand.
 
@@ -123,7 +125,7 @@ For 10 business days:
 - Contact 2 association/community channels per day.
 - Post one public proof-led note per day on a relevant professional channel.
 - Ask for one of three outcomes only: run the browser-side check, send a non-sensitive sample structure, or refer the person who owns supplier-file cleanup.
-- Log every send, reply, objection, file run, and paid cleanup opportunity.
+- Log every send, reply, objection, file run, and paid cleanup opportunity by `route_id`.
 - Summarize the private results ledger daily with `npm run summarize:outreach -- path/to/private-results.csv`.
 
 Do not count likes, compliments, or "interesting" replies as traction. Count real files, paid cleanup orders, pilot requests, referrals to data/compliance owners, and permissioned de-identified before/after evidence.
