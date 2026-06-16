@@ -112,6 +112,25 @@ describe("TraceReady conversion surface", () => {
     expect(headerText).toContain("Passive Print Labs LLC");
   });
 
+  it("surfaces the public dataset audit on the main landing page", () => {
+    act(() => {
+      root.render(<TraceReadyWorkbench />);
+    });
+
+    const pageText = container.textContent ?? "";
+    const proofLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("View public audit proof"),
+    );
+
+    expect(pageText).toContain("Public dataset proof");
+    expect(pageText).toContain("57,658 public cocoa rows checked");
+    expect(pageText).toContain("46,134 point-only plots over 4 hectares");
+    expect(pageText).toContain("57,658 rows without plot IDs");
+    expect(pageText).toContain("57,658 rows without supplier identity");
+    expect(pageText).toContain("not customer proof or legal certification");
+    expect(proofLink?.getAttribute("href")).toBe("/proof/");
+  });
+
   it("discloses the legal operator before a buyer opens Stripe checkout", () => {
     act(() => {
       root.render(<TraceReadyWorkbench />);

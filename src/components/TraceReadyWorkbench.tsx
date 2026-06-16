@@ -480,6 +480,26 @@ export function TraceReadyWorkbench() {
                   certification or due diligence statement.
                 </p>
               </div>
+              <div className="mt-3 max-w-2xl border border-[#74e0cd]/45 bg-[#071d1a]/[0.62] p-4 text-sm leading-6 text-[#d8eadf] backdrop-blur">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <p className="font-semibold text-white">Public dataset proof</p>
+                    <p className="mt-1">
+                      57,658 public cocoa rows checked: 46,134 point-only plots over 4 hectares,
+                      57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+                    </p>
+                    <p className="mt-2 text-xs leading-5 text-[#bcd6c4]">
+                      Real public dataset stress test, not customer proof or legal certification.
+                    </p>
+                  </div>
+                  <a
+                    href={PROOF_HREF}
+                    className="inline-flex h-10 shrink-0 items-center justify-center rounded-md border border-[#74e0cd]/60 px-3 text-xs font-semibold text-[#effdf4] transition hover:bg-white/[0.12]"
+                  >
+                    View public audit proof
+                  </a>
+                </div>
+              </div>
             </section>
 
             <section
