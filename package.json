@@ -15,6 +15,7 @@
     "prepare:outreach": "node scripts/prepare-outreach-workspace.mjs",
     "render:outreach": "node scripts/render-outreach-pack.mjs",
     "render:outreach-day": "node scripts/render-outreach-day-pack.mjs",
+    "render:outreach-replies": "node scripts/render-outreach-reply-playbook.mjs",
     "summarize:outreach": "node scripts/summarize-outreach-results.mjs",
     "update:outreach-result": "node scripts/update-outreach-result.mjs",
     "verify:outreach": "node scripts/verify-outreach.mjs",
