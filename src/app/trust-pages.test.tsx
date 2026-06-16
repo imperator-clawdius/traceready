@@ -138,7 +138,7 @@ describe("TraceReady trust pages", () => {
     expect(pageText).toContain("not legal certification");
   });
 
-  it("publishes proof status without pretending the sample is customer proof", () => {
+  it("publishes proof status around the public-data pilot without pretending it is a customer case", () => {
     act(() => {
       root.render(<ProofPage />);
     });
@@ -148,12 +148,16 @@ describe("TraceReady trust pages", () => {
       element.textContent?.includes("Download representative sample pack"),
     );
 
-    expect(pageText).toContain("Representative sample fixture");
-    expect(pageText).toContain("not customer proof");
-    expect(pageText).toContain("not transaction proof");
-    expect(pageText).toContain("messy file in");
-    expect(pageText).toContain("issue list");
-    expect(pageText).toContain("cleaned pack out");
+    expect(pageText).toContain("Public-data pilot, exact limits");
+    expect(pageText).toContain("one real public cocoa dataset");
+    expect(pageText).toContain("not a customer case");
+    expect(pageText).toContain("not a paid transaction");
+    expect(pageText).toContain("Public source rows");
+    expect(pageText).toContain("Issue log");
+    expect(pageText).toContain("Handoff out");
+    expect(pageText).toContain("does not fabricate missing supplier IDs");
+    expect(pageText).toContain("Format example pack");
+    expect(pageText).toContain("fictional fixture");
     expect(sampleLink?.getAttribute("href")).toBe("/traceready-sample-output.zip");
   });
 

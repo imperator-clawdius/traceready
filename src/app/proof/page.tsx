@@ -47,7 +47,7 @@ const AUDIT_STATS = [
 
 export const metadata = {
   title: "Proof | TraceReady",
-  description: "TraceReady sample output, proof status, and buyer-facing limits.",
+  description: "TraceReady public-data pilot, exact issue counts, output format, and buyer-facing limits.",
 };
 
 export default function ProofPage() {
@@ -63,43 +63,48 @@ export default function ProofPage() {
             Proof status
           </p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-[#2b190f]">
-            Representative sample fixture, plain limits.
+            Public-data pilot, exact limits.
           </h1>
           <p className="mt-4 max-w-3xl text-sm leading-7 text-zinc-700">
-            The current public sample shows the product mechanics: messy file in, issue list, cleaned
-            pack out. It is a fictional fixture for inspection, not customer proof, not transaction proof,
-            not buyer approval, and not legal certification.
+            This is the current trust asset: one real public cocoa dataset treated like a buyer handoff
+            file, exact issues found, and an honest output boundary. It is not a customer case, not a
+            paid transaction, not buyer approval, and not legal certification.
           </p>
         </section>
 
         <div className="mt-6 grid gap-4 lg:grid-cols-3">
           <section className="border border-[#d9bf92] bg-white p-5 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#7d5d32]">Before</p>
-            <h2 className="mt-2 text-lg font-semibold text-[#2b190f]">Messy source rows</h2>
+            <h2 className="mt-2 text-lg font-semibold text-[#2b190f]">Public source rows</h2>
             <p className="mt-3 text-sm leading-6 text-zinc-700">
-              Duplicate farm ID, bad coordinate, missing supplier identity, and a point-only large plot.
+              57,658 rows with latitude, longitude, and area values, but no plot IDs, supplier identity,
+              batch linkage, or polygon geometry in the buyer-handoff view.
             </p>
           </section>
           <section className="border border-[#d9bf92] bg-white p-5 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#7d5d32]">During</p>
-            <h2 className="mt-2 text-lg font-semibold text-[#2b190f]">Issue list</h2>
+            <h2 className="mt-2 text-lg font-semibold text-[#2b190f]">Issue log</h2>
             <p className="mt-3 text-sm leading-6 text-zinc-700">
-              Blockers and warnings stay visible so the buyer can see what was fixed and what still needs
-              supplier confirmation.
+              TraceReady found 161,450 blockers, 57,658 warnings, and 46,134 point-only plots over
+              4 hectares that need polygon follow-up before buyer review.
             </p>
           </section>
           <section className="border border-[#d9bf92] bg-white p-5 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#7d5d32]">After</p>
-            <h2 className="mt-2 text-lg font-semibold text-[#2b190f]">Cleaned pack out</h2>
+            <h2 className="mt-2 text-lg font-semibold text-[#2b190f]">Handoff out</h2>
             <p className="mt-3 text-sm leading-6 text-zinc-700">
-              A ZIP with clean tabular data, normalized geolocation, a buyer summary, and operational
-              readiness artifacts.
+              Output is a buyer/supplier follow-up list and issue evidence. TraceReady does not fabricate
+              missing supplier IDs, plot IDs, batch IDs, or polygon boundaries.
             </p>
           </section>
         </div>
 
         <section className="mt-6 border border-[#d9bf92] bg-[#fffaf2] p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-[#2b190f]">Files in the sample pack</h2>
+          <h2 className="text-lg font-semibold text-[#2b190f]">Format example pack</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-zinc-700">
+            The downloadable ZIP is still a fictional fixture. It shows the file names and handoff
+            format a paid cleanup can return when a source file has enough real data to repair.
+          </p>
           <ul className="mt-4 grid gap-2 text-sm font-medium text-[#3f2a1b] sm:grid-cols-2">
             {OUTPUTS.map((output) => (
               <li key={output} className="border border-[#eadcc8] bg-white px-3 py-2">
@@ -228,8 +233,8 @@ export default function ProofPage() {
         <p className="mt-6 text-xs leading-5 text-zinc-500">
           Public proof will be upgraded only when it is true and permissioned: customer quote, company
           name, paid order count, turnaround metric, or de-identified customer before/after. Until then,
-          TraceReady is clear that this public pack is a fictional inspection fixture operated by{" "}
-          {LEGAL_OPERATOR}. Questions: {CONTACT_EMAIL}.
+          TraceReady is clear that the public-data pilot is not a customer case and the sample ZIP is
+          format-only. Operated by {LEGAL_OPERATOR}. Questions: {CONTACT_EMAIL}.
         </p>
       </div>
     </main>

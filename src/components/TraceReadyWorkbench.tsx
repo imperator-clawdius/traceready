@@ -154,21 +154,6 @@ const FIX_CATEGORIES = [
   },
 ];
 
-const BEFORE_AFTER_ROWS = [
-  {
-    value: "COOP-018, Ghana, coffee, LOT-7, 5.7 ha, lat: 183.421, lon: -1.612",
-    problem: "invalid latitude and point-only plot",
-  },
-  {
-    value: "COOP-018, Ghana, coffee, LOT-7, 5.7 ha, lat: 6.334, lon: -1.613",
-    problem: "duplicate farm ID",
-  },
-  {
-    value: "COOP-022, , cocoa, LOT-7, 2.1 ha, lat: 6.204, lon: -1.708",
-    problem: "missing supplier",
-  },
-];
-
 const PACK_ITEMS = [
   "Cleaned farm CSV",
   "Issue log CSV",
@@ -179,18 +164,26 @@ const PACK_ITEMS = [
   "Paid-cleanup intake note",
 ];
 
-const PROOF_ISSUES = [
+const PUBLIC_PILOT_STATS = [
   {
-    label: "3 blockers",
-    detail: "invalid coordinate, duplicate farm ID, and missing supplier identity",
+    value: "57,658",
+    label: "public cocoa rows checked",
   },
   {
-    label: "1 geometry follow-up",
-    detail: "plot over 4 ha has only a point, so buyer likely needs polygon evidence",
+    value: "46,134",
+    label: "point-only plots over 4 ha",
   },
   {
-    label: "7 files out",
-    detail: "cleaned CSV, issue log, normalized GeoJSON, buyer summary, report, checklist, intake note",
+    value: "57,658",
+    label: "rows missing plot IDs",
+  },
+  {
+    value: "57,658",
+    label: "rows missing supplier identity",
+  },
+  {
+    value: "0",
+    label: "ready records",
   },
 ];
 
@@ -449,10 +442,10 @@ export function TraceReadyWorkbench() {
             </div>
             <div className="hidden items-center gap-2 sm:flex">
               <a
-                href="#sample-output"
+                href="#pilot-case"
                 className="h-10 items-center justify-center rounded-md border border-white/[0.18] bg-white/[0.1] px-4 text-sm font-semibold text-[#effdf4] backdrop-blur transition hover:bg-white/[0.16] sm:inline-flex"
               >
-                Sample output
+                Pilot case
               </a>
               <a
                 href={METHODOLOGY_HREF}
@@ -463,7 +456,7 @@ export function TraceReadyWorkbench() {
             </div>
           </nav>
 
-          <div className="grid flex-1 items-center gap-8 py-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(340px,0.58fr)] lg:py-14">
+          <div className="grid flex-1 items-center gap-8 py-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(360px,0.62fr)] lg:py-14">
             <section className="max-w-3xl">
               <h1 className="text-4xl font-semibold leading-[1.02] text-white sm:text-5xl lg:text-6xl">
                 Check a farm file before a buyer rejects it.
@@ -492,106 +485,57 @@ export function TraceReadyWorkbench() {
                 </button>
               </div>
               <p className="mt-4 max-w-xl text-sm leading-6 text-[#bcd6c4]">
-                No farm data leaves your browser during the free check. Paid cleanup is offered after
-                you can see what needs fixing.
+                The free diagnosis stays in your browser. Paid cleanup starts only after the issue
+                list proves there is real buyer-review rework to fix.
               </p>
-              <div className="mt-5 max-w-2xl border border-white/[0.18] bg-white/[0.1] p-4 text-sm leading-6 text-[#d8eadf] backdrop-blur">
-                <p className="font-semibold text-white">Founder proof</p>
-                <p className="mt-1">
-                  TraceReady is founder-operated by Passive Print Labs LLC through{" "}
-                  <a href={`mailto:${CONTACT_EMAIL}`} className="font-semibold text-white underline-offset-4 hover:underline">
-                    {CONTACT_EMAIL}
-                  </a>
-                  . Small-team advantage: the operator behind it has worked across regulated tax
-                  and advisory operations, AI systems builds, public and private product launches,
-                  automation workflows, and enough spreadsheet mileage to know messy records are not
-                  a character flaw.
-                </p>
-                <p className="mt-2">
-                  No enterprise theater, no procurement parade, no magic compliance wand. TraceReady
-                  shows the issue list first, keeps the free check browser-side, and uses
-                  deterministic issue logs and deterministic checks for missing IDs, duplicate farms,
-                  bad coordinates, point-only plots over 4 ha, and incomplete shipment fields.
-                </p>
-                <p className="mt-2 text-xs leading-5 text-[#bcd6c4]">
-                  Operated by {LEGAL_OPERATOR}. This is operational file cleanup, not a legal
-                  certification or due diligence statement.
-                </p>
-              </div>
-              <div className="mt-3 max-w-2xl border border-[#74e0cd]/45 bg-[#071d1a]/[0.62] p-4 text-sm leading-6 text-[#d8eadf] backdrop-blur">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <p className="font-semibold text-white">Public dataset proof</p>
-                    <p className="mt-1">
-                      57,658 public cocoa rows checked: 46,134 point-only plots over 4 hectares,
-                      57,658 rows without plot IDs, and 57,658 rows without supplier identity.
-                    </p>
-                    <p className="mt-2 text-xs leading-5 text-[#bcd6c4]">
-                      Real public dataset stress test, not customer proof or legal certification.
-                    </p>
-                  </div>
-                  <div className="flex shrink-0 flex-col gap-2">
-                    <a
-                      href={PROOF_HREF}
-                      className="inline-flex h-10 items-center justify-center rounded-md border border-[#74e0cd]/60 px-3 text-xs font-semibold text-[#effdf4] transition hover:bg-white/[0.12]"
-                    >
-                      View public audit proof
-                    </a>
-                    <a
-                      href={FIELD_NOTE_EUDR_FILE_ERRORS_HREF}
-                      className="inline-flex h-10 items-center justify-center rounded-md border border-[#74e0cd]/60 px-3 text-xs font-semibold text-[#effdf4] transition hover:bg-white/[0.12]"
-                    >
-                      Read the field note
-                    </a>
-                  </div>
-                </div>
-              </div>
             </section>
 
             <section
-              id="sample-output"
-              className="border border-white/[0.16] bg-[#071d1a]/[0.78] p-5 shadow-2xl backdrop-blur-md"
+              id="pilot-case"
+              className="border border-[#74e0cd]/45 bg-[#071d1a]/[0.78] p-5 shadow-2xl backdrop-blur-md"
             >
               <p className="text-xs font-semibold uppercase text-[#74e0cd]">
-                Representative before-and-after
+                Public-data pilot
               </p>
               <h2 className="mt-2 text-2xl font-semibold leading-tight text-white">
-                Messy rows become a visible issue list and cleaned pack.
+                57,658 real cocoa rows checked; 0 were buyer-ready.
               </h2>
-              <p className="mt-2 text-xs leading-5 text-[#bcd6c4]">
-                A fictional sample fixture, not customer proof, so the mechanics are inspectable without
-                exposing buyer files.
+              <p className="mt-3 text-sm leading-6 text-[#d8eadf]">
+                Input: a public Colombian cocoa dataset with coordinates and area values. TraceReady
+                treated it like a buyer handoff file, supplied only public country and commodity
+                metadata, and did not invent missing IDs, suppliers, batches, or polygons.
               </p>
-              <div className="mt-5 border border-white/[0.12] bg-white/[0.08] p-4">
-                <p className="text-sm font-semibold text-[#fff9e8]">Before: messy supplier CSV</p>
-                <div className="mt-3 space-y-2 font-mono text-[11px] leading-5 text-[#d8eadf]">
-                  {BEFORE_AFTER_ROWS.map((row) => (
-                    <div key={row.value} className="border-l-2 border-[#f3b365] pl-3">
-                      <p>{row.value}</p>
-                      <p className="text-[#f6c987]">{row.problem}</p>
-                    </div>
-                  ))}
-                </div>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                {PUBLIC_PILOT_STATS.map((stat) => (
+                  <div key={stat.label} className="border-t border-white/[0.18] pt-3">
+                    <p className="text-2xl font-semibold tabular-nums text-white">{stat.value}</p>
+                    <p className="mt-1 text-xs font-medium uppercase leading-5 tracking-[0.08em] text-[#bcd6c4]">
+                      {stat.label}
+                    </p>
+                  </div>
+                ))}
               </div>
-              <div className="mt-3 border border-white/[0.12] bg-white/[0.08] p-4">
-                <p className="text-sm font-semibold text-[#fff9e8]">Issues TraceReady catches</p>
-                <ul className="mt-3 space-y-2 text-sm leading-5 text-[#cfe3d7]">
-                  {PROOF_ISSUES.map((issue) => (
-                    <li key={issue.label} className="flex gap-2">
-                      <AlertTriangle className="mt-0.5 size-4 shrink-0 text-[#f3b365]" aria-hidden="true" />
-                      <span>
-                        <span className="font-semibold text-white">{issue.label}:</span> {issue.detail}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="mt-3 border border-white/[0.12] bg-[#effaf4] p-4 text-[#17352d]">
-                <p className="text-sm font-semibold">After: cleaned buyer pack</p>
-                <p className="mt-2 text-sm leading-6">
-                  Cleaned farm CSV, issue log, normalized GeoJSON, buyer summary, readiness
-                  report, EUDR checklist, and paid-cleanup intake note.
+              <div className="mt-5 border-t border-white/[0.18] pt-4 text-sm leading-6 text-[#d8eadf]">
+                <p className="font-semibold text-white">Output</p>
+                <p className="mt-1">
+                  Exact issue counts, row-level cleanup blockers, and a buyer/supplier follow-up list:
+                  57,658 rows without plot IDs, 57,658 rows without supplier identity, 57,658 rows
+                  without shipment linkage, and 46,134 point-only plots over 4 hectares.
                 </p>
+              </div>
+              <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+                <a
+                  href={PROOF_HREF}
+                  className="inline-flex h-10 items-center justify-center rounded-md bg-[#0aa394] px-3 text-sm font-semibold text-white transition hover:bg-[#0b8f83]"
+                >
+                  View pilot case
+                </a>
+                <a
+                  href={FIELD_NOTE_EUDR_FILE_ERRORS_HREF}
+                  className="inline-flex h-10 items-center justify-center rounded-md border border-[#74e0cd]/60 px-3 text-sm font-semibold text-[#effdf4] transition hover:bg-white/[0.12]"
+                >
+                  Read field note
+                </a>
               </div>
             </section>
           </div>
@@ -805,7 +749,7 @@ export function TraceReadyWorkbench() {
               </a>
             </div>
             <div className="mt-4 border-t border-[#eadcc8] pt-4 text-xs leading-5 text-[#7a6144]">
-              <p className="font-semibold text-[#3a2517]">Founder-operated cleanup desk</p>
+              <p className="font-semibold text-[#3a2517]">TraceReady cleanup desk</p>
               <p className="mt-1">
                 TraceReady checkout is labeled as TraceReady and operated by {LEGAL_OPERATOR}.
               </p>
@@ -853,19 +797,20 @@ export function TraceReadyWorkbench() {
 
 function MarketProofSections() {
   return (
-    <section className="relative z-10 border-y border-[#dec8a6] bg-[#fff7e8]/86 py-8 backdrop-blur">
+    <section id="sample-output" className="relative z-10 border-y border-[#dec8a6] bg-[#fff7e8]/86 py-8 backdrop-blur">
       <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 sm:px-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:px-8">
         <section>
           <div className="max-w-3xl">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#087f73]">
-              What the proof example represents
+              What paid cleanup produces
             </p>
             <h2 className="mt-2 text-2xl font-semibold leading-tight text-[#2b190f]">
               The product is the issue log, cleaned file, and buyer handoff.
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-[#6a5137]">
-              The free check shows whether the source file is actually usable. Paid cleanup is only
-              for files where the issue list shows work that needs manual repair before buyer review.
+              The public pilot proves TraceReady can find file-readiness blockers in real data. The
+              representative sample pack below shows the shape of the paid handoff without exposing
+              private buyer or supplier files.
             </p>
           </div>
 

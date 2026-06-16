@@ -88,49 +88,47 @@ describe("TraceReady conversion surface", () => {
     );
   });
 
-  it("shows one concrete representative before-and-after proof example on the launch surface", () => {
+  it("leads with one real public-data pilot instead of fictional proof", () => {
     act(() => {
       root.render(<TraceReadyWorkbench />);
     });
 
     const pageText = container.textContent ?? "";
-    const sampleOutput = container.querySelector("#sample-output")?.textContent ?? "";
+    const pilotCase = container.querySelector("#pilot-case")?.textContent ?? "";
 
-    expect(sampleOutput).toContain("Representative before-and-after");
-    expect(sampleOutput).toContain("fictional sample fixture, not customer proof");
-    expect(sampleOutput).toContain("Before: messy supplier CSV");
-    expect(sampleOutput).toContain("COOP-018");
-    expect(sampleOutput).toContain("lat: 183.421");
-    expect(sampleOutput).toContain("Issues TraceReady catches");
-    expect(sampleOutput).toContain("3 blockers");
-    expect(sampleOutput).toContain("After: cleaned buyer pack");
-    expect(sampleOutput).toContain(
-      "Cleaned farm CSV, issue log, normalized GeoJSON, buyer summary, readiness report, EUDR checklist, and paid-cleanup intake note.",
-    );
-    expect(sampleOutput).not.toContain("cleaned_farms.csv");
-    expect(sampleOutput).not.toContain("issue_log.csv");
-    expect(sampleOutput).not.toContain("buyer_summary.md");
-    expect(sampleOutput).not.toContain("No issues found");
-    expect(pageText).toContain("No farm data leaves your browser during the free check.");
+    expect(pilotCase).toContain("Public-data pilot");
+    expect(pilotCase).toContain("57,658 real cocoa rows checked; 0 were buyer-ready.");
+    expect(pilotCase).toContain("public Colombian cocoa dataset");
+    expect(pilotCase).toContain("did not invent missing IDs, suppliers, batches, or polygons");
+    expect(pilotCase).toContain("46,134");
+    expect(pilotCase).toContain("point-only plots over 4 ha");
+    expect(pilotCase).toContain("missing plot IDs");
+    expect(pilotCase).toContain("ready records");
+    expect(pilotCase).toContain("Exact issue counts");
+    expect(pilotCase).toContain("buyer/supplier follow-up list");
+    expect(pilotCase).not.toContain("fictional sample fixture");
+    expect(pilotCase).not.toContain("Founder proof");
+    expect(pageText).toContain("The free diagnosis stays in your browser.");
   });
 
-  it("places operator credibility directly under the hero CTA", () => {
+  it("removes generic founder biography from the hero proof area", () => {
     act(() => {
       root.render(<TraceReadyWorkbench />);
     });
 
     const headerText = container.querySelector("header")?.textContent ?? "";
 
-    expect(headerText).toContain("Founder proof");
-    expect(headerText).toContain("founder-operated by Passive Print Labs LLC");
-    expect(headerText).toContain("founder@traceready.online");
-    expect(headerText).toContain("Small-team advantage");
-    expect(headerText).toContain("regulated tax and advisory operations");
-    expect(headerText).toContain("AI systems builds");
-    expect(headerText).toContain("public and private product launches");
-    expect(headerText).toContain("enough spreadsheet mileage");
-    expect(headerText).toContain("No enterprise theater");
-    expect(headerText).toContain("deterministic issue logs");
+    expect(headerText).toContain("Public-data pilot");
+    expect(headerText).toContain("Exact issue counts");
+    expect(headerText).not.toContain("Founder proof");
+    expect(headerText).not.toContain("founder-operated by Passive Print Labs LLC");
+    expect(headerText).not.toContain("founder@traceready.online");
+    expect(headerText).not.toContain("Small-team advantage");
+    expect(headerText).not.toContain("regulated tax and advisory operations");
+    expect(headerText).not.toContain("AI systems builds");
+    expect(headerText).not.toContain("public and private product launches");
+    expect(headerText).not.toContain("enough spreadsheet mileage");
+    expect(headerText).not.toContain("No enterprise theater");
     expect(headerText).not.toContain("teddyalston.com");
     expect(headerText).not.toContain("Teddy");
     expect(headerText).not.toContain("Orlando");
@@ -140,9 +138,6 @@ describe("TraceReady conversion surface", () => {
     expect(headerText).not.toContain("theodore.alston@gmail.com");
     expect(headerText).not.toContain("IRS");
     expect(headerText).not.toContain("Florida");
-    expect(headerText).toContain("deterministic checks");
-    expect(headerText).toContain("not a legal certification");
-    expect(headerText).toContain("Passive Print Labs LLC");
   });
 
   it("surfaces the public dataset audit on the main landing page", () => {
@@ -152,15 +147,17 @@ describe("TraceReady conversion surface", () => {
 
     const pageText = container.textContent ?? "";
     const proofLink = Array.from(container.querySelectorAll("a")).find((element) =>
-      element.textContent?.includes("View public audit proof"),
+      element.textContent?.includes("View pilot case"),
     );
 
-    expect(pageText).toContain("Public dataset proof");
-    expect(pageText).toContain("57,658 public cocoa rows checked");
+    expect(pageText).toContain("Public-data pilot");
+    expect(pageText).toContain("57,658");
+    expect(pageText).toContain("public cocoa rows checked");
+    expect(pageText).toContain("57,658 real cocoa rows checked; 0 were buyer-ready.");
     expect(pageText).toContain("46,134 point-only plots over 4 hectares");
     expect(pageText).toContain("57,658 rows without plot IDs");
     expect(pageText).toContain("57,658 rows without supplier identity");
-    expect(pageText).toContain("not customer proof or legal certification");
+    expect(pageText).toContain("did not invent missing IDs, suppliers, batches, or polygons");
     expect(proofLink?.getAttribute("href")).toBe("/proof/");
   });
 
@@ -179,7 +176,7 @@ describe("TraceReady conversion surface", () => {
 
     expect(pageText).toContain("TraceReady checkout is labeled as TraceReady");
     expect(pageText).toContain("operated by Passive Print Labs LLC");
-    expect(pageText).toContain("Founder-operated cleanup desk");
+    expect(pageText).toContain("TraceReady cleanup desk");
     expect(pageText).toContain("Review order intake checklist");
     expect(cleanupLink?.getAttribute("href")).toBe("/checkout/cleanup/");
     expect(pilotLink?.getAttribute("href")).toBe("/checkout/pilot/");
