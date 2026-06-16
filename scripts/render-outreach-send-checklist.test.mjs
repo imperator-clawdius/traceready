@@ -37,6 +37,9 @@ describe("outreach send checklist", () => {
     expect(markdown).toContain("Send tier filter: importer");
     expect(markdown).toContain("## 1. b01-r06 - Cafe Imports Europe");
     expect(markdown).toContain("- [ ] Open company-level route: https://www.cafeimports.com/europe/blog/general-contact/");
+    expect(markdown).toContain(
+      "npm run render:outreach-send-ready -- --results private/outreach-results-batch-01.csv --sendability-audit private/outreach-sendability-audit-importer.json --route b01-r06 --today 2026-06-16 --output private/send-ready-b01-r06.md",
+    );
     expect(markdown).toContain("- [ ] Paste the subject and body exactly as shown below.");
     expect(markdown).toContain("Subject: Row-level check for messy EUDR farm files");
     expect(markdown).toContain("Worth testing one messy supplier file?");
@@ -135,6 +138,9 @@ describe("outreach send checklist", () => {
     expect(markdown).toContain("## 1. b01-r11 - InterAmerican Coffee Europe");
     expect(markdown).toContain("- Sendability: browser_form_ready via public_browser_form");
     expect(markdown).toContain("- [ ] Open company-level route: https://interamericancoffee.de/contact/");
+    expect(markdown).toContain(
+      "npm run render:outreach-send-ready -- --results private/outreach-results-batch-01.csv --sendability-audit private/outreach-sendability-audit-importer.json --route b01-r11 --today 2026-06-16 --output private/send-ready-b01-r11.md",
+    );
     expect(markdown).toContain("--route b01-r11 --date-sent 2026-06-16 --status sent");
     expect(markdown).not.toContain("## 1. b01-r06 - Cafe Imports Europe");
     expect(markdown).toContain("## Skipped By Sendability");

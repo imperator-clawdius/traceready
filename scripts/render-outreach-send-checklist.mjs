@@ -11,6 +11,7 @@ const DEFAULT_BATCH_PATH = "docs/proof-led-outreach-batch-01.csv";
 const DEFAULT_RESULTS_PATH = "private/outreach-results-batch-01.csv";
 const DEFAULT_OUTPUT_PATH = "private/send-execution-checklist.md";
 const DEFAULT_SEND_LIMIT = 3;
+const DEFAULT_SENDABILITY_AUDIT_PATH = "private/outreach-sendability-audit-importer.json";
 
 export function renderOutreachSendChecklist(batchRows, resultRows, options = {}) {
   const batchPath = options.batchPath ?? DEFAULT_BATCH_PATH;
@@ -55,7 +56,7 @@ export function renderOutreachSendChecklist(batchRows, resultRows, options = {})
         ]
       : []),
     "",
-    ...renderSendTasks(sendRows, batchByRoute, resultsPath, today, routeAudit, sendabilityAudit),
+    ...renderSendTasks(sendRows, batchByRoute, resultsPath, today, routeAudit, sendabilityAudit, options.sendabilityAuditPath),
     "",
     ...renderSkippedByRouteHealth(routeGate?.skippedRows ?? [], batchByRoute),
     "",
@@ -118,7 +119,7 @@ export function parseOutreachSendChecklistArgs(argv) {
   return parsed;
 }
 
-function renderSendTasks(sendRows, batchByRoute, resultsPath, today, routeAudit, sendabilityAudit) {
+function renderSendTasks(sendRows, batchByRoute, resultsPath, today, routeAudit, sendabilityAudit, sendabilityAuditPath) {
   if (sendRows.length === 0) {
     return ["No unsent routes are queued for this checklist."];
   }
@@ -143,6 +144,7 @@ function renderSendTasks(sendRows, batchByRoute, resultsPath, today, routeAudit,
         : []),
       `- [ ] Open company-level route: ${sourceUrl}`,
       `- [ ] Confirm this is still company-level, not a personal profile or direct personal email.`,
+      `- [ ] Render send-ready packet: \`${sendReadyCommand(resultsPath, resultRow.route_id, today, sendabilityAuditPath)}\``,
       "- [ ] Paste the subject and body exactly as shown below.",
       "- [ ] Submit once. Do not send duplicates from multiple channels on the same day.",
       `- [ ] Mark sent: \`${updateCommand(resultsPath, resultRow.route_id, {
@@ -162,6 +164,17 @@ function renderSendTasks(sendRows, batchByRoute, resultsPath, today, routeAudit,
       "",
     ];
   });
+}
+
+function sendReadyCommand(resultsPath, routeId, today, sendabilityAuditPath = DEFAULT_SENDABILITY_AUDIT_PATH) {
+  return [
+    "npm run render:outreach-send-ready --",
+    `--results ${resultsPath}`,
+    `--sendability-audit ${sendabilityAuditPath}`,
+    `--route ${routeId}`,
+    `--today ${today}`,
+    `--output private/send-ready-${routeId}.md`,
+  ].join(" ");
 }
 
 function applySendabilityAuditGate(sendRows, sendabilityAudit, sendLimit) {
