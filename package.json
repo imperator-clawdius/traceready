@@ -11,6 +11,7 @@
     "audit:public-dataset": "node --experimental-strip-types --no-warnings scripts/audit-public-dataset.mjs",
     "init:outreach-results": "node scripts/init-outreach-results.mjs",
     "next:outreach": "node scripts/next-outreach-actions.mjs",
+    "prepare:outreach": "node scripts/prepare-outreach-workspace.mjs",
     "render:outreach": "node scripts/render-outreach-pack.mjs",
     "render:outreach-day": "node scripts/render-outreach-day-pack.mjs",
     "summarize:outreach": "node scripts/summarize-outreach-results.mjs",

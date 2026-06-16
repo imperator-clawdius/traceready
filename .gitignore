@@ -20,6 +20,9 @@
 # production
 /build
 
+# private outreach/customer workspaces
+/private/
+
 # misc
 .DS_Store
 *.pem
