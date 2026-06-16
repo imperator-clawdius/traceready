@@ -1,0 +1,191 @@
+import { resolveMx, resolveTxt } from "node:dns/promises";
+import { fileURLToPath } from "node:url";
+
+export const DEFAULT_DOMAIN = "traceready.online";
+export const DEFAULT_CONTACT_EMAIL = `founder@${DEFAULT_DOMAIN}`;
+export const EXPECTED_FORWARDING_MX = [
+  "eforward1.registrar-servers.com",
+  "eforward2.registrar-servers.com",
+  "eforward3.registrar-servers.com",
+  "eforward4.registrar-servers.com",
+  "eforward5.registrar-servers.com",
+];
+export const NAMECHEAP_FORWARDING_SPF = "include:spf.efwd.registrar-servers.com";
+export const DEFAULT_DKIM_SELECTORS = ["default", "google", "selector1", "selector2"];
+
+export function parseOutreachEmailArgs(argv) {
+  const options = {
+    domain: DEFAULT_DOMAIN,
+    contactEmail: DEFAULT_CONTACT_EMAIL,
+    dkimSelectors: [...DEFAULT_DKIM_SELECTORS],
+  };
+
+  for (let index = 0; index < argv.length; index += 1) {
+    const arg = argv[index];
+    const next = argv[index + 1];
+
+    if (arg === "--domain" && next) {
+      options.domain = next;
+      index += 1;
+    } else if (arg === "--contact" && next) {
+      options.contactEmail = next;
+      index += 1;
+    } else if (arg === "--dkim-selector" && next) {
+      options.dkimSelectors.push(next);
+      index += 1;
+    }
+  }
+
+  return options;
+}
+
+export async function inspectOutreachEmailDns(options = {}) {
+  const domain = options.domain ?? DEFAULT_DOMAIN;
+  const contactEmail = options.contactEmail ?? `founder@${domain}`;
+  const dkimSelectors = options.dkimSelectors ?? DEFAULT_DKIM_SELECTORS;
+  const resolver = options.resolver ?? defaultResolver;
+
+  const [mxRecords, apexTxtRecords, dmarcTxtRecords, ...dkimTxtRecordSets] = await Promise.all([
+    resolver.mx(domain),
+    resolver.txt(domain),
+    resolver.txt(`_dmarc.${domain}`),
+    ...dkimSelectors.map((selector) => resolver.txt(`${selector}._domainkey.${domain}`)),
+  ]);
+
+  return evaluateOutreachEmailDns({
+    domain,
+    contactEmail,
+    dkimSelectors,
+    mxRecords,
+    apexTxtRecords,
+    dmarcTxtRecords,
+    dkimTxtRecordSets,
+  });
+}
+
+export function evaluateOutreachEmailDns({
+  domain = DEFAULT_DOMAIN,
+  contactEmail = DEFAULT_CONTACT_EMAIL,
+  dkimSelectors = DEFAULT_DKIM_SELECTORS,
+  mxRecords = [],
+  apexTxtRecords = [],
+  dmarcTxtRecords = [],
+  dkimTxtRecordSets = [],
+}) {
+  const normalizedMxHosts = mxRecords.map((record) => normalizeHost(record.exchange ?? record.host ?? String(record)));
+  const apexTxt = flattenTxt(apexTxtRecords);
+  const dmarcTxt = flattenTxt(dmarcTxtRecords);
+  const dkimRecords = dkimSelectors.map((selector, index) => ({
+    selector,
+    txt: flattenTxt(dkimTxtRecordSets[index] ?? []),
+  }));
+  const expectedMxMissing = EXPECTED_FORWARDING_MX.filter((host) => !normalizedMxHosts.includes(host));
+  const spfRecords = apexTxt.filter((value) => value.toLowerCase().startsWith("v=spf1"));
+  const dmarcRecords = dmarcTxt.filter((value) => value.toLowerCase().startsWith("v=dmarc1"));
+  const dkimReadySelectors = dkimRecords
+    .filter((record) => record.txt.some((value) => value.toLowerCase().startsWith("v=dkim1")))
+    .map((record) => record.selector);
+
+  const mxReady = expectedMxMissing.length === 0;
+  const spfReady = spfRecords.some((record) => record.includes(NAMECHEAP_FORWARDING_SPF));
+  const dmarcReady = dmarcRecords.length > 0;
+  const dkimReady = dkimReadySelectors.length > 0;
+  const outboundReady = spfReady && dmarcReady && dkimReady;
+  const ready = mxReady && spfReady && outboundReady;
+
+  return {
+    domain,
+    contactEmail,
+    checks: [
+      {
+        label: "OUTREACH_EMAIL_MX",
+        ready: mxReady,
+        detail:
+          expectedMxMissing.length === 0
+            ? `found=${normalizedMxHosts.join(",") || "none"}`
+            : `missing=${expectedMxMissing.join(",")} found=${normalizedMxHosts.join(",") || "none"}`,
+      },
+      {
+        label: "OUTREACH_EMAIL_SPF",
+        ready: spfReady,
+        detail: `records=${spfRecords.join(" | ") || "none"}`,
+      },
+      {
+        label: "OUTREACH_EMAIL_DMARC",
+        ready: dmarcReady,
+        detail: `records=${dmarcRecords.join(" | ") || "none"}`,
+      },
+      {
+        label: "OUTREACH_EMAIL_DKIM",
+        ready: dkimReady,
+        detail: `selectors=${dkimReadySelectors.join(",") || "none"}`,
+      },
+      {
+        label: "OUTREACH_EMAIL_OUTBOUND_AUTH",
+        ready: outboundReady,
+        detail: "requires SPF plus at least one DKIM selector and DMARC",
+      },
+      {
+        label: "OUTREACH_EMAIL_ALIAS_TEST",
+        ready: false,
+        detail: `DNS cannot prove ${contactEmail} forwards to a controlled mailbox; send and receive a test email`,
+      },
+    ],
+    ready,
+  };
+}
+
+export function renderOutreachEmailReport(report) {
+  const lines = [
+    `OUTREACH_EMAIL_DOMAIN=${report.domain}`,
+    `OUTREACH_EMAIL_CONTACT=${report.contactEmail}`,
+    ...report.checks.map((check) => `${check.label}=${check.ready ? "pass" : "pending"} ${check.detail}`),
+    `OUTREACH_EMAIL_READY=${report.ready}`,
+  ];
+
+  if (!report.ready) {
+    lines.push("OUTREACH_EMAIL_NEXT=verify alias delivery, configure authenticated outbound sender, publish DKIM and DMARC");
+  }
+
+  return `${lines.join("\n")}\n`;
+}
+
+async function main() {
+  const options = parseOutreachEmailArgs(process.argv.slice(2));
+  const report = await inspectOutreachEmailDns(options);
+
+  process.stdout.write(renderOutreachEmailReport(report));
+
+  if (!report.ready) {
+    process.exitCode = 1;
+  }
+}
+
+const defaultResolver = {
+  async mx(hostname) {
+    try {
+      return await resolveMx(hostname);
+    } catch {
+      return [];
+    }
+  },
+  async txt(hostname) {
+    try {
+      return await resolveTxt(hostname);
+    } catch {
+      return [];
+    }
+  },
+};
+
+function flattenTxt(records) {
+  return records.map((record) => (Array.isArray(record) ? record.join("") : String(record))).filter(Boolean);
+}
+
+function normalizeHost(hostname) {
+  return hostname.toLowerCase().replace(/\.$/, "");
+}
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  await main();
+}

@@ -1,0 +1,107 @@
+import { describe, expect, it } from "vitest";
+import {
+  evaluateOutreachEmailDns,
+  inspectOutreachEmailDns,
+  parseOutreachEmailArgs,
+  renderOutreachEmailReport,
+} from "./verify-outreach-email.mjs";
+
+const NAMECHEAP_MX = [
+  { exchange: "eforward1.registrar-servers.com" },
+  { exchange: "eforward2.registrar-servers.com" },
+  { exchange: "eforward3.registrar-servers.com" },
+  { exchange: "eforward4.registrar-servers.com" },
+  { exchange: "eforward5.registrar-servers.com" },
+];
+
+describe("outreach email verifier", () => {
+  it("passes only when forwarding MX, SPF, DMARC, and DKIM are present", () => {
+    const report = evaluateOutreachEmailDns({
+      mxRecords: NAMECHEAP_MX,
+      apexTxtRecords: [["v=spf1 include:spf.efwd.registrar-servers.com ~all"]],
+      dmarcTxtRecords: [["v=DMARC1; p=none; rua=mailto:founder@traceready.online"]],
+      dkimSelectors: ["default"],
+      dkimTxtRecordSets: [[["v=DKIM1; k=rsa; p=abc123"]]],
+    });
+
+    expect(report.ready).toBe(true);
+    expect(report.checks.find((check) => check.label === "OUTREACH_EMAIL_MX")?.ready).toBe(true);
+    expect(report.checks.find((check) => check.label === "OUTREACH_EMAIL_DKIM")?.detail).toContain("default");
+  });
+
+  it("keeps the alias test pending because DNS cannot prove mailbox delivery", () => {
+    const report = evaluateOutreachEmailDns({
+      mxRecords: NAMECHEAP_MX,
+      apexTxtRecords: [["v=spf1 include:spf.efwd.registrar-servers.com ~all"]],
+      dmarcTxtRecords: [["v=DMARC1; p=none"]],
+      dkimSelectors: ["default"],
+      dkimTxtRecordSets: [[["v=DKIM1; k=rsa; p=abc123"]]],
+    });
+
+    const aliasCheck = report.checks.find((check) => check.label === "OUTREACH_EMAIL_ALIAS_TEST");
+
+    expect(report.ready).toBe(true);
+    expect(aliasCheck?.ready).toBe(false);
+    expect(aliasCheck?.detail).toContain("send and receive a test email");
+  });
+
+  it("flags the current pre-send failure mode when DMARC and DKIM are missing", () => {
+    const report = evaluateOutreachEmailDns({
+      mxRecords: NAMECHEAP_MX,
+      apexTxtRecords: [["v=spf1 include:spf.efwd.registrar-servers.com ~all"]],
+      dmarcTxtRecords: [],
+      dkimSelectors: ["default", "google"],
+      dkimTxtRecordSets: [[], []],
+    });
+
+    const rendered = renderOutreachEmailReport(report);
+
+    expect(report.ready).toBe(false);
+    expect(rendered).toContain("OUTREACH_EMAIL_DMARC=pending records=none");
+    expect(rendered).toContain("OUTREACH_EMAIL_DKIM=pending selectors=none");
+    expect(rendered).toContain("OUTREACH_EMAIL_READY=false");
+  });
+
+  it("supports injected DNS resolution for deterministic checks", async () => {
+    const report = await inspectOutreachEmailDns({
+      domain: "example.test",
+      contactEmail: "founder@example.test",
+      dkimSelectors: ["selector-a"],
+      resolver: {
+        async mx() {
+          return NAMECHEAP_MX;
+        },
+        async txt(hostname) {
+          if (hostname === "example.test") {
+            return [["v=spf1 include:spf.efwd.registrar-servers.com ~all"]];
+          }
+          if (hostname === "_dmarc.example.test") {
+            return [["v=DMARC1; p=none"]];
+          }
+          return [["v=DKIM1; k=rsa; p=abc123"]];
+        },
+      },
+    });
+
+    expect(report.domain).toBe("example.test");
+    expect(report.contactEmail).toBe("founder@example.test");
+    expect(report.ready).toBe(true);
+  });
+
+  it("parses domain, contact, and extra DKIM selector options", () => {
+    expect(
+      parseOutreachEmailArgs([
+        "--domain",
+        "example.test",
+        "--contact",
+        "desk@example.test",
+        "--dkim-selector",
+        "mailgun",
+      ]),
+    ).toEqual({
+      domain: "example.test",
+      contactEmail: "desk@example.test",
+      dkimSelectors: ["default", "google", "selector1", "selector2", "mailgun"],
+    });
+  });
+});
