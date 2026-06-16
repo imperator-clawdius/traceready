@@ -87,6 +87,21 @@ describe("TraceReady conversion surface", () => {
     expect(shellClasses).not.toContain("overflow-hidden");
   });
 
+  it("keeps the real proof asset directly after the hero instead of inside it", () => {
+    act(() => {
+      root.render(<TraceReadyWorkbench />);
+    });
+
+    const headerText = container.querySelector("header")?.textContent ?? "";
+    const proofSection = container.querySelector("header + #pilot-case");
+
+    expect(headerText).not.toContain("57,658 real cocoa rows checked; 0 were buyer-ready.");
+    expect(proofSection?.textContent).toContain("57,658 real cocoa rows checked; 0 were buyer-ready.");
+    expect(proofSection?.textContent).toContain("public Colombian cocoa dataset");
+    expect(proofSection?.textContent).toContain("View pilot case");
+    expect(proofSection?.textContent).toContain("Download evidence pack");
+  });
+
   it("preserves outreach route attribution when a diagnosed visitor asks for free triage", () => {
     window.history.pushState(
       {},
@@ -138,8 +153,6 @@ describe("TraceReady conversion surface", () => {
 
     const headerText = container.querySelector("header")?.textContent ?? "";
 
-    expect(headerText).toContain("Public-data pilot");
-    expect(headerText).toContain("Exact issue counts");
     expect(headerText).not.toContain("Founder proof");
     expect(headerText).not.toContain("founder-operated by Passive Print Labs LLC");
     expect(headerText).not.toContain("founder@traceready.online");

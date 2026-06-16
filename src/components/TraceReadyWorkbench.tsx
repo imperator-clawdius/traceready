@@ -425,7 +425,7 @@ export function TraceReadyWorkbench() {
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(9,29,28,0.96)_0%,rgba(9,38,35,0.86)_37%,rgba(9,38,35,0.36)_68%,rgba(9,38,35,0.1)_100%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_48%,rgba(255,250,238,0.15),transparent_28rem)]" />
 
-        <div className="relative mx-auto flex min-h-[620px] w-full max-w-7xl flex-col px-4 py-5 sm:px-6 lg:px-8">
+        <div className="relative mx-auto flex min-h-[560px] w-full max-w-7xl flex-col px-4 py-5 sm:min-h-[620px] sm:px-6 lg:px-8">
           <nav className="flex items-center justify-between gap-4" aria-label="Primary">
             <div className="flex items-center gap-3">
               <span className="flex size-12 shrink-0 items-center justify-center rounded-md border border-white/[0.18] bg-white/[0.94] shadow-sm">
@@ -459,7 +459,7 @@ export function TraceReadyWorkbench() {
             </div>
           </nav>
 
-          <div className="grid flex-1 items-center gap-8 py-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(360px,0.62fr)] lg:py-14">
+          <div className="flex flex-1 items-center py-10 lg:py-14">
             <section className="max-w-3xl">
               <h1 className="text-4xl font-semibold leading-[1.02] text-white sm:text-5xl lg:text-6xl">
                 Check a farm file before a buyer rejects it.
@@ -492,58 +492,55 @@ export function TraceReadyWorkbench() {
                 list proves there is real buyer-review rework to fix.
               </p>
             </section>
-
-            <section
-              id="pilot-case"
-              className="border border-[#74e0cd]/45 bg-[#071d1a]/[0.78] p-5 shadow-2xl backdrop-blur-md"
-            >
-              <p className="text-xs font-semibold uppercase text-[#74e0cd]">
-                Public-data pilot
-              </p>
-              <h2 className="mt-2 text-2xl font-semibold leading-tight text-white">
-                57,658 real cocoa rows checked; 0 were buyer-ready.
-              </h2>
-              <p className="mt-3 text-sm leading-6 text-[#d8eadf]">
-                Input: a public Colombian cocoa dataset with coordinates and area values. TraceReady
-                treated it like a buyer handoff file, supplied only public country and commodity
-                metadata, and did not invent missing IDs, suppliers, batches, or polygons.
-              </p>
-              <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                {PUBLIC_PILOT_STATS.map((stat) => (
-                  <div key={stat.label} className="border-t border-white/[0.18] pt-3">
-                    <p className="text-2xl font-semibold tabular-nums text-white">{stat.value}</p>
-                    <p className="mt-1 text-xs font-medium uppercase leading-5 tracking-[0.08em] text-[#bcd6c4]">
-                      {stat.label}
-                    </p>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-5 border-t border-white/[0.18] pt-4 text-sm leading-6 text-[#d8eadf]">
-                <p className="font-semibold text-white">Output</p>
-                <p className="mt-1">
-                  Exact issue counts, row-level cleanup blockers, and a buyer/supplier follow-up list:
-                  57,658 rows without plot IDs, 57,658 rows without supplier identity, 57,658 rows
-                  without shipment linkage, and 46,134 point-only plots over 4 hectares.
-                </p>
-              </div>
-              <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-                <a
-                  href={PUBLIC_PILOT_CASE_HREF}
-                  className="inline-flex h-10 items-center justify-center rounded-md bg-[#0aa394] px-3 text-sm font-semibold text-white transition hover:bg-[#0b8f83]"
-                >
-                  View pilot case
-                </a>
-                <a
-                  href={PUBLIC_PILOT_PACK_HREF}
-                  className="inline-flex h-10 items-center justify-center rounded-md border border-[#74e0cd]/60 px-3 text-sm font-semibold text-[#effdf4] transition hover:bg-white/[0.12]"
-                >
-                  Download evidence pack
-                </a>
-              </div>
-            </section>
           </div>
         </div>
       </header>
+
+      <section id="pilot-case" className="relative z-10 border-b border-[#dec8a6] bg-[#123f34] px-4 py-6 text-white">
+        <div className="mx-auto grid w-full max-w-7xl gap-5 sm:px-2 lg:grid-cols-[minmax(0,0.78fr)_minmax(360px,0.55fr)] lg:items-start lg:px-6">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-100">
+              Public-data pilot
+            </p>
+            <h2 className="mt-2 max-w-3xl text-2xl font-semibold leading-tight sm:text-3xl">
+              57,658 real cocoa rows checked; 0 were buyer-ready.
+            </h2>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-emerald-50">
+              One public Colombian cocoa dataset went in. TraceReady found the exact issue counts and
+              produced a buyer/supplier follow-up pack. TraceReady did not invent missing IDs,
+              suppliers, batches, or polygons.
+            </p>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-emerald-50">
+              Exact issue counts and buyer/supplier follow-up list: 46,134 point-only plots over 4
+              hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+            </p>
+            <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+              <a
+                href={PUBLIC_PILOT_CASE_HREF}
+                className="inline-flex h-10 items-center justify-center rounded-md bg-white px-3 text-sm font-semibold text-[#123f34] transition hover:bg-emerald-50"
+              >
+                View pilot case
+              </a>
+              <a
+                href={PUBLIC_PILOT_PACK_HREF}
+                className="inline-flex h-10 items-center justify-center rounded-md border border-emerald-100 px-3 text-sm font-semibold text-white transition hover:bg-emerald-900"
+              >
+                Download evidence pack
+              </a>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {PUBLIC_PILOT_STATS.map((stat) => (
+              <div key={stat.label} className="border-t border-white/[0.18] pt-3">
+                <p className="text-xl font-semibold tabular-nums sm:text-2xl">{stat.value}</p>
+                <p className="mt-1 text-xs font-medium uppercase leading-5 tracking-[0.08em] text-emerald-100">
+                  {stat.label}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <main className="relative z-10 mx-auto grid w-full max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:px-8">
         <section className="space-y-6">
