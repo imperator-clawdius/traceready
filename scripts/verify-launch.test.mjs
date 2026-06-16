@@ -42,5 +42,7 @@ describe("launch verifier route manifest", () => {
     expect(script).toContain('path: "/pilot-proof/"');
     expect(script).toContain("first anonymized case");
     expect(script).toContain("Email documented pilot request");
+    expect(script).toContain("Permission boundary");
+    expect(script).toContain("Can publish only with explicit yes");
   });
 });

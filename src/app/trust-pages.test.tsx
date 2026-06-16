@@ -315,6 +315,11 @@ describe("TraceReady trust pages", () => {
     expect(pageText).toContain("Publish only with permission");
     expect(pageText).toContain("Anonymized before: file type, row count, issue counts");
     expect(pageText).toContain("one short quote");
+    expect(pageText).toContain("Permission boundary");
+    expect(pageText).toContain("Can publish only with explicit yes");
+    expect(pageText).toContain("Stays private even if the pilot is useful");
+    expect(pageText).toContain("company name, supplier names, buyer names, coordinates, source rows");
+    expect(pageText).toContain("If permission is no, TraceReady still treats the cleanup as private work");
     expect(emailLink?.getAttribute("href")).toContain("mailto:founder@traceready.online");
     expect(emailLink?.getAttribute("href")).toContain("TraceReady%20documented%20pilot%20request");
     expect(triageLink?.getAttribute("href")).toBe("/file-triage/");

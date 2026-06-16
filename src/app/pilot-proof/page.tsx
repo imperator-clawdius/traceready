@@ -32,6 +32,24 @@ const PROOF_OUTPUTS = [
   "One permissioned sentence about whether the issue log or cleaned pack was useful.",
 ];
 
+const PERMISSION_BOUNDARY = [
+  {
+    title: "Can publish only with explicit yes",
+    detail:
+      "Anonymized issue counts, file type, row count, cleaned-pack contents, remaining follow-ups, and one approved sentence.",
+  },
+  {
+    title: "Stays private even if the pilot is useful",
+    detail:
+      "company name, supplier names, buyer names, coordinates, source rows, shipment references, and buyer documents.",
+  },
+  {
+    title: "No permission still means private cleanup",
+    detail:
+      "If permission is no, TraceReady still treats the cleanup as private work and does not turn it into public proof.",
+  },
+];
+
 export const metadata = {
   title: "Documented Pilot | TraceReady",
   description: "Request a TraceReady documented pilot that can become an anonymized case study with permission.",
@@ -80,6 +98,23 @@ export default function PilotProofPage() {
               <p className="mt-3 text-sm leading-6 text-zinc-700">{step.detail}</p>
             </article>
           ))}
+        </section>
+
+        <section className="mt-6 border border-[#d9bf92] bg-white p-6 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-700">
+            Permission boundary
+          </p>
+          <h2 className="mt-3 text-2xl font-semibold tracking-tight text-[#2b190f]">
+            A useful pilot does not automatically become public proof.
+          </h2>
+          <div className="mt-5 grid gap-3 lg:grid-cols-3">
+            {PERMISSION_BOUNDARY.map((item) => (
+              <article key={item.title} className="border-l-2 border-emerald-700 pl-3">
+                <h3 className="text-sm font-semibold text-[#2b190f]">{item.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-zinc-700">{item.detail}</p>
+              </article>
+            ))}
+          </div>
         </section>
 
         <section className="mt-6 border border-[#d9bf92] bg-[#fffaf2] p-6 shadow-sm">
