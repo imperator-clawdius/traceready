@@ -81,6 +81,9 @@ const requiredPages = [
       "46,134 point-only plots over 4 hectares",
       "Colombian-Cocoa-Dataset",
       "CBI EUDR coffee guidance",
+      "Run one supplier file before sending coordinates",
+      "The first pass stays in your browser",
+      "Buy 24-hour cleanup",
     ],
   },
   {

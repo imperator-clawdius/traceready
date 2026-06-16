@@ -1,6 +1,8 @@
 import Link from "next/link";
 import {
+  CHECKOUT_CLEANUP_HREF,
   CONTACT_EMAIL,
+  CONTACT_HREF,
   LEGAL_OPERATOR,
   METHODOLOGY_HREF,
   ORDER_INTAKE_HREF,
@@ -172,6 +174,41 @@ export default function ProofPage() {
               states that polygon mapping is mandatory for coffee plots larger than 4 hectares.
               TraceReady applies that launch-readiness threshold to coffee and cocoa file checks.
             </p>
+          </div>
+        </section>
+
+        <section className="mt-6 border border-emerald-800 bg-[#123f34] p-6 text-white shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-100">
+            Next step for a real file
+          </p>
+          <h2 className="mt-3 text-2xl font-semibold tracking-tight">
+            Run one supplier file before sending coordinates.
+          </h2>
+          <p className="mt-4 max-w-3xl text-sm leading-7 text-emerald-50">
+            The first pass stays in your browser: load a CSV, KML, GeoJSON, or JSON GeoJSON file,
+            review the row-level blockers, and decide whether the issue list is worth cleaning up.
+            If the issue list is useful, buy the 24-hour cleanup and send the file through the
+            order-intake path.
+          </p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            <Link
+              href="/"
+              className="inline-flex h-11 items-center justify-center rounded-md bg-white px-4 text-sm font-semibold text-[#123f34] transition hover:bg-emerald-50"
+            >
+              Run a file in the browser
+            </Link>
+            <Link
+              href={CHECKOUT_CLEANUP_HREF}
+              className="inline-flex h-11 items-center justify-center rounded-md border border-emerald-100 px-4 text-sm font-semibold text-white transition hover:bg-emerald-900"
+            >
+              Buy 24-hour cleanup
+            </Link>
+            <Link
+              href={CONTACT_HREF}
+              className="inline-flex h-11 items-center justify-center rounded-md border border-emerald-100 px-4 text-sm font-semibold text-white transition hover:bg-emerald-900"
+            >
+              Ask a scope question
+            </Link>
           </div>
         </section>
 

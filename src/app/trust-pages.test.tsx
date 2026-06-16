@@ -179,6 +179,31 @@ describe("TraceReady trust pages", () => {
     expect(cbiLink?.getAttribute("href")).toBe("https://www.cbi.eu/market-information/coffee/tips-become-eudr-compliant");
   });
 
+  it("turns the proof page into a low-trust file-check landing path", () => {
+    act(() => {
+      root.render(<ProofPage />);
+    });
+
+    const pageText = container.textContent ?? "";
+    const links = Array.from(container.querySelectorAll("a"));
+    const browserCheckLink = links.find((element) =>
+      element.textContent?.includes("Run a file in the browser"),
+    );
+    const cleanupLink = links.find((element) =>
+      element.textContent?.includes("Buy 24-hour cleanup"),
+    );
+    const contactLink = links.find((element) =>
+      element.textContent?.includes("Ask a scope question"),
+    );
+
+    expect(pageText).toContain("Run one supplier file before sending coordinates");
+    expect(pageText).toContain("The first pass stays in your browser");
+    expect(pageText).toContain("If the issue list is useful, buy the 24-hour cleanup");
+    expect(browserCheckLink?.getAttribute("href")).toBe("/");
+    expect(cleanupLink?.getAttribute("href")).toBe("/checkout/cleanup/");
+    expect(contactLink?.getAttribute("href")).toBe("/contact/");
+  });
+
   it("provides a tighter paid-order intake handoff", () => {
     act(() => {
       root.render(<OrderIntakePage />);
