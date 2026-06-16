@@ -21,6 +21,7 @@
     "summarize:outreach": "node scripts/summarize-outreach-results.mjs",
     "update:outreach-result": "node scripts/update-outreach-result.mjs",
     "verify:outreach-email": "node scripts/verify-outreach-email.mjs",
+    "verify:outreach-sendability": "node scripts/verify-outreach-sendability.mjs",
     "verify:outreach": "node scripts/verify-outreach.mjs",
     "verify:launch": "node scripts/verify-launch.mjs",
     "check": "npm run verify:outreach && npm run lint && npm run test && npm run build"
