@@ -76,6 +76,17 @@ describe("TraceReady conversion surface", () => {
     expect(pilotProofLink?.getAttribute("href")).toBe("/pilot-proof/");
   });
 
+  it("does not clip vertical page scrolling at the app shell", () => {
+    act(() => {
+      root.render(<TraceReadyWorkbench />);
+    });
+
+    const shellClasses = container.querySelector(".trace-botanical-shell")?.className.split(/\s+/) ?? [];
+
+    expect(shellClasses).toContain("overflow-x-hidden");
+    expect(shellClasses).not.toContain("overflow-hidden");
+  });
+
   it("preserves outreach route attribution when a diagnosed visitor asks for free triage", () => {
     window.history.pushState(
       {},

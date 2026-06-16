@@ -408,7 +408,7 @@ export function TraceReadyWorkbench() {
   }
 
   return (
-    <div className="trace-botanical-shell relative min-h-screen overflow-hidden bg-[#f6efe1] text-[#24150d]">
+    <div className="trace-botanical-shell relative min-h-screen overflow-x-hidden bg-[#f6efe1] text-[#24150d]">
       <CoffeeBotanicalFrame />
 
       <header className="relative z-10 overflow-hidden border-b border-[#d6dfd4] bg-[#10251f] text-white shadow-sm">
