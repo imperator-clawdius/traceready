@@ -1,7 +1,8 @@
 "use client";
 
-import { type ReactNode, useMemo } from "react";
+import { type ReactNode } from "react";
 import { buildTriageMailto } from "@/lib/triage-mail";
+import { useLocationSearch } from "@/lib/use-location-search";
 
 type TriageMailLinkProps = {
   children: ReactNode;
@@ -9,13 +10,7 @@ type TriageMailLinkProps = {
 };
 
 export function TriageMailLink({ children, className }: TriageMailLinkProps) {
-  const href = useMemo(() => {
-    if (typeof window === "undefined") {
-      return buildTriageMailto();
-    }
-
-    return buildTriageMailto(window.location.search);
-  }, []);
+  const href = buildTriageMailto(useLocationSearch());
 
   return (
     <a href={href} className={className}>

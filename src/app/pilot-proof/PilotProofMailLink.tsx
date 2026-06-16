@@ -1,7 +1,8 @@
 "use client";
 
-import { type ReactNode, useMemo } from "react";
+import { type ReactNode } from "react";
 import { buildPilotProofMailto } from "@/lib/pilot-proof-mail";
+import { useLocationSearch } from "@/lib/use-location-search";
 
 type PilotProofMailLinkProps = {
   children: ReactNode;
@@ -9,13 +10,7 @@ type PilotProofMailLinkProps = {
 };
 
 export function PilotProofMailLink({ children, className }: PilotProofMailLinkProps) {
-  const href = useMemo(() => {
-    if (typeof window === "undefined") {
-      return buildPilotProofMailto();
-    }
-
-    return buildPilotProofMailto(window.location.search);
-  }, []);
+  const href = buildPilotProofMailto(useLocationSearch());
 
   return (
     <a href={href} className={className}>

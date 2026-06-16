@@ -92,12 +92,12 @@ export default function PilotProofPage() {
             ))}
           </ul>
           <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-            <Link
+            <a
               href={PUBLIC_PILOT_PACK_HREF}
               className="inline-flex h-11 items-center justify-center rounded-md bg-zinc-950 px-4 text-sm font-semibold text-white transition hover:bg-zinc-800"
             >
               View current public pilot pack
-            </Link>
+            </a>
             <Link
               href={FILE_TRIAGE_HREF}
               className="inline-flex h-11 items-center justify-center rounded-md border border-zinc-300 bg-white px-4 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-100"
