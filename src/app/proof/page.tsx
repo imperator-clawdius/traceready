@@ -9,6 +9,7 @@ import {
   SAMPLE_PACK_HREF,
 } from "@/lib/site";
 import { TrackedHomeLink } from "./TrackedHomeLink";
+import { TrackedTriageLink } from "./TrackedTriageLink";
 
 const OUTPUTS = [
   "traceready-cleaned-farms.csv",
@@ -191,12 +192,17 @@ export default function ProofPage() {
             If the issue list is useful, buy the 24-hour cleanup and send the file through the
             order-intake path.
           </p>
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <TrackedHomeLink
               className="inline-flex h-11 items-center justify-center rounded-md bg-white px-4 text-sm font-semibold text-[#123f34] transition hover:bg-emerald-50"
             >
               Run a file in the browser
             </TrackedHomeLink>
+            <TrackedTriageLink
+              className="inline-flex h-11 items-center justify-center rounded-md border border-emerald-100 px-4 text-sm font-semibold text-white transition hover:bg-emerald-900"
+            >
+              Request free issue-log triage
+            </TrackedTriageLink>
             <Link
               href={CHECKOUT_CLEANUP_HREF}
               className="inline-flex h-11 items-center justify-center rounded-md border border-emerald-100 px-4 text-sm font-semibold text-white transition hover:bg-emerald-900"

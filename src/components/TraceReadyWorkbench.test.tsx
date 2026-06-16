@@ -53,6 +53,9 @@ describe("TraceReady conversion surface", () => {
     const cleanupLink = Array.from(container.querySelectorAll("a")).find((element) =>
       element.textContent?.includes("Buy 24-hour cleanup"),
     );
+    const triageLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("Request free issue-log triage"),
+    );
     const cleanupSectionText = cleanupLink?.closest("section")?.textContent ?? "";
 
     expect(heading).toContain("Check a farm file before a buyer rejects it.");
@@ -61,6 +64,28 @@ describe("TraceReady conversion surface", () => {
     expect(headerText).not.toContain("Buy cleanup");
     expect(uploadAction?.tagName).toBe("BUTTON");
     expect(cleanupSectionText).toContain("After the diagnosis");
+    expect(cleanupSectionText).toContain("not ready to send raw coordinates");
+    expect(triageLink?.getAttribute("href")).toBe("/file-triage/");
+  });
+
+  it("preserves outreach route attribution when a diagnosed visitor asks for free triage", () => {
+    window.history.pushState(
+      {},
+      "",
+      "/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r06",
+    );
+
+    act(() => {
+      root.render(<TraceReadyWorkbench />);
+    });
+
+    const triageLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("Request free issue-log triage"),
+    );
+
+    expect(triageLink?.getAttribute("href")).toBe(
+      "/file-triage/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r06",
+    );
   });
 
   it("shows one concrete representative before-and-after proof example on the launch surface", () => {

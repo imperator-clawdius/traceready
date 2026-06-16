@@ -40,6 +40,7 @@ The founder angle is useful only after the proof lands: small team, hands-on cle
 - Do not scrape employee emails, personal phone numbers, or private social profiles.
 - Do not imply certification, legal due diligence, TRACES submission, or deforestation-free proof.
 - Do not ask for confidential coordinates in the first message. Ask them to run the browser-side check first, then offer concierge cleanup if useful.
+- If they hesitate on file sharing, send `/file-triage/` and ask for non-sensitive issue counts, field names, commodity, source country, buyer deadline, and a sample row shape instead of raw farm coordinates.
 - Log sends, replies, file checks, route-stamped buyer summaries, and orders against the row's `route_id` in a private copy of `docs/proof-led-outreach-results-batch-01.csv`; do not commit customer files or private replies.
 
 ## Target Tiers

@@ -5,6 +5,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import CleanupCheckoutPage from "./checkout/cleanup/page";
 import PilotCheckoutPage from "./checkout/pilot/page";
 import ContactPage from "./contact/page";
+import FileTriagePage from "./file-triage/page";
 import MethodologyPage from "./methodology/page";
 import OrderIntakePage from "./order-intake/page";
 import ProofPage from "./proof/page";
@@ -196,6 +197,9 @@ describe("TraceReady trust pages", () => {
     const contactLink = links.find((element) =>
       element.textContent?.includes("Ask a scope question"),
     );
+    const triageLink = links.find((element) =>
+      element.textContent?.includes("Request free issue-log triage"),
+    );
 
     expect(pageText).toContain("Run one supplier file before sending coordinates");
     expect(pageText).toContain("The first pass stays in your browser");
@@ -203,9 +207,10 @@ describe("TraceReady trust pages", () => {
     expect(browserCheckLink?.getAttribute("href")).toBe("/");
     expect(cleanupLink?.getAttribute("href")).toBe("/checkout/cleanup/");
     expect(contactLink?.getAttribute("href")).toBe("/contact/");
+    expect(triageLink?.getAttribute("href")).toBe("/file-triage/");
   });
 
-  it("preserves proof-led route tracking when proof visitors continue to the browser checker", () => {
+  it("preserves proof-led route tracking when proof visitors continue to the browser checker or triage handoff", () => {
     window.history.pushState(
       {},
       "",
@@ -219,10 +224,34 @@ describe("TraceReady trust pages", () => {
     const browserCheckLink = Array.from(container.querySelectorAll("a")).find((element) =>
       element.textContent?.includes("Run a file in the browser"),
     );
+    const triageLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("Request free issue-log triage"),
+    );
 
     expect(browserCheckLink?.getAttribute("href")).toBe(
       "/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04",
     );
+    expect(triageLink?.getAttribute("href")).toBe(
+      "/file-triage/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04",
+    );
+  });
+
+  it("offers a non-sensitive free triage handoff before asking for source files or payment", () => {
+    act(() => {
+      root.render(<FileTriagePage />);
+    });
+
+    const pageText = container.textContent ?? "";
+    const emailLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("Email issue-log triage request"),
+    );
+
+    expect(pageText).toContain("Free issue-log triage");
+    expect(pageText).toContain("Do not send raw farm coordinates first");
+    expect(pageText).toContain("Paste issue counts, field names, and a non-sensitive sample row shape");
+    expect(pageText).toContain("24-hour cleanup");
+    expect(emailLink?.getAttribute("href")).toContain("mailto:founder@traceready.online");
+    expect(emailLink?.getAttribute("href")).toContain("TraceReady%20free%20issue-log%20triage");
   });
 
   it("provides a tighter paid-order intake handoff", () => {

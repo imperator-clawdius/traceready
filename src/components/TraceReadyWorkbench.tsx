@@ -19,6 +19,7 @@ import {
   type ValidationIssue,
 } from "@/lib/eudr";
 import {
+  appendOutreachSearch,
   formatOutreachAttributionLines,
   parseOutreachAttribution,
   type OutreachAttribution,
@@ -28,6 +29,7 @@ import {
   CHECKOUT_PILOT_HREF,
   CONTACT_EMAIL,
   CONTACT_HREF,
+  FILE_TRIAGE_HREF,
   LEGAL_OPERATOR,
   METHODOLOGY_HREF,
   ORDER_INTAKE_HREF,
@@ -238,6 +240,13 @@ export function TraceReadyWorkbench() {
 
     return `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
   }, [analysis, outreachAttribution]);
+  const triageHref = useMemo(() => {
+    if (typeof window === "undefined") {
+      return FILE_TRIAGE_HREF;
+    }
+
+    return appendOutreachSearch(FILE_TRIAGE_HREF, window.location.search);
+  }, []);
   const buyerBrief = useMemo(
     () => (analysis ? buildBuyerBrief(analysis, outreachAttribution) : ""),
     [analysis, outreachAttribution],
@@ -733,10 +742,19 @@ export function TraceReadyWorkbench() {
             <h2 className="text-lg font-semibold text-[#2b190f]">After the diagnosis</h2>
             <p className="mt-2 text-sm leading-6 text-[#6a5137]">
               If the free check shows blockers, buy cleanup only after you can see the issue list.
+              If you are not ready to send raw coordinates, request free issue-log triage with only
+              counts and field names first.
             </p>
             <a
+              href={triageHref}
+              className="mt-4 inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[#2d1a10] px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#4a2a16]"
+            >
+              <FileCheck2 className="size-4" aria-hidden="true" />
+              Request free issue-log triage
+            </a>
+            <a
               href={CHECKOUT_CLEANUP_HREF}
-              className="mt-4 inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[#c6782a] px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#a86222]"
+              className="mt-3 inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[#c6782a] px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#a86222]"
             >
               <CreditCard className="size-4" aria-hidden="true" />
               Buy 24-hour cleanup

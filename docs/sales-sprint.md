@@ -29,6 +29,8 @@ Ask these before selling:
 - Has a buyer, importer, or platform rejected the file yet?
 - Do you need cleanup, a buyer summary, or just a quick readiness check?
 
+If they are not ready to send raw coordinates, route them to `/file-triage/` first. Ask for issue counts, field names, commodity, source country, buyer deadline, and a non-sensitive sample row shape. Count a useful triage email as a real file conversation only if it includes concrete issue counts or buyer requirements.
+
 ## Outreach Message
 
 Proof-led variant: use `docs/public-dataset-mini-audit.md` when the prospect has not shown trust yet. Lead with the public-dataset defect numbers before asking for a file.

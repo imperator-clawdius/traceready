@@ -12,6 +12,7 @@ Clean and validate messy farm CSV, KML, and GeoJSON files into buyer-ready coffe
 - Downloadable ZIP pack with cleaned CSV, issue log, buyer summary, readiness report, normalized GeoJSON, structured EUDR checklist, and a paid-cleanup intake note.
 - Public representative sample output pack at `/traceready-sample-output.zip`.
 - Methodology, proof status, contact, and order intake pages for buyer due diligence before purchase.
+- Free issue-log triage page for prospects who want to share non-sensitive issue counts before sending raw farm coordinates.
 - Paid cleanup CTAs route through TraceReady checkout handoff pages before Stripe so buyers see the legal-operator disclosure before payment.
 - Privacy and terms pages linked from the product footer with retention, deletion, confidentiality, no-model-training, legal-operator, and no-certification language.
 
