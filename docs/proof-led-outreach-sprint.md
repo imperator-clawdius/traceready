@@ -8,6 +8,8 @@ The page to send is `https://traceready.online/proof/`. The supporting write-up 
 
 The first executable batch is `docs/proof-led-outreach-batch-01.csv`. The copy-pasteable send packet is `docs/proof-led-outreach-send-pack-01.md`. They are intentionally company-level only: public route URLs, no employee names, no personal emails, no personal profile URLs, and every row starts from the public audit numbers. Run `npm run render:outreach` after editing the CSV, then `npm run verify:outreach` before using or modifying the batch.
 
+After sending, copy `docs/proof-led-outreach-results-template.csv` to a private working file and run `npm run summarize:outreach -- path/to/private-results.csv`. Do not commit private replies, personal contact details, customer files, or order evidence.
+
 ## Positioning
 
 Do not lead with "buy my tool." Lead with proof:
@@ -122,6 +124,7 @@ For 10 business days:
 - Post one public proof-led note per day on a relevant professional channel.
 - Ask for one of three outcomes only: run the browser-side check, send a non-sensitive sample structure, or refer the person who owns supplier-file cleanup.
 - Log every send, reply, objection, file run, and paid cleanup opportunity.
+- Summarize the private results ledger daily with `npm run summarize:outreach -- path/to/private-results.csv`.
 
 Do not count likes, compliments, or "interesting" replies as traction. Count real files, paid cleanup orders, pilot requests, referrals to data/compliance owners, and permissioned de-identified before/after evidence.
 

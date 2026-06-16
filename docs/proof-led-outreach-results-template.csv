@@ -1,0 +1,2 @@
+date_sent,company_or_channel,tier,status,response_type,file_check_count,paid_order_count,pilot_requested,reply_notes,next_action
+,Example Company,importer,not_sent,none,0,0,no,,send first message

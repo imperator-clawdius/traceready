@@ -10,6 +10,7 @@
     "test": "vitest run",
     "audit:public-dataset": "node --experimental-strip-types --no-warnings scripts/audit-public-dataset.mjs",
     "render:outreach": "node scripts/render-outreach-pack.mjs",
+    "summarize:outreach": "node scripts/summarize-outreach-results.mjs",
     "verify:outreach": "node scripts/verify-outreach.mjs",
     "verify:launch": "node scripts/verify-launch.mjs",
     "check": "npm run verify:outreach && npm run lint && npm run test && npm run build"
