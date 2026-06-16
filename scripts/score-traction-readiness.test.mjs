@@ -1,0 +1,98 @@
+import { describe, expect, it } from "vitest";
+import { renderTractionReadinessScorecard, scoreTractionReadiness } from "./score-traction-readiness.mjs";
+import { parseOutreachResults } from "./summarize-outreach-results.mjs";
+import { parseOutreachLedger } from "./verify-outreach-ledger.mjs";
+
+const PUBLIC_AUDIT = `# TraceReady public dataset mini-audit
+
+| Check | Count |
+| --- | ---: |
+| Records analyzed | 57,658 |
+| Records with latitude/longitude | 57,658 |
+| Records over 4 hectares | 46,134 |
+| Polygon records present | 0 |
+| Point-only plots over 4 hectares | 46,134 |
+| Ready records | 0 |
+| Readiness score | 0/100 |
+
+| TraceReady issue | Count |
+| --- | ---: |
+| missing_farmId | 57,658 |
+| missing_supplier | 57,658 |
+`;
+
+const BATCH_CSV = `priority,route_id,tier,company_or_channel,segment,why_it_fits,public_route,source_url,proof_url,field_note_url,file_check_url,pilot_proof_url,message_variant,proof_hook,ask,status,next_step
+1,b02-r03,overflow,Control Union,EUDR certification,Public EUDR service route,public EUDR service page,https://www.controlunion.com/eu-deforestation-regulation-eudr/,https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r03,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r03,https://traceready.online/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r03,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r03,overflow,"Lead with 57,658-row public audit",Offer malformed file cleanup,not_started,Send overflow variant
+2,b02-r04,overflow,Bureau Veritas,EUDR services,Public EUDR service route,public EUDR page,https://group.bureauveritas.com/sustainability/nature/eudr,https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,https://traceready.online/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,overflow,"Lead with 57,658-row public audit",Offer first-pass file hygiene,not_started,Send overflow variant
+`;
+
+const RESULTS_CSV = `route_id,date_sent,company_or_channel,tier,proof_url,field_note_url,file_check_url,pilot_proof_url,status,response_type,field_note_click_count,file_check_count,paid_order_count,pilot_requested,reply_notes,next_action
+b02-r03,,Control Union,overflow,https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r03,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r03,https://traceready.online/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r03,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r03,not_sent,none,0,0,0,no,,send first message
+b02-r04,,Bureau Veritas,overflow,https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,https://traceready.online/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,not_sent,none,0,0,0,no,,send first message
+`;
+
+describe("traction readiness scorecard", () => {
+  it("separates quantified proof, ready routes, unmeasured traction, and email risk", () => {
+    const score = scoreTractionReadiness({
+      publicAuditMarkdown: PUBLIC_AUDIT,
+      batchRows: parseOutreachLedger(BATCH_CSV),
+      resultRows: parseOutreachResults(RESULTS_CSV),
+      sendabilityAudit: {
+        routes: [
+          {
+            route_id: "b02-r03",
+            company_or_channel: "Control Union",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://www.controlunion.com/eu-deforestation-regulation-eudr/",
+            requires_action_time_confirmation: true,
+          },
+          {
+            route_id: "b02-r04",
+            company_or_channel: "Bureau Veritas",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://news.bureauveritas.net/l/591681/2024-10-25/3t89vtv",
+            requires_action_time_confirmation: true,
+          },
+        ],
+      },
+      contactRecon: {
+        summary: {
+          routesInspected: 2,
+          candidateBrowserForm: 2,
+          formWithCaptcha: 0,
+          contactLinkOnly: 0,
+          unreachable: 0,
+        },
+      },
+      emailReport: {
+        ready: false,
+        dnsReady: false,
+        checks: [
+          { label: "OUTREACH_EMAIL_MX", ready: true },
+          { label: "OUTREACH_EMAIL_DMARC", ready: false },
+          { label: "OUTREACH_EMAIL_DKIM", ready: false },
+          { label: "OUTREACH_EMAIL_ALIAS_TEST", ready: false },
+        ],
+      },
+    });
+
+    expect(score.publicProof.recordsAnalyzed).toBe(57658);
+    expect(score.publicProof.pointOnlyOver4ha).toBe(46134);
+    expect(score.publicProof.readinessScore).toBe("0/100");
+    expect(score.outreach.readyBrowserFormRoutes).toBe(2);
+    expect(score.outreach.sentOrBeyond).toBe(0);
+    expect(score.currentState).toBe("proof_ready_send_ready_traction_unmeasured");
+    expect(score.nextGate).toBe("submit_verified_public_forms_after_action_time_confirmation");
+
+    const markdown = renderTractionReadinessScorecard(score, { generatedAt: "2026-06-16" });
+    expect(markdown).toContain("# TraceReady traction-readiness scorecard - 2026-06-16");
+    expect(markdown).toContain("| Public rows analyzed | 57,658 |");
+    expect(markdown).toContain("| Manually verified browser-form-ready routes | 2 |");
+    expect(markdown).toContain("| External submissions completed | 0 |");
+    expect(markdown).toContain("OUTREACH_EMAIL_DMARC: pending");
+    expect(markdown).toContain("Confirm: submit b02-r03 to Control Union");
+    expect(markdown).toContain("Confirm: submit b02-r04 to Bureau Veritas");
+  });
+});
