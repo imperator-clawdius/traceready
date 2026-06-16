@@ -29,6 +29,7 @@ import {
   CHECKOUT_PILOT_HREF,
   CONTACT_EMAIL,
   CONTACT_HREF,
+  FIELD_NOTE_EUDR_FILE_ERRORS_HREF,
   FILE_TRIAGE_HREF,
   LEGAL_OPERATOR,
   METHODOLOGY_HREF,
@@ -781,6 +782,9 @@ export function TraceReadyWorkbench() {
             </a>
             <a href={PROOF_HREF} className="hover:text-[#087f73]">
               Proof
+            </a>
+            <a href={FIELD_NOTE_EUDR_FILE_ERRORS_HREF} className="hover:text-[#087f73]">
+              Field note
             </a>
             <a href={ORDER_INTAKE_HREF} className="hover:text-[#087f73]">
               Order intake
