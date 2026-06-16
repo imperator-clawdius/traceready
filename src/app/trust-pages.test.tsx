@@ -254,6 +254,27 @@ describe("TraceReady trust pages", () => {
     expect(emailLink?.getAttribute("href")).toContain("TraceReady%20free%20issue-log%20triage");
   });
 
+  it("stamps proof-led route tracking into free triage email handoffs", () => {
+    window.history.pushState(
+      {},
+      "",
+      "/file-triage/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04",
+    );
+
+    act(() => {
+      root.render(<FileTriagePage />);
+    });
+
+    const emailLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("Email issue-log triage request"),
+    );
+    const decodedHref = decodeURIComponent(emailLink?.getAttribute("href") ?? "");
+
+    expect(decodedHref).toContain("Outreach route: b01-r04");
+    expect(decodedHref).toContain("Outreach source: proof_led_batch_01");
+    expect(decodedHref).toContain("Outreach campaign: eudr_file_readiness");
+  });
+
   it("provides a tighter paid-order intake handoff", () => {
     act(() => {
       root.render(<OrderIntakePage />);

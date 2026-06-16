@@ -1,12 +1,12 @@
 import Link from "next/link";
 import {
   CHECKOUT_CLEANUP_HREF,
-  CONTACT_EMAIL,
   LEGAL_OPERATOR,
   METHODOLOGY_HREF,
   ORDER_INTAKE_HREF,
   PROOF_HREF,
 } from "@/lib/site";
+import { TriageMailLink } from "./TriageMailLink";
 
 const TRIAGE_ITEMS = [
   "Issue counts from TraceReady: blockers, warnings, duplicate farm IDs, missing fields, and point-only over-4ha records.",
@@ -15,38 +15,12 @@ const TRIAGE_ITEMS = [
   "Commodity, source country, deadline, and what the buyer or importer asked for.",
 ];
 
-const TRIAGE_BODY = [
-  "TraceReady free issue-log triage",
-  "",
-  "Do not include raw coordinates or confidential supplier data in this first email.",
-  "",
-  "Commodity:",
-  "Source country:",
-  "Buyer/importer deadline:",
-  "File type: CSV, KML, GeoJSON, Excel export, or mixed",
-  "",
-  "Issue counts from TraceReady:",
-  "- Blockers:",
-  "- Warnings:",
-  "- Point-only over-4ha records:",
-  "- Missing plot IDs:",
-  "- Missing supplier identity:",
-  "- Duplicate farm IDs:",
-  "",
-  "Non-sensitive field names or sample row shape:",
-  "",
-  "What I need back: quick triage, 24-hour cleanup quote, or pilot scope",
-].join("\n");
-
 export const metadata = {
   title: "Free Issue-Log Triage | TraceReady",
   description: "Ask TraceReady to review non-sensitive issue counts before sending raw farm coordinates.",
 };
 
 export default function FileTriagePage() {
-  const subject = encodeURIComponent("TraceReady free issue-log triage");
-  const body = encodeURIComponent(TRIAGE_BODY);
-
   return (
     <main className="min-h-screen bg-[#f8f7f3] px-4 py-10 text-zinc-950 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl">
@@ -68,12 +42,11 @@ export default function FileTriagePage() {
             data.
           </p>
           <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-            <a
-              href={`mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`}
+            <TriageMailLink
               className="inline-flex h-11 items-center justify-center rounded-md bg-zinc-950 px-4 text-sm font-semibold text-white transition hover:bg-zinc-800"
             >
               Email issue-log triage request
-            </a>
+            </TriageMailLink>
             <Link
               href="/"
               className="inline-flex h-11 items-center justify-center rounded-md border border-zinc-300 bg-white px-4 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-100"
