@@ -14,6 +14,7 @@ Included files:
 - public-cocoa-pilot-issue-summary.csv
 - public-cocoa-pilot-buyer-summary.txt
 - public-cocoa-pilot-buyer-followups.txt
+- public-cocoa-pilot-reproducibility-manifest.txt
 - public-cocoa-pilot-audit.json
 
 Important boundary:

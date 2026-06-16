@@ -1,0 +1,38 @@
+TraceReady public cocoa pilot
+Reproducibility manifest
+
+Dataset:
+- Dataset title: Colombian-Cocoa-Dataset
+- Dataset URL: https://www.kaggle.com/datasets/lehetasa/colombian-cocoa-dataset
+- License reported by the source audit: CC BY-NC-SA 4.0
+- Public rows analyzed: 57,658
+
+TraceReady-supplied assumptions:
+- country=Colombia
+- commodity=cocoa
+
+Method boundary:
+- TraceReady used public row-level area and coordinate columns.
+- TraceReady did not invent missing plot IDs, supplier identity, shipment linkage, or polygon geometry.
+- No raw source rows or farm coordinates are redistributed in this pack.
+- The derived output is a readiness report, issue summary, buyer handoff summary, source-owner follow-up list, and audit JSON.
+
+Deterministic outputs:
+- Records analyzed: 57,658
+- Records with latitude/longitude: 57,658
+- Records over 4 hectares: 46,134
+- Polygon records present: 0
+- Point-only plots over 4 hectares: 46,134
+- Blockers found: 161,450
+- Warnings found: 57,658
+- Ready records: 0
+- Readiness score: 0/100
+
+Issue-code counts:
+- missing_farmId: 57,658
+- missing_supplier: 57,658
+- missing_batch: 57,658
+- polygon_required: 46,134
+
+Trust boundary:
+This public pilot is not a customer case, paid transaction, buyer approval, legal certification, audit assurance, TRACES submission, or due-diligence statement. It is a reproducible public-data stress test of TraceReady's file-readiness checks.

@@ -105,8 +105,8 @@ export default function PublicCocoaPilotPage() {
           <h2 className="mt-3 text-2xl font-semibold tracking-tight">Download the evidence pack.</h2>
           <p className="mt-4 max-w-3xl text-sm leading-7 text-emerald-50">
             The ZIP contains the readiness report, issue-summary CSV, buyer-style handoff summary,
-            buyer/supplier follow-up list, and audit JSON. It contains derived proof artifacts only,
-            not raw source rows or farm coordinates.
+            buyer/supplier follow-up list, reproducibility manifest, and audit JSON. It contains
+            derived proof artifacts only, not raw source rows or farm coordinates.
           </p>
           <div className="mt-5 flex flex-col gap-3 sm:flex-row">
             <a

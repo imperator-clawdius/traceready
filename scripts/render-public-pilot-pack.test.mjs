@@ -22,6 +22,10 @@ describe("public pilot evidence pack renderer", () => {
     expect(files["public-cocoa-pilot-buyer-summary.txt"]).toContain("Buyer handoff summary");
     expect(files["public-cocoa-pilot-buyer-summary.txt"]).toContain("Decision: hold for source-owner repair");
     expect(files["public-cocoa-pilot-buyer-summary.txt"]).toContain("Cleaned pack outcome");
+    expect(files["public-cocoa-pilot-reproducibility-manifest.txt"]).toContain("Reproducibility manifest");
+    expect(files["public-cocoa-pilot-reproducibility-manifest.txt"]).toContain("Dataset URL: https://www.kaggle.com/datasets/lehetasa/colombian-cocoa-dataset");
+    expect(files["public-cocoa-pilot-reproducibility-manifest.txt"]).toContain("TraceReady-supplied assumptions");
+    expect(files["public-cocoa-pilot-reproducibility-manifest.txt"]).toContain("No raw source rows or farm coordinates are redistributed");
     expect(files["public-cocoa-pilot-audit.json"]).toContain('"readyRecords": 0');
     expect(combined).toContain("This is not a customer case");
     expect(combined).toContain("does not redistribute raw source rows");
@@ -40,6 +44,7 @@ describe("public pilot evidence pack renderer", () => {
 
     expect(result.files).toContain("public-cocoa-pilot-issue-summary.csv");
     expect(result.files).toContain("public-cocoa-pilot-buyer-summary.txt");
+    expect(result.files).toContain("public-cocoa-pilot-reproducibility-manifest.txt");
     expect(zippedNames).toEqual(result.files.toSorted());
     expect(await fs.readFile(path.join(result.packDir, "public-cocoa-pilot-audit.json"), "utf8")).toContain(
       `"analyzedRecords": ${PUBLIC_COCOA_PILOT_AUDIT.analyzedRecords}`,

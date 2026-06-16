@@ -222,6 +222,8 @@ describe("TraceReady trust pages", () => {
     expect(pageText).toContain("Cleaned pack out");
     expect(pageText).toContain("Decision: hold for source-owner repair");
     expect(pageText).toContain("the cleaned output is a repair brief");
+    expect(pageText).toContain("reproducibility manifest");
+    expect(pageText).toContain("audit JSON");
     expect(pageText).toContain("not a customer case");
     expect(pageText).not.toContain("fictional fixture");
     expect(packLink?.getAttribute("href")).toBe("/traceready-public-cocoa-pilot-pack.zip");

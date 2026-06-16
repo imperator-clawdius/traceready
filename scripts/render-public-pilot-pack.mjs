@@ -40,6 +40,7 @@ export function renderPublicPilotPackFiles(audit = PUBLIC_COCOA_PILOT_AUDIT) {
     "public-cocoa-pilot-issue-summary.csv": renderIssueSummaryCsv(audit),
     "public-cocoa-pilot-buyer-summary.txt": renderBuyerSummary(audit),
     "public-cocoa-pilot-buyer-followups.txt": renderBuyerFollowups(audit),
+    "public-cocoa-pilot-reproducibility-manifest.txt": renderReproducibilityManifest(audit),
     "public-cocoa-pilot-audit.json": `${JSON.stringify(audit, null, 2)}\n`,
   };
 }
@@ -89,12 +90,55 @@ Included files:
 - public-cocoa-pilot-issue-summary.csv
 - public-cocoa-pilot-buyer-summary.txt
 - public-cocoa-pilot-buyer-followups.txt
+- public-cocoa-pilot-reproducibility-manifest.txt
 - public-cocoa-pilot-audit.json
 
 Important boundary:
 This ZIP does not redistribute raw source rows, latitude/longitude records, supplier lists, buyer files, or customer material. It contains derived issue counts, method notes, and buyer follow-up output only.
 
 This is not a customer case, paid transaction, buyer approval, legal certification, audit assurance, TRACES submission, or due-diligence statement.
+`;
+}
+
+function renderReproducibilityManifest(audit) {
+  return `TraceReady public cocoa pilot
+Reproducibility manifest
+
+Dataset:
+- Dataset title: ${audit.datasetTitle}
+- Dataset URL: ${audit.datasetUrl}
+- License reported by the source audit: ${audit.sourceLicense}
+- Public rows analyzed: ${formatNumber(audit.analyzedRecords)}
+
+TraceReady-supplied assumptions:
+- country=${audit.sourceCountry}
+- commodity=${audit.sourceCommodity}
+
+Method boundary:
+- TraceReady used public row-level area and coordinate columns.
+- TraceReady did not invent missing plot IDs, supplier identity, shipment linkage, or polygon geometry.
+- No raw source rows or farm coordinates are redistributed in this pack.
+- The derived output is a readiness report, issue summary, buyer handoff summary, source-owner follow-up list, and audit JSON.
+
+Deterministic outputs:
+- Records analyzed: ${formatNumber(audit.analyzedRecords)}
+- Records with latitude/longitude: ${formatNumber(audit.geolocatedRecords)}
+- Records over 4 hectares: ${formatNumber(audit.recordsOver4Ha)}
+- Polygon records present: ${formatNumber(audit.polygonRecords)}
+- Point-only plots over 4 hectares: ${formatNumber(audit.pointOnlyOver4Ha)}
+- Blockers found: ${formatNumber(audit.blockers)}
+- Warnings found: ${formatNumber(audit.warnings)}
+- Ready records: ${formatNumber(audit.readyRecords)}
+- Readiness score: ${audit.readinessScore}/100
+
+Issue-code counts:
+- missing_farmId: ${formatNumber(audit.issueCounts.missing_farmId)}
+- missing_supplier: ${formatNumber(audit.issueCounts.missing_supplier)}
+- missing_batch: ${formatNumber(audit.issueCounts.missing_batch)}
+- polygon_required: ${formatNumber(audit.issueCounts.polygon_required)}
+
+Trust boundary:
+This public pilot is not a customer case, paid transaction, buyer approval, legal certification, audit assurance, TRACES submission, or due-diligence statement. It is a reproducible public-data stress test of TraceReady's file-readiness checks.
 `;
 }
 
