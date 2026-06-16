@@ -110,7 +110,7 @@ function renderRow(row) {
   ];
 }
 
-function subjectFor(row) {
+export function subjectFor(row) {
   if (row.message_variant === "association") {
     return "Free EUDR file-readiness example for coffee members";
   }
@@ -122,7 +122,7 @@ function subjectFor(row) {
   return "Row-level check for messy EUDR farm files";
 }
 
-function bodyFor(row) {
+export function bodyFor(row) {
   if (row.message_variant === "association") {
     return [
       `Hi ${row.company_or_channel},`,
@@ -168,7 +168,7 @@ function bodyFor(row) {
   ].join("\n");
 }
 
-function followUpFor(row) {
+export function followUpFor(row) {
   if (row.message_variant === "association") {
     return [
       `Quick follow-up on the TraceReady public file-readiness example for ${row.company_or_channel}.`,
