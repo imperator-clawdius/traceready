@@ -8,6 +8,7 @@ export const CHECKOUT_PILOT_HREF = "/checkout/pilot/";
 export const ORDER_INTAKE_HREF = "/order-intake/";
 export const METHODOLOGY_HREF = "/methodology/";
 export const PROOF_HREF = "/proof/";
+export const PILOT_PROOF_HREF = "/pilot-proof/";
 export const CONTACT_HREF = "/contact/";
 export const FILE_TRIAGE_HREF = "/file-triage/";
 export const FIELD_NOTE_EUDR_FILE_ERRORS_HREF = "/field-notes/eudr-file-errors/";

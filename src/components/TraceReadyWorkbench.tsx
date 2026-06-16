@@ -34,6 +34,7 @@ import {
   LEGAL_OPERATOR,
   METHODOLOGY_HREF,
   ORDER_INTAKE_HREF,
+  PILOT_PROOF_HREF,
   PROOF_HREF,
   PUBLIC_PILOT_PACK_HREF,
   SAMPLE_PACK_HREF,
@@ -785,6 +786,9 @@ export function TraceReadyWorkbench() {
             </a>
             <a href={FIELD_NOTE_EUDR_FILE_ERRORS_HREF} className="hover:text-[#087f73]">
               Field note
+            </a>
+            <a href={PILOT_PROOF_HREF} className="hover:text-[#087f73]">
+              Pilot proof
             </a>
             <a href={ORDER_INTAKE_HREF} className="hover:text-[#087f73]">
               Order intake

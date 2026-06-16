@@ -4,6 +4,7 @@ import {
   LEGAL_OPERATOR,
   METHODOLOGY_HREF,
   ORDER_INTAKE_HREF,
+  PILOT_PROOF_HREF,
   PROOF_HREF,
 } from "@/lib/site";
 import { TriageMailLink } from "./TriageMailLink";
@@ -93,6 +94,12 @@ export default function FileTriagePage() {
                 className="inline-flex h-11 items-center justify-center rounded-md border border-zinc-300 bg-white px-4 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-100"
               >
                 Read methodology
+              </Link>
+              <Link
+                href={PILOT_PROOF_HREF}
+                className="inline-flex h-11 items-center justify-center rounded-md border border-zinc-300 bg-white px-4 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-100"
+              >
+                Offer documented pilot
               </Link>
             </div>
           </div>

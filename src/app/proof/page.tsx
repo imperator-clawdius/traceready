@@ -11,6 +11,7 @@ import {
   SAMPLE_PACK_HREF,
 } from "@/lib/site";
 import { TrackedHomeLink } from "./TrackedHomeLink";
+import { TrackedPilotProofLink } from "./TrackedPilotProofLink";
 import { TrackedTriageLink } from "./TrackedTriageLink";
 
 const OUTPUTS = [
@@ -225,7 +226,7 @@ export default function ProofPage() {
             If the issue list is useful, buy the 24-hour cleanup and send the file through the
             order-intake path.
           </p>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
             <TrackedHomeLink
               className="inline-flex h-11 items-center justify-center rounded-md bg-white px-4 text-sm font-semibold text-[#123f34] transition hover:bg-emerald-50"
             >
@@ -248,6 +249,11 @@ export default function ProofPage() {
             >
               Ask a scope question
             </Link>
+            <TrackedPilotProofLink
+              className="inline-flex h-11 items-center justify-center rounded-md border border-emerald-100 px-4 text-sm font-semibold text-white transition hover:bg-emerald-900"
+            >
+              Offer documented pilot
+            </TrackedPilotProofLink>
           </div>
         </section>
 

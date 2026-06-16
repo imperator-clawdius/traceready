@@ -9,6 +9,7 @@ import FileTriagePage from "./file-triage/page";
 import EudrFileErrorsPage from "./field-notes/eudr-file-errors/page";
 import MethodologyPage from "./methodology/page";
 import OrderIntakePage from "./order-intake/page";
+import PilotProofPage from "./pilot-proof/page";
 import ProofPage from "./proof/page";
 import PrivacyPage from "./privacy/page";
 import TermsPage from "./terms/page";
@@ -243,6 +244,9 @@ describe("TraceReady trust pages", () => {
     const fieldNoteLink = links.find((element) =>
       element.textContent?.includes("Read the field note"),
     );
+    const pilotProofLink = links.find((element) =>
+      element.textContent?.includes("Offer documented pilot"),
+    );
 
     expect(pageText).toContain("Run one supplier file before sending coordinates");
     expect(pageText).toContain("The first pass stays in your browser");
@@ -252,9 +256,38 @@ describe("TraceReady trust pages", () => {
     expect(contactLink?.getAttribute("href")).toBe("/contact/");
     expect(triageLink?.getAttribute("href")).toBe("/file-triage/");
     expect(fieldNoteLink?.getAttribute("href")).toBe("/field-notes/eudr-file-errors/");
+    expect(pilotProofLink?.getAttribute("href")).toBe("/pilot-proof/");
   });
 
-  it("preserves proof-led route tracking when proof visitors continue to the browser checker or triage handoff", () => {
+  it("offers a documented pilot route for earning a permissioned anonymized case", () => {
+    act(() => {
+      root.render(<PilotProofPage />);
+    });
+
+    const pageText = container.textContent ?? "";
+    const emailLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("Email documented pilot request"),
+    );
+    const triageLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("Use free issue-log triage instead"),
+    );
+    const pilotPackLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("View current public pilot pack"),
+    );
+
+    expect(pageText).toContain("Documented pilot");
+    expect(pageText).toContain("first anonymized case");
+    expect(pageText).toContain("Do not send raw coordinates first");
+    expect(pageText).toContain("Publish only with permission");
+    expect(pageText).toContain("Anonymized before: file type, row count, issue counts");
+    expect(pageText).toContain("one short quote");
+    expect(emailLink?.getAttribute("href")).toContain("mailto:founder@traceready.online");
+    expect(emailLink?.getAttribute("href")).toContain("TraceReady%20documented%20pilot%20request");
+    expect(triageLink?.getAttribute("href")).toBe("/file-triage/");
+    expect(pilotPackLink?.getAttribute("href")).toBe("/traceready-public-cocoa-pilot-pack.zip");
+  });
+
+  it("preserves proof-led route tracking when proof visitors continue to the browser checker, triage handoff, or documented pilot", () => {
     window.history.pushState(
       {},
       "",
@@ -271,6 +304,9 @@ describe("TraceReady trust pages", () => {
     const triageLink = Array.from(container.querySelectorAll("a")).find((element) =>
       element.textContent?.includes("Request free issue-log triage"),
     );
+    const pilotProofLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("Offer documented pilot"),
+    );
 
     expect(browserCheckLink?.getAttribute("href")).toBe(
       "/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04",
@@ -278,6 +314,30 @@ describe("TraceReady trust pages", () => {
     expect(triageLink?.getAttribute("href")).toBe(
       "/file-triage/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04",
     );
+    expect(pilotProofLink?.getAttribute("href")).toBe(
+      "/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04",
+    );
+  });
+
+  it("stamps proof-led route tracking into documented pilot email handoffs", () => {
+    window.history.pushState(
+      {},
+      "",
+      "/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04",
+    );
+
+    act(() => {
+      root.render(<PilotProofPage />);
+    });
+
+    const emailLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("Email documented pilot request"),
+    );
+    const decodedHref = decodeURIComponent(emailLink?.getAttribute("href") ?? "");
+
+    expect(decodedHref).toContain("Outreach route: b01-r04");
+    expect(decodedHref).toContain("Outreach source: proof_led_batch_01");
+    expect(decodedHref).toContain("Outreach campaign: eudr_file_readiness");
   });
 
   it("offers a non-sensitive free triage handoff before asking for source files or payment", () => {
@@ -289,6 +349,9 @@ describe("TraceReady trust pages", () => {
     const emailLink = Array.from(container.querySelectorAll("a")).find((element) =>
       element.textContent?.includes("Email issue-log triage request"),
     );
+    const pilotProofLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("Offer documented pilot"),
+    );
 
     expect(pageText).toContain("Free issue-log triage");
     expect(pageText).toContain("Do not send raw farm coordinates first");
@@ -296,6 +359,7 @@ describe("TraceReady trust pages", () => {
     expect(pageText).toContain("24-hour cleanup");
     expect(emailLink?.getAttribute("href")).toContain("mailto:founder@traceready.online");
     expect(emailLink?.getAttribute("href")).toContain("TraceReady%20free%20issue-log%20triage");
+    expect(pilotProofLink?.getAttribute("href")).toBe("/pilot-proof/");
   });
 
   it("stamps proof-led route tracking into free triage email handoffs", () => {

@@ -27,4 +27,13 @@ describe("launch verifier route manifest", () => {
     expect(script).toContain("Download public pilot evidence pack");
     expect(script).toContain("/traceready-public-cocoa-pilot-pack.zip");
   });
+
+  it("checks the documented pilot route in live launch verification", () => {
+    const script = fs.readFileSync("scripts/verify-launch.mjs", "utf8");
+
+    expect(script).toContain('label: "PILOT_PROOF_PAGE"');
+    expect(script).toContain('path: "/pilot-proof/"');
+    expect(script).toContain("first anonymized case");
+    expect(script).toContain("Email documented pilot request");
+  });
 });

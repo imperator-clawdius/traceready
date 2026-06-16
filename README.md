@@ -58,6 +58,8 @@ Use `docs/public-dataset-mini-audit.md` for proof-led outreach based on a reprod
 
 Run `npm run render:public-pilot-pack` after changing the public cocoa audit counts. It regenerates `public/samples/traceready-public-cocoa-pilot/` and `public/traceready-public-cocoa-pilot-pack.zip` from derived issue counts only; do not put raw Kaggle rows, coordinates, customer files, or buyer material in the public pilot pack.
 
+Use `/pilot-proof/` when the goal is to recruit one permissioned real-world case. It asks for non-sensitive issue counts first and explicit approval before publishing anonymized before/after structure or a quote.
+
 Use `/field-notes/eudr-file-errors/` as the shareable public field note for LinkedIn, association, and reply-thread outreach when a prospect needs the practical issue list before trusting the tool.
 
 Use `docs/proof-led-outreach-sprint.md` for company-level target tiers, message variants, and the 10-day proof-led outreach cadence.

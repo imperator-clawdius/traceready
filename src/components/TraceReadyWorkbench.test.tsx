@@ -59,6 +59,9 @@ describe("TraceReady conversion surface", () => {
     const fieldNoteLink = Array.from(container.querySelectorAll("a")).find((element) =>
       element.textContent?.includes("Field note"),
     );
+    const pilotProofLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("Pilot proof"),
+    );
     const cleanupSectionText = cleanupLink?.closest("section")?.textContent ?? "";
 
     expect(heading).toContain("Check a farm file before a buyer rejects it.");
@@ -70,6 +73,7 @@ describe("TraceReady conversion surface", () => {
     expect(cleanupSectionText).toContain("not ready to send raw coordinates");
     expect(triageLink?.getAttribute("href")).toBe("/file-triage/");
     expect(fieldNoteLink?.getAttribute("href")).toBe("/field-notes/eudr-file-errors/");
+    expect(pilotProofLink?.getAttribute("href")).toBe("/pilot-proof/");
   });
 
   it("preserves outreach route attribution when a diagnosed visitor asks for free triage", () => {
