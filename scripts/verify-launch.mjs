@@ -72,7 +72,16 @@ const requiredPages = [
   {
     label: "PROOF_PAGE",
     path: "/proof/",
-    content: ["Representative sample fixture", "not customer proof", "not transaction proof"],
+    content: [
+      "Representative sample fixture",
+      "not customer proof",
+      "not transaction proof",
+      "Public dataset mini-audit",
+      "57,658 public cocoa rows checked",
+      "46,134 point-only plots over 4 hectares",
+      "Colombian-Cocoa-Dataset",
+      "CBI EUDR coffee guidance",
+    ],
   },
   {
     label: "ORDER_INTAKE_PAGE",
