@@ -18,11 +18,14 @@ export function renderOutreachSendChecklist(batchRows, resultRows, options = {})
   const today = options.today ?? todayIsoDate();
   const sendLimit = options.sendLimit ?? DEFAULT_SEND_LIMIT;
   const sendTier = options.sendTier;
+  const routeAudit = options.routeAudit;
   const queue = buildOutreachActionQueue(resultRows, {
     today,
-    sendLimit,
+    sendLimit: routeAudit ? resultRows.length : sendLimit,
     sendTier,
   });
+  const sendGate = routeAudit ? applyRouteAuditGate(queue.sendRows, routeAudit, sendLimit) : undefined;
+  const sendRows = sendGate?.sendRows ?? queue.sendRows;
   const batchByRoute = new Map(batchRows.map((row) => [row.route_id, row]));
 
   return [
@@ -32,10 +35,18 @@ export function renderOutreachSendChecklist(batchRows, resultRows, options = {})
     `Results: \`${resultsPath}\``,
     `Today: ${today}`,
     ...(sendTier ? [`Send tier filter: ${sendTier}`] : []),
+    ...(options.routeAuditPath ? [`Route audit: \`${options.routeAuditPath}\``] : []),
     "",
     "Use this as the send console. Work top to bottom. Only mark a route sent after a real company-level public form or company-level public route has been used.",
+    ...(routeAudit
+      ? [
+          "Route health gate is active: only audited routes marked reachable are queued for sending.",
+        ]
+      : []),
     "",
-    ...renderSendTasks(queue.sendRows, batchByRoute, resultsPath, today),
+    ...renderSendTasks(sendRows, batchByRoute, resultsPath, today, routeAudit),
+    "",
+    ...renderSkippedByRouteHealth(sendGate?.skippedRows ?? [], batchByRoute),
     "",
     "## End-of-block checks",
     "",
@@ -80,6 +91,8 @@ export function parseOutreachSendChecklistArgs(argv) {
       parsed.sendLimit = parsePositiveInteger(value, flag);
     } else if (flag === "--send-tier") {
       parsed.sendTier = value;
+    } else if (flag === "--route-audit") {
+      parsed.routeAuditPath = value;
     } else {
       throw new Error(`unknown flag: ${flag}`);
     }
@@ -90,17 +103,21 @@ export function parseOutreachSendChecklistArgs(argv) {
   return parsed;
 }
 
-function renderSendTasks(sendRows, batchByRoute, resultsPath, today) {
+function renderSendTasks(sendRows, batchByRoute, resultsPath, today, routeAudit) {
   if (sendRows.length === 0) {
     return ["No unsent routes are queued for this checklist."];
   }
 
+  const routeHealthById = routeAudit ? routeAuditMap(routeAudit) : new Map();
+
   return sendRows.flatMap((resultRow, index) => {
     const batchRow = batchByRoute.get(resultRow.route_id);
+    const routeHealth = routeHealthById.get(resultRow.route_id);
 
     return [
       `## ${index + 1}. ${resultRow.route_id} - ${resultRow.company_or_channel}`,
       "",
+      ...(routeHealth ? [`- Route audit health: ${routeHealth.health}${routeHealth.status ? ` (${routeHealth.status})` : ""}`] : []),
       `- [ ] Open company-level route: ${batchRow.source_url}`,
       `- [ ] Confirm this is still company-level, not a personal profile or direct personal email.`,
       "- [ ] Paste the subject and body exactly as shown below.",
@@ -122,6 +139,44 @@ function renderSendTasks(sendRows, batchByRoute, resultsPath, today) {
       "",
     ];
   });
+}
+
+function applyRouteAuditGate(sendRows, routeAudit, sendLimit) {
+  const routeHealthById = routeAuditMap(routeAudit);
+  const auditedRows = sendRows.filter((row) => routeHealthById.has(row.route_id));
+  const sendableRows = auditedRows.filter((row) => routeHealthById.get(row.route_id)?.health === "reachable");
+  const skippedRows = auditedRows
+    .filter((row) => routeHealthById.get(row.route_id)?.health !== "reachable")
+    .map((row) => ({
+      ...row,
+      routeHealth: routeHealthById.get(row.route_id),
+    }));
+
+  return {
+    sendRows: sendableRows.slice(0, sendLimit),
+    skippedRows,
+  };
+}
+
+function renderSkippedByRouteHealth(skippedRows, batchByRoute) {
+  if (skippedRows.length === 0) {
+    return [];
+  }
+
+  return [
+    "## Skipped By Route Health",
+    "",
+    ...skippedRows.map((row) => {
+      const batchRow = batchByRoute.get(row.route_id);
+      const note = row.routeHealth?.note ? `, ${row.routeHealth.note}` : "";
+
+      return `- ${row.route_id} - ${row.company_or_channel}: ${row.routeHealth?.health ?? "unknown"}${note}. Manual check before sending: ${batchRow?.source_url ?? row.source_url}`;
+    }),
+  ];
+}
+
+function routeAuditMap(routeAudit) {
+  return new Map((routeAudit.routes ?? []).map((route) => [route.route_id, route]));
 }
 
 function updateCommand(resultsPath, routeId, patch) {
@@ -160,12 +215,14 @@ function todayIsoDate() {
 
 async function main() {
   const options = parseOutreachSendChecklistArgs(process.argv.slice(2));
-  const [batchCsv, resultsCsv] = await Promise.all([
+  const [batchCsv, resultsCsv, routeAuditJson] = await Promise.all([
     fs.readFile(options.batchPath, "utf8"),
     fs.readFile(options.resultsPath, "utf8"),
+    options.routeAuditPath ? fs.readFile(options.routeAuditPath, "utf8") : Promise.resolve(""),
   ]);
   const batchRows = parseOutreachLedger(batchCsv);
   const resultRows = parseOutreachResults(resultsCsv);
+  const routeAudit = routeAuditJson ? JSON.parse(routeAuditJson) : undefined;
   const errors = [
     ...validateOutreachLedger(batchRows),
     ...validateOutreachResults(resultRows),
@@ -180,7 +237,7 @@ async function main() {
     return;
   }
 
-  const markdown = `${renderOutreachSendChecklist(batchRows, resultRows, options)}\n`;
+  const markdown = `${renderOutreachSendChecklist(batchRows, resultRows, { ...options, routeAudit })}\n`;
   await fs.mkdir(path.dirname(options.outputPath), { recursive: true });
   await fs.writeFile(options.outputPath, markdown, "utf8");
   console.log(`OUTREACH_SEND_CHECKLIST=pass path=${options.outputPath}`);

@@ -1,4 +1,5 @@
 import fs from "node:fs/promises";
+import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseOutreachLedger, validateOutreachLedger } from "./verify-outreach-ledger.mjs";
 
@@ -114,6 +115,10 @@ export function renderOutreachRouteAudit(audit) {
   ].join("\n");
 }
 
+export function renderOutreachRouteAuditJson(audit) {
+  return JSON.stringify(audit, null, 2);
+}
+
 export function parseOutreachRouteAuditArgs(argv) {
   const args = [...argv];
   const parsed = {
@@ -144,6 +149,8 @@ export function parseOutreachRouteAuditArgs(argv) {
       parsed.limit = parsePositiveInteger(value, flag);
     } else if (flag === "--concurrency") {
       parsed.concurrency = parsePositiveInteger(value, flag);
+    } else if (flag === "--json-output") {
+      parsed.jsonOutputPath = value;
     } else {
       throw new Error(`unknown flag: ${flag}`);
     }
@@ -226,7 +233,17 @@ async function main() {
   }
 
   const audit = await auditOutreachRoutes(rows, options);
+
+  if (options.jsonOutputPath) {
+    await fs.mkdir(path.dirname(options.jsonOutputPath), { recursive: true });
+    await fs.writeFile(options.jsonOutputPath, `${renderOutreachRouteAuditJson(audit)}\n`, "utf8");
+  }
+
   console.log(renderOutreachRouteAudit(audit));
+
+  if (options.jsonOutputPath) {
+    console.log(`OUTREACH_ROUTE_AUDIT_JSON=pass path=${options.jsonOutputPath}`);
+  }
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

@@ -4,6 +4,7 @@ import {
   checkOutreachRoute,
   parseOutreachRouteAuditArgs,
   renderOutreachRouteAudit,
+  renderOutreachRouteAuditJson,
 } from "./audit-outreach-routes.mjs";
 import { parseOutreachLedger } from "./verify-outreach-ledger.mjs";
 
@@ -169,6 +170,28 @@ describe("outreach route audit", () => {
     expect(markdown).not.toContain("@");
   });
 
+  it("renders machine-readable route health for execution tooling", async () => {
+    const audit = await auditOutreachRoutes(parseOutreachLedger(BATCH_CSV), {
+      batchPath: "docs/proof-led-outreach-batch-01.csv",
+      tier: "importer",
+      limit: 2,
+      checkRoute: async (row) => ({
+        health: row.route_id === "b01-r02" ? "reachable" : "unreachable",
+        status: row.route_id === "b01-r02" ? 200 : undefined,
+        finalUrl: row.source_url,
+        note: row.route_id === "b01-r02" ? "HTTP 200" : "timed out after 4000ms",
+      }),
+    });
+    const parsed = JSON.parse(renderOutreachRouteAuditJson(audit));
+
+    expect(parsed.batchPath).toBe("docs/proof-led-outreach-batch-01.csv");
+    expect(parsed.summary.reachable).toBe(1);
+    expect(parsed.routes.map((route) => [route.route_id, route.health])).toEqual([
+      ["b01-r02", "reachable"],
+      ["b01-r03", "unreachable"],
+    ]);
+  });
+
   it("parses CLI flags for batch, tier, timeout, and limit", () => {
     expect(
       parseOutreachRouteAuditArgs([
@@ -180,6 +203,8 @@ describe("outreach route audit", () => {
         "5000",
         "--limit",
         "3",
+        "--json-output",
+        "private/route-audit.json",
       ]),
     ).toEqual({
       batchPath: "docs/proof-led-outreach-batch-01.csv",
@@ -187,6 +212,7 @@ describe("outreach route audit", () => {
       timeoutMs: 5000,
       limit: 3,
       concurrency: 4,
+      jsonOutputPath: "private/route-audit.json",
     });
   });
 
