@@ -12,7 +12,7 @@ const PILOT_STEPS = [
   {
     title: "1. Send issue counts first",
     detail:
-      "Run the browser check and paste blockers, warnings, file type, field names, commodity, source country, and buyer deadline. Do not send raw coordinates first.",
+      "Run the browser check and paste blockers, warnings, file type, field names, commodity, source country, and buyer deadline. Do not include raw coordinates or confidential supplier rows.",
   },
   {
     title: "2. Scope one real file",

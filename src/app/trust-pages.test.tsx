@@ -277,7 +277,7 @@ describe("TraceReady trust pages", () => {
 
     expect(pageText).toContain("Documented pilot");
     expect(pageText).toContain("first anonymized case");
-    expect(pageText).toContain("Do not send raw coordinates first");
+    expect(pageText).toContain("Do not include raw coordinates");
     expect(pageText).toContain("Publish only with permission");
     expect(pageText).toContain("Anonymized before: file type, row count, issue counts");
     expect(pageText).toContain("one short quote");
