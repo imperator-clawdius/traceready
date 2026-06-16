@@ -57,6 +57,56 @@ describe("outreach route audit", () => {
     ]);
   });
 
+  it("checks selected routes with bounded concurrency", async () => {
+    const rows = parseOutreachLedger(BATCH_CSV);
+    const startedRoutes = [];
+    let releaseChecks;
+    const checksCanFinish = new Promise((resolve) => {
+      releaseChecks = resolve;
+    });
+    const bothChecksStarted = new Promise((resolve) => {
+      const timer = setInterval(() => {
+        if (startedRoutes.length >= 2) {
+          clearInterval(timer);
+          resolve("started");
+        }
+      }, 1);
+    });
+
+    const auditPromise = auditOutreachRoutes(rows, {
+      tier: "importer",
+      concurrency: 2,
+      checkRoute: async (row) => {
+        startedRoutes.push(row.route_id);
+        await checksCanFinish;
+        return {
+          health: "reachable",
+          status: 200,
+          finalUrl: row.source_url,
+          note: "HTTP 200",
+        };
+      },
+    });
+    const startResult = await Promise.race([
+      bothChecksStarted,
+      new Promise((resolve) => setTimeout(() => resolve("timed out"), 30)),
+    ]);
+    releaseChecks();
+    await auditPromise;
+
+    expect(startResult).toBe("started");
+    expect(startedRoutes).toEqual(["b01-r02", "b01-r03"]);
+  });
+
+  it("parses a concurrency override for slow route audits", () => {
+    expect(parseOutreachRouteAuditArgs(["--tier", "importer", "--concurrency", "2"])).toEqual({
+      batchPath: "docs/proof-led-outreach-batch-01.csv",
+      tier: "importer",
+      timeoutMs: 4000,
+      concurrency: 2,
+    });
+  });
+
   it("checks a route with injected fetch and classifies common statuses", async () => {
     const reachable = await checkOutreachRoute("https://example.com/contact", {
       fetchImpl: async () => ({
@@ -136,6 +186,7 @@ describe("outreach route audit", () => {
       tier: "importer",
       timeoutMs: 5000,
       limit: 3,
+      concurrency: 4,
     });
   });
 
@@ -143,6 +194,7 @@ describe("outreach route audit", () => {
     expect(parseOutreachRouteAuditArgs([])).toEqual({
       batchPath: "docs/proof-led-outreach-batch-01.csv",
       timeoutMs: 4000,
+      concurrency: 4,
     });
   });
 });

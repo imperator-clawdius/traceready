@@ -4,15 +4,15 @@ import { parseOutreachLedger, validateOutreachLedger } from "./verify-outreach-l
 
 const DEFAULT_BATCH_PATH = "docs/proof-led-outreach-batch-01.csv";
 const DEFAULT_TIMEOUT_MS = 4_000;
+const DEFAULT_CONCURRENCY = 4;
 const MANUAL_CHECK_STATUSES = new Set([401, 403, 405, 429]);
 
 export async function auditOutreachRoutes(rows, options = {}) {
   const tier = options.tier;
   const limit = options.limit;
+  const concurrency = options.concurrency ?? DEFAULT_CONCURRENCY;
   const selectedRows = rows.filter((row) => !tier || row.tier === tier).slice(0, limit ?? rows.length);
-  const routes = [];
-
-  for (const row of selectedRows) {
+  const routes = await mapWithConcurrency(selectedRows, concurrency, async (row) => {
     const check = options.checkRoute
       ? await options.checkRoute(row)
       : await checkOutreachRoute(row.source_url, {
@@ -20,15 +20,15 @@ export async function auditOutreachRoutes(rows, options = {}) {
           fetchImpl: options.fetchImpl,
         });
 
-    routes.push({
+    return {
       route_id: row.route_id,
       tier: row.tier,
       company_or_channel: row.company_or_channel,
       public_route: row.public_route,
       source_url: row.source_url,
       ...check,
-    });
-  }
+    };
+  });
 
   return {
     batchPath: options.batchPath ?? DEFAULT_BATCH_PATH,
@@ -119,6 +119,7 @@ export function parseOutreachRouteAuditArgs(argv) {
   const parsed = {
     batchPath: DEFAULT_BATCH_PATH,
     timeoutMs: DEFAULT_TIMEOUT_MS,
+    concurrency: DEFAULT_CONCURRENCY,
   };
 
   for (let index = 0; index < args.length; index += 1) {
@@ -141,6 +142,8 @@ export function parseOutreachRouteAuditArgs(argv) {
       parsed.timeoutMs = parsePositiveInteger(value, flag);
     } else if (flag === "--limit") {
       parsed.limit = parsePositiveInteger(value, flag);
+    } else if (flag === "--concurrency") {
+      parsed.concurrency = parsePositiveInteger(value, flag);
     } else {
       throw new Error(`unknown flag: ${flag}`);
     }
@@ -189,6 +192,23 @@ function parsePositiveInteger(value, flag) {
   }
 
   return Number(value);
+}
+
+async function mapWithConcurrency(items, concurrency, mapper) {
+  const results = new Array(items.length);
+  let nextIndex = 0;
+
+  async function worker() {
+    while (nextIndex < items.length) {
+      const index = nextIndex;
+      nextIndex += 1;
+      results[index] = await mapper(items[index], index);
+    }
+  }
+
+  const workerCount = Math.min(concurrency, items.length);
+  await Promise.all(Array.from({ length: workerCount }, () => worker()));
+  return results;
 }
 
 async function main() {
