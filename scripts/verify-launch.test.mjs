@@ -26,6 +26,10 @@ describe("launch verifier route manifest", () => {
     expect(script).toContain("Download evidence pack");
     expect(script).toContain("Download public pilot evidence pack");
     expect(script).toContain("/traceready-public-cocoa-pilot-pack.zip");
+    expect(script).toContain("Messy public file in");
+    expect(script).toContain("Exact issue counts out");
+    expect(script).toContain("Cleaned pack boundary");
+    expect(script).not.toContain("Format example pack");
   });
 
   it("checks the documented pilot route in live launch verification", () => {
