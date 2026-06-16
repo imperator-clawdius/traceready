@@ -9,6 +9,7 @@
     "lint": "eslint",
     "test": "vitest run",
     "audit:public-dataset": "node --experimental-strip-types --no-warnings scripts/audit-public-dataset.mjs",
+    "verify:outreach": "node scripts/verify-outreach-ledger.mjs",
     "verify:launch": "node scripts/verify-launch.mjs",
     "check": "npm run lint && npm run test && npm run build"
   },

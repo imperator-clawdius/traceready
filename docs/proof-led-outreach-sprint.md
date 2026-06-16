@@ -6,6 +6,8 @@ Turn the public dataset mini-audit into the first 10 serious file conversations 
 
 The page to send is `https://traceready.online/proof/`. The supporting write-up is `docs/public-dataset-mini-audit.md`.
 
+The first executable batch is `docs/proof-led-outreach-batch-01.csv`. It is intentionally company-level only: public route URLs, no employee names, no personal emails, no personal profile URLs, and every row starts from the public audit numbers. Run `npm run verify:outreach` before using or modifying it.
+
 ## Positioning
 
 Do not lead with "buy my tool." Lead with proof:
@@ -113,6 +115,7 @@ If a client sends you a malformed farm file, I can handle the first-pass cleanup
 
 For 10 business days:
 
+- Use `docs/proof-led-outreach-batch-01.csv` as day one's first 20 public routes.
 - Contact 8 importer/buyer targets per day.
 - Contact 4 consultant or overflow targets per day.
 - Contact 2 association/community channels per day.
