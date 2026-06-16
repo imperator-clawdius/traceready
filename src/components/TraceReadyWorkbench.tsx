@@ -502,15 +502,16 @@ export function TraceReadyWorkbench() {
                   <a href={`mailto:${CONTACT_EMAIL}`} className="font-semibold text-white underline-offset-4 hover:underline">
                     {CONTACT_EMAIL}
                   </a>
-                  . Built by a founder-side operator who has shipped open-source services, SaaS
-                  prototypes, Android wrappers, automation workflows, regulated service operations,
-                  and multi-agent QA loops.
+                  . Small-team advantage: the operator behind it has worked across regulated tax
+                  and advisory operations, AI systems builds, public and private product launches,
+                  automation workflows, and enough spreadsheet mileage to know messy records are not
+                  a character flaw.
                 </p>
                 <p className="mt-2">
-                  The useful bit is not a mystery box with a checkout button: TraceReady shows the
-                  issue list first, keeps the free check browser-side, then sells cleanup only after
-                  scope is visible. The workflow uses deterministic checks for missing IDs, duplicate
-                  farms, bad coordinates, point-only plots over 4 ha, and incomplete shipment fields.
+                  No enterprise theater, no procurement parade, no magic compliance wand. TraceReady
+                  shows the issue list first, keeps the free check browser-side, and uses
+                  deterministic issue logs and deterministic checks for missing IDs, duplicate farms,
+                  bad coordinates, point-only plots over 4 ha, and incomplete shipment fields.
                 </p>
                 <p className="mt-2 text-xs leading-5 text-[#bcd6c4]">
                   Operated by {LEGAL_OPERATOR}. This is operational file cleanup, not a legal
