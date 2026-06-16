@@ -6,7 +6,7 @@ Turn the public dataset mini-audit into the first 10 serious file conversations 
 
 The page to send is `https://traceready.online/proof/`. The supporting write-up is `docs/public-dataset-mini-audit.md`.
 
-The first executable batch is `docs/proof-led-outreach-batch-01.csv`. It is intentionally company-level only: public route URLs, no employee names, no personal emails, no personal profile URLs, and every row starts from the public audit numbers. Run `npm run verify:outreach` before using or modifying it.
+The first executable batch is `docs/proof-led-outreach-batch-01.csv`. The copy-pasteable send packet is `docs/proof-led-outreach-send-pack-01.md`. They are intentionally company-level only: public route URLs, no employee names, no personal emails, no personal profile URLs, and every row starts from the public audit numbers. Run `npm run render:outreach` after editing the CSV, then `npm run verify:outreach` before using or modifying the batch.
 
 ## Positioning
 

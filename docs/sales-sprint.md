@@ -35,7 +35,7 @@ Proof-led variant: use `docs/public-dataset-mini-audit.md` when the prospect has
 
 Use `docs/proof-led-outreach-sprint.md` for the company-level target tiers, public contact-route rules, association/importer/consultant message variants, and 10-day operating cadence.
 
-Start with `docs/proof-led-outreach-batch-01.csv` for the first 20 public company/channel routes. Run `npm run verify:outreach` before editing or sending from that batch.
+Start with `docs/proof-led-outreach-batch-01.csv` for the first 20 public company/channel routes and `docs/proof-led-outreach-send-pack-01.md` for copy-pasteable first messages and follow-ups. Run `npm run render:outreach` after editing the CSV, then `npm run verify:outreach` before sending from that batch.
 
 Subject: Quick cleanup for EUDR farm files
 
