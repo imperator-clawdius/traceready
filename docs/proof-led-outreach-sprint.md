@@ -130,7 +130,7 @@ I built TraceReady as a narrow cleanup desk for coffee and cocoa CSV/KML/GeoJSON
 
 I just published a public mini-audit using a 57,658-row cocoa farm-location dataset. The useful part for members is practical: even with latitude, longitude, and area fields, the file still surfaced 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 
-Public proof page: {{proof_url}}
+Public pilot case: {{proof_url}}
 
 This is not legal certification and not a TRACES submission tool. It is a free operational example of the file defects that create buyer-review rework. Is there a member education channel where this would be useful?
 
@@ -144,7 +144,7 @@ Quick, specific note. I ran a public cocoa farm-location dataset through TraceRe
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
-Public proof page: {{proof_url}}
+Public pilot case: {{proof_url}}
 
 You can run one file in the browser first, before sending me anything: {{file_check_url}}
 
@@ -160,7 +160,7 @@ I am looking for EUDR consultants and advisors who run into broken coffee/cocoa 
 
 TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.
 
-Public proof page: {{proof_url}}
+Public pilot case: {{proof_url}}
 
 If a client sends you a malformed farm file, I can handle the first-pass cleanup so your team is not stuck fixing coordinates, missing plot IDs, duplicate farm IDs, and point-only over-4ha records by hand.
 

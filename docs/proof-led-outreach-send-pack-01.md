@@ -5,7 +5,7 @@ Generated from `docs/proof-led-outreach-batch-01.csv`. Use company-level public 
 Core proof: TraceReady checked 57,658 public cocoa rows and found 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Proof flow: Messy public file in; Exact issue counts out; Cleaned pack boundary stated honestly instead of pretending missing IDs, suppliers, batches, or polygons can be invented.
 
-Base proof page: https://traceready.online/proof/
+Base public pilot case: https://traceready.online/proof/public-cocoa-pilot/
 Base field note: https://traceready.online/field-notes/eudr-file-errors/
 Base browser-side file check: https://traceready.online/
 Base documented pilot request: https://traceready.online/pilot-proof/
@@ -20,7 +20,7 @@ Guardrail: TraceReady is operational file cleanup and readiness checking, not le
 - Segment: EU coffee association
 - Public route: public website
 - Source: https://www.ecf-coffee.org/
-- Proof URL: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01
+- Proof URL: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01
 - Field note URL: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01
 - File check URL: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01
 - Documented pilot URL: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01
@@ -41,7 +41,7 @@ Messy public file in: a public Colombian cocoa dataset with coordinates and area
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
 
-Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01
+Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01
 Documented pilot request: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01
 
@@ -59,7 +59,7 @@ Quick follow-up on the TraceReady public file-readiness example for European Cof
 
 The narrow value is showing common EUDR handoff defects before members send files into a buyer or platform workflow: missing plot IDs, missing supplier identity, and point-only plots over 4 hectares.
 
-If this is not the right route, is there a better public member-resource channel for a practical example? https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01
+If this is not the right route, is there a better public member-resource channel for a practical example? https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01
 
 If one member wants to document a real anonymized before/after case, the issue-count-first request is here: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01
 ```
@@ -71,7 +71,7 @@ If one member wants to document a real anonymized before/after case, the issue-c
 - Segment: EUDR coffee member tooling
 - Public route: public website
 - Source: https://eudr-coffee.eu/
-- Proof URL: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02
+- Proof URL: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02
 - Field note URL: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02
 - File check URL: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02
 - Documented pilot URL: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02
@@ -92,7 +92,7 @@ Messy public file in: a public Colombian cocoa dataset with coordinates and area
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
 
-Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02
+Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02
 Documented pilot request: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02
 
@@ -110,7 +110,7 @@ Quick follow-up on the TraceReady public file-readiness example for EUDR Coffee 
 
 The narrow value is showing common EUDR handoff defects before members send files into a buyer or platform workflow: missing plot IDs, missing supplier identity, and point-only plots over 4 hectares.
 
-If this is not the right route, is there a better public member-resource channel for a practical example? https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02
+If this is not the right route, is there a better public member-resource channel for a practical example? https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02
 
 If one member wants to document a real anonymized before/after case, the issue-count-first request is here: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02
 ```
@@ -122,7 +122,7 @@ If one member wants to document a real anonymized before/after case, the issue-c
 - Segment: German coffee association
 - Public route: public website
 - Source: https://www.kaffeeverband.de/en
-- Proof URL: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r03
+- Proof URL: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r03
 - Field note URL: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r03
 - File check URL: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r03
 - Documented pilot URL: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r03
@@ -143,7 +143,7 @@ Messy public file in: a public Colombian cocoa dataset with coordinates and area
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
 
-Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r03
+Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r03
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r03
 Documented pilot request: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r03
 
@@ -161,7 +161,7 @@ Quick follow-up on the TraceReady public file-readiness example for Deutscher Ka
 
 The narrow value is showing common EUDR handoff defects before members send files into a buyer or platform workflow: missing plot IDs, missing supplier identity, and point-only plots over 4 hectares.
 
-If this is not the right route, is there a better public member-resource channel for a practical example? https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r03
+If this is not the right route, is there a better public member-resource channel for a practical example? https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r03
 
 If one member wants to document a real anonymized before/after case, the issue-count-first request is here: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r03
 ```
@@ -173,7 +173,7 @@ If one member wants to document a real anonymized before/after case, the issue-c
 - Segment: coffee trade education
 - Public route: public article or organization route
 - Source: https://sca.coffee/sca-news/25/issue-22/cracking-coffee-regulation
-- Proof URL: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04
+- Proof URL: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04
 - Field note URL: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04
 - File check URL: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04
 - Documented pilot URL: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04
@@ -194,7 +194,7 @@ Messy public file in: a public Colombian cocoa dataset with coordinates and area
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
 
-Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04
+Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04
 Documented pilot request: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04
 
@@ -212,7 +212,7 @@ Quick follow-up on the TraceReady public file-readiness example for Specialty Co
 
 The narrow value is showing common EUDR handoff defects before members send files into a buyer or platform workflow: missing plot IDs, missing supplier identity, and point-only plots over 4 hectares.
 
-If this is not the right route, is there a better public member-resource channel for a practical example? https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04
+If this is not the right route, is there a better public member-resource channel for a practical example? https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04
 
 If one member wants to document a real anonymized before/after case, the issue-count-first request is here: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04
 ```
@@ -224,7 +224,7 @@ If one member wants to document a real anonymized before/after case, the issue-c
 - Segment: coffee sustainability platform
 - Public route: public website
 - Source: https://www.globalcoffeeplatform.org/latest/2024/gcp-signs-letter-to-eu-commission/
-- Proof URL: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r05
+- Proof URL: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r05
 - Field note URL: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r05
 - File check URL: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r05
 - Documented pilot URL: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r05
@@ -245,7 +245,7 @@ Messy public file in: a public Colombian cocoa dataset with coordinates and area
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
 
-Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r05
+Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r05
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r05
 Documented pilot request: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r05
 
@@ -263,7 +263,7 @@ Quick follow-up on the TraceReady public file-readiness example for Global Coffe
 
 The narrow value is showing common EUDR handoff defects before members send files into a buyer or platform workflow: missing plot IDs, missing supplier identity, and point-only plots over 4 hectares.
 
-If this is not the right route, is there a better public member-resource channel for a practical example? https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r05
+If this is not the right route, is there a better public member-resource channel for a practical example? https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r05
 
 If one member wants to document a real anonymized before/after case, the issue-count-first request is here: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r05
 ```
@@ -275,7 +275,7 @@ If one member wants to document a real anonymized before/after case, the issue-c
 - Segment: specialty green coffee importer
 - Public route: public contact page
 - Source: https://www.cafeimports.com/europe/blog/general-contact/
-- Proof URL: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r06
+- Proof URL: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r06
 - Field note URL: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r06
 - File check URL: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r06
 - Documented pilot URL: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r06
@@ -296,7 +296,7 @@ Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, ba
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
-Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r06
+Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r06
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r06
 
 You can run one file in the browser first, before sending me anything: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r06
@@ -326,7 +326,7 @@ If you want the first documented pilot case instead, start with issue counts her
 - Segment: green coffee network
 - Public route: public EMEA page
 - Source: https://sucafina.com/emea
-- Proof URL: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r07
+- Proof URL: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r07
 - Field note URL: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r07
 - File check URL: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r07
 - Documented pilot URL: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r07
@@ -347,7 +347,7 @@ Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, ba
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
-Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r07
+Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r07
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r07
 
 You can run one file in the browser first, before sending me anything: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r07
@@ -377,7 +377,7 @@ If you want the first documented pilot case instead, start with issue counts her
 - Segment: specialty green coffee trader
 - Public route: public Europe page
 - Source: https://falconcoffees.com/falcon-europe/
-- Proof URL: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r08
+- Proof URL: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r08
 - Field note URL: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r08
 - File check URL: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r08
 - Documented pilot URL: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r08
@@ -398,7 +398,7 @@ Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, ba
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
-Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r08
+Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r08
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r08
 
 You can run one file in the browser first, before sending me anything: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r08
@@ -428,7 +428,7 @@ If you want the first documented pilot case instead, start with issue counts her
 - Segment: specialty green coffee importer
 - Public route: public website
 - Source: https://www.nordicapproach.no/
-- Proof URL: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r09
+- Proof URL: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r09
 - Field note URL: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r09
 - File check URL: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r09
 - Documented pilot URL: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r09
@@ -449,7 +449,7 @@ Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, ba
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
-Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r09
+Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r09
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r09
 
 You can run one file in the browser first, before sending me anything: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r09
@@ -479,7 +479,7 @@ If you want the first documented pilot case instead, start with issue counts her
 - Segment: specialty coffee importer
 - Public route: public about page
 - Source: https://www.trabocca.com/about-us/
-- Proof URL: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r10
+- Proof URL: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r10
 - Field note URL: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r10
 - File check URL: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r10
 - Documented pilot URL: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r10
@@ -500,7 +500,7 @@ Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, ba
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
-Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r10
+Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r10
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r10
 
 You can run one file in the browser first, before sending me anything: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r10
@@ -530,7 +530,7 @@ If you want the first documented pilot case instead, start with issue counts her
 - Segment: specialty green coffee importer
 - Public route: public website
 - Source: https://interamericancoffee.de/
-- Proof URL: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r11
+- Proof URL: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r11
 - Field note URL: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r11
 - File check URL: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r11
 - Documented pilot URL: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r11
@@ -551,7 +551,7 @@ Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, ba
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
-Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r11
+Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r11
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r11
 
 You can run one file in the browser first, before sending me anything: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r11
@@ -581,7 +581,7 @@ If you want the first documented pilot case instead, start with issue counts her
 - Segment: green coffee specialist
 - Public route: public website
 - Source: https://efico.com/
-- Proof URL: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r12
+- Proof URL: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r12
 - Field note URL: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r12
 - File check URL: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r12
 - Documented pilot URL: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r12
@@ -602,7 +602,7 @@ Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, ba
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
-Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r12
+Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r12
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r12
 
 You can run one file in the browser first, before sending me anything: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r12
@@ -632,7 +632,7 @@ If you want the first documented pilot case instead, start with issue counts her
 - Segment: coffee and cocoa trader
 - Public route: public coffee page
 - Source: https://daarnhouwer.com/coffee/
-- Proof URL: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r13
+- Proof URL: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r13
 - Field note URL: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r13
 - File check URL: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r13
 - Documented pilot URL: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r13
@@ -653,7 +653,7 @@ Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, ba
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
-Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r13
+Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r13
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r13
 
 You can run one file in the browser first, before sending me anything: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r13
@@ -683,7 +683,7 @@ If you want the first documented pilot case instead, start with issue counts her
 - Segment: green coffee company
 - Public route: public contact page
 - Source: https://www.allycoffee.com/contact-us/
-- Proof URL: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r14
+- Proof URL: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r14
 - Field note URL: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r14
 - File check URL: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r14
 - Documented pilot URL: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r14
@@ -704,7 +704,7 @@ Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, ba
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
-Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r14
+Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r14
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r14
 
 You can run one file in the browser first, before sending me anything: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r14
@@ -734,7 +734,7 @@ If you want the first documented pilot case instead, start with issue counts her
 - Segment: wholesale green coffee importer
 - Public route: public contact page
 - Source: https://www.covoyacoffee.com/contact
-- Proof URL: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r15
+- Proof URL: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r15
 - Field note URL: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r15
 - File check URL: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r15
 - Documented pilot URL: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r15
@@ -755,7 +755,7 @@ Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, ba
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
-Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r15
+Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r15
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r15
 
 You can run one file in the browser first, before sending me anything: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r15
@@ -785,7 +785,7 @@ If you want the first documented pilot case instead, start with issue counts her
 - Segment: green coffee importer
 - Public route: public company page
 - Source: https://salpa.fr/en/the-group/belco/
-- Proof URL: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r16
+- Proof URL: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r16
 - Field note URL: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r16
 - File check URL: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r16
 - Documented pilot URL: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r16
@@ -806,7 +806,7 @@ Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, ba
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
-Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r16
+Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r16
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r16
 
 You can run one file in the browser first, before sending me anything: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r16
@@ -836,7 +836,7 @@ If you want the first documented pilot case instead, start with issue counts her
 - Segment: specialty green coffee importer
 - Public route: public website
 - Source: https://www.list-beisler.coffee/en/
-- Proof URL: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r17
+- Proof URL: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r17
 - Field note URL: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r17
 - File check URL: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r17
 - Documented pilot URL: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r17
@@ -857,7 +857,7 @@ Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, ba
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
-Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r17
+Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r17
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r17
 
 You can run one file in the browser first, before sending me anything: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r17
@@ -887,7 +887,7 @@ If you want the first documented pilot case instead, start with issue counts her
 - Segment: green coffee trader
 - Public route: public contact page
 - Source: https://drwakefield.com/contact/
-- Proof URL: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r18
+- Proof URL: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r18
 - Field note URL: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r18
 - File check URL: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r18
 - Documented pilot URL: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r18
@@ -908,7 +908,7 @@ Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, ba
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
-Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r18
+Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r18
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r18
 
 You can run one file in the browser first, before sending me anything: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r18
@@ -938,7 +938,7 @@ If you want the first documented pilot case instead, start with issue counts her
 - Segment: green coffee trader
 - Public route: public website
 - Source: https://hacofco.com/
-- Proof URL: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r19
+- Proof URL: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r19
 - Field note URL: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r19
 - File check URL: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r19
 - Documented pilot URL: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r19
@@ -959,7 +959,7 @@ Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, ba
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
-Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r19
+Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r19
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r19
 
 You can run one file in the browser first, before sending me anything: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r19
@@ -989,7 +989,7 @@ If you want the first documented pilot case instead, start with issue counts her
 - Segment: green coffee importer
 - Public route: public network page
 - Source: https://www.volcafe.com/network/uk-ie
-- Proof URL: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r20
+- Proof URL: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r20
 - Field note URL: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r20
 - File check URL: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r20
 - Documented pilot URL: https://traceready.online/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r20
@@ -1010,7 +1010,7 @@ Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, ba
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
-Public proof page: https://traceready.online/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r20
+Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r20
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r20
 
 You can run one file in the browser first, before sending me anything: https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r20

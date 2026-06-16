@@ -37,9 +37,9 @@ export function renderOutreachReplyPlaybook(rows, options = {}) {
       body: [
         `Fair question. I am the operator behind TraceReady, a narrow cleanup desk for coffee and cocoa CSV/KML/GeoJSON handoff files.`,
         "",
-        "I am not asking you to trust credentials first. Start with the public proof page or run one file browser-side before sending me anything.",
+        "I am not asking you to trust credentials first. Start with the public pilot case or run one file browser-side before sending me anything.",
         "",
-        `Public proof: ${row.proof_url}`,
+        `Public pilot case: ${row.proof_url}`,
         `Browser-side file check: ${row.file_check_url}`,
       ],
       command: updateCommand(resultsPath, row.route_id, {
