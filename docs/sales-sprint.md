@@ -37,7 +37,7 @@ Use `docs/proof-led-outreach-sprint.md` for the company-level target tiers, publ
 
 Start with `docs/proof-led-outreach-batch-01.csv` for the first 20 public company/channel routes and `docs/proof-led-outreach-send-pack-01.md` for copy-pasteable first messages and follow-ups. Use the row-specific `proof_url` and `file_check_url` links in the send packet, not the generic homepage link, so every response can be tied back to a `route_id`. Run `npm run render:outreach` after editing the CSV, then `npm run verify:outreach` before sending from that batch.
 
-After sending, copy `docs/proof-led-outreach-results-batch-01.csv` to a private file and run `npm run summarize:outreach -- path/to/private-results.csv` to measure reply rate, file-check rate, pilot requests, and paid cleanup orders by route. When a routed prospect copies a buyer summary, downloads a ZIP, or opens the paid-cleanup handoff, TraceReady stamps `Outreach route: b01-rNN` into the generated text so the result can be logged without storing personal contact data.
+After sending, copy `docs/proof-led-outreach-results-batch-01.csv` to a private file and run `npm run summarize:outreach -- path/to/private-results.csv` to measure reply rate, file-check rate, pilot requests, and paid cleanup orders by route. Use `npm run update:outreach-result -- --results path/to/private-results.csv --route b01-r06 --status sent --response-type none --date-sent 2026-06-16` to update one private row after a send or reply. When a routed prospect copies a buyer summary, downloads a ZIP, or opens the paid-cleanup handoff, TraceReady stamps `Outreach route: b01-rNN` into the generated text so the result can be logged without storing personal contact data.
 
 Subject: Quick cleanup for EUDR farm files
 

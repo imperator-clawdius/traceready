@@ -12,6 +12,18 @@ If a routed visitor lands on `/proof/`, the "Run a file in the browser" CTA keep
 
 After sending, copy `docs/proof-led-outreach-results-batch-01.csv` to a private working file, keep the route/link columns intact, and run `npm run summarize:outreach -- path/to/private-results.csv`. Do not commit private replies, personal contact details, customer files, or order evidence.
 
+## Private Results Updates
+
+Do not edit the committed public initialized ledger after real outreach starts. Copy it to a private file first, then update one `route_id` at a time:
+
+```bash
+npm run update:outreach-result -- --results path/to/private-results.csv --route b01-r06 --date-sent 2026-06-16 --status sent --response-type none --notes "sent via company contact form" --next-action "follow up in 4 business days"
+npm run update:outreach-result -- --results path/to/private-results.csv --route b01-r06 --status file_checked --response-type file_check --file-checks 1 --notes "route-stamped buyer summary received" --next-action "ask whether they want the cleaned pack"
+npm run update:outreach-result -- --results path/to/private-results.csv --route b01-r06 --status paid_order --response-type paid_order --file-checks 1 --paid-orders 1 --notes "paid cleanup ordered" --next-action "fulfill 24-hour cleanup"
+```
+
+The updater refuses `docs/proof-led-outreach-results-batch-01.csv` by default and re-runs the private-safe result validation before writing.
+
 ## Positioning
 
 Do not lead with "buy my tool." Lead with proof:
