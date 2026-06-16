@@ -10,12 +10,14 @@ import { parseOutreachLedger, validateOutreachLedger } from "./verify-outreach-l
 const DEFAULT_BATCH_PATH = "docs/proof-led-outreach-batch-01.csv";
 const DEFAULT_RESULTS_PATH = "private/outreach-results-batch-01.csv";
 const DEFAULT_OUTPUT_PATH = "private/send-execution-checklist.md";
+const DEFAULT_DAY_PACK_PATH = "private/outreach-day-pack.md";
 const DEFAULT_SEND_LIMIT = 3;
 const DEFAULT_SENDABILITY_AUDIT_PATH = "private/outreach-sendability-audit-importer.json";
 
 export function renderOutreachSendChecklist(batchRows, resultRows, options = {}) {
   const batchPath = options.batchPath ?? DEFAULT_BATCH_PATH;
   const resultsPath = options.resultsPath ?? DEFAULT_RESULTS_PATH;
+  const dayPackPath = options.dayPackPath ?? DEFAULT_DAY_PACK_PATH;
   const today = options.today ?? todayIsoDate();
   const sendLimit = options.sendLimit ?? DEFAULT_SEND_LIMIT;
   const sendTier = options.sendTier;
@@ -56,7 +58,7 @@ export function renderOutreachSendChecklist(batchRows, resultRows, options = {})
         ]
       : []),
     "",
-    ...renderSendTasks(sendRows, batchByRoute, resultsPath, today, routeAudit, sendabilityAudit, options.sendabilityAuditPath),
+    ...renderSendTasks(sendRows, batchByRoute, batchPath, resultsPath, today, routeAudit, sendabilityAudit, options.sendabilityAuditPath),
     "",
     ...renderSkippedByRouteHealth(routeGate?.skippedRows ?? [], batchByRoute),
     "",
@@ -65,7 +67,7 @@ export function renderOutreachSendChecklist(batchRows, resultRows, options = {})
     "## End-of-block checks",
     "",
     `- [ ] Re-run: \`npm run summarize:outreach -- ${resultsPath}\``,
-    `- [ ] Re-render next block: \`npm run prepare:outreach -- --today ${today} --send-limit ${sendLimit}${sendTier ? ` --send-tier ${sendTier}` : ""}\``,
+    `- [ ] Re-render next block: \`${prepareOutreachCommand(batchPath, resultsPath, dayPackPath, today, sendLimit, sendTier)}\``,
     "- [ ] Do not commit private replies, customer files, raw coordinates, screenshots, or order evidence.",
     "",
   ].join("\n");
@@ -77,6 +79,7 @@ export function parseOutreachSendChecklistArgs(argv) {
     batchPath: DEFAULT_BATCH_PATH,
     resultsPath: DEFAULT_RESULTS_PATH,
     outputPath: DEFAULT_OUTPUT_PATH,
+    dayPackPath: DEFAULT_DAY_PACK_PATH,
     today: todayIsoDate(),
     sendLimit: DEFAULT_SEND_LIMIT,
   };
@@ -99,6 +102,8 @@ export function parseOutreachSendChecklistArgs(argv) {
       parsed.resultsPath = value;
     } else if (flag === "--output") {
       parsed.outputPath = value;
+    } else if (flag === "--day-pack") {
+      parsed.dayPackPath = value;
     } else if (flag === "--today") {
       parsed.today = value;
     } else if (flag === "--send-limit") {
@@ -119,7 +124,7 @@ export function parseOutreachSendChecklistArgs(argv) {
   return parsed;
 }
 
-function renderSendTasks(sendRows, batchByRoute, resultsPath, today, routeAudit, sendabilityAudit, sendabilityAuditPath) {
+function renderSendTasks(sendRows, batchByRoute, batchPath, resultsPath, today, routeAudit, sendabilityAudit, sendabilityAuditPath) {
   if (sendRows.length === 0) {
     return ["No unsent routes are queued for this checklist."];
   }
@@ -144,7 +149,7 @@ function renderSendTasks(sendRows, batchByRoute, resultsPath, today, routeAudit,
         : []),
       `- [ ] Open company-level route: ${sourceUrl}`,
       `- [ ] Confirm this is still company-level, not a personal profile or direct personal email.`,
-      `- [ ] Render send-ready packet: \`${sendReadyCommand(resultsPath, resultRow.route_id, today, sendabilityAuditPath)}\``,
+      `- [ ] Render send-ready packet: \`${sendReadyCommand(batchPath, resultsPath, resultRow.route_id, today, sendabilityAuditPath)}\``,
       "- [ ] Paste the subject and body exactly as shown below.",
       "- [ ] Submit once. Do not send duplicates from multiple channels on the same day.",
       `- [ ] Mark sent: \`${updateCommand(resultsPath, resultRow.route_id, {
@@ -166,14 +171,27 @@ function renderSendTasks(sendRows, batchByRoute, resultsPath, today, routeAudit,
   });
 }
 
-function sendReadyCommand(resultsPath, routeId, today, sendabilityAuditPath = DEFAULT_SENDABILITY_AUDIT_PATH) {
+function sendReadyCommand(batchPath, resultsPath, routeId, today, sendabilityAuditPath = DEFAULT_SENDABILITY_AUDIT_PATH) {
   return [
     "npm run render:outreach-send-ready --",
+    `--batch ${batchPath}`,
     `--results ${resultsPath}`,
     `--sendability-audit ${sendabilityAuditPath}`,
     `--route ${routeId}`,
     `--today ${today}`,
     `--output private/send-ready-${routeId}.md`,
+  ].join(" ");
+}
+
+function prepareOutreachCommand(batchPath, resultsPath, dayPackPath, today, sendLimit, sendTier) {
+  return [
+    "npm run prepare:outreach --",
+    `--batch ${batchPath}`,
+    `--results ${resultsPath}`,
+    `--day-pack ${dayPackPath}`,
+    `--today ${today}`,
+    `--send-limit ${sendLimit}`,
+    ...(sendTier ? [`--send-tier ${sendTier}`] : []),
   ].join(" ");
 }
 

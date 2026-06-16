@@ -38,7 +38,7 @@ describe("outreach send checklist", () => {
     expect(markdown).toContain("## 1. b01-r06 - Cafe Imports Europe");
     expect(markdown).toContain("- [ ] Open company-level route: https://www.cafeimports.com/europe/blog/general-contact/");
     expect(markdown).toContain(
-      "npm run render:outreach-send-ready -- --results private/outreach-results-batch-01.csv --sendability-audit private/outreach-sendability-audit-importer.json --route b01-r06 --today 2026-06-16 --output private/send-ready-b01-r06.md",
+      "npm run render:outreach-send-ready -- --batch docs/proof-led-outreach-batch-01.csv --results private/outreach-results-batch-01.csv --sendability-audit private/outreach-sendability-audit-importer.json --route b01-r06 --today 2026-06-16 --output private/send-ready-b01-r06.md",
     );
     expect(markdown).toContain("- [ ] Paste the subject and body exactly as shown below.");
     expect(markdown).toContain("Subject: Row-level check for messy EUDR farm files");
@@ -63,6 +63,8 @@ describe("outreach send checklist", () => {
         "private/results.csv",
         "--output",
         "private/send-checklist.md",
+        "--day-pack",
+        "private/outreach-day-pack-batch-02.md",
         "--today",
         "2026-06-16",
         "--send-limit",
@@ -74,6 +76,7 @@ describe("outreach send checklist", () => {
       batchPath: "docs/proof-led-outreach-batch-01.csv",
       resultsPath: "private/results.csv",
       outputPath: "private/send-checklist.md",
+      dayPackPath: "private/outreach-day-pack-batch-02.md",
       today: "2026-06-16",
       sendLimit: 3,
       sendTier: "importer",
@@ -139,7 +142,7 @@ describe("outreach send checklist", () => {
     expect(markdown).toContain("- Sendability: browser_form_ready via public_browser_form");
     expect(markdown).toContain("- [ ] Open company-level route: https://interamericancoffee.de/contact/");
     expect(markdown).toContain(
-      "npm run render:outreach-send-ready -- --results private/outreach-results-batch-01.csv --sendability-audit private/outreach-sendability-audit-importer.json --route b01-r11 --today 2026-06-16 --output private/send-ready-b01-r11.md",
+      "npm run render:outreach-send-ready -- --batch docs/proof-led-outreach-batch-01.csv --results private/outreach-results-batch-01.csv --sendability-audit private/outreach-sendability-audit-importer.json --route b01-r11 --today 2026-06-16 --output private/send-ready-b01-r11.md",
     );
     expect(markdown).toContain("--route b01-r11 --date-sent 2026-06-16 --status sent");
     expect(markdown).not.toContain("## 1. b01-r06 - Cafe Imports Europe");
@@ -173,5 +176,35 @@ describe("outreach send checklist", () => {
       resultsPath: "private/results.csv",
       sendabilityAuditPath: "private/outreach-sendability-audit-importer.json",
     });
+  });
+
+  it("renders send-ready commands against a custom batch path", () => {
+    const markdown = renderOutreachSendChecklist(parseOutreachLedger(BATCH_CSV), parseOutreachResults(RESULTS_CSV), {
+      batchPath: "docs/proof-led-outreach-batch-02.csv",
+      resultsPath: "private/outreach-results-batch-02.csv",
+      dayPackPath: "private/outreach-day-pack-batch-02.md",
+      sendabilityAuditPath: "private/outreach-sendability-audit-batch-02.json",
+      sendabilityAudit: {
+        routes: [
+          {
+            route_id: "b01-r11",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://interamericancoffee.de/contact/",
+            note: "general coffee/account/contact form",
+          },
+        ],
+      },
+      today: "2026-06-16",
+      sendLimit: 1,
+      sendTier: "importer",
+    });
+
+    expect(markdown).toContain(
+      "npm run render:outreach-send-ready -- --batch docs/proof-led-outreach-batch-02.csv --results private/outreach-results-batch-02.csv --sendability-audit private/outreach-sendability-audit-batch-02.json --route b01-r11 --today 2026-06-16 --output private/send-ready-b01-r11.md",
+    );
+    expect(markdown).toContain(
+      "npm run prepare:outreach -- --batch docs/proof-led-outreach-batch-02.csv --results private/outreach-results-batch-02.csv --day-pack private/outreach-day-pack-batch-02.md --today 2026-06-16 --send-limit 1 --send-tier importer",
+    );
   });
 });
