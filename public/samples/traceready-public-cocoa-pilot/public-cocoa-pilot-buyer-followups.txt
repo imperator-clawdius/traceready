@@ -1,0 +1,9 @@
+TraceReady public cocoa pilot buyer/supplier follow-up list
+
+1. Provide stable plot or farm IDs for 57,658 rows.
+2. Provide supplier, producer, farmer, cooperative, or supplier-ID identity for 57,658 rows.
+3. Provide batch, lot, shipment, or buyer handoff linkage for 57,658 rows.
+4. Provide polygon geometry or buyer-approved evidence for 46,134 point-only plots over 4 hectares.
+5. Confirm whether the buyer accepts metadata supplied outside the file for country and commodity.
+
+TraceReady did not fabricate any of the missing fields above. The point of this pilot is to show the exact rework list before a buyer, importer, consultant, or EUDR platform has to reject the handoff.

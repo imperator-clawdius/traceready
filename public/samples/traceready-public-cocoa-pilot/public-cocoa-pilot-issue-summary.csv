@@ -1,0 +1,12 @@
+metric,count,note
+records_analyzed,57658,Public cocoa rows checked
+records_with_latitude_longitude,57658,Coordinate fields were present
+records_over_4ha,46134,Area exceeds launch-readiness polygon threshold
+polygon_records_present,0,No polygon geometry was present
+point_only_over_4ha,46134,Large plots with point-only coordinates
+missing_plot_ids,57658,No row-level farm or plot identifier
+missing_supplier_identity,57658,No supplier identity in buyer-handoff view
+missing_shipment_linkage,57658,No batch or lot linkage
+blockers_found,161450,Total blocker issues
+warnings_found,57658,Total warning issues
+ready_records,0,Records ready without follow-up

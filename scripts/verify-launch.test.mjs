@@ -19,4 +19,12 @@ describe("launch verifier route manifest", () => {
     expect(script).toContain("7 EUDR file errors that create buyer-review rework");
     expect(script).toContain("46,134 point-only plots over 4 hectares");
   });
+
+  it("checks the public pilot evidence pack CTA in live launch verification", () => {
+    const script = fs.readFileSync("scripts/verify-launch.mjs", "utf8");
+
+    expect(script).toContain("Download evidence pack");
+    expect(script).toContain("Download public pilot evidence pack");
+    expect(script).toContain("/traceready-public-cocoa-pilot-pack.zip");
+  });
 });

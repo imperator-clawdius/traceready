@@ -29,12 +29,12 @@ import {
   CHECKOUT_PILOT_HREF,
   CONTACT_EMAIL,
   CONTACT_HREF,
-  FIELD_NOTE_EUDR_FILE_ERRORS_HREF,
   FILE_TRIAGE_HREF,
   LEGAL_OPERATOR,
   METHODOLOGY_HREF,
   ORDER_INTAKE_HREF,
   PROOF_HREF,
+  PUBLIC_PILOT_PACK_HREF,
   SAMPLE_PACK_HREF,
 } from "@/lib/site";
 
@@ -531,10 +531,10 @@ export function TraceReadyWorkbench() {
                   View pilot case
                 </a>
                 <a
-                  href={FIELD_NOTE_EUDR_FILE_ERRORS_HREF}
+                  href={PUBLIC_PILOT_PACK_HREF}
                   className="inline-flex h-10 items-center justify-center rounded-md border border-[#74e0cd]/60 px-3 text-sm font-semibold text-[#effdf4] transition hover:bg-white/[0.12]"
                 >
-                  Read field note
+                  Download evidence pack
                 </a>
               </div>
             </section>

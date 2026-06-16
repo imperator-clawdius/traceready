@@ -147,6 +147,9 @@ describe("TraceReady trust pages", () => {
     const sampleLink = Array.from(container.querySelectorAll("a")).find((element) =>
       element.textContent?.includes("Download representative sample pack"),
     );
+    const pilotPackLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("Download public pilot evidence pack"),
+    );
 
     expect(pageText).toContain("Public-data pilot, exact limits");
     expect(pageText).toContain("one real public cocoa dataset");
@@ -156,8 +159,12 @@ describe("TraceReady trust pages", () => {
     expect(pageText).toContain("Issue log");
     expect(pageText).toContain("Handoff out");
     expect(pageText).toContain("does not fabricate missing supplier IDs");
+    expect(pageText).toContain("Evidence pack");
+    expect(pageText).toContain("readiness report, issue-summary CSV, buyer/supplier follow-up list");
+    expect(pageText).toContain("not raw source rows or coordinates");
     expect(pageText).toContain("Format example pack");
     expect(pageText).toContain("fictional fixture");
+    expect(pilotPackLink?.getAttribute("href")).toBe("/traceready-public-cocoa-pilot-pack.zip");
     expect(sampleLink?.getAttribute("href")).toBe("/traceready-sample-output.zip");
   });
 

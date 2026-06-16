@@ -7,6 +7,7 @@ import {
   LEGAL_OPERATOR,
   METHODOLOGY_HREF,
   ORDER_INTAKE_HREF,
+  PUBLIC_PILOT_PACK_HREF,
   SAMPLE_PACK_HREF,
 } from "@/lib/site";
 import { TrackedHomeLink } from "./TrackedHomeLink";
@@ -98,6 +99,26 @@ export default function ProofPage() {
             </p>
           </section>
         </div>
+
+        <section className="mt-6 border border-emerald-800 bg-[#123f34] p-6 text-white shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-100">
+            Evidence pack
+          </p>
+          <h2 className="mt-3 text-2xl font-semibold tracking-tight">
+            Download the public pilot output.
+          </h2>
+          <p className="mt-4 max-w-3xl text-sm leading-7 text-emerald-50">
+            The ZIP contains the readiness report, issue-summary CSV, buyer/supplier follow-up list,
+            and audit JSON used for this public-data pilot. It contains derived counts and method notes
+            only, not raw source rows or coordinates.
+          </p>
+          <a
+            href={PUBLIC_PILOT_PACK_HREF}
+            className="mt-5 inline-flex h-11 items-center justify-center rounded-md bg-white px-4 text-sm font-semibold text-[#123f34] transition hover:bg-emerald-50"
+          >
+            Download public pilot evidence pack
+          </a>
+        </section>
 
         <section className="mt-6 border border-[#d9bf92] bg-[#fffaf2] p-6 shadow-sm">
           <h2 className="text-lg font-semibold text-[#2b190f]">Format example pack</h2>

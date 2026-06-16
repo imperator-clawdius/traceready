@@ -1,0 +1,23 @@
+{
+  "generatedAt": "2026-06-16T10:58:05.523Z",
+  "datasetTitle": "Colombian-Cocoa-Dataset",
+  "datasetUrl": "https://www.kaggle.com/datasets/lehetasa/colombian-cocoa-dataset",
+  "sourceLicense": "CC BY-NC-SA 4.0",
+  "sourceCountry": "Colombia",
+  "sourceCommodity": "cocoa",
+  "analyzedRecords": 57658,
+  "geolocatedRecords": 57658,
+  "recordsOver4Ha": 46134,
+  "polygonRecords": 0,
+  "pointOnlyOver4Ha": 46134,
+  "blockers": 161450,
+  "warnings": 57658,
+  "readyRecords": 0,
+  "readinessScore": 0,
+  "issueCounts": {
+    "missing_farmId": 57658,
+    "missing_supplier": 57658,
+    "missing_batch": 57658,
+    "polygon_required": 46134
+  }
+}

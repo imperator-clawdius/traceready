@@ -106,6 +106,7 @@ describe("TraceReady conversion surface", () => {
     expect(pilotCase).toContain("ready records");
     expect(pilotCase).toContain("Exact issue counts");
     expect(pilotCase).toContain("buyer/supplier follow-up list");
+    expect(pilotCase).toContain("Download evidence pack");
     expect(pilotCase).not.toContain("fictional sample fixture");
     expect(pilotCase).not.toContain("Founder proof");
     expect(pageText).toContain("The free diagnosis stays in your browser.");
@@ -149,6 +150,9 @@ describe("TraceReady conversion surface", () => {
     const proofLink = Array.from(container.querySelectorAll("a")).find((element) =>
       element.textContent?.includes("View pilot case"),
     );
+    const evidencePackLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("Download evidence pack"),
+    );
 
     expect(pageText).toContain("Public-data pilot");
     expect(pageText).toContain("57,658");
@@ -159,6 +163,7 @@ describe("TraceReady conversion surface", () => {
     expect(pageText).toContain("57,658 rows without supplier identity");
     expect(pageText).toContain("did not invent missing IDs, suppliers, batches, or polygons");
     expect(proofLink?.getAttribute("href")).toBe("/proof/");
+    expect(evidencePackLink?.getAttribute("href")).toBe("/traceready-public-cocoa-pilot-pack.zip");
   });
 
   it("discloses the legal operator before a buyer opens Stripe checkout", () => {
