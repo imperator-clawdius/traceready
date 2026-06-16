@@ -12,6 +12,7 @@ Source:
 Included files:
 - public-cocoa-pilot-readiness-report.txt
 - public-cocoa-pilot-issue-summary.csv
+- public-cocoa-pilot-buyer-summary.txt
 - public-cocoa-pilot-buyer-followups.txt
 - public-cocoa-pilot-audit.json
 

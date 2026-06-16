@@ -22,4 +22,4 @@ What changed:
 - TraceReady generated issue evidence and buyer/supplier follow-up questions instead of inventing data.
 
 Output:
-The usable output is an issue summary and follow-up list for buyer or supplier review. This public pilot cannot produce a cleaned compliant handoff because the missing identifiers and polygon boundaries are not present in the source row data.
+The usable output is an issue summary, buyer handoff summary, and follow-up list for buyer or supplier review. This public pilot cannot produce a cleaned compliant handoff because the missing identifiers and polygon boundaries are not present in the source row data.

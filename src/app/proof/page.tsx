@@ -97,8 +97,9 @@ export default function ProofPage() {
           </h2>
           <p className="mt-4 max-w-3xl text-sm leading-7 text-emerald-50">
             The ZIP contains the readiness report, issue-summary CSV, buyer/supplier follow-up list,
-            and audit JSON used for this public-data pilot. It contains derived counts and method notes
-            only, not raw source rows or coordinates.
+            buyer-style handoff summary, and audit JSON used for this public-data pilot. For this
+            source file, the cleaned output is a repair brief: derived counts, method notes, and
+            source-owner follow-up questions, not raw source rows or coordinates.
           </p>
           <a
             href={PUBLIC_PILOT_PACK_HREF}

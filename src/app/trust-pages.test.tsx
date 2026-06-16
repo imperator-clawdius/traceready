@@ -162,6 +162,8 @@ describe("TraceReady trust pages", () => {
     expect(pageText).toContain("does not fabricate missing supplier IDs");
     expect(pageText).toContain("Evidence pack");
     expect(pageText).toContain("readiness report, issue-summary CSV, buyer/supplier follow-up list");
+    expect(pageText).toContain("buyer-style handoff summary");
+    expect(pageText).toContain("the cleaned output is a repair brief");
     expect(pageText).toContain("not raw source rows or coordinates");
     expect(pageText).toContain("Messy public file in");
     expect(pageText).toContain("Exact issue counts out");

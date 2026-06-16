@@ -19,6 +19,9 @@ describe("public pilot evidence pack renderer", () => {
     expect(files["public-cocoa-pilot-readiness-report.txt"]).toContain("Status: Not buyer-ready");
     expect(files["public-cocoa-pilot-issue-summary.csv"]).toContain("point_only_over_4ha,46134");
     expect(files["public-cocoa-pilot-buyer-followups.txt"]).toContain("Provide stable plot or farm IDs");
+    expect(files["public-cocoa-pilot-buyer-summary.txt"]).toContain("Buyer handoff summary");
+    expect(files["public-cocoa-pilot-buyer-summary.txt"]).toContain("Decision: hold for source-owner repair");
+    expect(files["public-cocoa-pilot-buyer-summary.txt"]).toContain("Cleaned pack outcome");
     expect(files["public-cocoa-pilot-audit.json"]).toContain('"readyRecords": 0');
     expect(combined).toContain("This is not a customer case");
     expect(combined).toContain("does not redistribute raw source rows");
@@ -36,6 +39,7 @@ describe("public pilot evidence pack renderer", () => {
     const zippedNames = Object.keys(zip.files).sort();
 
     expect(result.files).toContain("public-cocoa-pilot-issue-summary.csv");
+    expect(result.files).toContain("public-cocoa-pilot-buyer-summary.txt");
     expect(zippedNames).toEqual(result.files.toSorted());
     expect(await fs.readFile(path.join(result.packDir, "public-cocoa-pilot-audit.json"), "utf8")).toContain(
       `"analyzedRecords": ${PUBLIC_COCOA_PILOT_AUDIT.analyzedRecords}`,

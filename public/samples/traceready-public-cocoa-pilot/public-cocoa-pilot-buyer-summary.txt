@@ -1,0 +1,27 @@
+TraceReady public cocoa pilot buyer handoff summary
+
+Buyer handoff summary
+Decision: hold for source-owner repair
+
+Input reviewed:
+- Public dataset: Colombian-Cocoa-Dataset
+- Rows analyzed: 57,658
+- Commodity/country used for the check: cocoa / Colombia
+
+Why this file is not buyer-ready:
+- 46,134 plots are over 4 hectares but only have point coordinates.
+- 57,658 rows need stable plot or farm IDs.
+- 57,658 rows need supplier, producer, farmer, cooperative, or supplier-ID identity.
+- 57,658 rows need batch, lot, shipment, or buyer handoff linkage.
+
+Cleaned pack outcome:
+The cleaned output is a repair brief, not a fabricated compliance file. TraceReady can produce the issue summary, this buyer handoff summary, and the source-owner follow-up list from the public input. It cannot truthfully produce a cleaned CSV or normalized GeoJSON because the missing IDs, shipment linkage, supplier identity, and polygon boundaries are not present in the source rows.
+
+What a real customer file would need before cleanup:
+1. Stable plot or farm IDs.
+2. Supplier identity fields accepted by the buyer.
+3. Batch, lot, shipment, or purchase-order linkage.
+4. Polygon geometry or buyer-approved evidence for point-only plots over 4 hectares.
+
+TraceReady boundary:
+TraceReady did not invent missing supplier IDs, plot IDs, batch IDs, or polygon boundaries for this public pilot.

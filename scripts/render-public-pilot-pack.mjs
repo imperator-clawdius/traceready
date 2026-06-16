@@ -38,6 +38,7 @@ export function renderPublicPilotPackFiles(audit = PUBLIC_COCOA_PILOT_AUDIT) {
     "README.txt": renderReadme(audit),
     "public-cocoa-pilot-readiness-report.txt": renderReadinessReport(audit),
     "public-cocoa-pilot-issue-summary.csv": renderIssueSummaryCsv(audit),
+    "public-cocoa-pilot-buyer-summary.txt": renderBuyerSummary(audit),
     "public-cocoa-pilot-buyer-followups.txt": renderBuyerFollowups(audit),
     "public-cocoa-pilot-audit.json": `${JSON.stringify(audit, null, 2)}\n`,
   };
@@ -86,6 +87,7 @@ Source:
 Included files:
 - public-cocoa-pilot-readiness-report.txt
 - public-cocoa-pilot-issue-summary.csv
+- public-cocoa-pilot-buyer-summary.txt
 - public-cocoa-pilot-buyer-followups.txt
 - public-cocoa-pilot-audit.json
 
@@ -121,7 +123,7 @@ What changed:
 - TraceReady generated issue evidence and buyer/supplier follow-up questions instead of inventing data.
 
 Output:
-The usable output is an issue summary and follow-up list for buyer or supplier review. This public pilot cannot produce a cleaned compliant handoff because the missing identifiers and polygon boundaries are not present in the source row data.
+The usable output is an issue summary, buyer handoff summary, and follow-up list for buyer or supplier review. This public pilot cannot produce a cleaned compliant handoff because the missing identifiers and polygon boundaries are not present in the source row data.
 `;
 }
 
@@ -142,6 +144,37 @@ function renderIssueSummaryCsv(audit) {
   ];
 
   return `${rows.map((row) => row.map(csvCell).join(",")).join("\n")}\n`;
+}
+
+function renderBuyerSummary(audit) {
+  return `TraceReady public cocoa pilot buyer handoff summary
+
+Buyer handoff summary
+Decision: hold for source-owner repair
+
+Input reviewed:
+- Public dataset: ${audit.datasetTitle}
+- Rows analyzed: ${formatNumber(audit.analyzedRecords)}
+- Commodity/country used for the check: ${audit.sourceCommodity} / ${audit.sourceCountry}
+
+Why this file is not buyer-ready:
+- ${formatNumber(audit.pointOnlyOver4Ha)} plots are over 4 hectares but only have point coordinates.
+- ${formatNumber(audit.issueCounts.missing_farmId)} rows need stable plot or farm IDs.
+- ${formatNumber(audit.issueCounts.missing_supplier)} rows need supplier, producer, farmer, cooperative, or supplier-ID identity.
+- ${formatNumber(audit.issueCounts.missing_batch)} rows need batch, lot, shipment, or buyer handoff linkage.
+
+Cleaned pack outcome:
+The cleaned output is a repair brief, not a fabricated compliance file. TraceReady can produce the issue summary, this buyer handoff summary, and the source-owner follow-up list from the public input. It cannot truthfully produce a cleaned CSV or normalized GeoJSON because the missing IDs, shipment linkage, supplier identity, and polygon boundaries are not present in the source rows.
+
+What a real customer file would need before cleanup:
+1. Stable plot or farm IDs.
+2. Supplier identity fields accepted by the buyer.
+3. Batch, lot, shipment, or purchase-order linkage.
+4. Polygon geometry or buyer-approved evidence for point-only plots over 4 hectares.
+
+TraceReady boundary:
+TraceReady did not invent missing supplier IDs, plot IDs, batch IDs, or polygon boundaries for this public pilot.
+`;
 }
 
 function renderBuyerFollowups(audit) {
