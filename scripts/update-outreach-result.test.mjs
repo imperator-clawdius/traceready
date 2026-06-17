@@ -61,6 +61,7 @@ describe("outreach result updater", () => {
         "2026-06-16",
         "--status",
         "sent",
+        "--visible-success",
         "--response-type",
         "none",
         "--field-note-clicks",
@@ -78,10 +79,57 @@ describe("outreach result updater", () => {
         status: "sent",
         response_type: "none",
         field_note_click_count: "1",
-        reply_notes: "sent via company contact form",
+        reply_notes: "sent via company contact form; visible form success observed",
         next_action: "follow up in 4 business days",
       },
     });
+  });
+
+  it("rejects sent updates that do not include visible submission evidence", () => {
+    const rows = parseOutreachResults(FIXTURE_CSV);
+
+    expect(() =>
+      updateOutreachResult(rows, "b01-r06", {
+        date_sent: "2026-06-16",
+        status: "sent",
+        response_type: "none",
+        reply_notes: "sent manually",
+        next_action: "follow up in 4 business days",
+      }),
+    ).toThrow("row b01-r06 status sent requires reply_notes to include visible form success observed");
+
+    expect(() =>
+      updateOutreachResult(rows, "b01-r06", {
+        date_sent: "2026-06-16",
+        status: "sent",
+        response_type: "none",
+        reply_notes: "sent manually; visible form success observed",
+        next_action: "follow up in 4 business days",
+      }),
+    ).not.toThrow();
+  });
+
+  it("rejects concrete traction statuses without matching count evidence", () => {
+    const rows = parseOutreachResults(FIXTURE_CSV);
+
+    expect(() =>
+      updateOutreachResult(rows, "b01-r06", {
+        date_sent: "2026-06-16",
+        status: "file_checked",
+        response_type: "file_check",
+        reply_notes: "asked for a file review",
+      }),
+    ).toThrow("row b01-r06 status file_checked requires file_check_count above 0");
+
+    expect(() =>
+      updateOutreachResult(rows, "b01-r06", {
+        date_sent: "2026-06-16",
+        status: "paid_order",
+        response_type: "paid_order",
+        file_check_count: "1",
+        reply_notes: "checkout completed",
+      }),
+    ).toThrow("row b01-r06 status paid_order requires paid_order_count above 0");
   });
 
   it("rejects unknown routes and private contact data before writing", () => {

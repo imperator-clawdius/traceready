@@ -56,6 +56,8 @@ export function updateOutreachResult(rows, routeId, patch) {
     throw new Error(errors.join("; "));
   }
 
+  assertEvidenceBackedUpdate(nextRows[rowIndex]);
+
   return nextRows;
 }
 
@@ -71,6 +73,7 @@ export function parseUpdateArgs(argv) {
   const patch = {};
   let resultsPath = "";
   let routeId = "";
+  let visibleSuccess = false;
 
   for (let index = 0; index < args.length; index += 1) {
     const flag = args[index];
@@ -78,6 +81,11 @@ export function parseUpdateArgs(argv) {
 
     if (!flag.startsWith("--")) {
       throw new Error(`unexpected argument: ${flag}`);
+    }
+
+    if (flag === "--visible-success") {
+      visibleSuccess = true;
+      continue;
     }
 
     if (value === undefined || value.startsWith("--")) {
@@ -95,6 +103,10 @@ export function parseUpdateArgs(argv) {
     }
 
     index += 1;
+  }
+
+  if (visibleSuccess) {
+    patch.reply_notes = appendVisibleSuccessMarker(patch.reply_notes);
   }
 
   if (!resultsPath) {
@@ -127,6 +139,54 @@ function cleanPatch(patch) {
   }
 
   return Object.fromEntries(entries);
+}
+
+function assertEvidenceBackedUpdate(row) {
+  if (row.status === "not_sent") {
+    return;
+  }
+
+  if (!row.date_sent) {
+    throw new Error(`row ${row.route_id} status ${row.status} requires date_sent`);
+  }
+
+  if (!row.reply_notes) {
+    throw new Error(`row ${row.route_id} status ${row.status} requires reply_notes evidence`);
+  }
+
+  if (["sent", "no_reply"].includes(row.status) && !hasVisibleSuccessEvidence(row.reply_notes)) {
+    throw new Error(
+      `row ${row.route_id} status ${row.status} requires reply_notes to include visible form success observed`,
+    );
+  }
+
+  if (row.status === "file_checked" && Number(row.file_check_count || 0) <= 0) {
+    throw new Error(`row ${row.route_id} status file_checked requires file_check_count above 0`);
+  }
+
+  if (row.status === "paid_order" && Number(row.paid_order_count || 0) <= 0) {
+    throw new Error(`row ${row.route_id} status paid_order requires paid_order_count above 0`);
+  }
+
+  if (row.status === "pilot_requested" && row.pilot_requested !== "yes") {
+    throw new Error(`row ${row.route_id} status pilot_requested requires pilot_requested yes`);
+  }
+}
+
+function appendVisibleSuccessMarker(notes = "") {
+  const trimmedNotes = String(notes ?? "").trim();
+
+  if (hasVisibleSuccessEvidence(trimmedNotes)) {
+    return trimmedNotes;
+  }
+
+  return trimmedNotes
+    ? `${trimmedNotes}; visible form success observed`
+    : "visible form success observed";
+}
+
+function hasVisibleSuccessEvidence(notes) {
+  return /\bvisible form success observed\b/i.test(String(notes ?? ""));
 }
 
 async function main() {
