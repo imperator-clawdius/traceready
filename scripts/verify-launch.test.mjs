@@ -35,6 +35,17 @@ describe("launch verifier route manifest", () => {
     expect(script).not.toContain("Format example pack");
   });
 
+  it("checks the homepage public pilot proof strip in live launch verification", () => {
+    const script = fs.readFileSync("scripts/verify-launch.mjs", "utf8");
+    const appRootBlock = script.match(/label: "APP_ROOT"[\s\S]*?},\n  \{/)?.[0] ?? "";
+
+    expect(appRootBlock).toContain("Messy public file in");
+    expect(appRootBlock).toContain("Exact issues found");
+    expect(appRootBlock).toContain("Cleaned pack out");
+    expect(appRootBlock).toContain("Cleanup-desk credibility");
+    expect(appRootBlock).toContain("spreadsheet bouncer");
+  });
+
   it("checks the documented pilot route in live launch verification", () => {
     const script = fs.readFileSync("scripts/verify-launch.mjs", "utf8");
 

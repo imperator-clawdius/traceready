@@ -153,6 +153,10 @@ describe("TraceReady conversion surface", () => {
     expect(pilotCase).toContain("ready records");
     expect(pilotCase).toContain("Exact issue counts");
     expect(pilotCase).toContain("buyer/supplier follow-up list");
+    expect(pilotCase).toContain("Messy public file in");
+    expect(pilotCase).toContain("Exact issues found");
+    expect(pilotCase).toContain("Cleaned pack out");
+    expect(pilotCase).toContain("repair brief, buyer summary, issue CSV, and evidence pack");
     expect(pilotCase).toContain("Download evidence pack");
     expect(pilotCase).not.toContain("fictional sample fixture");
     expect(pilotCase).not.toContain("Founder proof");

@@ -23,6 +23,7 @@ npm install
 npm run lint
 npm run test
 npm run build
+npm run start
 npm run check
 npm run verify:launch
 npm run dev

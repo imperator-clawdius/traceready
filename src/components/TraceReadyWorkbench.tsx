@@ -190,6 +190,21 @@ const PUBLIC_PILOT_STATS = [
   },
 ];
 
+const PUBLIC_PILOT_FLOW = [
+  {
+    title: "Messy public file in",
+    detail: "57,658 public cocoa rows with coordinates and area values, but no plot IDs or supplier identity.",
+  },
+  {
+    title: "Exact issues found",
+    detail: "46,134 point-only plots over 4 ha, plus missing plot ID and supplier identity on every row.",
+  },
+  {
+    title: "Cleaned pack out",
+    detail: "No fake certainty: repair brief, buyer summary, issue CSV, and evidence pack for source-owner follow-up.",
+  },
+];
+
 const OPERATOR_PROOF_POINTS = [
   {
     title: "Regulated cleanup reflex",
@@ -537,6 +552,14 @@ export function TraceReadyWorkbench() {
               Exact issue counts and buyer/supplier follow-up list: 46,134 point-only plots over 4
               hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
             </p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              {PUBLIC_PILOT_FLOW.map((step) => (
+                <div key={step.title} className="border-t border-white/[0.22] pt-3">
+                  <p className="text-sm font-semibold text-white">{step.title}</p>
+                  <p className="mt-1 text-xs leading-5 text-emerald-50">{step.detail}</p>
+                </div>
+              ))}
+            </div>
             <div className="mt-4 flex flex-col gap-2 sm:flex-row">
               <a
                 href={PUBLIC_PILOT_CASE_HREF}
