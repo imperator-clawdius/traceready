@@ -10,6 +10,7 @@ Source:
 - Rows analyzed by TraceReady: 57,658
 
 Included files:
+- public-cocoa-pilot-case-study.txt
 - public-cocoa-pilot-readiness-report.txt
 - public-cocoa-pilot-issue-summary.csv
 - public-cocoa-pilot-buyer-summary.txt

@@ -36,6 +36,7 @@ const PACK_DATE = new Date("2026-06-16T12:00:00.000Z");
 export function renderPublicPilotPackFiles(audit = PUBLIC_COCOA_PILOT_AUDIT) {
   return {
     "README.txt": renderReadme(audit),
+    "public-cocoa-pilot-case-study.txt": renderCaseStudy(audit),
     "public-cocoa-pilot-readiness-report.txt": renderReadinessReport(audit),
     "public-cocoa-pilot-issue-summary.csv": renderIssueSummaryCsv(audit),
     "public-cocoa-pilot-buyer-summary.txt": renderBuyerSummary(audit),
@@ -86,6 +87,7 @@ Source:
 - Rows analyzed by TraceReady: ${formatNumber(audit.analyzedRecords)}
 
 Included files:
+- public-cocoa-pilot-case-study.txt
 - public-cocoa-pilot-readiness-report.txt
 - public-cocoa-pilot-issue-summary.csv
 - public-cocoa-pilot-buyer-summary.txt
@@ -97,6 +99,43 @@ Important boundary:
 This ZIP does not redistribute raw source rows, latitude/longitude records, supplier lists, buyer files, or customer material. It contains derived issue counts, method notes, and buyer follow-up output only.
 
 This is not a customer case, paid transaction, buyer approval, legal certification, audit assurance, TRACES submission, or due-diligence statement.
+`;
+}
+
+function renderCaseStudy(audit) {
+  return `TraceReady public cocoa pilot case study
+
+Case type:
+Public-data pilot. This is not a customer case, paid transaction, buyer approval, legal certification, audit assurance, TRACES submission, or due-diligence statement.
+
+Messy public file in:
+- Dataset: ${audit.datasetTitle}
+- Dataset URL: ${audit.datasetUrl}
+- Rows analyzed: ${formatNumber(audit.analyzedRecords)}
+- Commodity/country used for the check: ${audit.sourceCommodity} / ${audit.sourceCountry}
+- Available row data included coordinate and area values.
+- TraceReady did not invent missing plot IDs, supplier identity, shipment linkage, or polygon geometry.
+
+Exact issues found:
+- ${formatNumber(audit.pointOnlyOver4Ha)} point-only plots over 4 hectares.
+- ${formatNumber(audit.issueCounts.missing_farmId)} rows without stable plot or farm IDs.
+- ${formatNumber(audit.issueCounts.missing_supplier)} rows without supplier, producer, farmer, cooperative, or supplier-ID identity.
+- ${formatNumber(audit.issueCounts.missing_batch)} rows without batch, lot, shipment, or buyer handoff linkage.
+- ${formatNumber(audit.readyRecords)} records were buyer-ready without source-owner repair.
+
+Cleaned pack boundary:
+The output is a repair brief and buyer/supplier handoff pack, not a fabricated compliance file. TraceReady produced the issue summary, buyer handoff summary, source-owner follow-up list, reproducibility manifest, and audit JSON. It could not truthfully produce a cleaned CSV or normalized GeoJSON because the missing identifiers and polygon boundaries were absent from the source rows.
+
+What changed:
+- The vague claim "we clean files" became a row-counted issue ledger.
+- The buyer-facing decision became "hold for source-owner repair."
+- The next action became a concrete request list for the supplier or source owner.
+
+What would make this a real customer case:
+- Permission to publish anonymized before/after issue counts.
+- Confirmation of what was fixed, what stayed blocked, and what the buyer accepted.
+- One approved quote from a buyer, importer, exporter, consultant, or source-file owner.
+- No company names, supplier names, buyer names, source rows, or farm coordinates unless explicitly approved.
 `;
 }
 

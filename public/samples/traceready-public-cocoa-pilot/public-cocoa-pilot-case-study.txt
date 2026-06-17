@@ -1,0 +1,33 @@
+TraceReady public cocoa pilot case study
+
+Case type:
+Public-data pilot. This is not a customer case, paid transaction, buyer approval, legal certification, audit assurance, TRACES submission, or due-diligence statement.
+
+Messy public file in:
+- Dataset: Colombian-Cocoa-Dataset
+- Dataset URL: https://www.kaggle.com/datasets/lehetasa/colombian-cocoa-dataset
+- Rows analyzed: 57,658
+- Commodity/country used for the check: cocoa / Colombia
+- Available row data included coordinate and area values.
+- TraceReady did not invent missing plot IDs, supplier identity, shipment linkage, or polygon geometry.
+
+Exact issues found:
+- 46,134 point-only plots over 4 hectares.
+- 57,658 rows without stable plot or farm IDs.
+- 57,658 rows without supplier, producer, farmer, cooperative, or supplier-ID identity.
+- 57,658 rows without batch, lot, shipment, or buyer handoff linkage.
+- 0 records were buyer-ready without source-owner repair.
+
+Cleaned pack boundary:
+The output is a repair brief and buyer/supplier handoff pack, not a fabricated compliance file. TraceReady produced the issue summary, buyer handoff summary, source-owner follow-up list, reproducibility manifest, and audit JSON. It could not truthfully produce a cleaned CSV or normalized GeoJSON because the missing identifiers and polygon boundaries were absent from the source rows.
+
+What changed:
+- The vague claim "we clean files" became a row-counted issue ledger.
+- The buyer-facing decision became "hold for source-owner repair."
+- The next action became a concrete request list for the supplier or source owner.
+
+What would make this a real customer case:
+- Permission to publish anonymized before/after issue counts.
+- Confirmation of what was fixed, what stayed blocked, and what the buyer accepted.
+- One approved quote from a buyer, importer, exporter, consultant, or source-file owner.
+- No company names, supplier names, buyer names, source rows, or farm coordinates unless explicitly approved.

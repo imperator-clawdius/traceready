@@ -573,6 +573,12 @@ export function TraceReadyWorkbench() {
               >
                 Download evidence pack
               </a>
+              <a
+                href={PILOT_PROOF_HREF}
+                className="inline-flex h-10 items-center justify-center rounded-md border border-emerald-100 px-3 text-sm font-semibold text-white transition hover:bg-emerald-900"
+              >
+                Offer first real pilot
+              </a>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">

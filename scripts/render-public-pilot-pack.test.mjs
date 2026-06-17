@@ -22,6 +22,10 @@ describe("public pilot evidence pack renderer", () => {
     expect(files["public-cocoa-pilot-buyer-summary.txt"]).toContain("Buyer handoff summary");
     expect(files["public-cocoa-pilot-buyer-summary.txt"]).toContain("Decision: hold for source-owner repair");
     expect(files["public-cocoa-pilot-buyer-summary.txt"]).toContain("Cleaned pack outcome");
+    expect(files["public-cocoa-pilot-case-study.txt"]).toContain("Messy public file in");
+    expect(files["public-cocoa-pilot-case-study.txt"]).toContain("Exact issues found");
+    expect(files["public-cocoa-pilot-case-study.txt"]).toContain("Cleaned pack boundary");
+    expect(files["public-cocoa-pilot-case-study.txt"]).toContain("What would make this a real customer case");
     expect(files["public-cocoa-pilot-reproducibility-manifest.txt"]).toContain("Reproducibility manifest");
     expect(files["public-cocoa-pilot-reproducibility-manifest.txt"]).toContain("Dataset URL: https://www.kaggle.com/datasets/lehetasa/colombian-cocoa-dataset");
     expect(files["public-cocoa-pilot-reproducibility-manifest.txt"]).toContain("TraceReady-supplied assumptions");
@@ -43,6 +47,7 @@ describe("public pilot evidence pack renderer", () => {
     const zippedNames = Object.keys(zip.files).sort();
 
     expect(result.files).toContain("public-cocoa-pilot-issue-summary.csv");
+    expect(result.files).toContain("public-cocoa-pilot-case-study.txt");
     expect(result.files).toContain("public-cocoa-pilot-buyer-summary.txt");
     expect(result.files).toContain("public-cocoa-pilot-reproducibility-manifest.txt");
     expect(zippedNames).toEqual(result.files.toSorted());
