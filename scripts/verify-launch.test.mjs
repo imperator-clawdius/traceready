@@ -86,4 +86,13 @@ describe("launch verifier route manifest", () => {
     expect(script).toContain("Use Stripe only after TraceReady confirms the file is in launch scope");
     expect(script).toContain("After scope confirmation and checkout");
   });
+
+  it("checks that the proof page keeps cleanup scope-first instead of buy-first", () => {
+    const script = fs.readFileSync("scripts/verify-launch.mjs", "utf8");
+    const proofPageBlock = script.match(/label: "PROOF_PAGE"[\s\S]*?},\n  \{/)?.[0] ?? "";
+
+    expect(proofPageBlock).toContain("Request scoped cleanup");
+    expect(proofPageBlock).toContain("TraceReady confirms launch scope before raw coordinates or Stripe payment");
+    expect(proofPageBlock).not.toContain("Buy 24-hour cleanup");
+  });
 });

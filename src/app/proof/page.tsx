@@ -247,8 +247,8 @@ export default function ProofPage() {
           <p className="mt-4 max-w-3xl text-sm leading-7 text-emerald-50">
             The first pass stays in your browser: load a CSV, KML, GeoJSON, or JSON GeoJSON file,
             review the row-level blockers, and decide whether the issue list is worth cleaning up.
-            If the issue list is useful, buy the 24-hour cleanup and send the file through the
-            order-intake path.
+            If the issue list is useful, request a scoped cleanup before payment. TraceReady confirms
+            launch scope before raw coordinates or Stripe payment.
           </p>
           <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
             <TrackedHomeLink
@@ -265,7 +265,7 @@ export default function ProofPage() {
               href={CHECKOUT_CLEANUP_HREF}
               className="inline-flex h-11 items-center justify-center rounded-md border border-emerald-100 px-4 text-sm font-semibold text-white transition hover:bg-emerald-900"
             >
-              Buy 24-hour cleanup
+              Request scoped cleanup
             </Link>
             <Link
               href={CONTACT_HREF}

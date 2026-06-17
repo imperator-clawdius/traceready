@@ -127,8 +127,9 @@ const requiredPages = [
       "CBI EUDR coffee guidance",
       "Run one supplier file before sending coordinates",
       "The first pass stays in your browser",
+      "TraceReady confirms launch scope before raw coordinates or Stripe payment",
       "Request free issue-log triage",
-      "Buy 24-hour cleanup",
+      "Request scoped cleanup",
     ],
   },
   {

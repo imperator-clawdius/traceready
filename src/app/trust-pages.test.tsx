@@ -305,7 +305,7 @@ describe("TraceReady trust pages", () => {
       element.textContent?.includes("Run a file in the browser"),
     );
     const cleanupLink = links.find((element) =>
-      element.textContent?.includes("Buy 24-hour cleanup"),
+      element.textContent?.includes("Request scoped cleanup"),
     );
     const contactLink = links.find((element) =>
       element.textContent?.includes("Ask a scope question"),
@@ -322,7 +322,9 @@ describe("TraceReady trust pages", () => {
 
     expect(pageText).toContain("Run one supplier file before sending coordinates");
     expect(pageText).toContain("The first pass stays in your browser");
-    expect(pageText).toContain("If the issue list is useful, buy the 24-hour cleanup");
+    expect(pageText).toContain("If the issue list is useful, request a scoped cleanup before payment");
+    expect(pageText).toContain("TraceReady confirms launch scope before raw coordinates or Stripe payment");
+    expect(pageText).not.toContain("If the issue list is useful, buy the 24-hour cleanup");
     expect(browserCheckLink?.getAttribute("href")).toBe("/");
     expect(cleanupLink?.getAttribute("href")).toBe("/checkout/cleanup/");
     expect(contactLink?.getAttribute("href")).toBe("/contact/");
