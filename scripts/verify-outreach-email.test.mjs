@@ -293,6 +293,9 @@ describe("outreach email verifier", () => {
     expect(markdown).toContain("private/reply-capture-handoff.md");
     expect(markdown).toContain("private/reply-capture-email.eml");
     expect(markdown).toContain("Current challenge subject: `TraceReady reply-capture test trc-test-1234`");
+    expect(markdown).toContain(
+      "The saved `.eml` must include the original `Date` and `Subject` headers plus the message body carrying the challenge token.",
+    );
     expect(markdown).toContain("If the `.eml` file is already saved, run the finalizer directly:");
     expect(markdown).toContain("npm run finalize:reply-capture");
     expect(markdown).toContain(

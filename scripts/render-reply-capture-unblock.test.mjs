@@ -79,6 +79,9 @@ describe("reply-capture unblock packet", () => {
     expect(markdown).toContain("Subject: `TraceReady reply-capture test trc-20260617-ae6acb63`");
     expect(markdown).toContain("Challenge token: trc-20260617-ae6acb63");
     expect(markdown).toContain("save the received message source as `private/reply-capture-received.eml`");
+    expect(markdown).toContain(
+      "The saved `.eml` must include the original `Date` and `Subject` headers plus the message body carrying the challenge token.",
+    );
     expect(markdown).toContain("npm run finalize:reply-capture");
     expect(markdown).toContain("npm run render:outreach-email-runbook");
     expect(markdown).toContain("| `b02-r03` | Control Union |");

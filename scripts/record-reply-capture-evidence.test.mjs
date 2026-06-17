@@ -138,6 +138,60 @@ describe("reply-capture evidence recorder", () => {
     ).toThrow("received subject must match challenge subject");
   });
 
+  it("rejects a saved eml whose body does not carry the prepared challenge token", () => {
+    const challenge = buildReplyCaptureChallenge({
+      contactEmail: "founder@traceready.online",
+      createdAt: "2026-06-17T03:00:00.000Z",
+      token: "trc-test-1234",
+    });
+    const eml = [
+      "From: sender@example.com",
+      "To: founder@traceready.online",
+      "Date: Wed, 17 Jun 2026 03:04:00 +0000",
+      "Subject: TraceReady reply-capture test trc-test-1234",
+      "",
+      "TraceReady reply-capture test for founder@traceready.online.",
+      "Challenge token: wrong-token",
+      "",
+    ].join("\r\n");
+
+    expect(() =>
+      buildReplyCaptureEvidenceFromEml({
+        contactEmail: "founder@traceready.online",
+        eml,
+        confirmedControlledInbox: true,
+        challenge,
+      }),
+    ).toThrow("received eml body must include challengeToken");
+  });
+
+  it("rejects a saved eml with an unparseable received date through the evidence verifier", () => {
+    const challenge = buildReplyCaptureChallenge({
+      contactEmail: "founder@traceready.online",
+      createdAt: "2026-06-17T03:00:00.000Z",
+      token: "trc-test-1234",
+    });
+    const eml = [
+      "From: sender@example.com",
+      "To: founder@traceready.online",
+      "Date: not-a-date",
+      "Subject: TraceReady reply-capture test trc-test-1234",
+      "",
+      "TraceReady reply-capture test for founder@traceready.online.",
+      "Challenge token: trc-test-1234",
+      "",
+    ].join("\r\n");
+
+    expect(() =>
+      buildReplyCaptureEvidenceFromEml({
+        contactEmail: "founder@traceready.online",
+        eml,
+        confirmedControlledInbox: true,
+        challenge,
+      }),
+    ).toThrow("receivedAt must be a valid ISO timestamp");
+  });
+
   it("parses the command used after a real inbox test arrives", () => {
     expect(
       parseReplyCaptureEvidenceArgs([

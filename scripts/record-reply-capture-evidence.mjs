@@ -97,8 +97,13 @@ export function buildReplyCaptureEvidenceFromEml({
   challenge,
 } = {}) {
   const headers = parseEmlHeaders(eml);
+  const body = parseEmlBody(eml);
   const receivedSubject = headers.subject;
-  const receivedAt = headers.date ? new Date(headers.date).toISOString() : "";
+  const receivedAt = parseEmlDate(headers.date);
+
+  if (challenge?.challengeToken && !body.includes(challenge.challengeToken)) {
+    throw new Error("received eml body must include challengeToken");
+  }
 
   return buildReplyCaptureEvidence({
     contactEmail,
@@ -150,6 +155,20 @@ function parseEmlHeaders(eml) {
   }
 
   return headers;
+}
+
+function parseEmlBody(eml) {
+  const parts = String(eml ?? "").split(/\r?\n\r?\n/);
+  return parts.slice(1).join("\n\n");
+}
+
+function parseEmlDate(value) {
+  if (!value) {
+    return "";
+  }
+
+  const timestamp = Date.parse(value);
+  return Number.isNaN(timestamp) ? "" : new Date(timestamp).toISOString();
 }
 
 async function main() {

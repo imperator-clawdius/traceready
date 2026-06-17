@@ -158,6 +158,7 @@ export function renderReplyCaptureUnblockPacket(packet, options = {}) {
     "",
     ...(challengeBody ? ["```text", challengeBody, "```", ""] : []),
     "After the message arrives, save the received message source as `private/reply-capture-received.eml`.",
+    "The saved `.eml` must include the original `Date` and `Subject` headers plus the message body carrying the challenge token.",
     "",
     "Then run:",
     "",

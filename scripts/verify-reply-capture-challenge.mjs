@@ -176,6 +176,7 @@ export function renderReplyCaptureChallengeHandoff(result, options = {}) {
     "## After It Arrives",
     "",
     "Save the received message source as `private/reply-capture-received.eml`, then record evidence:",
+    "The saved `.eml` must include the original `Date` and `Subject` headers plus the message body carrying the challenge token.",
     "",
     "```powershell",
     recordReplyCaptureCommand({

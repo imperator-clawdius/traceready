@@ -376,6 +376,7 @@ export function renderOutreachEmailRunbook(report, options = {}) {
     "- Send from a separate mailbox, not from the forwarding destination.",
     "",
     "After the message arrives, save the received message source as `private/reply-capture-received.eml`, then record evidence:",
+    "The saved `.eml` must include the original `Date` and `Subject` headers plus the message body carrying the challenge token.",
     "",
     "If the `.eml` file is already saved, run the finalizer directly:",
     "",
