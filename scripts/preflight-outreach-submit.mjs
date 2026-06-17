@@ -98,6 +98,7 @@ export function preflightOutreachSubmit({
 
 export function renderOutreachSubmitPreflight(preflight, options = {}) {
   const generatedAt = options.generatedAt ?? todayIsoDate();
+  const status = submitPreflightStatus(preflight);
   const submissionEvidenceCommand = [
     "npm run record:submission-evidence --",
     `--results ${preflight.resultsPath}`,
@@ -111,7 +112,7 @@ export function renderOutreachSubmitPreflight(preflight, options = {}) {
 
   return `# TraceReady submit preflight: ${preflight.routeId}
 
-OUTREACH_SUBMIT_PREFLIGHT=pass route=${preflight.routeId} company="${preflight.companyName}" reply_capture=${preflight.replyCapture}
+OUTREACH_SUBMIT_PREFLIGHT=${status} route=${preflight.routeId} company="${preflight.companyName}" reply_capture=${preflight.replyCapture}
 
 Generated: ${generatedAt}
 
@@ -211,6 +212,9 @@ export function preflightAllReadyOutreachSubmits({
 
 export function renderOutreachSubmitQueue(queue, options = {}) {
   const generatedAt = options.generatedAt ?? todayIsoDate();
+  const status = submitQueueStatus(queue);
+  const heldPreflights = queue.preflights.filter((preflight) => preflight.replyCapture !== "ready").length;
+  const actionablePreflights = queue.preflightReadyRoutes - heldPreflights;
   const tableRows = queue.preflights.map(
     (preflight) =>
       `| \`${preflight.routeId}\` | ${preflight.companyName} | ${preflight.publicRoute} | \`${preflight.sendReadyPath}\` | \`${preflight.preflightPath}\` | \`${preflight.replyCapture}\` |`,
@@ -219,7 +223,7 @@ export function renderOutreachSubmitQueue(queue, options = {}) {
 
   return `# TraceReady submit queue - ${generatedAt}
 
-OUTREACH_SUBMIT_QUEUE=pass ready_routes=${queue.readyRoutes} preflight_ready=${queue.preflightReadyRoutes} reply_capture=${queue.replyCapture}
+OUTREACH_SUBMIT_QUEUE=${status} ready_routes=${queue.readyRoutes} preflight_ready=${actionablePreflights} held_preflights=${heldPreflights} reply_capture=${queue.replyCapture}
 
 External browser-form submission still requires exact action-time confirmation for each route.
 ${queue.replyCapture === "ready" ? "" : "\nReply capture is not ready; keep these preflights held."}
@@ -347,6 +351,16 @@ function replyCaptureReadyFromEmailReport(emailReport = {}) {
   return Boolean(checks.OUTREACH_EMAIL_MX && checks.OUTREACH_EMAIL_ALIAS_TEST);
 }
 
+function submitPreflightStatus(preflight) {
+  return preflight.replyCapture === "ready" ? "pass" : "pending";
+}
+
+function submitQueueStatus(queue) {
+  return queue.replyCapture === "ready" && queue.preflights.every((preflight) => preflight.replyCapture === "ready")
+    ? "pass"
+    : "pending";
+}
+
 function quoteForShell(value) {
   return `"${String(value).replace(/"/g, '\\"')}"`;
 }
@@ -418,7 +432,7 @@ async function main() {
     await fs.writeFile(options.queueOutputPath, queueMarkdown, "utf8");
 
     console.log(
-      `OUTREACH_SUBMIT_QUEUE=pass ready_routes=${queue.readyRoutes} preflight_ready=${queue.preflightReadyRoutes} reply_capture=${queue.replyCapture} output=${options.queueOutputPath}`,
+      `${renderOutreachSubmitQueueHeadline(queue)} output=${options.queueOutputPath}`,
     );
     return;
   }
@@ -441,8 +455,19 @@ async function main() {
   await fs.writeFile(options.outputPath, markdown, "utf8");
 
   console.log(
-    `OUTREACH_SUBMIT_PREFLIGHT=pass route=${preflight.routeId} company="${preflight.companyName}" reply_capture=${preflight.replyCapture} output=${options.outputPath}`,
+    `${renderOutreachSubmitPreflightHeadline(preflight)} output=${options.outputPath}`,
   );
+}
+
+function renderOutreachSubmitPreflightHeadline(preflight) {
+  return `OUTREACH_SUBMIT_PREFLIGHT=${submitPreflightStatus(preflight)} route=${preflight.routeId} company="${preflight.companyName}" reply_capture=${preflight.replyCapture}`;
+}
+
+function renderOutreachSubmitQueueHeadline(queue) {
+  const heldPreflights = queue.preflights.filter((preflight) => preflight.replyCapture !== "ready").length;
+  const actionablePreflights = queue.preflightReadyRoutes - heldPreflights;
+
+  return `OUTREACH_SUBMIT_QUEUE=${submitQueueStatus(queue)} ready_routes=${queue.readyRoutes} preflight_ready=${actionablePreflights} held_preflights=${heldPreflights} reply_capture=${queue.replyCapture}`;
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

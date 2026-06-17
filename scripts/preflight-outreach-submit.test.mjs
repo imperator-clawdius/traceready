@@ -114,7 +114,7 @@ describe("outreach submit preflight", () => {
 
     expect(preflight.replyCapture).toBe("at_risk");
     expect(markdown).toContain(
-      'OUTREACH_SUBMIT_PREFLIGHT=pass route=b02-r04 company="Bureau Veritas" reply_capture=at_risk',
+      'OUTREACH_SUBMIT_PREFLIGHT=pending route=b02-r04 company="Bureau Veritas" reply_capture=at_risk',
     );
     expect(markdown).toContain("Reply capture is `at_risk`; do not submit this route yet.");
     expect(markdown).toContain("npm run record:submission-evidence --");
@@ -279,7 +279,9 @@ describe("outreach submit preflight", () => {
     const markdown = renderOutreachSubmitQueue(queue, { generatedAt: "2026-06-17" });
 
     expect(queue.replyCapture).toBe("at_risk");
-    expect(markdown).toContain("OUTREACH_SUBMIT_QUEUE=pass ready_routes=2 preflight_ready=2 reply_capture=at_risk");
+    expect(markdown).toContain(
+      "OUTREACH_SUBMIT_QUEUE=pending ready_routes=2 preflight_ready=0 held_preflights=2 reply_capture=at_risk",
+    );
     expect(markdown).toContain("Reply capture is not ready; keep these preflights held.");
   });
 
@@ -310,7 +312,9 @@ describe("outreach submit preflight", () => {
     const markdown = renderOutreachSubmitQueue(queue, { generatedAt: "2026-06-17" });
 
     expect(queue.replyCapture).toBe("ready");
-    expect(markdown).toContain("OUTREACH_SUBMIT_QUEUE=pass ready_routes=2 preflight_ready=2 reply_capture=ready");
+    expect(markdown).toContain(
+      "OUTREACH_SUBMIT_QUEUE=pass ready_routes=2 preflight_ready=2 held_preflights=0 reply_capture=ready",
+    );
     expect(markdown).toContain("| `b02-r03` | Control Union |");
   });
 
