@@ -12,6 +12,7 @@ const DEFAULT_SENDABILITY_AUDIT_PATH = "private/outreach-sendability-audit-batch
 const DEFAULT_CHALLENGE_PATH = "private/reply-capture-challenge.json";
 const DEFAULT_EVIDENCE_PATH = "private/reply-capture-evidence.json";
 const DEFAULT_EML_PATH = "private/reply-capture-received.eml";
+const DEFAULT_EMAIL_DRAFT_PATH = "private/reply-capture-email.eml";
 const DEFAULT_OUTPUT_PATH = "private/reply-capture-unblock.md";
 const DEFAULT_PREFLIGHT_QUEUE_PATH = "private/preflight-submit-queue.md";
 const CONTACT_EMAIL = "founder@traceready.online";
@@ -24,6 +25,7 @@ export function parseReplyCaptureUnblockArgs(argv) {
     challengePath: DEFAULT_CHALLENGE_PATH,
     evidencePath: DEFAULT_EVIDENCE_PATH,
     emlPath: DEFAULT_EML_PATH,
+    emailDraftPath: DEFAULT_EMAIL_DRAFT_PATH,
     outputPath: DEFAULT_OUTPUT_PATH,
     preflightQueuePath: DEFAULT_PREFLIGHT_QUEUE_PATH,
     generatedAt: new Date().toISOString().slice(0, 10),
@@ -53,6 +55,8 @@ export function parseReplyCaptureUnblockArgs(argv) {
       options.evidencePath = value;
     } else if (flag === "--eml") {
       options.emlPath = value;
+    } else if (flag === "--email-draft") {
+      options.emailDraftPath = value;
     } else if (flag === "--preflight-queue") {
       options.preflightQueuePath = value;
     } else if (flag === "--output") {
@@ -78,6 +82,7 @@ export function buildReplyCaptureUnblockPacket({
   evidencePath = DEFAULT_EVIDENCE_PATH,
   challengePath = DEFAULT_CHALLENGE_PATH,
   emlPath = DEFAULT_EML_PATH,
+  emailDraftPath = DEFAULT_EMAIL_DRAFT_PATH,
   preflightQueuePath = DEFAULT_PREFLIGHT_QUEUE_PATH,
 } = {}) {
   const replyCaptureReady = Boolean(emailReport.replyCaptureReady);
@@ -96,6 +101,7 @@ export function buildReplyCaptureUnblockPacket({
     evidencePath,
     challengePath,
     emlPath,
+    emailDraftPath,
     preflightQueuePath,
   };
 }
@@ -155,6 +161,8 @@ export function renderReplyCaptureUnblockPacket(packet, options = {}) {
     "",
     challengeSubject ? `To: \`${CONTACT_EMAIL}\`` : "Challenge not found; regenerate it before sending.",
     challengeSubject ? `Subject: \`${challengeSubject}\`` : "`npm run prepare:reply-capture -- --output private/reply-capture-challenge.json --contact founder@traceready.online --handoff-output private/reply-capture-handoff.md --email-draft-output private/reply-capture-email.eml`",
+    challengeSubject ? `[Open mail draft](${replyCaptureMailtoHref(packet.challenge)})` : "",
+    challengeSubject ? `Optional local draft: \`${packet.emailDraftPath}\`` : "",
     "",
     ...(challengeBody ? ["```text", challengeBody, "```", ""] : []),
     "After the message arrives, save the received message source as `private/reply-capture-received.eml`.",
@@ -186,6 +194,14 @@ function escapeTableCell(value) {
   return String(value ?? "").replaceAll("|", "\\|");
 }
 
+function replyCaptureMailtoHref(challenge = {}) {
+  const recipient = encodeURIComponent(challenge.contactEmail ?? CONTACT_EMAIL);
+  const subject = encodeURIComponent(challenge.subject ?? "");
+  const body = encodeURIComponent(String(challenge.body ?? "").replace(/\r?\n/g, "\n"));
+
+  return `mailto:${recipient}?subject=${subject}&body=${body}`;
+}
+
 export async function renderReplyCaptureUnblockFromFiles(options = {}) {
   const batchPath = options.batchPath ?? DEFAULT_BATCH_PATH;
   const resultsPath = options.resultsPath ?? DEFAULT_RESULTS_PATH;
@@ -193,6 +209,7 @@ export async function renderReplyCaptureUnblockFromFiles(options = {}) {
   const challengePath = options.challengePath ?? DEFAULT_CHALLENGE_PATH;
   const evidencePath = options.evidencePath ?? DEFAULT_EVIDENCE_PATH;
   const emlPath = options.emlPath ?? DEFAULT_EML_PATH;
+  const emailDraftPath = options.emailDraftPath ?? DEFAULT_EMAIL_DRAFT_PATH;
   const preflightQueuePath = options.preflightQueuePath ?? DEFAULT_PREFLIGHT_QUEUE_PATH;
   const [batchCsv, resultsCsv, sendabilityAuditJson, challenge, evidenceExists, emlExists] =
     await Promise.all([
@@ -237,6 +254,7 @@ export async function renderReplyCaptureUnblockFromFiles(options = {}) {
     evidencePath,
     challengePath,
     emlPath,
+    emailDraftPath,
     preflightQueuePath,
   });
 

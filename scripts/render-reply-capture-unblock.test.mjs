@@ -77,6 +77,10 @@ describe("reply-capture unblock packet", () => {
     expect(markdown).toContain("Send this challenge from a separate mailbox");
     expect(markdown).toContain("To: `founder@traceready.online`");
     expect(markdown).toContain("Subject: `TraceReady reply-capture test trc-20260617-ae6acb63`");
+    expect(markdown).toContain(
+      "[Open mail draft](mailto:founder%40traceready.online?subject=TraceReady%20reply-capture%20test%20trc-20260617-ae6acb63",
+    );
+    expect(markdown).toContain("Optional local draft: `private/reply-capture-email.eml`");
     expect(markdown).toContain("Challenge token: trc-20260617-ae6acb63");
     expect(markdown).toContain("save the received message source as `private/reply-capture-received.eml`");
     expect(markdown).toContain(
@@ -131,6 +135,8 @@ describe("reply-capture unblock packet", () => {
         "private/evidence.json",
         "--eml",
         "private/received.eml",
+        "--email-draft",
+        "private/draft.eml",
         "--output",
         "private/unblock.md",
         "--today",
@@ -140,6 +146,7 @@ describe("reply-capture unblock packet", () => {
       challengePath: "private/challenge.json",
       evidencePath: "private/evidence.json",
       emlPath: "private/received.eml",
+      emailDraftPath: "private/draft.eml",
       outputPath: "private/unblock.md",
       generatedAt: "2026-06-17",
     });
