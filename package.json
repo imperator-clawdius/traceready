@@ -22,6 +22,7 @@
     "render:outreach": "node scripts/render-outreach-pack.mjs",
     "render:outreach-day": "node scripts/render-outreach-day-pack.mjs",
     "render:outreach-email-runbook": "node scripts/verify-outreach-email.mjs --reply-capture-evidence private/reply-capture-evidence.json --reply-capture-challenge private/reply-capture-challenge.json --runbook-output private/outreach-email-runbook.md --allow-pending",
+    "render:market-proof-brief": "node scripts/render-market-proof-action-brief.mjs",
     "render:outreach-replies": "node scripts/render-outreach-reply-playbook.mjs",
     "render:outreach-send-ready": "node scripts/render-outreach-send-ready.mjs",
     "render:outreach-send-checklist": "node scripts/render-outreach-send-checklist.mjs",
