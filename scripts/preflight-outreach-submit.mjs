@@ -73,6 +73,10 @@ export function preflightOutreachSubmit({
     throw new Error(`send-ready packet for ${routeId} is missing the verified public route`);
   }
 
+  if (!replyCaptureReadyFromEmailReport(emailReport)) {
+    throw new Error(`reply capture must be verified before creating submit preflight for ${routeId}`);
+  }
+
   return {
     routeId,
     companyName,
@@ -158,7 +162,8 @@ export function preflightAllReadyOutreachSubmits({
   sendReadyDir = DEFAULT_PRIVATE_DIR,
 }) {
   const readyRoutes = (sendabilityAudit.routes ?? []).filter((route) => route.sendability === "browser_form_ready");
-  const preflights = readyRoutes.map((route) => {
+  const replyCaptureReady = replyCaptureReadyFromEmailReport(emailReport);
+  const sendReadyEntries = readyRoutes.map((route) => {
     const sendReadyPath = normalizePath(`${sendReadyDir}/send-ready-${route.route_id}.md`);
     const sendReadyMarkdown = sendReadyPackets[sendReadyPath] ?? sendReadyPackets[route.route_id] ?? "";
 
@@ -166,6 +171,14 @@ export function preflightAllReadyOutreachSubmits({
       throw new Error(`send-ready packet for ${route.route_id} is missing`);
     }
 
+    return { route, sendReadyPath, sendReadyMarkdown };
+  });
+
+  if (!replyCaptureReady) {
+    throw new Error("reply capture must be verified before creating submit preflight queue");
+  }
+
+  const preflights = sendReadyEntries.map(({ route, sendReadyPath, sendReadyMarkdown }) => {
     return {
       ...preflightOutreachSubmit({
         batchRows,
@@ -184,7 +197,7 @@ export function preflightAllReadyOutreachSubmits({
   return {
     readyRoutes: readyRoutes.length,
     preflightReadyRoutes: preflights.length,
-    replyCapture: replyCaptureReadyFromEmailReport(emailReport) ? "ready" : "at_risk",
+    replyCapture: replyCaptureReady ? "ready" : "at_risk",
     outputDir: normalizePath(outputDir),
     preflights,
   };

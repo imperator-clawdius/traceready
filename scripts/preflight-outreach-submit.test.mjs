@@ -83,32 +83,19 @@ const REPLY_CAPTURE_READY_EMAIL = {
 };
 
 describe("outreach submit preflight", () => {
-  it("renders a safe action-time checklist for a browser-form-ready unsent route", () => {
-    const preflight = preflightOutreachSubmit({
-      batchRows: parseOutreachLedger(BATCH_CSV),
-      resultRows: parseOutreachResults(RESULTS_CSV),
-      sendabilityAudit: SENDABILITY_AUDIT,
-      sendReadyMarkdown: SEND_READY_PACKET,
-      routeId: "b02-r04",
-      sendReadyPath: "private/send-ready-b02-r04.md",
-      resultsPath: "private/outreach-results-batch-02.csv",
-      emailReport: { ready: false },
-    });
-    const markdown = renderOutreachSubmitPreflight(preflight, { generatedAt: "2026-06-16" });
-
-    expect(preflight.replyCapture).toBe("at_risk");
-    expect(markdown).toContain("# TraceReady submit preflight: b02-r04");
-    expect(markdown).toContain(
-      'OUTREACH_SUBMIT_PREFLIGHT=pass route=b02-r04 company="Bureau Veritas" reply_capture=at_risk',
-    );
-    expect(markdown).toContain("Public route: https://news.bureauveritas.net/l/591681/2024-10-25/3t89vtv");
-    expect(markdown).toContain("Result ledger status: `not_sent`");
-    expect(markdown).toContain("Send-ready packet: `private/send-ready-b02-r04.md`");
-    expect(markdown).toContain(
-      "Confirm: submit b02-r04 to Bureau Veritas using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-b02-r04.md.",
-    );
-    expect(markdown).toContain("Do not submit until that exact confirmation has been given at action time.");
-    expect(markdown).toContain("Only run this after visible browser success");
+  it("refuses to render an actionable route preflight until reply capture is verified", () => {
+    expect(() =>
+      preflightOutreachSubmit({
+        batchRows: parseOutreachLedger(BATCH_CSV),
+        resultRows: parseOutreachResults(RESULTS_CSV),
+        sendabilityAudit: SENDABILITY_AUDIT,
+        sendReadyMarkdown: SEND_READY_PACKET,
+        routeId: "b02-r04",
+        sendReadyPath: "private/send-ready-b02-r04.md",
+        resultsPath: "private/outreach-results-batch-02.csv",
+        emailReport: { ready: false },
+      }),
+    ).toThrow("reply capture must be verified before creating submit preflight for b02-r04");
   });
 
   it("marks browser-form reply capture ready when the alias delivery test is proven", () => {
@@ -201,43 +188,33 @@ describe("outreach submit preflight", () => {
     });
   });
 
-  it("builds a queue of preflights for every browser-form-ready unsent route", () => {
-    const queue = preflightAllReadyOutreachSubmits({
-      batchRows: parseOutreachLedger(BATCH_CSV),
-      resultRows: parseOutreachResults(RESULTS_CSV),
-      sendabilityAudit: {
-        auditDate: "2026-06-16",
-        routes: [
-          {
-            route_id: "b02-r03",
-            company_or_channel: "Control Union",
-            sendability: "browser_form_ready",
-            contact_method: "public_browser_form",
-            route_url: "https://www.controlunion.com/eu-deforestation-regulation-eudr/",
-            requires_action_time_confirmation: true,
-          },
-          SENDABILITY_AUDIT.routes[1],
-        ],
-      },
-      sendReadyPackets: {
-        "private/send-ready-b02-r03.md": CONTROL_UNION_PACKET,
-        "private/send-ready-b02-r04.md": SEND_READY_PACKET,
-      },
-      resultsPath: "private/outreach-results-batch-02.csv",
-      emailReport: { ready: false },
-    });
-    const markdown = renderOutreachSubmitQueue(queue, { generatedAt: "2026-06-16" });
-
-    expect(queue.preflights).toHaveLength(2);
-    expect(queue.readyRoutes).toBe(2);
-    expect(queue.preflightReadyRoutes).toBe(2);
-    expect(queue.replyCapture).toBe("at_risk");
-    expect(markdown).toContain("# TraceReady submit queue - 2026-06-16");
-    expect(markdown).toContain("OUTREACH_SUBMIT_QUEUE=pass ready_routes=2 preflight_ready=2 reply_capture=at_risk");
-    expect(markdown).toContain("| `b02-r03` | Control Union |");
-    expect(markdown).toContain("| `b02-r04` | Bureau Veritas |");
-    expect(markdown).toContain("Confirm: submit b02-r03 to Control Union");
-    expect(markdown).toContain("Confirm: submit b02-r04 to Bureau Veritas");
+  it("refuses an all-ready queue until reply capture is verified", () => {
+    expect(() =>
+      preflightAllReadyOutreachSubmits({
+        batchRows: parseOutreachLedger(BATCH_CSV),
+        resultRows: parseOutreachResults(RESULTS_CSV),
+        sendabilityAudit: {
+          auditDate: "2026-06-16",
+          routes: [
+            {
+              route_id: "b02-r03",
+              company_or_channel: "Control Union",
+              sendability: "browser_form_ready",
+              contact_method: "public_browser_form",
+              route_url: "https://www.controlunion.com/eu-deforestation-regulation-eudr/",
+              requires_action_time_confirmation: true,
+            },
+            SENDABILITY_AUDIT.routes[1],
+          ],
+        },
+        sendReadyPackets: {
+          "private/send-ready-b02-r03.md": CONTROL_UNION_PACKET,
+          "private/send-ready-b02-r04.md": SEND_READY_PACKET,
+        },
+        resultsPath: "private/outreach-results-batch-02.csv",
+        emailReport: { ready: false },
+      }),
+    ).toThrow("reply capture must be verified before creating submit preflight queue");
   });
 
   it("builds a ready reply-capture queue without requiring full outbound email readiness", () => {

@@ -60,6 +60,11 @@ const SEND_READY_PACKETS = Object.fromEntries(
 );
 
 const SUBMIT_PREFLIGHT_PACKETS = {
+  "b02-r03": 'OUTREACH_SUBMIT_PREFLIGHT=pass route=b02-r03 company="Control Union" reply_capture=ready\nConfirm: submit b02-r03 to Control Union using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-b02-r03.md.',
+  "b02-r04": 'OUTREACH_SUBMIT_PREFLIGHT=pass route=b02-r04 company="Bureau Veritas" reply_capture=ready\nConfirm: submit b02-r04 to Bureau Veritas using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-b02-r04.md.',
+};
+
+const SUBMIT_PREFLIGHT_PACKETS_AT_RISK = {
   "b02-r03": 'OUTREACH_SUBMIT_PREFLIGHT=pass route=b02-r03 company="Control Union" reply_capture=at_risk\nConfirm: submit b02-r03 to Control Union using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-b02-r03.md.',
   "b02-r04": 'OUTREACH_SUBMIT_PREFLIGHT=pass route=b02-r04 company="Bureau Veritas" reply_capture=at_risk\nConfirm: submit b02-r04 to Bureau Veritas using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-b02-r04.md.',
 };
@@ -162,8 +167,8 @@ describe("traction readiness scorecard", () => {
     expect(score.outreach.packetReadyRoutes).toBe(2);
     expect(score.outreach.missingPacketRoutes).toEqual([]);
     expect(score.outreach.sentOrBeyond).toBe(0);
-    expect(score.currentState).toBe("proof_ready_send_ready_traction_unmeasured");
-    expect(score.nextGate).toBe("submit_verified_public_forms_after_action_time_confirmation");
+    expect(score.currentState).toBe("proof_ready_reply_capture_at_risk_traction_unmeasured");
+    expect(score.nextGate).toBe("verify_reply_capture_before_external_submission");
 
     const markdown = renderTractionReadinessScorecard(score, { generatedAt: "2026-06-16" });
     expect(markdown).toContain("# TraceReady traction-readiness scorecard - 2026-06-16");
@@ -219,6 +224,47 @@ describe("traction readiness scorecard", () => {
     expect(markdown).toContain("| Missing submit preflights | 0 |");
     expect(markdown).toContain("| Submit preflights missing confirmation | 0 |");
     expect(markdown).toContain("## Submit Preflight Guard");
+  });
+
+  it("does not count stale submit preflights with at-risk reply capture as ready", () => {
+    const score = scoreTractionReadiness({
+      publicAuditMarkdown: PUBLIC_AUDIT,
+      batchRows: parseOutreachLedger(BATCH_CSV),
+      resultRows: parseOutreachResults(RESULTS_CSV),
+      sendabilityAudit: {
+        routes: [
+          {
+            route_id: "b02-r03",
+            company_or_channel: "Control Union",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://www.controlunion.com/eu-deforestation-regulation-eudr/",
+            requires_action_time_confirmation: true,
+          },
+          {
+            route_id: "b02-r04",
+            company_or_channel: "Bureau Veritas",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://news.bureauveritas.net/l/591681/2024-10-25/3t89vtv",
+            requires_action_time_confirmation: true,
+          },
+        ],
+      },
+      contactRecon: { summary: {} },
+      emailReport: REPLY_CAPTURE_AT_RISK_EMAIL,
+      sendReadyPackets: SEND_READY_PACKETS,
+      submitPreflightPackets: SUBMIT_PREFLIGHT_PACKETS_AT_RISK,
+    });
+
+    expect(score.outreach.submitPreflightReadyRoutes).toBe(0);
+    expect(score.outreach.missingSubmitPreflightConfirmationRoutes).toEqual(["b02-r03", "b02-r04"]);
+    expect(score.currentState).toBe("proof_ready_reply_capture_at_risk_traction_unmeasured");
+    expect(score.nextGate).toBe("verify_reply_capture_before_external_submission");
+
+    const markdown = renderTractionReadinessScorecard(score, { generatedAt: "2026-06-17" });
+    expect(markdown).toContain("| Submit preflights with matching confirmation | 0 |");
+    expect(markdown).toContain("| Submit preflights missing confirmation | `b02-r03`, `b02-r04` |");
   });
 
   it("promotes submit-ready routes when a live submit route report is passing", () => {

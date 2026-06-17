@@ -42,6 +42,20 @@ export function scoreTractionReadiness({
   const reconSummary = contactRecon?.summary ?? {};
   const emailChecks = Object.fromEntries((emailReport?.checks ?? []).map((check) => [check.label, check.ready]));
   const replyCaptureReady = Boolean(emailChecks.OUTREACH_EMAIL_MX && emailChecks.OUTREACH_EMAIL_ALIAS_TEST);
+  const sendPacketNeedsWork =
+    packetVerification.checked &&
+    packetVerification.missingPacketRoutes.length +
+      packetVerification.missingConfirmationRoutes.length +
+      packetVerification.missingTrustBridgeRoutes.length >
+      0;
+  const submitPreflightNeedsWork =
+    submitPreflightVerification.checked &&
+    submitPreflightVerification.missingPreflightRoutes.length +
+      submitPreflightVerification.missingConfirmationRoutes.length >
+      0;
+  const liveSubmitRoutesBlocked = liveSubmitVerification.checked && liveSubmitVerification.status !== "pass";
+  const replyCaptureAtRiskBeforeExternalSubmission =
+    !replyCaptureReady && resultsSummary.sentOrBeyond === 0 && readyRoutes.length > 0;
   const liveSubmitReadyButReplyCaptureAtRisk =
     liveSubmitVerification.checked &&
     liveSubmitVerification.status === "pass" &&
@@ -50,21 +64,14 @@ export function scoreTractionReadiness({
     readyRoutes.length > 0 &&
     !replyCaptureReady;
   const currentState =
-    packetVerification.checked &&
-    packetVerification.missingPacketRoutes.length +
-      packetVerification.missingConfirmationRoutes.length +
-      packetVerification.missingTrustBridgeRoutes.length >
-      0
+    sendPacketNeedsWork
       ? "proof_ready_routes_need_send_packets"
-      : submitPreflightVerification.checked &&
-          submitPreflightVerification.missingPreflightRoutes.length +
-            submitPreflightVerification.missingConfirmationRoutes.length >
-            0
-        ? "proof_ready_routes_need_submit_preflights"
-        : liveSubmitVerification.checked && liveSubmitVerification.status !== "pass"
+      : liveSubmitRoutesBlocked
           ? "proof_ready_live_submit_routes_blocked"
-          : liveSubmitReadyButReplyCaptureAtRisk
+          : liveSubmitReadyButReplyCaptureAtRisk || replyCaptureAtRiskBeforeExternalSubmission
             ? "proof_ready_reply_capture_at_risk_traction_unmeasured"
+            : submitPreflightNeedsWork
+              ? "proof_ready_routes_need_submit_preflights"
         : liveSubmitVerification.checked && submitPreflightVerification.checked && resultsSummary.sentOrBeyond === 0 && readyRoutes.length > 0
           ? "proof_ready_live_submit_ready_traction_unmeasured"
         : submitPreflightVerification.checked && resultsSummary.sentOrBeyond === 0 && readyRoutes.length > 0
@@ -123,21 +130,14 @@ export function scoreTractionReadiness({
     },
     currentState,
     nextGate:
-      packetVerification.checked &&
-      packetVerification.missingPacketRoutes.length +
-        packetVerification.missingConfirmationRoutes.length +
-        packetVerification.missingTrustBridgeRoutes.length >
-        0
+      sendPacketNeedsWork
         ? "render_missing_send_ready_packets"
-        : submitPreflightVerification.checked &&
-            submitPreflightVerification.missingPreflightRoutes.length +
-              submitPreflightVerification.missingConfirmationRoutes.length >
-              0
-          ? "render_missing_submit_preflights"
-          : liveSubmitVerification.checked && liveSubmitVerification.status !== "pass"
+        : liveSubmitRoutesBlocked
             ? "refresh_or_replace_blocked_submit_routes"
-            : liveSubmitReadyButReplyCaptureAtRisk
+            : liveSubmitReadyButReplyCaptureAtRisk || replyCaptureAtRiskBeforeExternalSubmission
               ? "verify_reply_capture_before_external_submission"
+              : submitPreflightNeedsWork
+                ? "render_missing_submit_preflights"
         : submissionEvidence.unevidencedSentRoutes.length > 0
           ? "record_visible_success_evidence_before_measuring_traction"
         : resultsSummary.sentOrBeyond === 0 && readyRoutes.length > 0
@@ -459,7 +459,7 @@ function verifySubmitPreflightPackets(readyRoutes, submitPreflightPackets) {
       submitPreflightPackets[route.route_id] ??
       submitPreflightPackets[`private/preflight-submit-${route.route_id}.md`] ??
       "";
-    const expectedPassLine = `OUTREACH_SUBMIT_PREFLIGHT=pass route=${route.route_id} company="${route.company_or_channel}"`;
+    const expectedPassLine = `OUTREACH_SUBMIT_PREFLIGHT=pass route=${route.route_id} company="${route.company_or_channel}" reply_capture=ready`;
     const expectedConfirmation = `Confirm: submit ${route.route_id} to ${route.company_or_channel} using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-${route.route_id}.md.`;
 
     if (!packetText.trim()) {
