@@ -8,6 +8,7 @@ import {
   inspectOutreachEmailDns,
   parseOutreachEmailArgs,
   renderOutreachEmailReport,
+  renderOutreachEmailRunbook,
 } from "./verify-outreach-email.mjs";
 
 const NAMECHEAP_MX = [
@@ -251,6 +252,46 @@ describe("outreach email verifier", () => {
     expect(rendered).toContain("OUTREACH_EMAIL_ALIAS_NEXT=");
   });
 
+  it("renders an operator runbook for pending reply capture and email DNS work", () => {
+    const report = evaluateOutreachEmailDns({
+      mxRecords: NAMECHEAP_MX,
+      apexTxtRecords: [["v=spf1 include:spf.efwd.registrar-servers.com ~all"]],
+      dmarcTxtRecords: [],
+      dkimSelectors: ["default", "google"],
+      dkimTxtRecordSets: [[], []],
+      replyCaptureEvidenceResult: {
+        ready: false,
+        detail: "reply-capture evidence file not found: private/reply-capture-evidence.json",
+        errors: ["reply-capture evidence file not found: private/reply-capture-evidence.json"],
+      },
+    });
+
+    const markdown = renderOutreachEmailRunbook(report, {
+      challengePath: "private/reply-capture-challenge.json",
+      evidencePath: "private/reply-capture-evidence.json",
+      handoffPath: "private/reply-capture-handoff.md",
+      emailDraftPath: "private/reply-capture-email.eml",
+      generatedAt: "2026-06-17T04:00:00.000Z",
+    });
+
+    expect(markdown).toContain("# TraceReady outreach email runbook");
+    expect(markdown).toContain("Generated: 2026-06-17T04:00:00.000Z");
+    expect(markdown).toContain("| OUTREACH_EMAIL_MX | pass |");
+    expect(markdown).toContain("| OUTREACH_EMAIL_DMARC | pending |");
+    expect(markdown).toContain("TXT `_dmarc`");
+    expect(markdown).toContain("v=DMARC1; p=none; rua=mailto:founder@traceready.online; adkim=r; aspf=r");
+    expect(markdown).toContain("Add the DKIM TXT/CNAME records from the outbound mail provider");
+    expect(markdown).toContain("private/reply-capture-handoff.md");
+    expect(markdown).toContain("private/reply-capture-email.eml");
+    expect(markdown).toContain(
+      "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
+    );
+    expect(markdown).toContain(
+      "npm run verify:outreach-email -- --reply-capture-evidence private/reply-capture-evidence.json --reply-capture-challenge private/reply-capture-challenge.json",
+    );
+    expect(markdown).toContain("Do not mark outreach sent or measure non-response until reply capture is recorded.");
+  });
+
   it("parses domain, contact, and extra DKIM selector options", () => {
     expect(
       parseOutreachEmailArgs([
@@ -264,6 +305,9 @@ describe("outreach email verifier", () => {
         "private/reply-capture-evidence.json",
         "--reply-capture-challenge",
         "private/reply-capture-challenge.json",
+        "--runbook-output",
+        "private/outreach-email-runbook.md",
+        "--allow-pending",
         "--alias-tested",
       ]),
     ).toEqual({
@@ -272,6 +316,8 @@ describe("outreach email verifier", () => {
       dkimSelectors: ["default", "google", "selector1", "selector2", "mailgun"],
       replyCaptureEvidencePath: "private/reply-capture-evidence.json",
       replyCaptureChallengePath: "private/reply-capture-challenge.json",
+      runbookOutputPath: "private/outreach-email-runbook.md",
+      allowPending: true,
       aliasTested: true,
     });
   });

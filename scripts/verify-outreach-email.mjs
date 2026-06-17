@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import { resolveMx, resolveTxt } from "node:dns/promises";
+import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 export const DEFAULT_DOMAIN = "traceready.online";
@@ -13,6 +14,10 @@ export const EXPECTED_FORWARDING_MX = [
 ];
 export const NAMECHEAP_FORWARDING_SPF = "include:spf.efwd.registrar-servers.com";
 export const DEFAULT_DKIM_SELECTORS = ["default", "google", "selector1", "selector2"];
+const DEFAULT_REPLY_CAPTURE_EVIDENCE_PATH = "private/reply-capture-evidence.json";
+const DEFAULT_REPLY_CAPTURE_CHALLENGE_PATH = "private/reply-capture-challenge.json";
+const DEFAULT_REPLY_CAPTURE_HANDOFF_PATH = "private/reply-capture-handoff.md";
+const DEFAULT_REPLY_CAPTURE_EMAIL_DRAFT_PATH = "private/reply-capture-email.eml";
 
 export function parseOutreachEmailArgs(argv) {
   const options = {
@@ -41,6 +46,11 @@ export function parseOutreachEmailArgs(argv) {
     } else if (arg === "--reply-capture-challenge" && next) {
       options.replyCaptureChallengePath = next;
       index += 1;
+    } else if (arg === "--runbook-output" && next) {
+      options.runbookOutputPath = next;
+      index += 1;
+    } else if (arg === "--allow-pending") {
+      options.allowPending = true;
     } else if (arg === "--alias-tested") {
       options.aliasTested = true;
     }
@@ -308,13 +318,88 @@ export function renderOutreachEmailReport(report) {
   return `${lines.join("\n")}\n`;
 }
 
+export function renderOutreachEmailRunbook(report, options = {}) {
+  const challengePath = options.challengePath ?? DEFAULT_REPLY_CAPTURE_CHALLENGE_PATH;
+  const evidencePath = options.evidencePath ?? DEFAULT_REPLY_CAPTURE_EVIDENCE_PATH;
+  const handoffPath = options.handoffPath ?? DEFAULT_REPLY_CAPTURE_HANDOFF_PATH;
+  const emailDraftPath = options.emailDraftPath ?? DEFAULT_REPLY_CAPTURE_EMAIL_DRAFT_PATH;
+  const generatedAt = options.generatedAt ?? new Date().toISOString();
+  const dmarcValue = `v=DMARC1; p=none; rua=mailto:${report.contactEmail}; adkim=r; aspf=r`;
+
+  return `${[
+    "# TraceReady outreach email runbook",
+    "",
+    `Generated: ${generatedAt}`,
+    "",
+    "## Current Gate",
+    "",
+    `Domain: ${report.domain}`,
+    `Contact: ${report.contactEmail}`,
+    `Email ready: ${report.ready ? "yes" : "no"}`,
+    `Reply capture ready: ${report.replyCaptureReady ? "yes" : "no"}`,
+    "",
+    "| Check | Status | Detail |",
+    "| --- | --- | --- |",
+    ...report.checks.map((check) => `| ${check.label} | ${check.ready ? "pass" : "pending"} | ${escapeTableCell(check.detail)} |`),
+    "",
+    "## DNS Records",
+    "",
+    "- Existing SPF should keep the Namecheap forwarding include: `v=spf1 include:spf.efwd.registrar-servers.com ~all`.",
+    `- Namecheap record: TXT \`_dmarc\` with value \`${dmarcValue}\`.`,
+    "- Add the DKIM TXT/CNAME records from the outbound mail provider. TraceReady cannot infer DKIM until the sender/provider is chosen.",
+    "",
+    "| Type | Host | Value |",
+    "| --- | --- | --- |",
+    `| TXT | \`_dmarc\` | \`${dmarcValue}\` |`,
+    "",
+    "## Reply Capture",
+    "",
+    `- Send the challenge from \`${handoffPath}\` to prove the alias reaches a controlled inbox.`,
+    `- Optional local draft: \`${emailDraftPath}\`.`,
+    "- Send from a separate mailbox, not from the forwarding destination.",
+    "",
+    "After the message arrives, record the real received timestamp:",
+    "",
+    "```powershell",
+    `npm run record:reply-capture -- --output ${evidencePath} --contact ${report.contactEmail} --received-at <received-at-iso> --challenge ${challengePath} --confirm-controlled-inbox`,
+    "```",
+    "",
+    "Then rerun:",
+    "",
+    "```powershell",
+    `npm run verify:outreach-email -- --reply-capture-evidence ${evidencePath} --reply-capture-challenge ${challengePath}`,
+    "npm run finalize:reply-capture",
+    "```",
+    "",
+    "Do not mark outreach sent or measure non-response until reply capture is recorded.",
+  ].join("\n")}\n`;
+}
+
+export async function writeOutreachEmailRunbook(report, options = {}) {
+  if (!options.outputPath) {
+    return null;
+  }
+
+  await fs.mkdir(path.dirname(options.outputPath), { recursive: true });
+  await fs.writeFile(options.outputPath, renderOutreachEmailRunbook(report, options), "utf8");
+  return options.outputPath;
+}
+
 async function main() {
   const options = parseOutreachEmailArgs(process.argv.slice(2));
   const report = await inspectOutreachEmailDns(options);
 
   process.stdout.write(renderOutreachEmailReport(report));
+  if (options.runbookOutputPath) {
+    await writeOutreachEmailRunbook(report, {
+      outputPath: options.runbookOutputPath,
+      challengePath: options.replyCaptureChallengePath,
+      evidencePath: options.replyCaptureEvidencePath,
+    });
+    process.stdout.write(`OUTREACH_EMAIL_RUNBOOK=${options.runbookOutputPath}\n`);
+  }
 
-  if (!report.ready) {
+  if (!report.ready && !options.allowPending) {
     process.exitCode = 1;
   }
 }
@@ -346,6 +431,10 @@ function normalizeHost(hostname) {
 
 function normalizeEmail(email) {
   return String(email ?? "").trim().toLowerCase();
+}
+
+function escapeTableCell(value) {
+  return String(value ?? "").replaceAll("|", "\\|");
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
