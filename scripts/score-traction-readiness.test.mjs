@@ -90,6 +90,28 @@ OUTREACH_SUBMIT_LIVE=pending ready_routes=2 live_ready=1 blocked=1 captcha=0
 | CAPTCHA or browser challenge marker | none |
 `;
 
+const REPLY_CAPTURE_READY_EMAIL = {
+  ready: false,
+  dnsReady: false,
+  checks: [
+    { label: "OUTREACH_EMAIL_MX", ready: true },
+    { label: "OUTREACH_EMAIL_DMARC", ready: false },
+    { label: "OUTREACH_EMAIL_DKIM", ready: false },
+    { label: "OUTREACH_EMAIL_ALIAS_TEST", ready: true },
+  ],
+};
+
+const REPLY_CAPTURE_AT_RISK_EMAIL = {
+  ready: false,
+  dnsReady: false,
+  checks: [
+    { label: "OUTREACH_EMAIL_MX", ready: true },
+    { label: "OUTREACH_EMAIL_DMARC", ready: false },
+    { label: "OUTREACH_EMAIL_DKIM", ready: false },
+    { label: "OUTREACH_EMAIL_ALIAS_TEST", ready: false },
+  ],
+};
+
 describe("traction readiness scorecard", () => {
   it("separates quantified proof, ready routes, unmeasured traction, and email risk", () => {
     const score = scoreTractionReadiness({
@@ -125,16 +147,7 @@ describe("traction readiness scorecard", () => {
           unreachable: 0,
         },
       },
-      emailReport: {
-        ready: false,
-        dnsReady: false,
-        checks: [
-          { label: "OUTREACH_EMAIL_MX", ready: true },
-          { label: "OUTREACH_EMAIL_DMARC", ready: false },
-          { label: "OUTREACH_EMAIL_DKIM", ready: false },
-          { label: "OUTREACH_EMAIL_ALIAS_TEST", ready: false },
-        ],
-      },
+      emailReport: REPLY_CAPTURE_AT_RISK_EMAIL,
       sendReadyPackets: SEND_READY_PACKETS,
     });
 
@@ -154,6 +167,7 @@ describe("traction readiness scorecard", () => {
     expect(markdown).toContain("| Manually verified browser-form-ready routes | 2 |");
     expect(markdown).toContain("| Send-ready packets with matching confirmation | 2 |");
     expect(markdown).toContain("| External submissions completed | 0 |");
+    expect(markdown).toContain("| OUTREACH_EMAIL_REPLY_CAPTURE | pending |");
     expect(markdown).toContain("OUTREACH_EMAIL_DMARC: pending");
     expect(markdown).toContain("Confirm: submit b02-r03 to Control Union");
     expect(markdown).toContain("Confirm: submit b02-r04 to Bureau Veritas");
@@ -185,7 +199,7 @@ describe("traction readiness scorecard", () => {
         ],
       },
       contactRecon: { summary: {} },
-      emailReport: { ready: false, dnsReady: false, checks: [] },
+      emailReport: REPLY_CAPTURE_READY_EMAIL,
       sendReadyPackets: SEND_READY_PACKETS,
       submitPreflightPackets: SUBMIT_PREFLIGHT_PACKETS,
     });
@@ -229,7 +243,7 @@ describe("traction readiness scorecard", () => {
         ],
       },
       contactRecon: { summary: {} },
-      emailReport: { ready: false, dnsReady: false, checks: [] },
+      emailReport: REPLY_CAPTURE_READY_EMAIL,
       sendReadyPackets: SEND_READY_PACKETS,
       submitPreflightPackets: SUBMIT_PREFLIGHT_PACKETS,
       liveSubmitReport: LIVE_SUBMIT_REPORT_PASS,
@@ -247,6 +261,48 @@ describe("traction readiness scorecard", () => {
     expect(markdown).toContain("| Live submit routes HTTP-blocked | 0 |");
     expect(markdown).toContain("| Live submit routes CAPTCHA/challenge | 0 |");
     expect(markdown).toContain("## Live Submit Route Guard");
+    expect(markdown).toContain("| OUTREACH_EMAIL_REPLY_CAPTURE | pass |");
+  });
+
+  it("does not call live submit-ready routes actionable until reply capture is verified", () => {
+    const score = scoreTractionReadiness({
+      publicAuditMarkdown: PUBLIC_AUDIT,
+      batchRows: parseOutreachLedger(BATCH_CSV),
+      resultRows: parseOutreachResults(RESULTS_CSV),
+      sendabilityAudit: {
+        routes: [
+          {
+            route_id: "b02-r03",
+            company_or_channel: "Control Union",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://www.controlunion.com/eu-deforestation-regulation-eudr/",
+            requires_action_time_confirmation: true,
+          },
+          {
+            route_id: "b02-r04",
+            company_or_channel: "Bureau Veritas",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://news.bureauveritas.net/l/591681/2024-10-25/3t89vtv",
+            requires_action_time_confirmation: true,
+          },
+        ],
+      },
+      contactRecon: { summary: {} },
+      emailReport: REPLY_CAPTURE_AT_RISK_EMAIL,
+      sendReadyPackets: SEND_READY_PACKETS,
+      submitPreflightPackets: SUBMIT_PREFLIGHT_PACKETS,
+      liveSubmitReport: LIVE_SUBMIT_REPORT_PASS,
+    });
+
+    expect(score.email.replyCaptureReady).toBe(false);
+    expect(score.currentState).toBe("proof_ready_reply_capture_at_risk_traction_unmeasured");
+    expect(score.nextGate).toBe("verify_reply_capture_before_external_submission");
+
+    const markdown = renderTractionReadinessScorecard(score, { generatedAt: "2026-06-17" });
+    expect(markdown).toContain("| OUTREACH_EMAIL_REPLY_CAPTURE | pending |");
+    expect(markdown).toContain("Reply capture must pass before treating non-response as market evidence.");
   });
 
   it("blocks action-time submission when the live submit route report has route blockers", () => {
@@ -275,7 +331,7 @@ describe("traction readiness scorecard", () => {
         ],
       },
       contactRecon: { summary: {} },
-      emailReport: { ready: false, dnsReady: false, checks: [] },
+      emailReport: REPLY_CAPTURE_AT_RISK_EMAIL,
       sendReadyPackets: SEND_READY_PACKETS,
       submitPreflightPackets: SUBMIT_PREFLIGHT_PACKETS,
       liveSubmitReport: LIVE_SUBMIT_REPORT_PENDING,
@@ -317,7 +373,7 @@ describe("traction readiness scorecard", () => {
         ],
       },
       contactRecon: { summary: {} },
-      emailReport: { ready: false, dnsReady: false, checks: [] },
+      emailReport: REPLY_CAPTURE_READY_EMAIL,
       sendReadyPackets: {
         "b02-r03": SEND_READY_PACKETS["b02-r03"],
       },
@@ -355,7 +411,7 @@ describe("traction readiness scorecard", () => {
         ],
       },
       contactRecon: { summary: {} },
-      emailReport: { ready: false, dnsReady: false, checks: [] },
+      emailReport: REPLY_CAPTURE_READY_EMAIL,
       sendReadyPackets: {
         "b02-r03": SEND_READY_PACKETS["b02-r03"],
         "b02-r04": SEND_READY_CONFIRMATIONS["b02-r04"],
@@ -397,7 +453,7 @@ describe("traction readiness scorecard", () => {
         ],
       },
       contactRecon: { summary: {} },
-      emailReport: { ready: false, dnsReady: false, checks: [] },
+      emailReport: REPLY_CAPTURE_READY_EMAIL,
       sendReadyPackets: SEND_READY_PACKETS,
       submitPreflightPackets: SUBMIT_PREFLIGHT_PACKETS,
     });
@@ -439,7 +495,7 @@ describe("traction readiness scorecard", () => {
         ],
       },
       contactRecon: { summary: {} },
-      emailReport: { ready: false, dnsReady: false, checks: [] },
+      emailReport: REPLY_CAPTURE_READY_EMAIL,
       sendReadyPackets: SEND_READY_PACKETS,
       submitPreflightPackets: SUBMIT_PREFLIGHT_PACKETS,
     });

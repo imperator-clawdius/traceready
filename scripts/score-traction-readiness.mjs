@@ -41,6 +41,14 @@ export function scoreTractionReadiness({
   const submissionEvidence = verifySubmissionEvidence(resultRows);
   const reconSummary = contactRecon?.summary ?? {};
   const emailChecks = Object.fromEntries((emailReport?.checks ?? []).map((check) => [check.label, check.ready]));
+  const replyCaptureReady = Boolean(emailChecks.OUTREACH_EMAIL_MX && emailChecks.OUTREACH_EMAIL_ALIAS_TEST);
+  const liveSubmitReadyButReplyCaptureAtRisk =
+    liveSubmitVerification.checked &&
+    liveSubmitVerification.status === "pass" &&
+    submitPreflightVerification.checked &&
+    resultsSummary.sentOrBeyond === 0 &&
+    readyRoutes.length > 0 &&
+    !replyCaptureReady;
   const currentState =
     packetVerification.checked &&
     packetVerification.missingPacketRoutes.length +
@@ -55,6 +63,8 @@ export function scoreTractionReadiness({
         ? "proof_ready_routes_need_submit_preflights"
         : liveSubmitVerification.checked && liveSubmitVerification.status !== "pass"
           ? "proof_ready_live_submit_routes_blocked"
+          : liveSubmitReadyButReplyCaptureAtRisk
+            ? "proof_ready_reply_capture_at_risk_traction_unmeasured"
         : liveSubmitVerification.checked && submitPreflightVerification.checked && resultsSummary.sentOrBeyond === 0 && readyRoutes.length > 0
           ? "proof_ready_live_submit_ready_traction_unmeasured"
         : submitPreflightVerification.checked && resultsSummary.sentOrBeyond === 0 && readyRoutes.length > 0
@@ -108,6 +118,7 @@ export function scoreTractionReadiness({
     email: {
       ready: Boolean(emailReport?.ready),
       dnsReady: Boolean(emailReport?.dnsReady),
+      replyCaptureReady,
       checks: emailChecks,
     },
     currentState,
@@ -125,6 +136,8 @@ export function scoreTractionReadiness({
           ? "render_missing_submit_preflights"
           : liveSubmitVerification.checked && liveSubmitVerification.status !== "pass"
             ? "refresh_or_replace_blocked_submit_routes"
+            : liveSubmitReadyButReplyCaptureAtRisk
+              ? "verify_reply_capture_before_external_submission"
         : submissionEvidence.unevidencedSentRoutes.length > 0
           ? "record_visible_success_evidence_before_measuring_traction"
         : resultsSummary.sentOrBeyond === 0 && readyRoutes.length > 0
@@ -244,6 +257,7 @@ ${readyRouteLines.join("\n")}
 | OUTREACH_EMAIL_DKIM | ${statusFor(score.email.checks.OUTREACH_EMAIL_DKIM)} |
 | OUTREACH_EMAIL_OUTBOUND_AUTH | ${statusFor(score.email.checks.OUTREACH_EMAIL_OUTBOUND_AUTH)} |
 | OUTREACH_EMAIL_ALIAS_TEST | ${statusFor(score.email.checks.OUTREACH_EMAIL_ALIAS_TEST)} |
+| OUTREACH_EMAIL_REPLY_CAPTURE | ${statusFor(score.email.replyCaptureReady)} |
 | OUTREACH_EMAIL_READY | ${statusFor(score.email.ready)} |
 
 Email gate summary:
@@ -253,7 +267,10 @@ Email gate summary:
 - OUTREACH_EMAIL_DKIM: ${statusFor(score.email.checks.OUTREACH_EMAIL_DKIM)}
 - OUTREACH_EMAIL_OUTBOUND_AUTH: ${statusFor(score.email.checks.OUTREACH_EMAIL_OUTBOUND_AUTH)}
 - OUTREACH_EMAIL_ALIAS_TEST: ${statusFor(score.email.checks.OUTREACH_EMAIL_ALIAS_TEST)}
+- OUTREACH_EMAIL_REPLY_CAPTURE: ${statusFor(score.email.replyCaptureReady)}
 - OUTREACH_EMAIL_READY: ${statusFor(score.email.ready)}
+
+${score.email.replyCaptureReady ? "" : "Reply capture must pass before treating non-response as market evidence.\n"}
 
 ## Measurement Rule
 
@@ -624,6 +641,7 @@ async function main() {
       `file_checks=${score.outreach.fileChecks}`,
       `paid_orders=${score.outreach.paidOrders}`,
       `email_ready=${score.email.ready}`,
+      `reply_capture_ready=${score.email.replyCaptureReady}`,
       ...(options.outputPath ? [`output=${options.outputPath}`] : []),
     ].join(" "),
   );
