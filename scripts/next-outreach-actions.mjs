@@ -8,6 +8,8 @@ const DEFAULT_SEND_LIMIT = 8;
 const DEFAULT_FOLLOW_UP_AFTER_DAYS = 4;
 const DEFAULT_SCORECARD_GATE = "run_score_traction_before_external_submission";
 const DEFAULT_REPLY_CAPTURE_CHALLENGE_PATH = "private/reply-capture-challenge.json";
+const DEFAULT_REPLY_CAPTURE_UNBLOCK_PATH = "private/reply-capture-unblock.md";
+const DEFAULT_SUBMIT_QUEUE_PATH = "private/preflight-submit-queue.md";
 const REPLY_CAPTURE_GATE = "verify_reply_capture_before_external_submission";
 const FOLLOW_UP_STATUSES = new Set(["sent", "no_reply"]);
 const OPPORTUNITY_STATUSES = new Set(["replied", "file_checked", "pilot_requested"]);
@@ -79,7 +81,12 @@ export function renderOutreachActionQueue(queue, options = {}) {
     `| Follow-ups due | ${queue.summary.followUpsDue} |`,
     `| Active opportunities | ${queue.summary.activeOpportunities} |`,
     "",
-    ...renderReadinessGate(readiness, today, options.replyCaptureChallenge),
+    ...renderReadinessGate(readiness, {
+      today,
+      replyCaptureChallenge: options.replyCaptureChallenge,
+      replyCaptureUnblockPath: options.replyCaptureUnblockPath,
+      submitQueuePath: options.submitQueuePath,
+    }),
     ...(readiness ? [""] : []),
     sendBlocked ? "## Send Next (blocked)" : "## Send Next",
     "",
@@ -120,6 +127,8 @@ export function parseNextActionArgs(argv) {
     followUpAfterDays: DEFAULT_FOLLOW_UP_AFTER_DAYS,
     scorecardRequired: false,
     replyCaptureChallengePath: DEFAULT_REPLY_CAPTURE_CHALLENGE_PATH,
+    replyCaptureUnblockPath: DEFAULT_REPLY_CAPTURE_UNBLOCK_PATH,
+    submitQueuePath: DEFAULT_SUBMIT_QUEUE_PATH,
   };
   let scorecardExplicit = false;
 
@@ -151,6 +160,10 @@ export function parseNextActionArgs(argv) {
       scorecardExplicit = true;
     } else if (flag === "--reply-capture-challenge") {
       parsed.replyCaptureChallengePath = value;
+    } else if (flag === "--reply-capture-unblock") {
+      parsed.replyCaptureUnblockPath = value;
+    } else if (flag === "--submit-queue") {
+      parsed.submitQueuePath = value;
     } else {
       throw new Error(`unknown flag: ${flag}`);
     }
@@ -165,11 +178,15 @@ export function parseNextActionArgs(argv) {
   return parsed;
 }
 
-function renderReadinessGate(readiness, today, replyCaptureChallenge) {
+function renderReadinessGate(readiness, options = {}) {
   if (!readiness) {
     return [];
   }
 
+  const today = options.today ?? todayIsoDate();
+  const replyCaptureChallenge = options.replyCaptureChallenge;
+  const replyCaptureUnblockPath = options.replyCaptureUnblockPath ?? DEFAULT_REPLY_CAPTURE_UNBLOCK_PATH;
+  const submitQueuePath = options.submitQueuePath ?? DEFAULT_SUBMIT_QUEUE_PATH;
   const state = readiness.currentState ?? "unknown";
   const nextGate = readiness.nextGate ?? "unknown";
   const status = isReplyCaptureGatePending(readiness) ? "pending" : "pass";
@@ -189,7 +206,13 @@ function renderReadinessGate(readiness, today, replyCaptureChallenge) {
           "",
           "Do not submit public forms or measure non-response until reply capture evidence is recorded.",
           "",
-          "Prepare a unique reply-capture challenge, send that subject to the alias from a separate mailbox, and record proof after it arrives:",
+          "Current b02 browser-form routes are already prepared; unlock the reply-capture gate before using them:",
+          `- Unblock packet: \`${replyCaptureUnblockPath}\``,
+          `- Submit queue: \`${submitQueuePath}\``,
+          `\`npm run render:reply-capture-unblock\``,
+          `\`npm run render:outreach-email-runbook\``,
+          "",
+          "If the challenge needs to be regenerated, prepare a unique reply-capture challenge, send that subject to the alias from a separate mailbox, and record proof after it arrives:",
           `\`npm run prepare:reply-capture -- --output private/reply-capture-challenge.json --contact founder@traceready.online --handoff-output private/reply-capture-handoff.md --email-draft-output private/reply-capture-email.eml\``,
           `\`npm run verify:reply-capture-challenge -- --challenge private/reply-capture-challenge.json --evidence-output private/reply-capture-evidence.json --contact founder@traceready.online --handoff-output private/reply-capture-handoff.md --email-draft-output private/reply-capture-email.eml\``,
           `\`${recordCommand}\``,

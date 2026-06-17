@@ -137,6 +137,11 @@ Next gate: \`verify_reply_capture_before_external_submission\`
     expect(markdown).toContain(
       "Do not submit public forms or measure non-response until reply capture evidence is recorded.",
     );
+    expect(markdown).toContain("Current b02 browser-form routes are already prepared");
+    expect(markdown).toContain("Unblock packet: `private/reply-capture-unblock.md`");
+    expect(markdown).toContain("Submit queue: `private/preflight-submit-queue.md`");
+    expect(markdown).toContain("npm run render:reply-capture-unblock");
+    expect(markdown).toContain("npm run render:outreach-email-runbook");
     expect(markdown).toContain(
       "npm run prepare:reply-capture -- --output private/reply-capture-challenge.json --contact founder@traceready.online --handoff-output private/reply-capture-handoff.md --email-draft-output private/reply-capture-email.eml",
     );
@@ -176,6 +181,10 @@ Next gate: \`verify_reply_capture_before_external_submission\`
         "importer",
         "--scorecard",
         "private/traction-readiness-scorecard-2026-06-17.md",
+        "--reply-capture-unblock",
+        "private/reply-capture-unblock.md",
+        "--submit-queue",
+        "private/preflight-submit-queue.md",
       ]),
     ).toEqual({
       resultsPath: "private/outreach-results.csv",
@@ -186,6 +195,8 @@ Next gate: \`verify_reply_capture_before_external_submission\`
       scorecardPath: "private/traction-readiness-scorecard-2026-06-17.md",
       scorecardRequired: true,
       replyCaptureChallengePath: "private/reply-capture-challenge.json",
+      replyCaptureUnblockPath: "private/reply-capture-unblock.md",
+      submitQueuePath: "private/preflight-submit-queue.md",
     });
   });
 
@@ -198,6 +209,8 @@ Next gate: \`verify_reply_capture_before_external_submission\`
       scorecardPath: "private/traction-readiness-scorecard-2026-06-20.md",
       scorecardRequired: false,
       replyCaptureChallengePath: "private/reply-capture-challenge.json",
+      replyCaptureUnblockPath: "private/reply-capture-unblock.md",
+      submitQueuePath: "private/preflight-submit-queue.md",
     });
   });
 
