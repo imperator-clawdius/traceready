@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { renderTractionReadinessScorecard, scoreTractionReadiness } from "./score-traction-readiness.mjs";
+import {
+  parseTractionReadinessArgs,
+  renderTractionReadinessScorecard,
+  scoreTractionReadiness,
+} from "./score-traction-readiness.mjs";
 import { parseOutreachResults } from "./summarize-outreach-results.mjs";
 import { parseOutreachLedger } from "./verify-outreach-ledger.mjs";
 
@@ -505,5 +509,21 @@ describe("traction readiness scorecard", () => {
     expect(score.outreach.unevidencedSentRoutes).toEqual(["b02-r03"]);
     expect(score.currentState).toBe("outreach_sent_needs_submission_evidence");
     expect(score.nextGate).toBe("record_visible_success_evidence_before_measuring_traction");
+  });
+
+  it("parses the manual alias-tested gate for reply-capture scoring", () => {
+    expect(
+      parseTractionReadinessArgs([
+        "--output",
+        "private/traction-readiness-scorecard-2026-06-17.md",
+        "--today",
+        "2026-06-17",
+        "--alias-tested",
+      ]),
+    ).toMatchObject({
+      outputPath: "private/traction-readiness-scorecard-2026-06-17.md",
+      generatedAt: "2026-06-17",
+      aliasTested: true,
+    });
   });
 });

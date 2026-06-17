@@ -83,7 +83,7 @@ export function preflightOutreachSubmit({
     sendReadyPath: normalizedSendReadyPath,
     resultsPath: normalizePath(resultsPath),
     resultStatus: resultRow.status,
-    replyCapture: emailReport.ready ? "ready" : "at_risk",
+    replyCapture: replyCaptureReadyFromEmailReport(emailReport) ? "ready" : "at_risk",
     emailReady: Boolean(emailReport.ready),
     auditDate: sendabilityAudit.auditDate,
   };
@@ -184,7 +184,7 @@ export function preflightAllReadyOutreachSubmits({
   return {
     readyRoutes: readyRoutes.length,
     preflightReadyRoutes: preflights.length,
-    replyCapture: emailReport.ready ? "ready" : "at_risk",
+    replyCapture: replyCaptureReadyFromEmailReport(emailReport) ? "ready" : "at_risk",
     outputDir: normalizePath(outputDir),
     preflights,
   };
@@ -240,6 +240,11 @@ export function parseOutreachSubmitPreflightArgs(argv) {
 
     if (flag === "--skip-email") {
       parsed.skipEmail = true;
+      continue;
+    }
+
+    if (flag === "--alias-tested") {
+      parsed.aliasTested = true;
       continue;
     }
 
@@ -308,6 +313,16 @@ function normalizePath(filePath) {
   return String(filePath ?? "").replace(/\\/g, "/");
 }
 
+function replyCaptureReadyFromEmailReport(emailReport = {}) {
+  if (emailReport.ready || emailReport.replyCaptureReady) {
+    return true;
+  }
+
+  const checks = Object.fromEntries((emailReport.checks ?? []).map((check) => [check.label, check.ready]));
+
+  return Boolean(checks.OUTREACH_EMAIL_MX && checks.OUTREACH_EMAIL_ALIAS_TEST);
+}
+
 function quoteIfNeeded(value) {
   const text = String(value);
   return /\s/.test(text) ? `"${text.replace(/"/g, '\\"')}"` : text;
@@ -341,7 +356,9 @@ async function main() {
     return;
   }
 
-  const emailReport = options.skipEmail ? { ready: false } : await inspectOutreachEmailDns();
+  const emailReport = options.skipEmail
+    ? { ready: false }
+    : await inspectOutreachEmailDns({ aliasTested: Boolean(options.aliasTested) });
 
   if (options.allReady) {
     const readyRoutes = (sendabilityAudit.routes ?? []).filter((route) => route.sendability === "browser_form_ready");

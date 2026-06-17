@@ -27,6 +27,7 @@ describe("outreach email verifier", () => {
 
     expect(report.ready).toBe(true);
     expect(report.dnsReady).toBe(true);
+    expect(report.replyCaptureReady).toBe(true);
     expect(report.checks.find((check) => check.label === "OUTREACH_EMAIL_MX")?.ready).toBe(true);
     expect(report.checks.find((check) => check.label === "OUTREACH_EMAIL_DKIM")?.detail).toContain("default");
   });
@@ -44,8 +45,31 @@ describe("outreach email verifier", () => {
 
     expect(report.dnsReady).toBe(true);
     expect(report.ready).toBe(false);
+    expect(report.replyCaptureReady).toBe(false);
     expect(aliasCheck?.ready).toBe(false);
     expect(aliasCheck?.detail).toContain("rerun with --alias-tested");
+  });
+
+  it("lets browser-form reply capture pass after a manual alias test without pretending outbound auth is ready", () => {
+    const report = evaluateOutreachEmailDns({
+      aliasTested: true,
+      mxRecords: NAMECHEAP_MX,
+      apexTxtRecords: [["v=spf1 include:spf.efwd.registrar-servers.com ~all"]],
+      dmarcTxtRecords: [],
+      dkimSelectors: ["default", "google"],
+      dkimTxtRecordSets: [[], []],
+    });
+    const rendered = renderOutreachEmailReport(report);
+
+    expect(report.replyCaptureReady).toBe(true);
+    expect(report.ready).toBe(false);
+    expect(rendered).toContain("OUTREACH_EMAIL_ALIAS_TEST=pass manual send/receive test acknowledged");
+    expect(rendered).toContain(
+      "OUTREACH_EMAIL_REPLY_CAPTURE=pass forwarding MX and manual alias delivery test are both present",
+    );
+    expect(rendered).toContain("OUTREACH_EMAIL_READY=false");
+    expect(rendered).toContain("OUTREACH_EMAIL_NEXT=configure authenticated outbound sender, publish DKIM and DMARC");
+    expect(rendered).not.toContain("OUTREACH_EMAIL_ALIAS_NEXT=");
   });
 
   it("flags the current pre-send failure mode when DMARC and DKIM are missing", () => {
@@ -62,6 +86,7 @@ describe("outreach email verifier", () => {
     expect(report.ready).toBe(false);
     expect(rendered).toContain("OUTREACH_EMAIL_DMARC=pending records=none");
     expect(rendered).toContain("OUTREACH_EMAIL_DKIM=pending selectors=none");
+    expect(rendered).toContain("OUTREACH_EMAIL_REPLY_CAPTURE=pending requires forwarding MX plus a manual alias delivery test");
     expect(rendered).toContain("OUTREACH_EMAIL_DNS_READY=false");
     expect(rendered).toContain("OUTREACH_EMAIL_READY=false");
     expect(rendered).toContain("OUTREACH_EMAIL_DMARC_STARTER=TXT _dmarc");
