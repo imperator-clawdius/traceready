@@ -73,6 +73,24 @@ describe("reply-capture evidence recorder", () => {
     expect(evaluation.detail).toContain("challenge=trc-test-1234");
   });
 
+  it("rejects a received subject that does not match the prepared challenge", () => {
+    const challenge = buildReplyCaptureChallenge({
+      contactEmail: "founder@traceready.online",
+      createdAt: "2026-06-17T03:00:00.000Z",
+      token: "trc-test-1234",
+    });
+
+    expect(() =>
+      buildReplyCaptureEvidence({
+        contactEmail: "founder@traceready.online",
+        receivedAt: "2026-06-17T03:04:00.000Z",
+        receivedSubject: "TraceReady reply-capture test wrong-token",
+        confirmedControlledInbox: true,
+        challenge,
+      }),
+    ).toThrow("received subject must match challenge subject");
+  });
+
   it("parses the command used after a real inbox test arrives", () => {
     expect(
       parseReplyCaptureEvidenceArgs([
@@ -82,6 +100,8 @@ describe("reply-capture evidence recorder", () => {
         "founder@traceready.online",
         "--received-at",
         "2026-06-17T02:30:00.000Z",
+        "--received-subject",
+        "TraceReady reply-capture test trc-test-1234",
         "--challenge",
         "private/reply-capture-challenge.json",
         "--confirm-controlled-inbox",
@@ -90,6 +110,7 @@ describe("reply-capture evidence recorder", () => {
       outputPath: "private/reply-capture-evidence.json",
       contactEmail: "founder@traceready.online",
       receivedAt: "2026-06-17T02:30:00.000Z",
+      receivedSubject: "TraceReady reply-capture test trc-test-1234",
       challengePath: "private/reply-capture-challenge.json",
       confirmedControlledInbox: true,
     });

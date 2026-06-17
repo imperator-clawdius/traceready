@@ -34,6 +34,8 @@ export function parseReplyCaptureEvidenceArgs(argv) {
       options.contactEmail = value;
     } else if (flag === "--received-at") {
       options.receivedAt = value;
+    } else if (flag === "--received-subject") {
+      options.receivedSubject = value;
     } else if (flag === "--challenge") {
       options.challengePath = value;
     } else {
@@ -49,6 +51,7 @@ export function parseReplyCaptureEvidenceArgs(argv) {
 export function buildReplyCaptureEvidence({
   contactEmail = DEFAULT_CONTACT_EMAIL,
   receivedAt = new Date().toISOString(),
+  receivedSubject,
   confirmedControlledInbox = false,
   challenge,
 } = {}) {
@@ -58,6 +61,10 @@ export function buildReplyCaptureEvidence({
 
   if (challenge && normalizeEmail(challenge.contactEmail) !== normalizeEmail(contactEmail)) {
     throw new Error(`challenge contactEmail must match ${contactEmail}`);
+  }
+
+  if (challenge && receivedSubject && String(receivedSubject).trim() !== String(challenge.subject ?? "").trim()) {
+    throw new Error("received subject must match challenge subject");
   }
 
   const evidence = {

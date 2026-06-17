@@ -152,7 +152,7 @@ export function renderReplyCaptureGateReport(result) {
     if (result.reason === "missing_reply_capture_evidence") {
       lines.push(`REPLY_CAPTURE_GATE_NEXT=send the email in ${result.handoffPath}`);
       lines.push(
-        `REPLY_CAPTURE_GATE_RECORD=\`npm run record:reply-capture -- --output ${result.evidencePath} --contact ${CONTACT_EMAIL} --received-at <received-at-iso> --challenge ${result.challengePath} --confirm-controlled-inbox\``,
+        `REPLY_CAPTURE_GATE_RECORD=\`npm run record:reply-capture -- --output ${result.evidencePath} --contact ${CONTACT_EMAIL} --received-at <received-at-iso> --received-subject <received-subject> --challenge ${result.challengePath} --confirm-controlled-inbox\``,
       );
     }
 
