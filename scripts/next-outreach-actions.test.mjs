@@ -178,6 +178,18 @@ Next gate: \`verify_reply_capture_before_external_submission\`
       followUpAfterDays: 5,
       sendTier: "importer",
       scorecardPath: "private/traction-readiness-scorecard-2026-06-17.md",
+      scorecardRequired: true,
+    });
+  });
+
+  it("defaults to the daily private traction scorecard so send gates are not skipped", () => {
+    expect(parseNextActionArgs(["--today", "2026-06-20"])).toEqual({
+      resultsPath: "docs/proof-led-outreach-results-batch-01.csv",
+      today: "2026-06-20",
+      sendLimit: 8,
+      followUpAfterDays: 4,
+      scorecardPath: "private/traction-readiness-scorecard-2026-06-20.md",
+      scorecardRequired: false,
     });
   });
 

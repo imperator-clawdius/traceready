@@ -6,6 +6,7 @@ const DEFAULT_RESULTS_PATH = "docs/proof-led-outreach-results-batch-01.csv";
 const PRIVATE_RESULTS_PLACEHOLDER = "path/to/private-results.csv";
 const DEFAULT_SEND_LIMIT = 8;
 const DEFAULT_FOLLOW_UP_AFTER_DAYS = 4;
+const DEFAULT_SCORECARD_GATE = "run_score_traction_before_external_submission";
 const REPLY_CAPTURE_GATE = "verify_reply_capture_before_external_submission";
 const FOLLOW_UP_STATUSES = new Set(["sent", "no_reply"]);
 const OPPORTUNITY_STATUSES = new Set(["replied", "file_checked", "pilot_requested"]);
@@ -115,7 +116,9 @@ export function parseNextActionArgs(argv) {
     today: todayIsoDate(),
     sendLimit: DEFAULT_SEND_LIMIT,
     followUpAfterDays: DEFAULT_FOLLOW_UP_AFTER_DAYS,
+    scorecardRequired: false,
   };
+  let scorecardExplicit = false;
 
   for (let index = 0; index < args.length; index += 1) {
     const flag = args[index];
@@ -141,11 +144,17 @@ export function parseNextActionArgs(argv) {
       parsed.sendTier = value;
     } else if (flag === "--scorecard") {
       parsed.scorecardPath = value;
+      parsed.scorecardRequired = true;
+      scorecardExplicit = true;
     } else {
       throw new Error(`unknown flag: ${flag}`);
     }
 
     index += 1;
+  }
+
+  if (!scorecardExplicit) {
+    parsed.scorecardPath = defaultScorecardPath(parsed.today);
   }
 
   return parsed;
@@ -312,13 +321,36 @@ function normalizePath(path) {
   return path.replace(/\\/g, "/");
 }
 
+function defaultScorecardPath(today) {
+  return `private/traction-readiness-scorecard-${today}.md`;
+}
+
+async function loadTractionReadiness(scorecardPath, { required = false } = {}) {
+  if (!scorecardPath) {
+    return undefined;
+  }
+
+  try {
+    return parseTractionReadinessSummary(await fs.readFile(scorecardPath, "utf8"));
+  } catch (error) {
+    if (required) {
+      throw error;
+    }
+
+    return {
+      currentState: "scorecard_missing",
+      nextGate: DEFAULT_SCORECARD_GATE,
+      replyCaptureStatus: "unknown",
+      replyCaptureReady: false,
+    };
+  }
+}
+
 async function main() {
   const options = parseNextActionArgs(process.argv.slice(2));
   const csv = await fs.readFile(options.resultsPath, "utf8");
   const rows = parseOutreachResults(csv);
-  const readiness = options.scorecardPath
-    ? parseTractionReadinessSummary(await fs.readFile(options.scorecardPath, "utf8"))
-    : undefined;
+  const readiness = await loadTractionReadiness(options.scorecardPath, { required: options.scorecardRequired });
   const errors = validateOutreachResults(rows);
 
   if (errors.length > 0) {
