@@ -520,11 +520,14 @@ describe("traction readiness scorecard", () => {
         "2026-06-17",
         "--reply-capture-evidence",
         "private/reply-capture-evidence.json",
+        "--reply-capture-challenge",
+        "private/reply-capture-challenge.json",
       ]),
     ).toMatchObject({
       outputPath: "private/traction-readiness-scorecard-2026-06-17.md",
       generatedAt: "2026-06-17",
       replyCaptureEvidencePath: "private/reply-capture-evidence.json",
+      replyCaptureChallengePath: "private/reply-capture-challenge.json",
     });
   });
 });

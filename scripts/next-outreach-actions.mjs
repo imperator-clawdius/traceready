@@ -174,8 +174,8 @@ function renderReadinessGate(readiness, today) {
           `\`npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox\``,
           "",
           "Then refresh the private readiness artifacts:",
-          `\`npm run score:traction -- --reply-capture-evidence private/reply-capture-evidence.json --output private/traction-readiness-scorecard-${today}.md --today ${today}\``,
-          `\`npm run preflight:outreach-submit -- --all-ready --reply-capture-evidence private/reply-capture-evidence.json --output-dir private --queue-output private/preflight-submit-queue.md --today ${today}\``,
+          `\`npm run score:traction -- --reply-capture-evidence private/reply-capture-evidence.json --reply-capture-challenge private/reply-capture-challenge.json --output private/traction-readiness-scorecard-${today}.md --today ${today}\``,
+          `\`npm run preflight:outreach-submit -- --all-ready --reply-capture-evidence private/reply-capture-evidence.json --reply-capture-challenge private/reply-capture-challenge.json --output-dir private --queue-output private/preflight-submit-queue.md --today ${today}\``,
         ]
       : ["", "Reply capture evidence is recorded; use the queue below against the current private ledger."]),
   ];

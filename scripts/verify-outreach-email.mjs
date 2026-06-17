@@ -38,6 +38,9 @@ export function parseOutreachEmailArgs(argv) {
     } else if (arg === "--reply-capture-evidence" && next) {
       options.replyCaptureEvidencePath = next;
       index += 1;
+    } else if (arg === "--reply-capture-challenge" && next) {
+      options.replyCaptureChallengePath = next;
+      index += 1;
     } else if (arg === "--alias-tested") {
       options.aliasTested = true;
     }
@@ -54,8 +57,11 @@ export async function inspectOutreachEmailDns(options = {}) {
   const replyCaptureEvidence = options.replyCaptureEvidencePath
     ? await loadReplyCaptureEvidence(options.replyCaptureEvidencePath)
     : options.replyCaptureEvidence;
+  const replyCaptureChallenge = options.replyCaptureChallengePath
+    ? await loadReplyCaptureChallenge(options.replyCaptureChallengePath)
+    : options.replyCaptureChallenge;
   const replyCaptureEvidenceResult = replyCaptureEvidence
-    ? evaluateReplyCaptureEvidence(replyCaptureEvidence, { contactEmail })
+    ? evaluateReplyCaptureEvidence(replyCaptureEvidence, { contactEmail, expectedChallenge: replyCaptureChallenge })
     : null;
   const aliasTested = Boolean(options.aliasTested || replyCaptureEvidenceResult?.ready);
 
@@ -84,7 +90,15 @@ export async function loadReplyCaptureEvidence(filePath) {
   return JSON.parse(raw);
 }
 
-export function evaluateReplyCaptureEvidence(evidence, { contactEmail = DEFAULT_CONTACT_EMAIL } = {}) {
+export async function loadReplyCaptureChallenge(filePath) {
+  const raw = await fs.readFile(filePath, "utf8");
+  return JSON.parse(raw);
+}
+
+export function evaluateReplyCaptureEvidence(
+  evidence,
+  { contactEmail = DEFAULT_CONTACT_EMAIL, expectedChallenge = null } = {},
+) {
   const errors = [];
   const receivedAt = evidence?.receivedAt ?? evidence?.testReceivedAt;
 
@@ -123,6 +137,24 @@ export function evaluateReplyCaptureEvidence(evidence, { contactEmail = DEFAULT_
 
   if (challengeToken && challengeSubject && !challengeSubject.includes(challengeToken)) {
     errors.push("challengeSubject must include challengeToken");
+  }
+
+  if (expectedChallenge) {
+    if (normalizeEmail(expectedChallenge.contactEmail) !== normalizeEmail(contactEmail)) {
+      errors.push(`reply-capture challenge contactEmail must be ${contactEmail}`);
+    }
+
+    if (challengeToken !== String(expectedChallenge.challengeToken ?? "").trim()) {
+      errors.push("challengeToken must match reply-capture challenge");
+    }
+
+    if (evidence?.challengeCreatedAt !== expectedChallenge.createdAt) {
+      errors.push("challengeCreatedAt must match reply-capture challenge");
+    }
+
+    if (challengeSubject !== String(expectedChallenge.subject ?? "").trim()) {
+      errors.push("challengeSubject must match reply-capture challenge");
+    }
   }
 
   if (
@@ -220,7 +252,7 @@ export function evaluateOutreachEmailDns({
         detail: aliasTested
           ? (replyCaptureEvidenceResult?.detail ?? `manual send/receive test acknowledged for ${contactEmail}`)
           : (replyCaptureEvidenceResult?.detail ??
-            `DNS cannot prove ${contactEmail} forwards to a controlled mailbox; send and receive a test email, then rerun with --reply-capture-evidence`),
+            `DNS cannot prove ${contactEmail} forwards to a controlled mailbox; send and receive a test email, then rerun with --reply-capture-evidence and --reply-capture-challenge`),
       },
       {
         label: "OUTREACH_EMAIL_REPLY_CAPTURE",
@@ -251,7 +283,7 @@ export function renderOutreachEmailReport(report) {
     lines.push("OUTREACH_EMAIL_DKIM_NEXT=add the DKIM TXT/CNAME records from the outbound mail provider");
     if (!report.replyCaptureReady) {
       lines.push(
-        "OUTREACH_EMAIL_ALIAS_NEXT=create Namecheap Redirect Email alias founder -> controlled inbox; run `npm run prepare:reply-capture -- --output private/reply-capture-challenge.json --contact founder@traceready.online`; send the generated subject to founder@traceready.online; record private reply-capture evidence with `npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox`; then rerun with --reply-capture-evidence",
+        "OUTREACH_EMAIL_ALIAS_NEXT=create Namecheap Redirect Email alias founder -> controlled inbox; run `npm run prepare:reply-capture -- --output private/reply-capture-challenge.json --contact founder@traceready.online`; send the generated subject to founder@traceready.online; record private reply-capture evidence with `npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox`; then rerun with --reply-capture-evidence and --reply-capture-challenge",
       );
     }
   }

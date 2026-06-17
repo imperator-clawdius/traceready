@@ -333,12 +333,15 @@ describe("outreach submit preflight", () => {
         "--all-ready",
         "--reply-capture-evidence",
         "private/reply-capture-evidence.json",
+        "--reply-capture-challenge",
+        "private/reply-capture-challenge.json",
         "--today",
         "2026-06-17",
       ]),
     ).toMatchObject({
       allReady: true,
       replyCaptureEvidencePath: "private/reply-capture-evidence.json",
+      replyCaptureChallengePath: "private/reply-capture-challenge.json",
       generatedAt: "2026-06-17",
     });
   });

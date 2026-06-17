@@ -330,6 +330,8 @@ export function parseTractionReadinessArgs(argv) {
       options.liveSubmitReportPath = value;
     } else if (flag === "--reply-capture-evidence") {
       options.replyCaptureEvidencePath = value;
+    } else if (flag === "--reply-capture-challenge") {
+      options.replyCaptureChallengePath = value;
     } else if (flag === "--output") {
       options.outputPath = value;
     } else if (flag === "--today") {
@@ -597,7 +599,10 @@ async function main() {
 
   const emailReport = options.skipEmail
     ? { ready: false, dnsReady: false, checks: [] }
-    : await inspectOutreachEmailDns({ replyCaptureEvidencePath: options.replyCaptureEvidencePath });
+    : await inspectOutreachEmailDns({
+        replyCaptureEvidencePath: options.replyCaptureEvidencePath,
+        replyCaptureChallengePath: options.replyCaptureChallengePath,
+      });
   const readyRoutesForPackets = (sendabilityAudit.routes ?? [])
     .filter((route) => route.sendability === "browser_form_ready")
     .map((route) => ({

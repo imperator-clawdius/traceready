@@ -48,7 +48,7 @@ describe("outreach email verifier", () => {
     expect(report.ready).toBe(false);
     expect(report.replyCaptureReady).toBe(false);
     expect(aliasCheck?.ready).toBe(false);
-    expect(aliasCheck?.detail).toContain("rerun with --reply-capture-evidence");
+    expect(aliasCheck?.detail).toContain("rerun with --reply-capture-evidence and --reply-capture-challenge");
   });
 
   it("lets browser-form reply capture pass after recorded evidence without pretending outbound auth is ready", () => {
@@ -134,6 +134,31 @@ describe("outreach email verifier", () => {
     expect(evidenceResult.errors).toContain("challengeSubject must include challengeToken");
   });
 
+  it("rejects reply-capture evidence that does not match the expected challenge file", () => {
+    const evidenceResult = evaluateReplyCaptureEvidence(
+      {
+        contactEmail: "founder@traceready.online",
+        receivedInControlledInbox: true,
+        receivedAt: "2026-06-17T03:04:00.000Z",
+        challengeToken: "trc-test-1234",
+        challengeCreatedAt: "2026-06-17T03:00:00.000Z",
+        challengeSubject: "TraceReady reply-capture test trc-test-1234",
+      },
+      {
+        expectedChallenge: {
+          contactEmail: "founder@traceready.online",
+          createdAt: "2026-06-17T03:00:00.000Z",
+          challengeToken: "trc-test-9999",
+          subject: "TraceReady reply-capture test trc-test-9999",
+        },
+      },
+    );
+
+    expect(evidenceResult.ready).toBe(false);
+    expect(evidenceResult.errors).toContain("challengeToken must match reply-capture challenge");
+    expect(evidenceResult.errors).toContain("challengeSubject must match reply-capture challenge");
+  });
+
   it("flags the current pre-send failure mode when DMARC and DKIM are missing", () => {
     const report = evaluateOutreachEmailDns({
       mxRecords: NAMECHEAP_MX,
@@ -155,6 +180,7 @@ describe("outreach email verifier", () => {
     expect(rendered).toContain("OUTREACH_EMAIL_ALIAS_NEXT=create Namecheap Redirect Email alias founder");
     expect(rendered).toContain("npm run prepare:reply-capture");
     expect(rendered).toContain("record private reply-capture evidence");
+    expect(rendered).toContain("then rerun with --reply-capture-evidence and --reply-capture-challenge");
   });
 
   it("supports injected DNS resolution for deterministic checks", async () => {
@@ -195,6 +221,8 @@ describe("outreach email verifier", () => {
         "mailgun",
         "--reply-capture-evidence",
         "private/reply-capture-evidence.json",
+        "--reply-capture-challenge",
+        "private/reply-capture-challenge.json",
         "--alias-tested",
       ]),
     ).toEqual({
@@ -202,6 +230,7 @@ describe("outreach email verifier", () => {
       contactEmail: "desk@example.test",
       dkimSelectors: ["default", "google", "selector1", "selector2", "mailgun"],
       replyCaptureEvidencePath: "private/reply-capture-evidence.json",
+      replyCaptureChallengePath: "private/reply-capture-challenge.json",
       aliasTested: true,
     });
   });

@@ -139,6 +139,12 @@ Next gate: \`verify_reply_capture_before_external_submission\`
     expect(markdown).toContain(
       "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
     );
+    expect(markdown).toContain(
+      "npm run score:traction -- --reply-capture-evidence private/reply-capture-evidence.json --reply-capture-challenge private/reply-capture-challenge.json",
+    );
+    expect(markdown).toContain(
+      "npm run preflight:outreach-submit -- --all-ready --reply-capture-evidence private/reply-capture-evidence.json --reply-capture-challenge private/reply-capture-challenge.json",
+    );
     expect(markdown).toContain("## Send Next (blocked)");
     expect(markdown).toContain("Reply capture gate is pending; queue shown for planning only.");
     expect(markdown).toContain("b01-r01 - European Coffee Federation");

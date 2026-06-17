@@ -260,6 +260,8 @@ export function parseOutreachSubmitPreflightArgs(argv) {
       parsed.sendabilityAuditPath = value;
     } else if (flag === "--reply-capture-evidence") {
       parsed.replyCaptureEvidencePath = value;
+    } else if (flag === "--reply-capture-challenge") {
+      parsed.replyCaptureChallengePath = value;
     } else if (flag === "--send-ready") {
       parsed.sendReadyPath = value;
     } else if (flag === "--route") {
@@ -355,7 +357,10 @@ async function main() {
 
   const emailReport = options.skipEmail
     ? { ready: false }
-    : await inspectOutreachEmailDns({ replyCaptureEvidencePath: options.replyCaptureEvidencePath });
+    : await inspectOutreachEmailDns({
+        replyCaptureEvidencePath: options.replyCaptureEvidencePath,
+        replyCaptureChallengePath: options.replyCaptureChallengePath,
+      });
 
   if (options.allReady) {
     const readyRoutes = (sendabilityAudit.routes ?? []).filter((route) => route.sendability === "browser_form_ready");
