@@ -109,6 +109,7 @@ export async function inspectOutreachEmailDns(options = {}) {
     dmarcTxtRecords,
     dkimTxtRecordSets,
     replyCaptureEvidenceResult,
+    replyCaptureChallenge,
   });
 }
 
@@ -215,6 +216,7 @@ export function evaluateOutreachEmailDns({
   dmarcTxtRecords = [],
   dkimTxtRecordSets = [],
   replyCaptureEvidenceResult = null,
+  replyCaptureChallenge = null,
 }) {
   const normalizedMxHosts = mxRecords.map((record) => normalizeHost(record.exchange ?? record.host ?? String(record)));
   const apexTxt = flattenTxt(apexTxtRecords);
@@ -290,10 +292,17 @@ export function evaluateOutreachEmailDns({
       },
     ],
     ready,
+    replyCaptureChallenge,
   };
 }
 
 export function renderOutreachEmailReport(report) {
+  const recordCommand = recordReplyCaptureCommand({
+    evidencePath: DEFAULT_REPLY_CAPTURE_EVIDENCE_PATH,
+    contactEmail: report.contactEmail,
+    receivedSubject: report.replyCaptureChallenge?.subject,
+    challengePath: DEFAULT_REPLY_CAPTURE_CHALLENGE_PATH,
+  });
   const lines = [
     `OUTREACH_EMAIL_DOMAIN=${report.domain}`,
     `OUTREACH_EMAIL_CONTACT=${report.contactEmail}`,
@@ -310,7 +319,7 @@ export function renderOutreachEmailReport(report) {
     lines.push("OUTREACH_EMAIL_DKIM_NEXT=add the DKIM TXT/CNAME records from the outbound mail provider");
     if (!report.replyCaptureReady) {
       lines.push(
-        "OUTREACH_EMAIL_ALIAS_NEXT=create Namecheap Redirect Email alias founder -> controlled inbox; run `npm run prepare:reply-capture -- --output private/reply-capture-challenge.json --contact founder@traceready.online --handoff-output private/reply-capture-handoff.md --email-draft-output private/reply-capture-email.eml`; send the generated subject to founder@traceready.online; record private reply-capture evidence with `npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --received-subject <received-subject> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox`; then rerun with --reply-capture-evidence and --reply-capture-challenge",
+        `OUTREACH_EMAIL_ALIAS_NEXT=create Namecheap Redirect Email alias founder -> controlled inbox; run \`npm run prepare:reply-capture -- --output private/reply-capture-challenge.json --contact founder@traceready.online --handoff-output private/reply-capture-handoff.md --email-draft-output private/reply-capture-email.eml\`; send the generated subject to founder@traceready.online; record private reply-capture evidence with \`${recordCommand}\`; then rerun with --reply-capture-evidence and --reply-capture-challenge`,
       );
     }
   }
@@ -325,6 +334,13 @@ export function renderOutreachEmailRunbook(report, options = {}) {
   const emailDraftPath = options.emailDraftPath ?? DEFAULT_REPLY_CAPTURE_EMAIL_DRAFT_PATH;
   const generatedAt = options.generatedAt ?? new Date().toISOString();
   const dmarcValue = `v=DMARC1; p=none; rua=mailto:${report.contactEmail}; adkim=r; aspf=r`;
+  const challengeSubject = String(report.replyCaptureChallenge?.subject ?? "").trim();
+  const recordCommand = recordReplyCaptureCommand({
+    evidencePath,
+    contactEmail: report.contactEmail,
+    receivedSubject: challengeSubject,
+    challengePath,
+  });
 
   return `${[
     "# TraceReady outreach email runbook",
@@ -355,13 +371,14 @@ export function renderOutreachEmailRunbook(report, options = {}) {
     "## Reply Capture",
     "",
     `- Send the challenge from \`${handoffPath}\` to prove the alias reaches a controlled inbox.`,
+    ...(challengeSubject ? [`- Current challenge subject: \`${challengeSubject}\`.`] : []),
     `- Optional local draft: \`${emailDraftPath}\`.`,
     "- Send from a separate mailbox, not from the forwarding destination.",
     "",
     "After the message arrives, record the real received timestamp:",
     "",
     "```powershell",
-    `npm run record:reply-capture -- --output ${evidencePath} --contact ${report.contactEmail} --received-at <received-at-iso> --received-subject <received-subject> --challenge ${challengePath} --confirm-controlled-inbox`,
+    recordCommand,
     "```",
     "",
     "Then rerun:",
@@ -427,6 +444,16 @@ function flattenTxt(records) {
 
 function normalizeHost(hostname) {
   return hostname.toLowerCase().replace(/\.$/, "");
+}
+
+function quoteForCommand(value) {
+  return `"${String(value).replace(/"/g, '\\"')}"`;
+}
+
+function recordReplyCaptureCommand({ evidencePath, contactEmail, receivedSubject, challengePath }) {
+  const subjectArg = receivedSubject ? quoteForCommand(receivedSubject) : "<received-subject>";
+
+  return `npm run record:reply-capture -- --output ${evidencePath} --contact ${contactEmail} --received-at <received-at-iso> --received-subject ${subjectArg} --challenge ${challengePath} --confirm-controlled-inbox`;
 }
 
 function normalizeEmail(email) {

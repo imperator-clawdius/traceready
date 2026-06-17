@@ -133,7 +133,7 @@ export function renderReplyCaptureChallengeReport(result, options = {}) {
   lines.push(challenge.body);
   lines.push("REPLY_CAPTURE_CHALLENGE_BODY_END");
   lines.push(
-    `REPLY_CAPTURE_CHALLENGE_NEXT=send the subject above to ${challenge.contactEmail} from a separate mailbox; after it arrives, run \`npm run record:reply-capture -- --output ${evidencePath} --contact ${challenge.contactEmail} --received-at <received-at-iso> --received-subject <received-subject> --challenge ${challengePath} --confirm-controlled-inbox\``,
+    `REPLY_CAPTURE_CHALLENGE_NEXT=send the subject above to ${challenge.contactEmail} from a separate mailbox; after it arrives, run \`${recordReplyCaptureCommand({ evidencePath, contactEmail: challenge.contactEmail, receivedSubject: challenge.subject, challengePath })}\``,
   );
 
   return `${lines.join("\n")}\n`;
@@ -178,7 +178,12 @@ export function renderReplyCaptureChallengeHandoff(result, options = {}) {
     "Record the real received timestamp from the controlled inbox:",
     "",
     "```powershell",
-    `npm run record:reply-capture -- --output ${evidencePath} --contact ${challenge.contactEmail} --received-at <received-at-iso> --received-subject <received-subject> --challenge ${challengePath} --confirm-controlled-inbox`,
+    recordReplyCaptureCommand({
+      evidencePath,
+      contactEmail: challenge.contactEmail,
+      receivedSubject: challenge.subject,
+      challengePath,
+    }),
     "```",
     "",
     "Then rerun the email readiness check:",
@@ -264,6 +269,16 @@ function normalizeEmail(email) {
 
 function quoteForLog(value) {
   return `"${String(value).replace(/"/g, '\\"')}"`;
+}
+
+function quoteForCommand(value) {
+  return `"${String(value).replace(/"/g, '\\"')}"`;
+}
+
+function recordReplyCaptureCommand({ evidencePath, contactEmail, receivedSubject, challengePath }) {
+  const subjectArg = receivedSubject ? quoteForCommand(receivedSubject) : "<received-subject>";
+
+  return `npm run record:reply-capture -- --output ${evidencePath} --contact ${contactEmail} --received-at <received-at-iso> --received-subject ${subjectArg} --challenge ${challengePath} --confirm-controlled-inbox`;
 }
 
 function safeHeader(value) {

@@ -265,6 +265,12 @@ describe("outreach email verifier", () => {
         detail: "reply-capture evidence file not found: private/reply-capture-evidence.json",
         errors: ["reply-capture evidence file not found: private/reply-capture-evidence.json"],
       },
+      replyCaptureChallenge: {
+        contactEmail: "founder@traceready.online",
+        createdAt: "2026-06-17T03:00:00.000Z",
+        challengeToken: "trc-test-1234",
+        subject: "TraceReady reply-capture test trc-test-1234",
+      },
     });
 
     const markdown = renderOutreachEmailRunbook(report, {
@@ -274,6 +280,7 @@ describe("outreach email verifier", () => {
       emailDraftPath: "private/reply-capture-email.eml",
       generatedAt: "2026-06-17T04:00:00.000Z",
     });
+    const rendered = renderOutreachEmailReport(report);
 
     expect(markdown).toContain("# TraceReady outreach email runbook");
     expect(markdown).toContain("Generated: 2026-06-17T04:00:00.000Z");
@@ -284,8 +291,12 @@ describe("outreach email verifier", () => {
     expect(markdown).toContain("Add the DKIM TXT/CNAME records from the outbound mail provider");
     expect(markdown).toContain("private/reply-capture-handoff.md");
     expect(markdown).toContain("private/reply-capture-email.eml");
+    expect(markdown).toContain("Current challenge subject: `TraceReady reply-capture test trc-test-1234`");
     expect(markdown).toContain(
-      "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --received-subject <received-subject> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
+      'npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --received-subject "TraceReady reply-capture test trc-test-1234" --challenge private/reply-capture-challenge.json --confirm-controlled-inbox',
+    );
+    expect(rendered).toContain(
+      'npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --received-subject "TraceReady reply-capture test trc-test-1234" --challenge private/reply-capture-challenge.json --confirm-controlled-inbox',
     );
     expect(markdown).toContain(
       "npm run verify:outreach-email -- --reply-capture-evidence private/reply-capture-evidence.json --reply-capture-challenge private/reply-capture-challenge.json",
