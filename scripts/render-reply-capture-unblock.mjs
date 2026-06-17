@@ -82,11 +82,13 @@ export function buildReplyCaptureUnblockPacket({
 } = {}) {
   const replyCaptureReady = Boolean(emailReport.replyCaptureReady);
   const status = replyCaptureReady ? "ready" : emlExists ? "eml_saved_finalize_next" : "waiting_for_inbox_receipt";
+  const emailChecks = Array.isArray(emailReport.checks) ? emailReport.checks : [];
 
   return {
     status,
     replyCaptureReady,
     emailReady: Boolean(emailReport.ready),
+    emailChecks,
     evidenceExists,
     emlExists,
     challenge,
@@ -121,6 +123,28 @@ export function renderReplyCaptureUnblockPacket(packet, options = {}) {
     `Received message source: \`${packet.emlPath}\` ${packet.emlExists ? "(found)" : "(missing)"}`,
     `Evidence: \`${packet.evidencePath}\` ${packet.evidenceExists ? "(found)" : "(missing)"}`,
     "",
+    "## Email Risk Snapshot",
+    "",
+    ...(packet.emailChecks?.length
+      ? [
+          "| Check | Status | Detail |",
+          "| --- | --- | --- |",
+          ...packet.emailChecks.map(
+            (check) => `| ${check.label} | ${check.ready ? "pass" : "pending"} | ${escapeTableCell(check.detail)} |`,
+          ),
+          "",
+        ]
+      : ["No email DNS check details were available.", ""]),
+    packet.replyCaptureReady
+      ? "Reply capture is proven. DMARC, DKIM, and outbound sender auth may still need cleanup before measuring email non-response."
+      : "Reply capture is the submission gate. DMARC, DKIM, and outbound sender auth are delivery/reputation work; do not measure non-response until reply capture is proven.",
+    "",
+    "DNS starter still needed unless already configured:",
+    "",
+    "- Keep SPF forwarding include: `v=spf1 include:spf.efwd.registrar-servers.com ~all`.",
+    `- Add TXT \`_dmarc\`: \`v=DMARC1; p=none; rua=mailto:${CONTACT_EMAIL}; adkim=r; aspf=r\`.`,
+    "- Add DKIM TXT/CNAME records from the outbound mail provider once that sender is chosen.",
+    "",
     "## One Action To Unblock Submissions",
     "",
     packet.replyCaptureReady
@@ -139,6 +163,7 @@ export function renderReplyCaptureUnblockPacket(packet, options = {}) {
     "",
     "```powershell",
     "npm run finalize:reply-capture",
+    "npm run render:outreach-email-runbook",
     `npm run score:traction -- --reply-capture-evidence ${packet.evidencePath} --reply-capture-challenge ${packet.challengePath}`,
     `npm run preflight:outreach-submit -- --all-ready --reply-capture-evidence ${packet.evidencePath} --reply-capture-challenge ${packet.challengePath} --output-dir private --queue-output ${packet.preflightQueuePath}`,
     "```",
@@ -153,6 +178,10 @@ export function renderReplyCaptureUnblockPacket(packet, options = {}) {
     "",
     "Do not submit external forms, mark routes sent, or measure non-response until reply capture is proven and the user gives exact action-time confirmation for each route.",
   ].join("\n")}\n`;
+}
+
+function escapeTableCell(value) {
+  return String(value ?? "").replaceAll("|", "\\|");
 }
 
 export async function renderReplyCaptureUnblockFromFiles(options = {}) {

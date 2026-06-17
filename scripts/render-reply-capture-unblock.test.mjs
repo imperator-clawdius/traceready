@@ -27,6 +27,33 @@ const READY_ROUTES = [
   },
 ];
 
+const EMAIL_REPORT_PENDING = {
+  replyCaptureReady: false,
+  ready: false,
+  checks: [
+    {
+      label: "OUTREACH_EMAIL_MX",
+      ready: true,
+      detail: "found=eforward1.registrar-servers.com",
+    },
+    {
+      label: "OUTREACH_EMAIL_DMARC",
+      ready: false,
+      detail: "records=none",
+    },
+    {
+      label: "OUTREACH_EMAIL_DKIM",
+      ready: false,
+      detail: "selectors=none",
+    },
+    {
+      label: "OUTREACH_EMAIL_ALIAS_TEST",
+      ready: false,
+      detail: "reply-capture evidence file not found",
+    },
+  ],
+};
+
 describe("reply-capture unblock packet", () => {
   it("renders the single external action and the routes blocked behind it", () => {
     const packet = buildReplyCaptureUnblockPacket({
@@ -34,19 +61,26 @@ describe("reply-capture unblock packet", () => {
       readyRoutes: READY_ROUTES,
       evidenceExists: false,
       emlExists: false,
-      emailReport: { replyCaptureReady: false, ready: false },
+      emailReport: EMAIL_REPORT_PENDING,
     });
     const markdown = renderReplyCaptureUnblockPacket(packet, { generatedAt: "2026-06-17" });
 
     expect(markdown).toContain("# TraceReady reply-capture unblock - 2026-06-17");
     expect(markdown).toContain("REPLY_CAPTURE_UNBLOCK=pending status=waiting_for_inbox_receipt");
     expect(markdown).toContain("Reply capture ready: no");
+    expect(markdown).toContain("## Email Risk Snapshot");
+    expect(markdown).toContain("| OUTREACH_EMAIL_MX | pass | found=eforward1.registrar-servers.com |");
+    expect(markdown).toContain("| OUTREACH_EMAIL_DMARC | pending | records=none |");
+    expect(markdown).toContain("| OUTREACH_EMAIL_DKIM | pending | selectors=none |");
+    expect(markdown).toContain("Reply capture is the submission gate.");
+    expect(markdown).toContain("v=DMARC1; p=none; rua=mailto:founder@traceready.online; adkim=r; aspf=r");
     expect(markdown).toContain("Send this challenge from a separate mailbox");
     expect(markdown).toContain("To: `founder@traceready.online`");
     expect(markdown).toContain("Subject: `TraceReady reply-capture test trc-20260617-ae6acb63`");
     expect(markdown).toContain("Challenge token: trc-20260617-ae6acb63");
     expect(markdown).toContain("save the received message source as `private/reply-capture-received.eml`");
     expect(markdown).toContain("npm run finalize:reply-capture");
+    expect(markdown).toContain("npm run render:outreach-email-runbook");
     expect(markdown).toContain("| `b02-r03` | Control Union |");
     expect(markdown).toContain("| `b02-r04` | Bureau Veritas |");
     expect(markdown).toContain("Do not submit external forms, mark routes sent, or measure non-response");
@@ -58,7 +92,7 @@ describe("reply-capture unblock packet", () => {
       readyRoutes: READY_ROUTES,
       evidenceExists: false,
       emlExists: true,
-      emailReport: { replyCaptureReady: false, ready: false },
+      emailReport: EMAIL_REPORT_PENDING,
     });
     const markdown = renderReplyCaptureUnblockPacket(packet, { generatedAt: "2026-06-17" });
 
@@ -73,11 +107,12 @@ describe("reply-capture unblock packet", () => {
       readyRoutes: READY_ROUTES,
       evidenceExists: true,
       emlExists: true,
-      emailReport: { replyCaptureReady: true, ready: false },
+      emailReport: { ...EMAIL_REPORT_PENDING, replyCaptureReady: true, ready: false },
     });
     const markdown = renderReplyCaptureUnblockPacket(packet, { generatedAt: "2026-06-17" });
 
     expect(markdown).toContain("REPLY_CAPTURE_UNBLOCK=pass status=ready");
+    expect(markdown).toContain("Reply capture is proven. DMARC, DKIM, and outbound sender auth may still need cleanup");
     expect(markdown).toContain("Reply capture is proven. Use `private/preflight-submit-queue.md`");
   });
 
