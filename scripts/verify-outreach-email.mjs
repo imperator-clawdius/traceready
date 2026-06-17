@@ -104,10 +104,21 @@ export function evaluateReplyCaptureEvidence(evidence, { contactEmail = DEFAULT_
     errors.push("receivedAt must be a valid ISO timestamp");
   }
 
+  if ("challengeToken" in evidence && !String(evidence.challengeToken ?? "").trim()) {
+    errors.push("challengeToken must be a non-empty string when present");
+  }
+
+  if ("challengeCreatedAt" in evidence && Number.isNaN(Date.parse(evidence.challengeCreatedAt))) {
+    errors.push("challengeCreatedAt must be a valid ISO timestamp when present");
+  }
+
   return {
     ready: errors.length === 0,
     receivedAt,
-    detail: errors.length === 0 ? `evidence receivedAt=${receivedAt}` : `invalid evidence: ${errors.join("; ")}`,
+    detail:
+      errors.length === 0
+        ? `evidence receivedAt=${receivedAt}${evidence?.challengeToken ? ` challenge=${evidence.challengeToken}` : ""}`
+        : `invalid evidence: ${errors.join("; ")}`,
     errors,
   };
 }
@@ -216,7 +227,9 @@ export function renderOutreachEmailReport(report) {
     lines.push("OUTREACH_EMAIL_DMARC_STARTER=TXT _dmarc v=DMARC1; p=none; rua=mailto:founder@traceready.online; adkim=r; aspf=r");
     lines.push("OUTREACH_EMAIL_DKIM_NEXT=add the DKIM TXT/CNAME records from the outbound mail provider");
     if (!report.replyCaptureReady) {
-      lines.push("OUTREACH_EMAIL_ALIAS_NEXT=create Namecheap Redirect Email alias founder -> controlled inbox, send a test to founder@traceready.online, record private reply-capture evidence, then rerun with --reply-capture-evidence");
+      lines.push(
+        "OUTREACH_EMAIL_ALIAS_NEXT=create Namecheap Redirect Email alias founder -> controlled inbox; run `npm run prepare:reply-capture -- --output private/reply-capture-challenge.json --contact founder@traceready.online`; send the generated subject to founder@traceready.online; record private reply-capture evidence with `npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox`; then rerun with --reply-capture-evidence",
+      );
     }
   }
 

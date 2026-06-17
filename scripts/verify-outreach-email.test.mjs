@@ -112,6 +112,7 @@ describe("outreach email verifier", () => {
     expect(rendered).toContain("OUTREACH_EMAIL_READY=false");
     expect(rendered).toContain("OUTREACH_EMAIL_DMARC_STARTER=TXT _dmarc");
     expect(rendered).toContain("OUTREACH_EMAIL_ALIAS_NEXT=create Namecheap Redirect Email alias founder");
+    expect(rendered).toContain("npm run prepare:reply-capture");
     expect(rendered).toContain("record private reply-capture evidence");
   });
 

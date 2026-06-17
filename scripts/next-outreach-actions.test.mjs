@@ -134,7 +134,10 @@ Next gate: \`verify_reply_capture_before_external_submission\`
       "Do not submit public forms or measure non-response until reply capture evidence is recorded.",
     );
     expect(markdown).toContain(
-      "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online",
+      "npm run prepare:reply-capture -- --output private/reply-capture-challenge.json --contact founder@traceready.online",
+    );
+    expect(markdown).toContain(
+      "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
     );
     expect(markdown).toContain("## Send Next (blocked)");
     expect(markdown).toContain("Reply capture gate is pending; queue shown for planning only.");

@@ -3,6 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { evaluateReplyCaptureEvidence, loadReplyCaptureEvidence } from "./verify-outreach-email.mjs";
+import { buildReplyCaptureChallenge } from "./prepare-reply-capture-challenge.mjs";
 import {
   buildReplyCaptureEvidence,
   parseReplyCaptureEvidenceArgs,
@@ -41,6 +42,37 @@ describe("reply-capture evidence recorder", () => {
     expect(evaluation.ready).toBe(true);
   });
 
+  it("records the challenge token when the inbox test used a prepared challenge", async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "traceready-reply-capture-"));
+    const outputPath = path.join(tempDir, "reply-capture-evidence.json");
+    const challenge = buildReplyCaptureChallenge({
+      contactEmail: "founder@traceready.online",
+      createdAt: "2026-06-17T03:00:00.000Z",
+      token: "trc-test-1234",
+    });
+
+    await recordReplyCaptureEvidence({
+      outputPath,
+      contactEmail: "founder@traceready.online",
+      receivedAt: "2026-06-17T03:04:00.000Z",
+      confirmedControlledInbox: true,
+      challenge,
+    });
+    const evidence = await loadReplyCaptureEvidence(outputPath);
+    const evaluation = evaluateReplyCaptureEvidence(evidence);
+
+    expect(evidence).toMatchObject({
+      contactEmail: "founder@traceready.online",
+      receivedInControlledInbox: true,
+      receivedAt: "2026-06-17T03:04:00.000Z",
+      challengeToken: "trc-test-1234",
+      challengeCreatedAt: "2026-06-17T03:00:00.000Z",
+      challengeSubject: "TraceReady reply-capture test trc-test-1234",
+    });
+    expect(evaluation.ready).toBe(true);
+    expect(evaluation.detail).toContain("challenge=trc-test-1234");
+  });
+
   it("parses the command used after a real inbox test arrives", () => {
     expect(
       parseReplyCaptureEvidenceArgs([
@@ -50,12 +82,15 @@ describe("reply-capture evidence recorder", () => {
         "founder@traceready.online",
         "--received-at",
         "2026-06-17T02:30:00.000Z",
+        "--challenge",
+        "private/reply-capture-challenge.json",
         "--confirm-controlled-inbox",
       ]),
     ).toEqual({
       outputPath: "private/reply-capture-evidence.json",
       contactEmail: "founder@traceready.online",
       receivedAt: "2026-06-17T02:30:00.000Z",
+      challengePath: "private/reply-capture-challenge.json",
       confirmedControlledInbox: true,
     });
   });

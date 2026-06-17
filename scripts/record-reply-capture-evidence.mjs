@@ -34,6 +34,8 @@ export function parseReplyCaptureEvidenceArgs(argv) {
       options.contactEmail = value;
     } else if (flag === "--received-at") {
       options.receivedAt = value;
+    } else if (flag === "--challenge") {
+      options.challengePath = value;
     } else {
       throw new Error(`unknown flag: ${flag}`);
     }
@@ -48,15 +50,27 @@ export function buildReplyCaptureEvidence({
   contactEmail = DEFAULT_CONTACT_EMAIL,
   receivedAt = new Date().toISOString(),
   confirmedControlledInbox = false,
+  challenge,
 } = {}) {
   if (!confirmedControlledInbox) {
     throw new Error("controlled inbox confirmation is required");
+  }
+
+  if (challenge && normalizeEmail(challenge.contactEmail) !== normalizeEmail(contactEmail)) {
+    throw new Error(`challenge contactEmail must match ${contactEmail}`);
   }
 
   const evidence = {
     contactEmail,
     receivedInControlledInbox: true,
     receivedAt,
+    ...(challenge
+      ? {
+          challengeToken: challenge.challengeToken,
+          challengeCreatedAt: challenge.createdAt,
+          challengeSubject: challenge.subject,
+        }
+      : {}),
   };
   const evaluation = evaluateReplyCaptureEvidence(evidence, { contactEmail });
 
@@ -69,7 +83,8 @@ export function buildReplyCaptureEvidence({
 
 export async function recordReplyCaptureEvidence(options = {}) {
   const outputPath = options.outputPath ?? DEFAULT_OUTPUT_PATH;
-  const evidence = buildReplyCaptureEvidence(options);
+  const challenge = options.challengePath ? await loadReplyCaptureChallenge(options.challengePath) : options.challenge;
+  const evidence = buildReplyCaptureEvidence({ ...options, challenge });
 
   await fs.mkdir(path.dirname(outputPath), { recursive: true });
   await fs.writeFile(outputPath, `${JSON.stringify(evidence, null, 2)}\n`, "utf8");
@@ -78,6 +93,11 @@ export async function recordReplyCaptureEvidence(options = {}) {
     outputPath,
     evidence,
   };
+}
+
+export async function loadReplyCaptureChallenge(filePath) {
+  const raw = await fs.readFile(filePath, "utf8");
+  return JSON.parse(raw);
 }
 
 async function main() {
@@ -92,6 +112,10 @@ async function main() {
       `output=${result.outputPath}`,
     ].join(" "),
   );
+}
+
+function normalizeEmail(email) {
+  return String(email ?? "").trim().toLowerCase();
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
