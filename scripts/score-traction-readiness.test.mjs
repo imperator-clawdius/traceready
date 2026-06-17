@@ -31,6 +31,16 @@ b02-r03,,Control Union,overflow,https://traceready.online/proof/public-cocoa-pil
 b02-r04,,Bureau Veritas,overflow,https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,https://traceready.online/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,not_sent,none,0,0,0,no,,send first message
 `;
 
+const RESULTS_WITH_EVIDENCED_SENT_CSV = `route_id,date_sent,company_or_channel,tier,proof_url,field_note_url,file_check_url,pilot_proof_url,status,response_type,field_note_click_count,file_check_count,paid_order_count,pilot_requested,reply_notes,next_action
+b02-r03,2026-06-16,Control Union,overflow,https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r03,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r03,https://traceready.online/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r03,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r03,sent,none,0,0,0,no,sent via Control Union public contact form; visible form success observed,follow up in 4 business days
+b02-r04,,Bureau Veritas,overflow,https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,https://traceready.online/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,not_sent,none,0,0,0,no,,send first message
+`;
+
+const RESULTS_WITH_UNEVIDENCED_SENT_CSV = `route_id,date_sent,company_or_channel,tier,proof_url,field_note_url,file_check_url,pilot_proof_url,status,response_type,field_note_click_count,file_check_count,paid_order_count,pilot_requested,reply_notes,next_action
+b02-r03,2026-06-16,Control Union,overflow,https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r03,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r03,https://traceready.online/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r03,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r03,sent,none,0,0,0,no,sent manually,follow up in 4 business days
+b02-r04,,Bureau Veritas,overflow,https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,https://traceready.online/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,not_sent,none,0,0,0,no,,send first message
+`;
+
 const SEND_READY_PACKETS = {
   "b02-r03": "Confirm: submit b02-r03 to Control Union using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-b02-r03.md.",
   "b02-r04": "Confirm: submit b02-r04 to Bureau Veritas using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-b02-r04.md.",
@@ -190,5 +200,85 @@ describe("traction readiness scorecard", () => {
     expect(score.outreach.missingPacketRoutes).toEqual(["b02-r04"]);
     expect(score.currentState).toBe("proof_ready_routes_need_send_packets");
     expect(score.nextGate).toBe("render_missing_send_ready_packets");
+  });
+
+  it("counts external submissions only when the sent row carries visible-success evidence", () => {
+    const score = scoreTractionReadiness({
+      publicAuditMarkdown: PUBLIC_AUDIT,
+      batchRows: parseOutreachLedger(BATCH_CSV),
+      resultRows: parseOutreachResults(RESULTS_WITH_EVIDENCED_SENT_CSV),
+      sendabilityAudit: {
+        routes: [
+          {
+            route_id: "b02-r03",
+            company_or_channel: "Control Union",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://www.controlunion.com/eu-deforestation-regulation-eudr/",
+            requires_action_time_confirmation: true,
+          },
+          {
+            route_id: "b02-r04",
+            company_or_channel: "Bureau Veritas",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://news.bureauveritas.net/l/591681/2024-10-25/3t89vtv",
+            requires_action_time_confirmation: true,
+          },
+        ],
+      },
+      contactRecon: { summary: {} },
+      emailReport: { ready: false, dnsReady: false, checks: [] },
+      sendReadyPackets: SEND_READY_PACKETS,
+      submitPreflightPackets: SUBMIT_PREFLIGHT_PACKETS,
+    });
+
+    expect(score.outreach.sentOrBeyond).toBe(1);
+    expect(score.outreach.evidenceBackedSubmissions).toBe(1);
+    expect(score.outreach.unevidencedSentRoutes).toEqual([]);
+    expect(score.currentState).toBe("outreach_sent_waiting_for_signal");
+
+    const markdown = renderTractionReadinessScorecard(score, { generatedAt: "2026-06-16" });
+    expect(markdown).toContain("| Evidence-backed submissions | 1 |");
+    expect(markdown).toContain("| Sent rows missing submission evidence | 0 |");
+    expect(markdown).toContain("## Submission Evidence Guard");
+  });
+
+  it("flags sent rows that do not carry visible-success evidence", () => {
+    const score = scoreTractionReadiness({
+      publicAuditMarkdown: PUBLIC_AUDIT,
+      batchRows: parseOutreachLedger(BATCH_CSV),
+      resultRows: parseOutreachResults(RESULTS_WITH_UNEVIDENCED_SENT_CSV),
+      sendabilityAudit: {
+        routes: [
+          {
+            route_id: "b02-r03",
+            company_or_channel: "Control Union",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://www.controlunion.com/eu-deforestation-regulation-eudr/",
+            requires_action_time_confirmation: true,
+          },
+          {
+            route_id: "b02-r04",
+            company_or_channel: "Bureau Veritas",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://news.bureauveritas.net/l/591681/2024-10-25/3t89vtv",
+            requires_action_time_confirmation: true,
+          },
+        ],
+      },
+      contactRecon: { summary: {} },
+      emailReport: { ready: false, dnsReady: false, checks: [] },
+      sendReadyPackets: SEND_READY_PACKETS,
+      submitPreflightPackets: SUBMIT_PREFLIGHT_PACKETS,
+    });
+
+    expect(score.outreach.sentOrBeyond).toBe(1);
+    expect(score.outreach.evidenceBackedSubmissions).toBe(0);
+    expect(score.outreach.unevidencedSentRoutes).toEqual(["b02-r03"]);
+    expect(score.currentState).toBe("outreach_sent_needs_submission_evidence");
+    expect(score.nextGate).toBe("record_visible_success_evidence_before_measuring_traction");
   });
 });

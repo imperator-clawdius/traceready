@@ -34,6 +34,7 @@ export function scoreTractionReadiness({
   }));
   const packetVerification = verifySendReadyPackets(readyRouteSummaries, sendReadyPackets);
   const submitPreflightVerification = verifySubmitPreflightPackets(readyRouteSummaries, submitPreflightPackets);
+  const submissionEvidence = verifySubmissionEvidence(resultRows);
   const reconSummary = contactRecon?.summary ?? {};
   const emailChecks = Object.fromEntries((emailReport?.checks ?? []).map((check) => [check.label, check.ready]));
   const currentState =
@@ -48,6 +49,8 @@ export function scoreTractionReadiness({
           ? "proof_ready_submit_preflight_ready_traction_unmeasured"
       : resultsSummary.sentOrBeyond === 0 && readyRoutes.length > 0
       ? "proof_ready_send_ready_traction_unmeasured"
+      : submissionEvidence.unevidencedSentRoutes.length > 0
+        ? "outreach_sent_needs_submission_evidence"
       : resultsSummary.sentOrBeyond > 0 && resultsSummary.replies + resultsSummary.fileChecks + resultsSummary.paidOrders + resultsSummary.pilotRequests === 0
         ? "outreach_sent_waiting_for_signal"
         : "traction_signal_present";
@@ -72,6 +75,8 @@ export function scoreTractionReadiness({
       missingSubmitPreflightRoutes: submitPreflightVerification.missingPreflightRoutes,
       missingSubmitPreflightConfirmationRoutes: submitPreflightVerification.missingConfirmationRoutes,
       sentOrBeyond: resultsSummary.sentOrBeyond,
+      evidenceBackedSubmissions: submissionEvidence.evidenceBackedSubmissions,
+      unevidencedSentRoutes: submissionEvidence.unevidencedSentRoutes,
       replies: resultsSummary.replies,
       fieldNoteClicks: resultsSummary.fieldNoteClicks,
       fileChecks: resultsSummary.fileChecks,
@@ -92,6 +97,8 @@ export function scoreTractionReadiness({
               submitPreflightVerification.missingConfirmationRoutes.length >
               0
           ? "render_missing_submit_preflights"
+        : submissionEvidence.unevidencedSentRoutes.length > 0
+          ? "record_visible_success_evidence_before_measuring_traction"
         : resultsSummary.sentOrBeyond === 0 && readyRoutes.length > 0
         ? "submit_verified_public_forms_after_action_time_confirmation"
         : "measure_replies_file_checks_pilot_requests_and_paid_orders",
@@ -151,6 +158,8 @@ Next gate: \`${score.nextGate}\`
 | Submit preflights missing confirmation | ${(score.outreach.missingSubmitPreflightConfirmationRoutes ?? []).length} |
 | Blocked sendability routes | ${score.outreach.blockedSendabilityRoutes} |
 | External submissions completed | ${score.outreach.sentOrBeyond} |
+| Evidence-backed submissions | ${score.outreach.evidenceBackedSubmissions} |
+| Sent rows missing submission evidence | ${(score.outreach.unevidencedSentRoutes ?? []).length} |
 | Replies | ${score.outreach.replies} |
 | Field-note clicks | ${score.outreach.fieldNoteClicks} |
 | Browser/file checks | ${score.outreach.fileChecks} |
@@ -176,6 +185,12 @@ ${readyRouteLines.join("\n")}
 | --- | --- |
 | Missing submit preflight files | ${(score.outreach.missingSubmitPreflightRoutes ?? []).length ? score.outreach.missingSubmitPreflightRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 | Submit preflights missing confirmation | ${(score.outreach.missingSubmitPreflightConfirmationRoutes ?? []).length ? score.outreach.missingSubmitPreflightConfirmationRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
+
+## Submission Evidence Guard
+
+| Check | Route IDs |
+| --- | --- |
+| Sent rows missing visible-success or response evidence | ${(score.outreach.unevidencedSentRoutes ?? []).length ? score.outreach.unevidencedSentRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 
 ## Reply-Capture Risk
 
@@ -375,6 +390,39 @@ function verifySubmitPreflightPackets(readyRoutes, submitPreflightPackets) {
     missingPreflightRoutes,
     missingConfirmationRoutes,
   };
+}
+
+function verifySubmissionEvidence(resultRows) {
+  const sentRows = resultRows.filter((row) => row.status !== "not_sent");
+  const evidenceBackedRows = sentRows.filter((row) => hasSubmissionEvidence(row));
+  const unevidencedSentRoutes = sentRows
+    .filter((row) => !hasSubmissionEvidence(row))
+    .map((row) => row.route_id);
+
+  return {
+    evidenceBackedSubmissions: evidenceBackedRows.length,
+    unevidencedSentRoutes,
+  };
+}
+
+function hasSubmissionEvidence(row) {
+  if (Number(row.file_check_count || 0) > 0 || Number(row.paid_order_count || 0) > 0) {
+    return true;
+  }
+
+  if (row.pilot_requested === "yes") {
+    return true;
+  }
+
+  if (row.status !== "sent" && row.response_type && row.response_type !== "none") {
+    return hasText(row.reply_notes);
+  }
+
+  return /\bvisible form success observed\b/i.test(row.reply_notes);
+}
+
+function hasText(value) {
+  return typeof value === "string" && value.trim().length > 0;
 }
 
 function extractNumber(markdown, label) {
