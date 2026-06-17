@@ -107,6 +107,9 @@ describe("market proof action brief", () => {
     expect(markdown).toContain("Reply capture is not proven yet.");
     expect(markdown).toContain("Subject: `TraceReady reply-capture test trc-20260617-ae6acb63`");
     expect(markdown).toContain("Save the received message source as `private/reply-capture-received.eml`");
+    expect(markdown).toContain(
+      "The saved `.eml` must show `founder@traceready.online` in `To`, `Delivered-To`, `X-Original-To`, `Envelope-To`, or another recipient/delivery header.",
+    );
     expect(markdown).toContain("npm run finalize:reply-capture");
     expect(markdown).toContain("| `b02-r03` | Control Union |");
     expect(markdown).toContain("| `b02-r04` | Bureau Veritas |");

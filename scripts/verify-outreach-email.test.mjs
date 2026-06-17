@@ -296,6 +296,9 @@ describe("outreach email verifier", () => {
     expect(markdown).toContain(
       "The saved `.eml` must include the original `Date` and `Subject` headers plus the message body carrying the challenge token.",
     );
+    expect(markdown).toContain(
+      "It must also show `founder@traceready.online` in `To`, `Delivered-To`, `X-Original-To`, `Envelope-To`, or another recipient/delivery header.",
+    );
     expect(markdown).toContain("If the `.eml` file is already saved, run the finalizer directly:");
     expect(markdown).toContain("npm run finalize:reply-capture");
     expect(markdown).toContain(

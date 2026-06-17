@@ -71,6 +71,9 @@ describe("reply-capture challenge verifier", () => {
       "The saved `.eml` must include the original `Date` and `Subject` headers plus the message body carrying the challenge token.",
     );
     expect(markdown).toContain(
+      "It must also show `founder@traceready.online` in `To`, `Delivered-To`, `X-Original-To`, `Envelope-To`, or another recipient/delivery header.",
+    );
+    expect(markdown).toContain(
       "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --from-eml private/reply-capture-received.eml --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
     );
     expect(markdown).toContain(

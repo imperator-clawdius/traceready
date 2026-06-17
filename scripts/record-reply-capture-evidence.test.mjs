@@ -114,6 +114,7 @@ describe("reply-capture evidence recorder", () => {
       receivedAt: "2026-06-17T03:04:00.000Z",
       challengeToken: "trc-test-1234",
       challengeSubject: "TraceReady reply-capture test trc-test-1234",
+      receivedForContactEmail: true,
     });
     expect(result.evidence).toEqual(evidence);
     expect(savedEvidence).toEqual(evidence);
@@ -147,6 +148,7 @@ describe("reply-capture evidence recorder", () => {
     });
 
     expect(evidence.challengeToken).toBe("trc-test-1234");
+    expect(evidence.receivedForContactEmail).toBe(true);
   });
 
   it("records evidence from a base64 text/plain MIME part in a saved eml", () => {
@@ -187,6 +189,34 @@ describe("reply-capture evidence recorder", () => {
     });
 
     expect(evidence.challengeToken).toBe("trc-test-1234");
+    expect(evidence.receivedForContactEmail).toBe(true);
+  });
+
+  it("rejects a saved eml that was not addressed to the TraceReady alias", () => {
+    const challenge = buildReplyCaptureChallenge({
+      contactEmail: "founder@traceready.online",
+      createdAt: "2026-06-17T03:00:00.000Z",
+      token: "trc-test-1234",
+    });
+    const eml = [
+      "From: sender@example.com",
+      "To: controlled-inbox@example.com",
+      "Date: Wed, 17 Jun 2026 03:04:00 +0000",
+      "Subject: TraceReady reply-capture test trc-test-1234",
+      "",
+      "TraceReady reply-capture test for founder@traceready.online.",
+      "Challenge token: trc-test-1234",
+      "",
+    ].join("\r\n");
+
+    expect(() =>
+      buildReplyCaptureEvidenceFromEml({
+        contactEmail: "founder@traceready.online",
+        eml,
+        confirmedControlledInbox: true,
+        challenge,
+      }),
+    ).toThrow("received eml must show delivery to founder@traceready.online");
   });
 
   it("rejects a received subject that does not match the prepared challenge", () => {
@@ -318,6 +348,9 @@ describe("reply-capture evidence recorder", () => {
     const readme = await fs.readFile("README.md", "utf8");
 
     expect(readme).toContain("save the received message source as `private/reply-capture-received.eml`");
+    expect(readme).toContain(
+      "The saved `.eml` must show `founder@traceready.online` in `To`, `Delivered-To`, `X-Original-To`, `Envelope-To`, or another recipient/delivery header.",
+    );
     expect(readme).toContain(
       "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --from-eml private/reply-capture-received.eml --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
     );

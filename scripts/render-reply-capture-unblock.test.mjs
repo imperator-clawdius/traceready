@@ -82,6 +82,9 @@ describe("reply-capture unblock packet", () => {
     expect(markdown).toContain(
       "The saved `.eml` must include the original `Date` and `Subject` headers plus the message body carrying the challenge token.",
     );
+    expect(markdown).toContain(
+      "It must also show `founder@traceready.online` in `To`, `Delivered-To`, `X-Original-To`, `Envelope-To`, or another recipient/delivery header.",
+    );
     expect(markdown).toContain("npm run finalize:reply-capture");
     expect(markdown).toContain("npm run render:outreach-email-runbook");
     expect(markdown).toContain("| `b02-r03` | Control Union |");

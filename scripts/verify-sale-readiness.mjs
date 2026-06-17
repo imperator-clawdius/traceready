@@ -232,6 +232,7 @@ Send the current challenge to prove \`${contactEmail}\` reaches a controlled inb
 ${challengeSubject ? `Subject: \`${challengeSubject}\`` : `Challenge file: \`${challengePath}\``}
 ${challengeToken ? `Token: \`${challengeToken}\`` : ""}
 Received message source: \`${emlPath}\`
+The saved \`.eml\` must show \`${contactEmail}\` in \`To\`, \`Delivered-To\`, \`X-Original-To\`, \`Envelope-To\`, or another recipient/delivery header.
 Evidence output: \`${evidencePath}\`
 
 \`\`\`powershell

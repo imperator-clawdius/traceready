@@ -79,6 +79,9 @@ describe("sale readiness verifier", () => {
     expect(markdown).toContain("Subject: `TraceReady reply-capture test trc-test-1234`");
     expect(markdown).toContain("Token: `trc-test-1234`");
     expect(markdown).toContain("Received message source: `private/reply-capture-received.eml`");
+    expect(markdown).toContain(
+      "The saved `.eml` must show `founder@traceready.online` in `To`, `Delivered-To`, `X-Original-To`, `Envelope-To`, or another recipient/delivery header.",
+    );
     expect(markdown).toContain("Evidence output: `private/reply-capture-evidence.json`");
     expect(markdown).toContain("npm run finalize:reply-capture");
     expect(markdown).toContain(

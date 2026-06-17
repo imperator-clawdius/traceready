@@ -56,6 +56,7 @@ export function buildReplyCaptureEvidence({
   receivedSubject,
   confirmedControlledInbox = false,
   challenge,
+  receivedForContactEmail,
 } = {}) {
   if (!confirmedControlledInbox) {
     throw new Error("controlled inbox confirmation is required");
@@ -73,6 +74,7 @@ export function buildReplyCaptureEvidence({
     contactEmail,
     receivedInControlledInbox: true,
     receivedAt,
+    ...(receivedForContactEmail === true ? { receivedForContactEmail: true } : {}),
     ...(challenge
       ? {
           challengeToken: challenge.challengeToken,
@@ -100,9 +102,14 @@ export function buildReplyCaptureEvidenceFromEml({
   const body = parseEmlBody(eml);
   const receivedSubject = headers.subject;
   const receivedAt = parseEmlDate(headers.date);
+  const receivedForContactEmail = emlShowsDeliveryToContact(headers, contactEmail);
 
   if (challenge?.challengeToken && !body.includes(challenge.challengeToken)) {
     throw new Error("received eml body must include challengeToken");
+  }
+
+  if (!receivedForContactEmail) {
+    throw new Error(`received eml must show delivery to ${contactEmail}`);
   }
 
   return buildReplyCaptureEvidence({
@@ -111,6 +118,7 @@ export function buildReplyCaptureEvidenceFromEml({
     receivedSubject,
     confirmedControlledInbox,
     challenge,
+    receivedForContactEmail,
   });
 }
 
@@ -179,6 +187,28 @@ function parseEmlDate(value) {
 
   const timestamp = Date.parse(value);
   return Number.isNaN(timestamp) ? "" : new Date(timestamp).toISOString();
+}
+
+function emlShowsDeliveryToContact(headers, contactEmail) {
+  const recipientHeaders = [
+    "to",
+    "delivered-to",
+    "x-original-to",
+    "envelope-to",
+    "x-envelope-to",
+    "x-forwarded-to",
+    "apparently-to",
+    "resent-to",
+  ];
+  const expected = normalizeEmail(contactEmail);
+
+  return recipientHeaders.some((header) => headerEmailList(headers[header]).includes(expected));
+}
+
+function headerEmailList(value) {
+  return String(value ?? "")
+    .toLowerCase()
+    .match(/[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-z0-9-]+(?:\.[a-z0-9-]+)+/g) ?? [];
 }
 
 function splitEmlSection(value) {

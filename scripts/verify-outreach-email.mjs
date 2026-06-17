@@ -377,6 +377,7 @@ export function renderOutreachEmailRunbook(report, options = {}) {
     "",
     "After the message arrives, save the received message source as `private/reply-capture-received.eml`, then record evidence:",
     "The saved `.eml` must include the original `Date` and `Subject` headers plus the message body carrying the challenge token.",
+    `It must also show \`${report.contactEmail}\` in \`To\`, \`Delivered-To\`, \`X-Original-To\`, \`Envelope-To\`, or another recipient/delivery header.`,
     "",
     "If the `.eml` file is already saved, run the finalizer directly:",
     "",
