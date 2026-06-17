@@ -20,6 +20,7 @@ export function scoreTractionReadiness({
   contactRecon,
   emailReport,
   sendReadyPackets,
+  submitPreflightPackets,
 }) {
   const publicProof = parsePublicProof(publicAuditMarkdown);
   const resultsSummary = summarizeOutreachResults(resultRows);
@@ -32,11 +33,19 @@ export function scoreTractionReadiness({
     route_url: route.route_url,
   }));
   const packetVerification = verifySendReadyPackets(readyRouteSummaries, sendReadyPackets);
+  const submitPreflightVerification = verifySubmitPreflightPackets(readyRouteSummaries, submitPreflightPackets);
   const reconSummary = contactRecon?.summary ?? {};
   const emailChecks = Object.fromEntries((emailReport?.checks ?? []).map((check) => [check.label, check.ready]));
   const currentState =
     packetVerification.checked && packetVerification.missingPacketRoutes.length + packetVerification.missingConfirmationRoutes.length > 0
       ? "proof_ready_routes_need_send_packets"
+      : submitPreflightVerification.checked &&
+          submitPreflightVerification.missingPreflightRoutes.length +
+            submitPreflightVerification.missingConfirmationRoutes.length >
+            0
+        ? "proof_ready_routes_need_submit_preflights"
+        : submitPreflightVerification.checked && resultsSummary.sentOrBeyond === 0 && readyRoutes.length > 0
+          ? "proof_ready_submit_preflight_ready_traction_unmeasured"
       : resultsSummary.sentOrBeyond === 0 && readyRoutes.length > 0
       ? "proof_ready_send_ready_traction_unmeasured"
       : resultsSummary.sentOrBeyond > 0 && resultsSummary.replies + resultsSummary.fileChecks + resultsSummary.paidOrders + resultsSummary.pilotRequests === 0
@@ -59,6 +68,9 @@ export function scoreTractionReadiness({
       packetReadyRoutes: packetVerification.packetReadyRoutes,
       missingPacketRoutes: packetVerification.missingPacketRoutes,
       missingConfirmationRoutes: packetVerification.missingConfirmationRoutes,
+      submitPreflightReadyRoutes: submitPreflightVerification.preflightReadyRoutes,
+      missingSubmitPreflightRoutes: submitPreflightVerification.missingPreflightRoutes,
+      missingSubmitPreflightConfirmationRoutes: submitPreflightVerification.missingConfirmationRoutes,
       sentOrBeyond: resultsSummary.sentOrBeyond,
       replies: resultsSummary.replies,
       fieldNoteClicks: resultsSummary.fieldNoteClicks,
@@ -75,6 +87,11 @@ export function scoreTractionReadiness({
     nextGate:
       packetVerification.checked && packetVerification.missingPacketRoutes.length + packetVerification.missingConfirmationRoutes.length > 0
         ? "render_missing_send_ready_packets"
+        : submitPreflightVerification.checked &&
+            submitPreflightVerification.missingPreflightRoutes.length +
+              submitPreflightVerification.missingConfirmationRoutes.length >
+              0
+          ? "render_missing_submit_preflights"
         : resultsSummary.sentOrBeyond === 0 && readyRoutes.length > 0
         ? "submit_verified_public_forms_after_action_time_confirmation"
         : "measure_replies_file_checks_pilot_requests_and_paid_orders",
@@ -129,6 +146,9 @@ Next gate: \`${score.nextGate}\`
 | Send-ready packets with matching confirmation | ${score.outreach.packetReadyRoutes ?? "not checked"} |
 | Missing send-ready packets | ${(score.outreach.missingPacketRoutes ?? []).length} |
 | Send-ready packets missing confirmation | ${(score.outreach.missingConfirmationRoutes ?? []).length} |
+| Submit preflights with matching confirmation | ${score.outreach.submitPreflightReadyRoutes ?? "not checked"} |
+| Missing submit preflights | ${(score.outreach.missingSubmitPreflightRoutes ?? []).length} |
+| Submit preflights missing confirmation | ${(score.outreach.missingSubmitPreflightConfirmationRoutes ?? []).length} |
 | Blocked sendability routes | ${score.outreach.blockedSendabilityRoutes} |
 | External submissions completed | ${score.outreach.sentOrBeyond} |
 | Replies | ${score.outreach.replies} |
@@ -149,6 +169,13 @@ ${readyRouteLines.join("\n")}
 | --- | --- |
 | Missing packet files | ${(score.outreach.missingPacketRoutes ?? []).length ? score.outreach.missingPacketRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 | Missing confirmation text | ${(score.outreach.missingConfirmationRoutes ?? []).length ? score.outreach.missingConfirmationRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
+
+## Submit Preflight Guard
+
+| Check | Route IDs |
+| --- | --- |
+| Missing submit preflight files | ${(score.outreach.missingSubmitPreflightRoutes ?? []).length ? score.outreach.missingSubmitPreflightRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
+| Submit preflights missing confirmation | ${(score.outreach.missingSubmitPreflightConfirmationRoutes ?? []).length ? score.outreach.missingSubmitPreflightConfirmationRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 
 ## Reply-Capture Risk
 
@@ -253,6 +280,22 @@ export async function loadSendReadyPackets(readyRoutes) {
   return Object.fromEntries(entries);
 }
 
+export async function loadSubmitPreflightPackets(readyRoutes) {
+  const entries = await Promise.all(
+    readyRoutes.map(async (route) => {
+      const packetPath = `private/preflight-submit-${route.route_id}.md`;
+
+      try {
+        return [route.route_id, await fs.readFile(packetPath, "utf8")];
+      } catch {
+        return [route.route_id, ""];
+      }
+    }),
+  );
+
+  return Object.fromEntries(entries);
+}
+
 function parsePublicProof(markdown) {
   return {
     recordsAnalyzed: extractNumber(markdown, "Records analyzed"),
@@ -294,6 +337,42 @@ function verifySendReadyPackets(readyRoutes, sendReadyPackets) {
     checked: true,
     packetReadyRoutes: readyRoutes.length - missingPacketRoutes.length - missingConfirmationRoutes.length,
     missingPacketRoutes,
+    missingConfirmationRoutes,
+  };
+}
+
+function verifySubmitPreflightPackets(readyRoutes, submitPreflightPackets) {
+  if (submitPreflightPackets === undefined) {
+    return {
+      checked: false,
+      preflightReadyRoutes: undefined,
+      missingPreflightRoutes: [],
+      missingConfirmationRoutes: [],
+    };
+  }
+
+  const missingPreflightRoutes = [];
+  const missingConfirmationRoutes = [];
+
+  for (const route of readyRoutes) {
+    const packetText =
+      submitPreflightPackets[route.route_id] ??
+      submitPreflightPackets[`private/preflight-submit-${route.route_id}.md`] ??
+      "";
+    const expectedPassLine = `OUTREACH_SUBMIT_PREFLIGHT=pass route=${route.route_id} company="${route.company_or_channel}"`;
+    const expectedConfirmation = `Confirm: submit ${route.route_id} to ${route.company_or_channel} using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-${route.route_id}.md.`;
+
+    if (!packetText.trim()) {
+      missingPreflightRoutes.push(route.route_id);
+    } else if (!packetText.includes(expectedPassLine) || !packetText.includes(expectedConfirmation)) {
+      missingConfirmationRoutes.push(route.route_id);
+    }
+  }
+
+  return {
+    checked: true,
+    preflightReadyRoutes: readyRoutes.length - missingPreflightRoutes.length - missingConfirmationRoutes.length,
+    missingPreflightRoutes,
     missingConfirmationRoutes,
   };
 }
@@ -355,6 +434,7 @@ async function main() {
       route_url: route.route_url,
     }));
   const sendReadyPackets = await loadSendReadyPackets(readyRoutesForPackets);
+  const submitPreflightPackets = await loadSubmitPreflightPackets(readyRoutesForPackets);
   const score = scoreTractionReadiness({
     publicAuditMarkdown,
     batchRows,
@@ -363,6 +443,7 @@ async function main() {
     contactRecon,
     emailReport,
     sendReadyPackets,
+    submitPreflightPackets,
   });
   const markdown = renderTractionReadinessScorecard(score, { generatedAt: options.generatedAt });
 
@@ -379,6 +460,7 @@ async function main() {
       `state=${score.currentState}`,
       `ready_routes=${score.outreach.readyBrowserFormRoutes}`,
       `packet_ready=${score.outreach.packetReadyRoutes}`,
+      `preflight_ready=${score.outreach.submitPreflightReadyRoutes}`,
       `sent=${score.outreach.sentOrBeyond}`,
       `replies=${score.outreach.replies}`,
       `file_checks=${score.outreach.fileChecks}`,

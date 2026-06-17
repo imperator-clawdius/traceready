@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
+  preflightAllReadyOutreachSubmits,
   parseOutreachSubmitPreflightArgs,
   preflightOutreachSubmit,
+  renderOutreachSubmitQueue,
   renderOutreachSubmitPreflight,
 } from "./preflight-outreach-submit.mjs";
 import { parseOutreachResults } from "./summarize-outreach-results.mjs";
@@ -57,6 +59,16 @@ Confirm: submit b02-r04 to Bureau Veritas using TraceReady Desk, founder@tracere
 ## Message
 
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
+`;
+
+const CONTROL_UNION_PACKET = `# TraceReady send-ready packet: b02-r03
+
+Target: Control Union
+Public route: https://www.controlunion.com/eu-deforestation-regulation-eudr/
+
+\`\`\`text
+Confirm: submit b02-r03 to Control Union using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-b02-r03.md.
+\`\`\`
 `;
 
 describe("outreach submit preflight", () => {
@@ -153,6 +165,101 @@ describe("outreach submit preflight", () => {
       sendReadyPath: "private/send-ready-b02-r04.md",
       routeId: "b02-r04",
       outputPath: "private/preflight-submit-b02-r04.md",
+      generatedAt: "2026-06-16",
+      skipEmail: true,
+    });
+  });
+
+  it("builds a queue of preflights for every browser-form-ready unsent route", () => {
+    const queue = preflightAllReadyOutreachSubmits({
+      batchRows: parseOutreachLedger(BATCH_CSV),
+      resultRows: parseOutreachResults(RESULTS_CSV),
+      sendabilityAudit: {
+        auditDate: "2026-06-16",
+        routes: [
+          {
+            route_id: "b02-r03",
+            company_or_channel: "Control Union",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://www.controlunion.com/eu-deforestation-regulation-eudr/",
+            requires_action_time_confirmation: true,
+          },
+          SENDABILITY_AUDIT.routes[1],
+        ],
+      },
+      sendReadyPackets: {
+        "private/send-ready-b02-r03.md": CONTROL_UNION_PACKET,
+        "private/send-ready-b02-r04.md": SEND_READY_PACKET,
+      },
+      resultsPath: "private/outreach-results-batch-02.csv",
+      emailReport: { ready: false },
+    });
+    const markdown = renderOutreachSubmitQueue(queue, { generatedAt: "2026-06-16" });
+
+    expect(queue.preflights).toHaveLength(2);
+    expect(queue.readyRoutes).toBe(2);
+    expect(queue.preflightReadyRoutes).toBe(2);
+    expect(queue.replyCapture).toBe("at_risk");
+    expect(markdown).toContain("# TraceReady submit queue - 2026-06-16");
+    expect(markdown).toContain("OUTREACH_SUBMIT_QUEUE=pass ready_routes=2 preflight_ready=2 reply_capture=at_risk");
+    expect(markdown).toContain("| `b02-r03` | Control Union |");
+    expect(markdown).toContain("| `b02-r04` | Bureau Veritas |");
+    expect(markdown).toContain("Confirm: submit b02-r03 to Control Union");
+    expect(markdown).toContain("Confirm: submit b02-r04 to Bureau Veritas");
+  });
+
+  it("refuses an all-ready queue when a ready route is missing its send-ready packet", () => {
+    expect(() =>
+      preflightAllReadyOutreachSubmits({
+        batchRows: parseOutreachLedger(BATCH_CSV),
+        resultRows: parseOutreachResults(RESULTS_CSV),
+        sendabilityAudit: {
+          auditDate: "2026-06-16",
+          routes: [
+            {
+              route_id: "b02-r03",
+              company_or_channel: "Control Union",
+              sendability: "browser_form_ready",
+              contact_method: "public_browser_form",
+              route_url: "https://www.controlunion.com/eu-deforestation-regulation-eudr/",
+              requires_action_time_confirmation: true,
+            },
+            SENDABILITY_AUDIT.routes[1],
+          ],
+        },
+        sendReadyPackets: {
+          "private/send-ready-b02-r04.md": SEND_READY_PACKET,
+        },
+      }),
+    ).toThrow("send-ready packet for b02-r03 is missing");
+  });
+
+  it("parses CLI flags for an all-ready submit queue", () => {
+    expect(
+      parseOutreachSubmitPreflightArgs([
+        "--batch",
+        "docs/proof-led-outreach-batch-02.csv",
+        "--results",
+        "private/outreach-results-batch-02.csv",
+        "--sendability-audit",
+        "private/outreach-sendability-audit-batch-02.json",
+        "--all-ready",
+        "--output-dir",
+        "private",
+        "--queue-output",
+        "private/preflight-submit-queue.md",
+        "--today",
+        "2026-06-16",
+        "--skip-email",
+      ]),
+    ).toEqual({
+      batchPath: "docs/proof-led-outreach-batch-02.csv",
+      resultsPath: "private/outreach-results-batch-02.csv",
+      sendabilityAuditPath: "private/outreach-sendability-audit-batch-02.json",
+      allReady: true,
+      outputDir: "private",
+      queueOutputPath: "private/preflight-submit-queue.md",
       generatedAt: "2026-06-16",
       skipEmail: true,
     });

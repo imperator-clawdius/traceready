@@ -9,6 +9,7 @@ import { validateOutreachSendabilityAudit } from "./verify-outreach-sendability.
 const DEFAULT_BATCH_PATH = "docs/proof-led-outreach-batch-02.csv";
 const DEFAULT_RESULTS_PATH = "private/outreach-results-batch-02.csv";
 const DEFAULT_SENDABILITY_AUDIT_PATH = "private/outreach-sendability-audit-batch-02.json";
+const DEFAULT_PRIVATE_DIR = "private";
 
 const CONTACT_PROFILE = {
   firstName: "TraceReady",
@@ -146,6 +147,81 @@ npm run render:outreach-replies -- --results ${preflight.resultsPath} --route ${
 `;
 }
 
+export function preflightAllReadyOutreachSubmits({
+  batchRows,
+  resultRows,
+  sendabilityAudit,
+  sendReadyPackets,
+  resultsPath = DEFAULT_RESULTS_PATH,
+  emailReport = { ready: false },
+  outputDir = DEFAULT_PRIVATE_DIR,
+  sendReadyDir = DEFAULT_PRIVATE_DIR,
+}) {
+  const readyRoutes = (sendabilityAudit.routes ?? []).filter((route) => route.sendability === "browser_form_ready");
+  const preflights = readyRoutes.map((route) => {
+    const sendReadyPath = normalizePath(`${sendReadyDir}/send-ready-${route.route_id}.md`);
+    const sendReadyMarkdown = sendReadyPackets[sendReadyPath] ?? sendReadyPackets[route.route_id] ?? "";
+
+    if (!sendReadyMarkdown.trim()) {
+      throw new Error(`send-ready packet for ${route.route_id} is missing`);
+    }
+
+    return {
+      ...preflightOutreachSubmit({
+        batchRows,
+        resultRows,
+        sendabilityAudit,
+        sendReadyMarkdown,
+        routeId: route.route_id,
+        sendReadyPath,
+        resultsPath,
+        emailReport,
+      }),
+      preflightPath: normalizePath(`${outputDir}/preflight-submit-${route.route_id}.md`),
+    };
+  });
+
+  return {
+    readyRoutes: readyRoutes.length,
+    preflightReadyRoutes: preflights.length,
+    replyCapture: emailReport.ready ? "ready" : "at_risk",
+    outputDir: normalizePath(outputDir),
+    preflights,
+  };
+}
+
+export function renderOutreachSubmitQueue(queue, options = {}) {
+  const generatedAt = options.generatedAt ?? todayIsoDate();
+  const tableRows = queue.preflights.map(
+    (preflight) =>
+      `| \`${preflight.routeId}\` | ${preflight.companyName} | ${preflight.publicRoute} | \`${preflight.sendReadyPath}\` | \`${preflight.preflightPath}\` | \`${preflight.replyCapture}\` |`,
+  );
+  const confirmations = queue.preflights.map((preflight) => preflight.confirmationLine);
+
+  return `# TraceReady submit queue - ${generatedAt}
+
+OUTREACH_SUBMIT_QUEUE=pass ready_routes=${queue.readyRoutes} preflight_ready=${queue.preflightReadyRoutes} reply_capture=${queue.replyCapture}
+
+External browser-form submission still requires exact action-time confirmation for each route.
+
+## Ready Routes
+
+| Route | Target | Public route | Send-ready packet | Submit preflight | Reply capture |
+| --- | --- | --- | --- | --- | --- |
+${tableRows.join("\n")}
+
+## Action-Time Confirmations
+
+\`\`\`text
+${confirmations.join("\n")}
+\`\`\`
+
+## Measurement Rule
+
+After submission, count only replies, routed browser/file checks, concrete referrals, pilot requests, paid cleanup orders, or permissioned de-identified before/after evidence as traction.
+`;
+}
+
 export function parseOutreachSubmitPreflightArgs(argv) {
   const parsed = {
     batchPath: DEFAULT_BATCH_PATH,
@@ -167,6 +243,11 @@ export function parseOutreachSubmitPreflightArgs(argv) {
       continue;
     }
 
+    if (flag === "--all-ready") {
+      parsed.allReady = true;
+      continue;
+    }
+
     if (value === undefined || value.startsWith("--")) {
       throw new Error(`${flag} requires a value`);
     }
@@ -184,6 +265,10 @@ export function parseOutreachSubmitPreflightArgs(argv) {
       parsed.sendReadyPath ??= `private/send-ready-${value}.md`;
     } else if (flag === "--output") {
       parsed.outputPath = value;
+    } else if (flag === "--output-dir") {
+      parsed.outputDir = value;
+    } else if (flag === "--queue-output") {
+      parsed.queueOutputPath = value;
     } else if (flag === "--today") {
       parsed.generatedAt = value;
     } else {
@@ -193,12 +278,19 @@ export function parseOutreachSubmitPreflightArgs(argv) {
     index += 1;
   }
 
-  if (!parsed.routeId) {
+  if (!parsed.routeId && !parsed.allReady) {
     throw new Error("--route requires a value");
   }
 
-  parsed.sendReadyPath ??= `private/send-ready-${parsed.routeId}.md`;
-  parsed.outputPath ??= `private/preflight-submit-${parsed.routeId}.md`;
+  if (parsed.routeId) {
+    parsed.sendReadyPath ??= `private/send-ready-${parsed.routeId}.md`;
+    parsed.outputPath ??= `private/preflight-submit-${parsed.routeId}.md`;
+  }
+
+  if (parsed.allReady) {
+    parsed.outputDir ??= DEFAULT_PRIVATE_DIR;
+    parsed.queueOutputPath ??= `${parsed.outputDir}/preflight-submit-queue.md`;
+  }
 
   return parsed;
 }
@@ -227,11 +319,10 @@ function todayIsoDate() {
 
 async function main() {
   const options = parseOutreachSubmitPreflightArgs(process.argv.slice(2));
-  const [batchCsv, resultsCsv, sendabilityAuditJson, sendReadyMarkdown] = await Promise.all([
+  const [batchCsv, resultsCsv, sendabilityAuditJson] = await Promise.all([
     fs.readFile(options.batchPath, "utf8"),
     fs.readFile(options.resultsPath, "utf8"),
     fs.readFile(options.sendabilityAuditPath, "utf8"),
-    fs.readFile(options.sendReadyPath, "utf8"),
   ]);
   const batchRows = parseOutreachLedger(batchCsv);
   const resultRows = parseOutreachResults(resultsCsv);
@@ -251,6 +342,44 @@ async function main() {
   }
 
   const emailReport = options.skipEmail ? { ready: false } : await inspectOutreachEmailDns();
+
+  if (options.allReady) {
+    const readyRoutes = (sendabilityAudit.routes ?? []).filter((route) => route.sendability === "browser_form_ready");
+    const sendReadyPackets = Object.fromEntries(
+      await Promise.all(
+        readyRoutes.map(async (route) => {
+          const packetPath = normalizePath(`private/send-ready-${route.route_id}.md`);
+          return [packetPath, await fs.readFile(packetPath, "utf8")];
+        }),
+      ),
+    );
+    const queue = preflightAllReadyOutreachSubmits({
+      batchRows,
+      resultRows,
+      sendabilityAudit,
+      sendReadyPackets,
+      resultsPath: options.resultsPath,
+      emailReport,
+      outputDir: options.outputDir,
+    });
+
+    await fs.mkdir(options.outputDir, { recursive: true });
+
+    for (const preflight of queue.preflights) {
+      const markdown = renderOutreachSubmitPreflight(preflight, { generatedAt: options.generatedAt });
+      await fs.writeFile(preflight.preflightPath, markdown, "utf8");
+    }
+
+    const queueMarkdown = renderOutreachSubmitQueue(queue, { generatedAt: options.generatedAt });
+    await fs.writeFile(options.queueOutputPath, queueMarkdown, "utf8");
+
+    console.log(
+      `OUTREACH_SUBMIT_QUEUE=pass ready_routes=${queue.readyRoutes} preflight_ready=${queue.preflightReadyRoutes} reply_capture=${queue.replyCapture} output=${options.queueOutputPath}`,
+    );
+    return;
+  }
+
+  const sendReadyMarkdown = await fs.readFile(options.sendReadyPath, "utf8");
   const preflight = preflightOutreachSubmit({
     batchRows,
     resultRows,
