@@ -107,7 +107,7 @@ OUTREACH_SUBMIT_LIVE=pending ready_routes=2 live_ready=1 blocked=1 captcha=0
 
 const LIVE_SUBMIT_REPORT_REPLY_CAPTURE_RISK = `# TraceReady live submit route check - 2026-06-17
 
-OUTREACH_SUBMIT_LIVE=pending ready_routes=2 live_ready=0 blocked=0 captcha=0
+OUTREACH_SUBMIT_LIVE=pending ready_routes=2 live_ready=0 blocked=0 captcha=0 reply_capture_held=2
 
 ## Route Checks
 
@@ -125,6 +125,7 @@ OUTREACH_SUBMIT_LIVE=pending ready_routes=2 live_ready=0 blocked=0 captcha=0
 | Fetch errors | none |
 | HTTP blocked | none |
 | CAPTCHA or browser challenge marker | none |
+| Reachable but held by reply capture | \`b02-r03\`, \`b02-r04\` |
 | Reply capture not ready | \`b02-r03\`, \`b02-r04\` |
 `;
 
@@ -463,11 +464,14 @@ describe("traction readiness scorecard", () => {
 
     expect(score.outreach.liveSubmitStatus).toBe("pending");
     expect(score.outreach.liveSubmitReadyRoutes).toBe(0);
+    expect(score.outreach.liveSubmitReplyCaptureHeldRoutes).toEqual(["b02-r03", "b02-r04"]);
     expect(score.outreach.liveSubmitReplyCaptureRiskRoutes).toEqual(["b02-r03", "b02-r04"]);
     expect(score.currentState).toBe("proof_ready_reply_capture_at_risk_traction_unmeasured");
     expect(score.nextGate).toBe("verify_reply_capture_before_external_submission");
 
     const markdown = renderTractionReadinessScorecard(score, { generatedAt: "2026-06-17" });
+    expect(markdown).toContain("| Live submit routes held by reply capture | 2 |");
+    expect(markdown).toContain("| Reachable but held by reply capture | `b02-r03`, `b02-r04` |");
     expect(markdown).toContain("| Reply capture not ready | `b02-r03`, `b02-r04` |");
   });
 

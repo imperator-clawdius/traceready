@@ -97,8 +97,10 @@ describe("live submit route verifier", () => {
 
     expect(report.status).toBe("pending");
     expect(report.liveReadyRoutes).toBe(0);
+    expect(report.replyCaptureHeldRoutes).toEqual(["b02-r03", "b02-r04"]);
     expect(report.replyCaptureRiskRoutes).toEqual(["b02-r03", "b02-r04"]);
-    expect(markdown).toContain("OUTREACH_SUBMIT_LIVE=pending ready_routes=2 live_ready=0");
+    expect(markdown).toContain("OUTREACH_SUBMIT_LIVE=pending ready_routes=2 live_ready=0 blocked=0 captcha=0 reply_capture_held=2");
+    expect(markdown).toContain("| Reachable but held by reply capture | `b02-r03`, `b02-r04` |");
     expect(markdown).toContain("| Reply capture not ready | `b02-r03`, `b02-r04` |");
   });
 

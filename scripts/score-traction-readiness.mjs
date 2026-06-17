@@ -122,6 +122,7 @@ export function scoreTractionReadiness({
       liveSubmitReadyRoutes: liveSubmitVerification.liveReadyRoutes,
       liveSubmitBlockedRoutes: liveSubmitVerification.blockedRoutes,
       liveSubmitCaptchaRoutes: liveSubmitVerification.captchaRoutes,
+      liveSubmitReplyCaptureHeldRoutes: liveSubmitVerification.replyCaptureHeldRoutes,
       liveSubmitMissingQueueRoutes: liveSubmitVerification.missingQueueRoutes,
       liveSubmitStaleQueueRoutes: liveSubmitVerification.staleQueueRoutes,
       liveSubmitFetchErrorRoutes: liveSubmitVerification.fetchErrorRoutes,
@@ -223,6 +224,7 @@ Next gate: \`${score.nextGate}\`
 | Live submit routes ready | ${score.outreach.liveSubmitReadyRoutes ?? "not checked"} |
 | Live submit routes HTTP-blocked | ${score.outreach.liveSubmitBlockedRoutes ?? "not checked"} |
 | Live submit routes CAPTCHA/challenge | ${score.outreach.liveSubmitCaptchaRoutes ?? "not checked"} |
+| Live submit routes held by reply capture | ${(score.outreach.liveSubmitReplyCaptureHeldRoutes ?? []).length} |
 | Blocked sendability routes | ${score.outreach.blockedSendabilityRoutes} |
 | External submissions completed | ${score.outreach.sentOrBeyond} |
 | Evidence-backed submissions | ${score.outreach.evidenceBackedSubmissions} |
@@ -264,6 +266,7 @@ ${readyRouteLines.join("\n")}
 | Fetch errors | ${(score.outreach.liveSubmitFetchErrorRoutes ?? []).length ? score.outreach.liveSubmitFetchErrorRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 | HTTP blocked | ${(score.outreach.liveSubmitHttpBlockedRouteIds ?? []).length ? score.outreach.liveSubmitHttpBlockedRouteIds.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 | CAPTCHA or browser challenge marker | ${(score.outreach.liveSubmitCaptchaRouteIds ?? []).length ? score.outreach.liveSubmitCaptchaRouteIds.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
+| Reachable but held by reply capture | ${(score.outreach.liveSubmitReplyCaptureHeldRoutes ?? []).length ? score.outreach.liveSubmitReplyCaptureHeldRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 | Reply capture not ready | ${(score.outreach.liveSubmitReplyCaptureRiskRoutes ?? []).length ? score.outreach.liveSubmitReplyCaptureRiskRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 
 ## Submission Evidence Guard
@@ -531,6 +534,7 @@ function parseLiveSubmitReport(markdown) {
       fetchErrorRoutes: [],
       httpBlockedRouteIds: [],
       captchaRouteIds: [],
+      replyCaptureHeldRoutes: [],
       replyCaptureRiskRoutes: [],
     };
   }
@@ -547,6 +551,7 @@ function parseLiveSubmitReport(markdown) {
     fetchErrorRoutes: extractRouteSet(text, "Fetch errors"),
     httpBlockedRouteIds: extractRouteSet(text, "HTTP blocked"),
     captchaRouteIds: extractRouteSet(text, "CAPTCHA or browser challenge marker"),
+    replyCaptureHeldRoutes: extractRouteSet(text, "Reachable but held by reply capture"),
     replyCaptureRiskRoutes: extractRouteSet(text, "Reply capture not ready"),
   };
 }

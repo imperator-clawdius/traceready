@@ -55,6 +55,7 @@ export async function inspectLiveSubmitRoutes({
   const fetchErrorRoutes = [];
   const noFormMarkerRoutes = [];
   const replyCaptureRiskRoutes = [];
+  const replyCaptureHeldRoutes = [];
 
   for (const readyRoute of readyRoutes) {
     const queueRoute = queueByRoute.get(readyRoute.route_id);
@@ -118,6 +119,19 @@ export async function inspectLiveSubmitRoutes({
       issues.push("no form marker found in fetched HTML");
     }
 
+    const heldOnlyByReplyCapture =
+      !replyCaptureReady &&
+      !stale &&
+      !response.error &&
+      response.statusCode >= 200 &&
+      response.statusCode < 400 &&
+      !hasCaptcha &&
+      hasFormMarker;
+
+    if (heldOnlyByReplyCapture) {
+      replyCaptureHeldRoutes.push(readyRoute.route_id);
+    }
+
     routeReports.push({
       route_id: readyRoute.route_id,
       company_or_channel: readyRoute.company_or_channel ?? queueRoute.company_or_channel,
@@ -148,6 +162,7 @@ export async function inspectLiveSubmitRoutes({
     fetchErrorRoutes,
     noFormMarkerRoutes,
     replyCaptureRiskRoutes,
+    replyCaptureHeldRoutes,
     routeReports,
   };
 }
@@ -161,7 +176,7 @@ export function renderLiveSubmitRouteReport(report, options = {}) {
 
   return `# TraceReady live submit route check - ${generatedAt}
 
-OUTREACH_SUBMIT_LIVE=${report.status} ready_routes=${report.readyRoutes} live_ready=${report.liveReadyRoutes} blocked=${report.blockedRoutes.length} captcha=${report.captchaRoutes.length}
+OUTREACH_SUBMIT_LIVE=${report.status} ready_routes=${report.readyRoutes} live_ready=${report.liveReadyRoutes} blocked=${report.blockedRoutes.length} captcha=${report.captchaRoutes.length} reply_capture_held=${report.replyCaptureHeldRoutes.length}
 
 ## Route Checks
 
@@ -178,6 +193,7 @@ ${routeRows.join("\n")}
 | Fetch errors | ${formatRouteSet(report.fetchErrorRoutes)} |
 | HTTP blocked | ${formatRouteSet(report.blockedRoutes)} |
 | CAPTCHA or browser challenge marker | ${formatRouteSet(report.captchaRoutes)} |
+| Reachable but held by reply capture | ${formatRouteSet(report.replyCaptureHeldRoutes)} |
 | Reply capture not ready | ${formatRouteSet(report.replyCaptureRiskRoutes)} |
 | No form marker found | ${formatRouteSet(report.noFormMarkerRoutes)} |
 
@@ -297,7 +313,7 @@ async function main() {
   await fs.writeFile(options.outputPath, markdown, "utf8");
 
   console.log(
-    `OUTREACH_SUBMIT_LIVE=${report.status} ready_routes=${report.readyRoutes} live_ready=${report.liveReadyRoutes} blocked=${report.blockedRoutes.length} captcha=${report.captchaRoutes.length} output=${options.outputPath}`,
+    `OUTREACH_SUBMIT_LIVE=${report.status} ready_routes=${report.readyRoutes} live_ready=${report.liveReadyRoutes} blocked=${report.blockedRoutes.length} captcha=${report.captchaRoutes.length} reply_capture_held=${report.replyCaptureHeldRoutes.length} output=${options.outputPath}`,
   );
 
   if (report.status !== "pass") {
