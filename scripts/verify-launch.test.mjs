@@ -55,5 +55,8 @@ describe("launch verifier route manifest", () => {
     expect(script).toContain("Email documented pilot request");
     expect(script).toContain("Permission boundary");
     expect(script).toContain("Can publish only with explicit yes");
+    expect(script).toContain("Case capture packet");
+    expect(script).toContain("Download pilot evidence template");
+    expect(script).toContain("/traceready-documented-pilot-template.txt");
   });
 });

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {
+  DOCUMENTED_PILOT_TEMPLATE_HREF,
   FILE_TRIAGE_HREF,
   LEGAL_OPERATOR,
   METHODOLOGY_HREF,
@@ -30,6 +31,12 @@ const PROOF_OUTPUTS = [
   "Anonymized before: file type, row count, issue counts, and blocker categories.",
   "Anonymized after: cleaned-pack contents, issues fixed, and remaining buyer/supplier follow-ups.",
   "One permissioned sentence about whether the issue log or cleaned pack was useful.",
+];
+
+const CAPTURE_PACKET_ITEMS = [
+  "Before cleanup: file type, row count, blocker counts, warning counts, and buyer deadline.",
+  "After cleanup: cleaned-pack contents, issues fixed, remaining follow-ups, and turnaround time.",
+  "Permission record: publish only with explicit written approval, including any quote.",
 ];
 
 const PERMISSION_BOUNDARY = [
@@ -115,6 +122,32 @@ export default function PilotProofPage() {
               </article>
             ))}
           </div>
+        </section>
+
+        <section className="mt-6 border border-[#d9bf92] bg-white p-6 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-700">
+            Case capture packet
+          </p>
+          <h2 className="mt-3 text-2xl font-semibold tracking-tight text-[#2b190f]">
+            Turn the first useful cleanup into proof without exposing the file owner.
+          </h2>
+          <p className="mt-3 max-w-3xl text-sm leading-7 text-zinc-700">
+            The template keeps the pilot honest: no public company names, supplier names, buyer names,
+            source rows, or farm coordinates. Publish only with explicit written approval.
+          </p>
+          <ul className="mt-4 grid gap-3 text-sm leading-6 text-zinc-700 lg:grid-cols-3">
+            {CAPTURE_PACKET_ITEMS.map((item) => (
+              <li key={item} className="border-l-2 border-emerald-700 pl-3">
+                {item}
+              </li>
+            ))}
+          </ul>
+          <a
+            href={DOCUMENTED_PILOT_TEMPLATE_HREF}
+            className="mt-5 inline-flex h-11 items-center justify-center rounded-md bg-zinc-950 px-4 text-sm font-semibold text-white transition hover:bg-zinc-800"
+          >
+            Download pilot evidence template
+          </a>
         </section>
 
         <section className="mt-6 border border-[#d9bf92] bg-[#fffaf2] p-6 shadow-sm">

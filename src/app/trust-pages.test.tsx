@@ -337,9 +337,14 @@ describe("TraceReady trust pages", () => {
     const pilotPackLink = Array.from(container.querySelectorAll("a")).find((element) =>
       element.textContent?.includes("View current public pilot pack"),
     );
+    const templateLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("Download pilot evidence template"),
+    );
 
     expect(pageText).toContain("Documented pilot");
     expect(pageText).toContain("first anonymized case");
+    expect(pageText).toContain("Case capture packet");
+    expect(pageText).toContain("Publish only with explicit written approval");
     expect(pageText).toContain("Do not include raw coordinates");
     expect(pageText).toContain("Publish only with permission");
     expect(pageText).toContain("Anonymized before: file type, row count, issue counts");
@@ -353,6 +358,7 @@ describe("TraceReady trust pages", () => {
     expect(emailLink?.getAttribute("href")).toContain("TraceReady%20documented%20pilot%20request");
     expect(triageLink?.getAttribute("href")).toBe("/file-triage/");
     expect(pilotPackLink?.getAttribute("href")).toBe("/traceready-public-cocoa-pilot-pack.zip");
+    expect(templateLink?.getAttribute("href")).toBe("/traceready-documented-pilot-template.txt");
   });
 
   it("preserves proof-led route tracking when proof visitors continue to the browser checker, triage handoff, or documented pilot", () => {

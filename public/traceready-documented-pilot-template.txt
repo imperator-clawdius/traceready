@@ -1,0 +1,54 @@
+TraceReady documented pilot evidence capture template
+
+Purpose
+Use this blank packet when one real coffee or cocoa file owner wants TraceReady to clean a messy supplier file and may allow an anonymized before/after case later.
+
+Privacy boundary
+Publish only with explicit written approval.
+Do not publish company names, supplier names, buyer names, source rows, or farm coordinates.
+Do not publish shipment references, receipt emails, buyer documents, or raw files.
+If approval is no or unclear, the work stays private cleanup only.
+
+Pilot identity
+Internal route ID:
+Contact role:
+Commodity:
+Source country:
+Buyer/importer deadline:
+File type:
+
+Before cleanup
+File count:
+Row count:
+Blocker count:
+Warning count:
+Point-only over-4ha records:
+Missing plot or farm IDs:
+Missing supplier identity:
+Duplicate farm IDs:
+Invalid coordinate rows:
+Other buyer handoff blockers:
+
+After cleanup
+Cleaned-pack contents returned:
+Issues fixed:
+Issues still blocked by missing source-owner data:
+Buyer/supplier follow-ups requested:
+Turnaround time:
+Buyer result, if known:
+
+Quote permission
+Approved short quote:
+May TraceReady publish the quote without naming the company? yes/no
+Approved quote contact role, if publishable:
+
+Customer approval
+May TraceReady publish anonymized issue counts? yes/no
+May TraceReady publish before/after structure without names or coordinates? yes/no
+May TraceReady publish cleaned-pack contents at a category level? yes/no
+May TraceReady mention buyer/importer outcome without names? yes/no
+Approval date:
+Approver role:
+
+Operator note
+No approved quote yet. Do not turn this into public proof until the written approvals above are complete.

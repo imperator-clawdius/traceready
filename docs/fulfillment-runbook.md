@@ -66,3 +66,5 @@ For permissioned de-identified case studies, collect:
 - Before: file count, record count, issue count, and issue types.
 - After: cleaned pack contents, remaining supplier follow-ups, turnaround time, and buyer result.
 - Quote or approval from the customer before using any public proof.
+
+Use `docs/documented-pilot-evidence-template.md` and the public blank template at `/traceready-documented-pilot-template.txt` to capture this consistently. Keep the completed copy private unless every publishable field has explicit written approval.
