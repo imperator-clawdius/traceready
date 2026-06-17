@@ -46,7 +46,7 @@ describe("launch verifier route manifest", () => {
     expect(appRootBlock).toContain("missing facts were not invented");
     expect(appRootBlock).toContain("records ready for buyer handoff");
     expect(appRootBlock).toContain("Cleanup-desk credibility");
-    expect(appRootBlock).toContain("missing column can ruin your week");
+    expect(appRootBlock).toContain("one missing column like a small fire");
     expect(appRootBlock).toContain("spreadsheet bouncer");
   });
 

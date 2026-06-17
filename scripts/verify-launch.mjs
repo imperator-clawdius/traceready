@@ -39,7 +39,7 @@ const requiredPages = [
       "missing facts were not invented",
       "records ready for buyer handoff",
       "Cleanup-desk credibility",
-      "missing column can ruin your week",
+      "one missing column like a small fire",
       "spreadsheet bouncer",
       "View pilot case",
       "Download evidence pack",
