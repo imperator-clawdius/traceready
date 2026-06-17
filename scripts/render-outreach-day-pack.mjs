@@ -18,6 +18,7 @@ const DEFAULT_RESULTS_PATH = "docs/proof-led-outreach-results-batch-01.csv";
 const PRIVATE_RESULTS_PLACEHOLDER = "path/to/private-results.csv";
 const DEFAULT_SEND_LIMIT = 8;
 const DEFAULT_FOLLOW_UP_AFTER_DAYS = 4;
+const VISIBLE_SUCCESS_NOTE = "visible form success observed";
 
 export function renderOutreachDayPack(batchRows, resultRows, options = {}) {
   const batchPath = options.batchPath ?? DEFAULT_BATCH_PATH;
@@ -167,7 +168,7 @@ function renderSendToday(rows, batchByRoute, resultsPath, today) {
         date_sent: today,
         status: "sent",
         response_type: "none",
-        reply_notes: "sent via public route",
+        reply_notes: `sent via public route; ${VISIBLE_SUCCESS_NOTE}`,
         next_action: "follow up in 4 business days",
       })}\``,
       "",
@@ -199,7 +200,7 @@ function renderFollowUpToday(rows, batchByRoute, resultsPath, today) {
       `Mark followed up: \`${updateCommand(resultsPath, resultRow.route_id, {
         status: "no_reply",
         response_type: "none",
-        reply_notes: "followed up via public route",
+        reply_notes: `followed up via public route after earlier ${VISIBLE_SUCCESS_NOTE}`,
         next_action: "wait for reply or change channel",
       })}\``,
       "",

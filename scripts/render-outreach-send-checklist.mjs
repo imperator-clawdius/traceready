@@ -13,6 +13,7 @@ const DEFAULT_OUTPUT_PATH = "private/send-execution-checklist.md";
 const DEFAULT_DAY_PACK_PATH = "private/outreach-day-pack.md";
 const DEFAULT_SEND_LIMIT = 3;
 const DEFAULT_SENDABILITY_AUDIT_PATH = "private/outreach-sendability-audit-importer.json";
+const VISIBLE_SUCCESS_NOTE = "visible form success observed";
 
 export function renderOutreachSendChecklist(batchRows, resultRows, options = {}) {
   const batchPath = options.batchPath ?? DEFAULT_BATCH_PATH;
@@ -156,7 +157,9 @@ function renderSendTasks(sendRows, batchByRoute, batchPath, resultsPath, today, 
         date_sent: today,
         status: "sent",
         response_type: "none",
-        reply_notes: sendability?.contact_method === "public_browser_form" ? "sent via public browser form" : "sent via public route",
+        reply_notes: sendability?.contact_method === "public_browser_form"
+          ? `sent via public browser form; ${VISIBLE_SUCCESS_NOTE}`
+          : `sent via public route; ${VISIBLE_SUCCESS_NOTE}`,
         next_action: "follow up in 4 business days",
       })}\``,
       `- [ ] Prepare reply handling: \`npm run render:outreach-replies -- --results ${resultsPath} --route ${resultRow.route_id} --output private/replies-${resultRow.route_id}.md\``,

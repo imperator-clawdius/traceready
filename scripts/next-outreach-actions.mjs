@@ -11,6 +11,7 @@ const DEFAULT_REPLY_CAPTURE_CHALLENGE_PATH = "private/reply-capture-challenge.js
 const REPLY_CAPTURE_GATE = "verify_reply_capture_before_external_submission";
 const FOLLOW_UP_STATUSES = new Set(["sent", "no_reply"]);
 const OPPORTUNITY_STATUSES = new Set(["replied", "file_checked", "pilot_requested"]);
+const VISIBLE_SUCCESS_NOTE = "visible form success observed";
 
 export function buildOutreachActionQueue(rows, options = {}) {
   const today = options.today ?? todayIsoDate();
@@ -251,7 +252,7 @@ function renderSendRows(rows, resultsPath, today, options = {}) {
         date_sent: today,
         status: "sent",
         response_type: "none",
-        reply_notes: "sent via public route",
+        reply_notes: `sent via public route; ${VISIBLE_SUCCESS_NOTE}`,
         next_action: "follow up in 4 business days",
       })}\``,
     ];
@@ -271,7 +272,7 @@ function renderFollowUpRows(rows, resultsPath, today) {
     `   - Mark followed up: \`${updateCommand(resultsPath, row.route_id, {
       status: "no_reply",
       response_type: "none",
-      reply_notes: "followed up via public route",
+      reply_notes: `followed up via public route after earlier ${VISIBLE_SUCCESS_NOTE}`,
       next_action: "wait for reply or change channel",
     })}\``,
   ]);

@@ -46,6 +46,7 @@ describe("outreach send checklist", () => {
     expect(markdown).toContain(
       "npm run update:outreach-result -- --results private/outreach-results-batch-01.csv --route b01-r06 --date-sent 2026-06-16 --status sent",
     );
+    expect(markdown).toContain('--notes "sent via public route; visible form success observed"');
     expect(markdown).toContain(
       "npm run render:outreach-replies -- --results private/outreach-results-batch-01.csv --route b01-r06 --output private/replies-b01-r06.md",
     );
@@ -145,6 +146,7 @@ describe("outreach send checklist", () => {
       "npm run render:outreach-send-ready -- --batch docs/proof-led-outreach-batch-01.csv --results private/outreach-results-batch-01.csv --sendability-audit private/outreach-sendability-audit-importer.json --route b01-r11 --today 2026-06-16 --output private/send-ready-b01-r11.md",
     );
     expect(markdown).toContain("--route b01-r11 --date-sent 2026-06-16 --status sent");
+    expect(markdown).toContain('--notes "sent via public browser form; visible form success observed"');
     expect(markdown).not.toContain("## 1. b01-r06 - Cafe Imports Europe");
     expect(markdown).toContain("## Skipped By Sendability");
     expect(markdown).toContain("- b01-r06 - Cafe Imports Europe: blocked, requires phone and reCAPTCHA");

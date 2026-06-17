@@ -16,7 +16,7 @@ const BATCH_CSV = `priority,route_id,tier,company_or_channel,segment,why_it_fits
 
 const RESULTS_CSV = `route_id,date_sent,company_or_channel,tier,proof_url,file_check_url,status,response_type,file_check_count,paid_order_count,pilot_requested,reply_notes,next_action
 b01-r01,,European Coffee Federation,association,https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01,not_sent,none,0,0,no,,send first message from proof-led packet
-b01-r02,2026-06-16,EUDR Coffee / German Coffee Association,association,https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02,sent,none,0,0,no,sent via public form,follow up in 4 business days
+b01-r02,2026-06-16,EUDR Coffee / German Coffee Association,association,https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02,sent,none,0,0,no,sent via public form; visible form success observed,follow up in 4 business days
 b01-r03,,Cafe Imports Europe,importer,https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r03,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r03,not_sent,none,0,0,no,,send first message from proof-led packet
 b01-r04,2026-06-18,Preferred by Nature,overflow,https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04,https://traceready.online/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04,file_checked,file_check,1,0,no,route-stamped buyer summary received,ask whether they want the cleaned pack
 `;
@@ -51,11 +51,13 @@ describe("proof-led outreach day pack", () => {
     expect(markdown).toContain(
       "npm run update:outreach-result -- --results private/outreach-results.csv --route b01-r01 --date-sent 2026-06-20 --status sent --response-type none",
     );
+    expect(markdown).toContain('--notes "sent via public route; visible form success observed"');
     expect(markdown).toContain("## Follow Up Today");
     expect(markdown).toContain("### b01-r02 - EUDR Coffee / German Coffee Association");
     expect(markdown).toContain("sent 4 days ago");
     expect(markdown).toContain("Subject: Re: EUDR file-readiness check");
     expect(markdown).toContain("If this is not the right route");
+    expect(markdown).toContain('--notes "followed up via public route after earlier visible form success observed"');
     expect(markdown).toContain("## Active Opportunities");
     expect(markdown).toContain("### b01-r04 - Preferred by Nature");
     expect(markdown).toContain("ask whether they want the cleaned pack");
