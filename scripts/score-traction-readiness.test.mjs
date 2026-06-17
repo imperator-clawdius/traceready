@@ -288,13 +288,15 @@ describe("traction readiness scorecard", () => {
     });
 
     expect(score.outreach.submitPreflightReadyRoutes).toBe(0);
-    expect(score.outreach.missingSubmitPreflightConfirmationRoutes).toEqual(["b02-r03", "b02-r04"]);
+    expect(score.outreach.missingSubmitPreflightConfirmationRoutes).toEqual([]);
+    expect(score.outreach.submitPreflightReplyCaptureHeldRoutes).toEqual(["b02-r03", "b02-r04"]);
     expect(score.currentState).toBe("proof_ready_reply_capture_at_risk_traction_unmeasured");
     expect(score.nextGate).toBe("verify_reply_capture_before_external_submission");
 
     const markdown = renderTractionReadinessScorecard(score, { generatedAt: "2026-06-17" });
     expect(markdown).toContain("| Submit preflights with matching confirmation | 0 |");
-    expect(markdown).toContain("| Submit preflights missing confirmation | `b02-r03`, `b02-r04` |");
+    expect(markdown).toContain("| Submit preflights missing confirmation | none |");
+    expect(markdown).toContain("| Submit preflights held by reply capture | `b02-r03`, `b02-r04` |");
   });
 
   it("promotes submit-ready routes when a live submit route report is passing", () => {

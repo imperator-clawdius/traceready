@@ -51,7 +51,8 @@ export function scoreTractionReadiness({
   const submitPreflightNeedsWork =
     submitPreflightVerification.checked &&
     submitPreflightVerification.missingPreflightRoutes.length +
-      submitPreflightVerification.missingConfirmationRoutes.length >
+      submitPreflightVerification.missingConfirmationRoutes.length +
+      (replyCaptureReady ? submitPreflightVerification.replyCaptureHeldRoutes.length : 0) >
       0;
   const liveSubmitBlockedOnlyByReplyCapture =
     liveSubmitVerification.checked &&
@@ -116,6 +117,7 @@ export function scoreTractionReadiness({
       submitPreflightReadyRoutes: submitPreflightVerification.preflightReadyRoutes,
       missingSubmitPreflightRoutes: submitPreflightVerification.missingPreflightRoutes,
       missingSubmitPreflightConfirmationRoutes: submitPreflightVerification.missingConfirmationRoutes,
+      submitPreflightReplyCaptureHeldRoutes: submitPreflightVerification.replyCaptureHeldRoutes,
       liveSubmitStatus: liveSubmitVerification.checked ? liveSubmitVerification.status : "not checked",
       liveSubmitReadyRoutes: liveSubmitVerification.liveReadyRoutes,
       liveSubmitBlockedRoutes: liveSubmitVerification.blockedRoutes,
@@ -216,6 +218,7 @@ Next gate: \`${score.nextGate}\`
 | Submit preflights with matching confirmation | ${score.outreach.submitPreflightReadyRoutes ?? "not checked"} |
 | Missing submit preflights | ${(score.outreach.missingSubmitPreflightRoutes ?? []).length} |
 | Submit preflights missing confirmation | ${(score.outreach.missingSubmitPreflightConfirmationRoutes ?? []).length} |
+| Submit preflights held by reply capture | ${(score.outreach.submitPreflightReplyCaptureHeldRoutes ?? []).length} |
 | Live submit routes checked | ${score.outreach.liveSubmitStatus ?? "not checked"} |
 | Live submit routes ready | ${score.outreach.liveSubmitReadyRoutes ?? "not checked"} |
 | Live submit routes HTTP-blocked | ${score.outreach.liveSubmitBlockedRoutes ?? "not checked"} |
@@ -250,6 +253,7 @@ ${readyRouteLines.join("\n")}
 | --- | --- |
 | Missing submit preflight files | ${(score.outreach.missingSubmitPreflightRoutes ?? []).length ? score.outreach.missingSubmitPreflightRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 | Submit preflights missing confirmation | ${(score.outreach.missingSubmitPreflightConfirmationRoutes ?? []).length ? score.outreach.missingSubmitPreflightConfirmationRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
+| Submit preflights held by reply capture | ${(score.outreach.submitPreflightReplyCaptureHeldRoutes ?? []).length ? score.outreach.submitPreflightReplyCaptureHeldRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 
 ## Live Submit Route Guard
 
@@ -468,11 +472,13 @@ function verifySubmitPreflightPackets(readyRoutes, submitPreflightPackets) {
       preflightReadyRoutes: undefined,
       missingPreflightRoutes: [],
       missingConfirmationRoutes: [],
+      replyCaptureHeldRoutes: [],
     };
   }
 
   const missingPreflightRoutes = [];
   const missingConfirmationRoutes = [];
+  const replyCaptureHeldRoutes = [];
 
   for (const route of readyRoutes) {
     const packetText =
@@ -480,20 +486,30 @@ function verifySubmitPreflightPackets(readyRoutes, submitPreflightPackets) {
       submitPreflightPackets[`private/preflight-submit-${route.route_id}.md`] ??
       "";
     const expectedPassLine = `OUTREACH_SUBMIT_PREFLIGHT=pass route=${route.route_id} company="${route.company_or_channel}" reply_capture=ready`;
+    const expectedHeldLine = `OUTREACH_SUBMIT_PREFLIGHT=pass route=${route.route_id} company="${route.company_or_channel}" reply_capture=at_risk`;
     const expectedConfirmation = `Confirm: submit ${route.route_id} to ${route.company_or_channel} using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-${route.route_id}.md.`;
 
     if (!packetText.trim()) {
       missingPreflightRoutes.push(route.route_id);
+    } else if (packetText.includes(expectedHeldLine) && packetText.includes(expectedConfirmation)) {
+      replyCaptureHeldRoutes.push(route.route_id);
     } else if (!packetText.includes(expectedPassLine) || !packetText.includes(expectedConfirmation)) {
       missingConfirmationRoutes.push(route.route_id);
     }
   }
 
+  const notReadyRouteCount = new Set([
+    ...missingPreflightRoutes,
+    ...missingConfirmationRoutes,
+    ...replyCaptureHeldRoutes,
+  ]).size;
+
   return {
     checked: true,
-    preflightReadyRoutes: readyRoutes.length - missingPreflightRoutes.length - missingConfirmationRoutes.length,
+    preflightReadyRoutes: readyRoutes.length - notReadyRouteCount,
     missingPreflightRoutes,
     missingConfirmationRoutes,
+    replyCaptureHeldRoutes,
   };
 }
 
