@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { OUTREACH_CORE_PROOF_LINE, REAL_WORLD_BRIDGE_LINES } from "./render-outreach-pack.mjs";
 import { parseOutreachLedger, validateOutreachLedger } from "./verify-outreach-ledger.mjs";
 
 const DEFAULT_BATCH_PATH = "docs/proof-led-outreach-batch-01.csv";
@@ -38,6 +39,10 @@ export function renderOutreachReplyPlaybook(rows, options = {}) {
         `Fair question. I am the operator behind TraceReady, a narrow cleanup desk for coffee and cocoa CSV/KML/GeoJSON handoff files.`,
         "",
         "I am not asking you to trust credentials first. Start with the public pilot case or run one file browser-side before sending me anything.",
+        "",
+        `Core proof: ${OUTREACH_CORE_PROOF_LINE}`,
+        REAL_WORLD_BRIDGE_LINES[0],
+        REAL_WORLD_BRIDGE_LINES[1],
         "",
         `Public pilot case: ${row.proof_url}`,
         `Browser-side file check: ${row.file_check_url}`,

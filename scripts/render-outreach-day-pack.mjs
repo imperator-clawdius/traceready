@@ -6,6 +6,7 @@ import {
 import {
   bodyFor,
   followUpFor,
+  REAL_WORLD_BRIDGE_LINES,
   subjectFor,
 } from "./render-outreach-pack.mjs";
 import { parseOutreachResults, validateOutreachResults } from "./summarize-outreach-results.mjs";
@@ -51,6 +52,8 @@ export function renderOutreachDayPack(batchRows, resultRows, options = {}) {
     "Use company-level public routes only. Do not add employee names, personal emails, personal-profile URLs, or private reply notes to committed files.",
     "",
     "Proof to lead with: 57,658 public cocoa rows checked; 46,134 point-only plots over 4 hectares; 57,658 rows missing plot IDs; 57,658 rows missing supplier identity.",
+    `Proof bridge to lead with: ${REAL_WORLD_BRIDGE_LINES[0].replace("Real-world bridge: ", "")}`,
+    REAL_WORLD_BRIDGE_LINES[1],
     "",
     "## Send Today",
     "",

@@ -8,17 +8,20 @@ const DEFAULT_OUTPUT_PATH = "docs/proof-led-outreach-send-pack-01.md";
 const EMAIL_PATTERN = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i;
 const PERSONAL_PROFILE_PATTERN =
   /(?:linkedin\.com\/in\/|facebook\.com\/people\/|instagram\.com\/p\/|x\.com\/[^/\s]+\/status\/)/i;
+const CORE_PROOF_LINE =
+  "TraceReady checked 57,658 public cocoa rows and found 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.";
 const PROOF_FLOW_LINES = [
   "Messy public file in: a public Colombian cocoa dataset with coordinates and area values.",
   "Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.",
   "Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.",
 ];
-const REAL_WORLD_BRIDGE_LINES = [
+export const REAL_WORLD_BRIDGE_LINES = [
   "Real-world bridge: EUDR due-diligence statements need plot coordinates, plots over 4 hectares need polygon boundaries, and buyer handoffs need structured farm files.",
   "Buyer handoff source: Daarnhouwer asks coffee and cocoa suppliers for WGS84 GeoJSON, CSV, or Excel geolocation files with a unique and persistent farm ID.",
 ];
-const BUYER_PRESSURE_LINE =
+export const BUYER_PRESSURE_LINE =
   "That matters because the EUDR handoff is not just coordinates: the file also has to survive plot-level identifiers, polygon thresholds, and buyer/source file instructions.";
+export const OUTREACH_CORE_PROOF_LINE = CORE_PROOF_LINE;
 
 export function renderOutreachPacket(rows, options = {}) {
   const batchPath = options.batchPath ?? DEFAULT_BATCH_PATH;
@@ -29,7 +32,7 @@ export function renderOutreachPacket(rows, options = {}) {
     "",
     `Generated from \`${batchPath}\`. Use company-level public routes only. Do not add employee names, personal emails, or personal-profile URLs to the committed packet.`,
     "",
-    "Core proof: TraceReady checked 57,658 public cocoa rows and found 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.",
+    `Core proof: ${CORE_PROOF_LINE}`,
     "Proof flow: Messy public file in; Exact issue counts out; Cleaned pack boundary stated honestly instead of pretending missing IDs, suppliers, batches, or polygons can be invented.",
     ...REAL_WORLD_BRIDGE_LINES,
     "",
