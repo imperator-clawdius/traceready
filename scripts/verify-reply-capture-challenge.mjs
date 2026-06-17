@@ -182,6 +182,12 @@ export function renderReplyCaptureChallengeHandoff(result, options = {}) {
     `npm run verify:outreach-email -- --reply-capture-evidence ${evidencePath} --reply-capture-challenge ${challengePath}`,
     "```",
     "",
+    "Then refresh the scorecard and submit preflight queue:",
+    "",
+    "```powershell",
+    "npm run finalize:reply-capture",
+    "```",
+    "",
     "Do not mark outreach sent or measure non-response until the readiness check passes reply capture.",
     "",
   ].join("\n");

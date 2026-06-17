@@ -67,6 +67,7 @@ describe("reply-capture challenge verifier", () => {
     expect(markdown).toContain(
       "npm run verify:outreach-email -- --reply-capture-evidence private/reply-capture-evidence.json --reply-capture-challenge private/reply-capture-challenge.json",
     );
+    expect(markdown).toContain("npm run finalize:reply-capture");
     expect(markdown).not.toContain("receivedInControlledInbox");
   });
 

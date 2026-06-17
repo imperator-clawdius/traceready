@@ -31,6 +31,7 @@
     "verify:outreach-submit-live": "node scripts/verify-outreach-submit-live.mjs",
     "verify:outreach-sendability": "node scripts/verify-outreach-sendability.mjs",
     "verify:outreach": "node scripts/verify-outreach.mjs",
+    "finalize:reply-capture": "node scripts/finalize-reply-capture-gate.mjs",
     "verify:launch": "node scripts/verify-launch.mjs",
     "check": "npm run verify:outreach && npm run lint && npm run test && npm run build"
   },
