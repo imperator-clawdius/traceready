@@ -47,6 +47,45 @@ describe("sale readiness verifier", () => {
     expect(markdown).toContain("Do not treat Stripe checkout as sale-ready until the paid-file intake inbox is proven.");
   });
 
+  it("renders the exact reply-capture unblock action when file intake is blocked", () => {
+    const report = evaluateSaleReadiness({
+      publicProof: PUBLIC_PROOF,
+      checkout: CHECKOUT_DEPENDENCIES,
+      email: {
+        replyCaptureReady: false,
+        ready: false,
+        checks: {
+          OUTREACH_EMAIL_MX: true,
+          OUTREACH_EMAIL_ALIAS_TEST: false,
+        },
+        replyCaptureChallenge: {
+          subject: "TraceReady reply-capture test trc-test-1234",
+          challengeToken: "trc-test-1234",
+        },
+        replyCaptureEvidencePath: "private/reply-capture-evidence.json",
+        replyCaptureChallengePath: "private/reply-capture-challenge.json",
+        replyCaptureEmlPath: "private/reply-capture-received.eml",
+      },
+      traction: {
+        paidOrders: 0,
+        fileChecks: 0,
+        pilotRequests: 0,
+        replies: 0,
+      },
+    });
+    const markdown = renderSaleReadinessReport(report, { generatedAt: "2026-06-17" });
+
+    expect(markdown).toContain("## Reply-Capture Unblock");
+    expect(markdown).toContain("Subject: `TraceReady reply-capture test trc-test-1234`");
+    expect(markdown).toContain("Token: `trc-test-1234`");
+    expect(markdown).toContain("Received message source: `private/reply-capture-received.eml`");
+    expect(markdown).toContain("Evidence output: `private/reply-capture-evidence.json`");
+    expect(markdown).toContain("npm run finalize:reply-capture");
+    expect(markdown).toContain(
+      "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --from-eml private/reply-capture-received.eml --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
+    );
+  });
+
   it("keeps sale readiness pending when intake works but outbound cleanup delivery auth is missing", () => {
     const report = evaluateSaleReadiness({
       publicProof: PUBLIC_PROOF,

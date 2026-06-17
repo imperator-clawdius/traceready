@@ -8,6 +8,7 @@ const DEFAULT_PUBLIC_AUDIT_PATH = "docs/public-dataset-mini-audit.md";
 const DEFAULT_RESULTS_PATH = "private/outreach-results-batch-02.csv";
 const DEFAULT_REPLY_CAPTURE_EVIDENCE_PATH = "private/reply-capture-evidence.json";
 const DEFAULT_REPLY_CAPTURE_CHALLENGE_PATH = "private/reply-capture-challenge.json";
+const DEFAULT_REPLY_CAPTURE_EML_PATH = "private/reply-capture-received.eml";
 const DEFAULT_OUTPUT_PATH = "private/sale-readiness-report.md";
 const DEFAULT_CONTACT_EMAIL = "founder@traceready.online";
 
@@ -78,6 +79,10 @@ export function evaluateSaleReadiness({
       ready: outboundReady,
       replyCaptureReady,
       checks: email.checks ?? {},
+      replyCaptureChallenge: email.replyCaptureChallenge ?? null,
+      replyCaptureEvidencePath: email.replyCaptureEvidencePath ?? DEFAULT_REPLY_CAPTURE_EVIDENCE_PATH,
+      replyCaptureChallengePath: email.replyCaptureChallengePath ?? DEFAULT_REPLY_CAPTURE_CHALLENGE_PATH,
+      replyCaptureEmlPath: email.replyCaptureEmlPath ?? DEFAULT_REPLY_CAPTURE_EML_PATH,
     },
     traction: {
       replies: Number(traction.replies ?? 0),
@@ -113,6 +118,8 @@ SALE_READINESS=${report.status} state=${report.currentState} next_gate=${report.
 ## Current Decision
 
 ${decisionText(report)}
+
+${replyCaptureUnblockSection(report)}
 
 ## Next Gate
 
@@ -175,7 +182,7 @@ export async function buildSaleReadinessFromFiles(options = {}) {
   const resultsPath = options.resultsPath ?? DEFAULT_RESULTS_PATH;
   const replyCaptureEvidencePath = options.replyCaptureEvidencePath ?? DEFAULT_REPLY_CAPTURE_EVIDENCE_PATH;
   const replyCaptureChallengePath = options.replyCaptureChallengePath ?? DEFAULT_REPLY_CAPTURE_CHALLENGE_PATH;
-  const [publicAuditMarkdown, resultsCsv, checkout, emailReport] = await Promise.all([
+  const [publicAuditMarkdown, resultsCsv, checkout, emailReport, replyCaptureChallenge] = await Promise.all([
     fs.readFile(publicAuditPath, "utf8"),
     fs.readFile(resultsPath, "utf8"),
     detectCheckoutDependencies(),
@@ -183,6 +190,7 @@ export async function buildSaleReadinessFromFiles(options = {}) {
       replyCaptureEvidencePath,
       ...(await pathExists(replyCaptureChallengePath) ? { replyCaptureChallengePath } : {}),
     }),
+    loadJsonIfPresent(replyCaptureChallengePath),
   ]);
   const resultsSummary = summarizeOutreachResults(parseOutreachResults(resultsCsv));
   const publicProof = parsePublicProof(publicAuditMarkdown);
@@ -195,9 +203,42 @@ export async function buildSaleReadinessFromFiles(options = {}) {
       ready: emailReport.ready,
       replyCaptureReady: emailReport.replyCaptureReady,
       checks: emailChecks,
+      replyCaptureChallenge,
+      replyCaptureEvidencePath,
+      replyCaptureChallengePath,
+      replyCaptureEmlPath: DEFAULT_REPLY_CAPTURE_EML_PATH,
     },
     traction: resultsSummary,
   });
+}
+
+function replyCaptureUnblockSection(report) {
+  if (report.currentState !== "sale_blocked_email_intake_unverified") {
+    return "";
+  }
+
+  const contactEmail = report.checkout.contactEmail;
+  const challenge = report.email.replyCaptureChallenge ?? {};
+  const challengeSubject = String(challenge.subject ?? "").trim();
+  const challengeToken = String(challenge.challengeToken ?? "").trim();
+  const evidencePath = report.email.replyCaptureEvidencePath ?? DEFAULT_REPLY_CAPTURE_EVIDENCE_PATH;
+  const challengePath = report.email.replyCaptureChallengePath ?? DEFAULT_REPLY_CAPTURE_CHALLENGE_PATH;
+  const emlPath = report.email.replyCaptureEmlPath ?? DEFAULT_REPLY_CAPTURE_EML_PATH;
+
+  return `## Reply-Capture Unblock
+
+Send the current challenge to prove \`${contactEmail}\` reaches a controlled inbox.
+
+${challengeSubject ? `Subject: \`${challengeSubject}\`` : `Challenge file: \`${challengePath}\``}
+${challengeToken ? `Token: \`${challengeToken}\`` : ""}
+Received message source: \`${emlPath}\`
+Evidence output: \`${evidencePath}\`
+
+\`\`\`powershell
+npm run finalize:reply-capture
+npm run record:reply-capture -- --output ${evidencePath} --contact ${contactEmail} --from-eml ${emlPath} --challenge ${challengePath} --confirm-controlled-inbox
+\`\`\`
+`;
 }
 
 function parsePublicProof(markdown) {
@@ -267,6 +308,18 @@ async function pathExists(filePath) {
     return true;
   } catch {
     return false;
+  }
+}
+
+async function loadJsonIfPresent(filePath) {
+  try {
+    return JSON.parse(await fs.readFile(filePath, "utf8"));
+  } catch (error) {
+    if (error && typeof error === "object" && error.code === "ENOENT") {
+      return null;
+    }
+
+    throw error;
   }
 }
 
