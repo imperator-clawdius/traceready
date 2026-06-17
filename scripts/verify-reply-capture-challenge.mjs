@@ -133,7 +133,7 @@ export function renderReplyCaptureChallengeReport(result, options = {}) {
   lines.push(challenge.body);
   lines.push("REPLY_CAPTURE_CHALLENGE_BODY_END");
   lines.push(
-    `REPLY_CAPTURE_CHALLENGE_NEXT=send the subject above to ${challenge.contactEmail} from a separate mailbox; after it arrives, run \`npm run record:reply-capture -- --output ${evidencePath} --contact ${challenge.contactEmail} --received-at <received-at-iso> --challenge ${challengePath} --confirm-controlled-inbox\``,
+    `REPLY_CAPTURE_CHALLENGE_NEXT=send the subject above to ${challenge.contactEmail} from a separate mailbox; after it arrives, run \`npm run record:reply-capture -- --output ${evidencePath} --contact ${challenge.contactEmail} --received-at <received-at-iso> --received-subject <received-subject> --challenge ${challengePath} --confirm-controlled-inbox\``,
   );
 
   return `${lines.join("\n")}\n`;
@@ -178,7 +178,7 @@ export function renderReplyCaptureChallengeHandoff(result, options = {}) {
     "Record the real received timestamp from the controlled inbox:",
     "",
     "```powershell",
-    `npm run record:reply-capture -- --output ${evidencePath} --contact ${challenge.contactEmail} --received-at <received-at-iso> --challenge ${challengePath} --confirm-controlled-inbox`,
+    `npm run record:reply-capture -- --output ${evidencePath} --contact ${challenge.contactEmail} --received-at <received-at-iso> --received-subject <received-subject> --challenge ${challengePath} --confirm-controlled-inbox`,
     "```",
     "",
     "Then rerun the email readiness check:",

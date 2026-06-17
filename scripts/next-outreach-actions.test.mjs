@@ -140,7 +140,7 @@ Next gate: \`verify_reply_capture_before_external_submission\`
       "npm run verify:reply-capture-challenge -- --challenge private/reply-capture-challenge.json --evidence-output private/reply-capture-evidence.json --contact founder@traceready.online --handoff-output private/reply-capture-handoff.md --email-draft-output private/reply-capture-email.eml",
     );
     expect(markdown).toContain(
-      "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
+      "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --received-subject <received-subject> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
     );
     expect(markdown).toContain("npm run finalize:reply-capture");
     expect(markdown).toContain(

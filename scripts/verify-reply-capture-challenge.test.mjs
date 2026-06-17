@@ -44,7 +44,7 @@ describe("reply-capture challenge verifier", () => {
     expect(report).toContain("Challenge token: trc-test-1234");
     expect(report).toContain("REPLY_CAPTURE_CHALLENGE_BODY_END");
     expect(report).toContain(
-      "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
+      "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --received-subject <received-subject> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
     );
   });
 
@@ -65,7 +65,7 @@ describe("reply-capture challenge verifier", () => {
     expect(markdown).toContain("Send this from a separate mailbox, not from the forwarding destination.");
     expect(markdown).toContain("Optional local draft: `private/reply-capture-email.eml`");
     expect(markdown).toContain(
-      "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
+      "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --received-subject <received-subject> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
     );
     expect(markdown).toContain(
       "npm run verify:outreach-email -- --reply-capture-evidence private/reply-capture-evidence.json --reply-capture-challenge private/reply-capture-challenge.json",
