@@ -153,6 +153,14 @@ ${routeLines.join("\n")}
 
 External form submission still requires explicit user confirmation at action time.
 
+After a form shows success, record it with \`npm run record:submission-evidence\`.
+
+Example:
+
+\`\`\`powershell
+npm run record:submission-evidence -- --results private/outreach-results-batch-02.csv --route b02-r03 --submitted-at ${generatedAt}T12:00:00.000Z --success-url "https://example.com/contact" --success-text "Thank you for your message" --output private/submission-evidence-b02-r03.json --confirm-visible-success
+\`\`\`
+
 \`\`\`text
 ${confirmationLines.join("\n")}
 \`\`\`

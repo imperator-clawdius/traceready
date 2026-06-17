@@ -74,6 +74,8 @@ describe("market proof action brief", () => {
     expect(markdown).toContain(
       "Do not submit external forms until reply capture passes and action-time confirmation is explicit.",
     );
+    expect(markdown).toContain("After a form shows success, record it with `npm run record:submission-evidence`.");
+    expect(markdown).toContain("--confirm-visible-success");
     expect(markdown).toContain("External submissions completed | 0");
     expect(markdown).toContain("Replies | 0");
     expect(markdown).toContain("Paid cleanup orders | 0");
