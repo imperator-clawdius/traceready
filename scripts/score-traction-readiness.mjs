@@ -146,6 +146,10 @@ export function scoreTractionReadiness({
   };
 }
 
+export function tractionReadinessStatus(score) {
+  return score?.currentState === "traction_signal_present" ? "pass" : "pending";
+}
+
 export function renderTractionReadinessScorecard(score, options = {}) {
   const generatedAt = options.generatedAt ?? new Date().toISOString().slice(0, 10);
   const readyRouteLines = score.outreach.readyRoutes.length
@@ -637,7 +641,7 @@ async function main() {
 
   console.log(
     [
-      "TRACTION_READINESS=pass",
+      `TRACTION_READINESS=${tractionReadinessStatus(score)}`,
       `state=${score.currentState}`,
       `ready_routes=${score.outreach.readyBrowserFormRoutes}`,
       `packet_ready=${score.outreach.packetReadyRoutes}`,

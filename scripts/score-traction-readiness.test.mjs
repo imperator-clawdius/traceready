@@ -3,6 +3,7 @@ import {
   parseTractionReadinessArgs,
   renderTractionReadinessScorecard,
   scoreTractionReadiness,
+  tractionReadinessStatus,
 } from "./score-traction-readiness.mjs";
 import { parseOutreachResults } from "./summarize-outreach-results.mjs";
 import { parseOutreachLedger } from "./verify-outreach-ledger.mjs";
@@ -42,6 +43,11 @@ b02-r04,,Bureau Veritas,overflow,https://traceready.online/proof/public-cocoa-pi
 
 const RESULTS_WITH_UNEVIDENCED_SENT_CSV = `route_id,date_sent,company_or_channel,tier,proof_url,field_note_url,file_check_url,pilot_proof_url,status,response_type,field_note_click_count,file_check_count,paid_order_count,pilot_requested,reply_notes,next_action
 b02-r03,2026-06-16,Control Union,overflow,https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r03,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r03,https://traceready.online/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r03,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r03,sent,none,0,0,0,no,sent manually,follow up in 4 business days
+b02-r04,,Bureau Veritas,overflow,https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,https://traceready.online/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,not_sent,none,0,0,0,no,,send first message
+`;
+
+const RESULTS_WITH_TRACTION_SIGNAL_CSV = `route_id,date_sent,company_or_channel,tier,proof_url,field_note_url,file_check_url,pilot_proof_url,status,response_type,field_note_click_count,file_check_count,paid_order_count,pilot_requested,reply_notes,next_action
+b02-r03,2026-06-16,Control Union,overflow,https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r03,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r03,https://traceready.online/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r03,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r03,replied,file_check,1,1,0,no,asked for one supplier file check,follow up with issue-count-first intake
 b02-r04,,Bureau Veritas,overflow,https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,https://traceready.online/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,not_sent,none,0,0,0,no,,send first message
 `;
 
@@ -169,6 +175,7 @@ describe("traction readiness scorecard", () => {
     expect(score.outreach.sentOrBeyond).toBe(0);
     expect(score.currentState).toBe("proof_ready_reply_capture_at_risk_traction_unmeasured");
     expect(score.nextGate).toBe("verify_reply_capture_before_external_submission");
+    expect(tractionReadinessStatus(score)).toBe("pending");
 
     const markdown = renderTractionReadinessScorecard(score, { generatedAt: "2026-06-16" });
     expect(markdown).toContain("# TraceReady traction-readiness scorecard - 2026-06-16");
@@ -555,6 +562,44 @@ describe("traction readiness scorecard", () => {
     expect(score.outreach.unevidencedSentRoutes).toEqual(["b02-r03"]);
     expect(score.currentState).toBe("outreach_sent_needs_submission_evidence");
     expect(score.nextGate).toBe("record_visible_success_evidence_before_measuring_traction");
+    expect(tractionReadinessStatus(score)).toBe("pending");
+  });
+
+  it("reports traction readiness as pass only when a real market signal is present", () => {
+    const score = scoreTractionReadiness({
+      publicAuditMarkdown: PUBLIC_AUDIT,
+      batchRows: parseOutreachLedger(BATCH_CSV),
+      resultRows: parseOutreachResults(RESULTS_WITH_TRACTION_SIGNAL_CSV),
+      sendabilityAudit: {
+        routes: [
+          {
+            route_id: "b02-r03",
+            company_or_channel: "Control Union",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://www.controlunion.com/eu-deforestation-regulation-eudr/",
+            requires_action_time_confirmation: true,
+          },
+          {
+            route_id: "b02-r04",
+            company_or_channel: "Bureau Veritas",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://news.bureauveritas.net/l/591681/2024-10-25/3t89vtv",
+            requires_action_time_confirmation: true,
+          },
+        ],
+      },
+      contactRecon: { summary: {} },
+      emailReport: REPLY_CAPTURE_READY_EMAIL,
+      sendReadyPackets: SEND_READY_PACKETS,
+      submitPreflightPackets: SUBMIT_PREFLIGHT_PACKETS,
+    });
+
+    expect(score.currentState).toBe("traction_signal_present");
+    expect(score.outreach.replies).toBe(1);
+    expect(score.outreach.fileChecks).toBe(1);
+    expect(tractionReadinessStatus(score)).toBe("pass");
   });
 
   it("parses the private reply-capture evidence gate for scoring", () => {
