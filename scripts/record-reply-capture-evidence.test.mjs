@@ -190,4 +190,15 @@ describe("reply-capture evidence recorder", () => {
 
     expect(packageJson.scripts["record:reply-capture"]).toBe("node scripts/record-reply-capture-evidence.mjs");
   });
+
+  it("documents saved-eml evidence capture in the public launch handoff", async () => {
+    const readme = await fs.readFile("README.md", "utf8");
+
+    expect(readme).toContain("save the received message source as `private/reply-capture-received.eml`");
+    expect(readme).toContain(
+      "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --from-eml private/reply-capture-received.eml --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
+    );
+    expect(readme).not.toContain("--received-at <received-at-iso>");
+    expect(readme).not.toContain("--received-subject <received-subject>");
+  });
 });
