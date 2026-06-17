@@ -218,14 +218,13 @@ function matchBacktickedValue(markdown, label) {
   return markdown.match(new RegExp(`${label}:\\s+\`([^\`]+)\``, "i"))?.[1];
 }
 
-function recordReplyCaptureCommand({ evidencePath, contactEmail, receivedSubject, challengePath }) {
-  const subjectArg = receivedSubject ? quoteForCommand(receivedSubject) : "<received-subject>";
-
-  return `npm run record:reply-capture -- --output ${evidencePath} --contact ${contactEmail} --received-at <received-at-iso> --received-subject ${subjectArg} --challenge ${challengePath} --confirm-controlled-inbox`;
-}
-
-function quoteForCommand(value) {
-  return `"${String(value).replace(/"/g, '\\"')}"`;
+function recordReplyCaptureCommand({
+  evidencePath,
+  contactEmail,
+  challengePath,
+  emlPath = "private/reply-capture-received.eml",
+}) {
+  return `npm run record:reply-capture -- --output ${evidencePath} --contact ${contactEmail} --from-eml ${emlPath} --challenge ${challengePath} --confirm-controlled-inbox`;
 }
 
 function renderSendRows(rows, resultsPath, today, options = {}) {

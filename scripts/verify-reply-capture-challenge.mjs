@@ -175,7 +175,7 @@ export function renderReplyCaptureChallengeHandoff(result, options = {}) {
     "",
     "## After It Arrives",
     "",
-    "Record the real received timestamp from the controlled inbox:",
+    "Save the received message source as `private/reply-capture-received.eml`, then record evidence:",
     "",
     "```powershell",
     recordReplyCaptureCommand({
@@ -271,14 +271,13 @@ function quoteForLog(value) {
   return `"${String(value).replace(/"/g, '\\"')}"`;
 }
 
-function quoteForCommand(value) {
-  return `"${String(value).replace(/"/g, '\\"')}"`;
-}
-
-function recordReplyCaptureCommand({ evidencePath, contactEmail, receivedSubject, challengePath }) {
-  const subjectArg = receivedSubject ? quoteForCommand(receivedSubject) : "<received-subject>";
-
-  return `npm run record:reply-capture -- --output ${evidencePath} --contact ${contactEmail} --received-at <received-at-iso> --received-subject ${subjectArg} --challenge ${challengePath} --confirm-controlled-inbox`;
+function recordReplyCaptureCommand({
+  evidencePath,
+  contactEmail,
+  challengePath,
+  emlPath = "private/reply-capture-received.eml",
+}) {
+  return `npm run record:reply-capture -- --output ${evidencePath} --contact ${contactEmail} --from-eml ${emlPath} --challenge ${challengePath} --confirm-controlled-inbox`;
 }
 
 function safeHeader(value) {

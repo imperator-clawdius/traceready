@@ -375,7 +375,7 @@ export function renderOutreachEmailRunbook(report, options = {}) {
     `- Optional local draft: \`${emailDraftPath}\`.`,
     "- Send from a separate mailbox, not from the forwarding destination.",
     "",
-    "After the message arrives, record the real received timestamp:",
+    "After the message arrives, save the received message source as `private/reply-capture-received.eml`, then record evidence:",
     "",
     "```powershell",
     recordCommand,
@@ -446,14 +446,13 @@ function normalizeHost(hostname) {
   return hostname.toLowerCase().replace(/\.$/, "");
 }
 
-function quoteForCommand(value) {
-  return `"${String(value).replace(/"/g, '\\"')}"`;
-}
-
-function recordReplyCaptureCommand({ evidencePath, contactEmail, receivedSubject, challengePath }) {
-  const subjectArg = receivedSubject ? quoteForCommand(receivedSubject) : "<received-subject>";
-
-  return `npm run record:reply-capture -- --output ${evidencePath} --contact ${contactEmail} --received-at <received-at-iso> --received-subject ${subjectArg} --challenge ${challengePath} --confirm-controlled-inbox`;
+function recordReplyCaptureCommand({
+  evidencePath,
+  contactEmail,
+  challengePath,
+  emlPath = "private/reply-capture-received.eml",
+}) {
+  return `npm run record:reply-capture -- --output ${evidencePath} --contact ${contactEmail} --from-eml ${emlPath} --challenge ${challengePath} --confirm-controlled-inbox`;
 }
 
 function normalizeEmail(email) {
