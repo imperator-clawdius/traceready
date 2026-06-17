@@ -5,8 +5,10 @@ import { describe, expect, it } from "vitest";
 import {
   evaluateReplyCaptureChallenge,
   parseReplyCaptureChallengeVerificationArgs,
+  renderReplyCaptureChallengeHandoff,
   renderReplyCaptureChallengeReport,
   verifyReplyCaptureChallengeFile,
+  writeReplyCaptureChallengeHandoff,
 } from "./verify-reply-capture-challenge.mjs";
 
 const VALID_CHALLENGE = {
@@ -42,6 +44,48 @@ describe("reply-capture challenge verifier", () => {
     expect(report).toContain(
       "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
     );
+  });
+
+  it("renders a durable reply-capture handoff without marking evidence complete", () => {
+    const result = evaluateReplyCaptureChallenge(VALID_CHALLENGE, {
+      contactEmail: "founder@traceready.online",
+    });
+    const markdown = renderReplyCaptureChallengeHandoff(result, {
+      challengePath: "private/reply-capture-challenge.json",
+      evidencePath: "private/reply-capture-evidence.json",
+    });
+
+    expect(markdown).toContain("# TraceReady reply-capture handoff");
+    expect(markdown).toContain("Status: challenge verified; inbox receipt not yet proven.");
+    expect(markdown).toContain("To: `founder@traceready.online`");
+    expect(markdown).toContain("Subject: `TraceReady reply-capture test trc-test-1234`");
+    expect(markdown).toContain("Challenge token: trc-test-1234");
+    expect(markdown).toContain("Send this from a separate mailbox, not from the forwarding destination.");
+    expect(markdown).toContain(
+      "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
+    );
+    expect(markdown).toContain(
+      "npm run verify:outreach-email -- --reply-capture-evidence private/reply-capture-evidence.json --reply-capture-challenge private/reply-capture-challenge.json",
+    );
+    expect(markdown).not.toContain("receivedInControlledInbox");
+  });
+
+  it("writes a reply-capture handoff file for the verified challenge", async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "traceready-reply-handoff-"));
+    const handoffPath = path.join(tempDir, "reply-capture-handoff.md");
+    const result = evaluateReplyCaptureChallenge(VALID_CHALLENGE, {
+      contactEmail: "founder@traceready.online",
+    });
+
+    await writeReplyCaptureChallengeHandoff(result, {
+      challengePath: "private/reply-capture-challenge.json",
+      evidencePath: "private/reply-capture-evidence.json",
+      handoffPath,
+    });
+
+    const markdown = await fs.readFile(handoffPath, "utf8");
+    expect(markdown).toContain("# TraceReady reply-capture handoff");
+    expect(markdown).toContain("Subject: `TraceReady reply-capture test trc-test-1234`");
   });
 
   it("rejects a challenge whose subject and body do not carry the token", () => {
@@ -82,11 +126,14 @@ describe("reply-capture challenge verifier", () => {
         "private/reply-capture-evidence.json",
         "--contact",
         "founder@traceready.online",
+        "--handoff-output",
+        "private/reply-capture-handoff.md",
       ]),
     ).toEqual({
       challengePath: "private/reply-capture-challenge.json",
       evidencePath: "private/reply-capture-evidence.json",
       contactEmail: "founder@traceready.online",
+      handoffPath: "private/reply-capture-handoff.md",
     });
   });
 

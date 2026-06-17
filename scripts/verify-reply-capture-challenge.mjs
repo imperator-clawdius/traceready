@@ -1,4 +1,5 @@
 import fs from "node:fs/promises";
+import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { DEFAULT_CONTACT_EMAIL } from "./verify-outreach-email.mjs";
 
@@ -30,6 +31,8 @@ export function parseReplyCaptureChallengeVerificationArgs(argv) {
       options.evidencePath = value;
     } else if (flag === "--contact") {
       options.contactEmail = value;
+    } else if (flag === "--handoff-output") {
+      options.handoffPath = value;
     } else {
       throw new Error(`unknown flag: ${flag}`);
     }
@@ -133,10 +136,76 @@ export function renderReplyCaptureChallengeReport(result, options = {}) {
   return `${lines.join("\n")}\n`;
 }
 
+export function renderReplyCaptureChallengeHandoff(result, options = {}) {
+  const challengePath = options.challengePath ?? DEFAULT_CHALLENGE_PATH;
+  const evidencePath = options.evidencePath ?? DEFAULT_EVIDENCE_PATH;
+  const challenge = result.challenge ?? {};
+
+  if (!result.ready) {
+    return [
+      "# TraceReady reply-capture handoff",
+      "",
+      "Status: challenge is not ready.",
+      "",
+      `Errors: ${result.errors.join("; ") || "unknown"}`,
+      "",
+    ].join("\n");
+  }
+
+  return [
+    "# TraceReady reply-capture handoff",
+    "",
+    "Status: challenge verified; inbox receipt not yet proven.",
+    "",
+    "## Email to Send",
+    "",
+    `To: \`${challenge.contactEmail}\``,
+    `Subject: \`${challenge.subject}\``,
+    "",
+    "```text",
+    challenge.body,
+    "```",
+    "",
+    "Send this from a separate mailbox, not from the forwarding destination.",
+    "",
+    "## After It Arrives",
+    "",
+    "Record the real received timestamp from the controlled inbox:",
+    "",
+    "```powershell",
+    `npm run record:reply-capture -- --output ${evidencePath} --contact ${challenge.contactEmail} --received-at <received-at-iso> --challenge ${challengePath} --confirm-controlled-inbox`,
+    "```",
+    "",
+    "Then rerun the email readiness check:",
+    "",
+    "```powershell",
+    `npm run verify:outreach-email -- --reply-capture-evidence ${evidencePath} --reply-capture-challenge ${challengePath}`,
+    "```",
+    "",
+    "Do not mark outreach sent or measure non-response until the readiness check passes reply capture.",
+    "",
+  ].join("\n");
+}
+
+export async function writeReplyCaptureChallengeHandoff(result, options = {}) {
+  const handoffPath = options.handoffPath;
+
+  if (!handoffPath) {
+    return;
+  }
+
+  await fs.mkdir(path.dirname(handoffPath), { recursive: true });
+  await fs.writeFile(handoffPath, renderReplyCaptureChallengeHandoff(result, options), "utf8");
+}
+
 async function main() {
   const options = parseReplyCaptureChallengeVerificationArgs(process.argv.slice(2));
   const result = await verifyReplyCaptureChallengeFile(options);
+  await writeReplyCaptureChallengeHandoff(result, options);
   process.stdout.write(renderReplyCaptureChallengeReport(result, options));
+  if (result.ready && options.handoffPath) {
+    process.stdout.write(`REPLY_CAPTURE_CHALLENGE_HANDOFF=${options.handoffPath}\n`);
+  }
 
   if (!result.ready) {
     process.exitCode = 1;

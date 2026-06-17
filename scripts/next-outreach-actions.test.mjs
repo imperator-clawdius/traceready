@@ -137,7 +137,7 @@ Next gate: \`verify_reply_capture_before_external_submission\`
       "npm run prepare:reply-capture -- --output private/reply-capture-challenge.json --contact founder@traceready.online",
     );
     expect(markdown).toContain(
-      "npm run verify:reply-capture-challenge -- --challenge private/reply-capture-challenge.json --evidence-output private/reply-capture-evidence.json --contact founder@traceready.online",
+      "npm run verify:reply-capture-challenge -- --challenge private/reply-capture-challenge.json --evidence-output private/reply-capture-evidence.json --contact founder@traceready.online --handoff-output private/reply-capture-handoff.md",
     );
     expect(markdown).toContain(
       "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
