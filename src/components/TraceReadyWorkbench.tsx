@@ -193,14 +193,14 @@ const PUBLIC_PILOT_STATS = [
 
 const OPERATOR_PROOF_POINTS = [
   {
-    title: "Compliance-trained triage",
+    title: "Regulated-file reflex",
     detail:
-      "High-liability advisory work trained the operating reflex: every vague answer needs a source field, a decision log, and a reviewable next step.",
+      "Years around regulated tax and advisory files across hundreds of client matters trained the habit this product needs: every vague answer gets a source field, a decision log, and a reviewable next step.",
   },
   {
     title: "AI systems with receipts",
     detail:
-      "AI workflow builds, test plans, checkout handoffs, documentation, and audit exports shape the product: useful automation with inspectable evidence.",
+      "Product builds, LLM workflows, test plans, checkout handoffs, documentation, and audit exports shape the product: useful automation with inspectable evidence.",
   },
   {
     title: "Private data stays local first",
@@ -589,19 +589,19 @@ export function TraceReadyWorkbench() {
               Cleanup-desk credibility
             </p>
             <h2 className="mt-2 max-w-3xl text-2xl font-semibold leading-tight text-[#2b190f]">
-              Built by the kind of operator who notices when one missing column can ruin your week.
+              Built by the kind of operator who treats one missing column like a small fire.
             </h2>
             <p className="mt-3 max-w-3xl border-l-2 border-[#0aa394] bg-white/70 px-4 py-3 text-sm font-semibold leading-6 text-[#2b190f]">
-              TraceReady is a spreadsheet bouncer: IDs at the door, coordinates checked against reality,
-              over-4ha points sent back for polygons, and missing supplier facts left blank instead of
-              dressed up.
+              TraceReady is a spreadsheet bouncer: IDs at the door, coordinates checked against
+              reality, over-4ha points sent back for polygons, and missing supplier facts left blank
+              instead of dressed up for the buyer.
             </p>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-[#6a5137]">
-              Public proof beats biography here. The useful background is compliance-heavy advisory
-              operations, AI systems delivery, launch QA, automation handoffs, audit exports, buyer
-              handoff workflows, and privacy guardrails. The trust claim is narrow: find row-level
-              defects, keep supplier coordinates local first, and return a cleanup boundary a buyer or
-              consultant can inspect.
+              Public proof beats biography here, but the operating background matters: regulated
+              advisory work across hundreds of client files, AI systems delivery, launch QA,
+              automation handoffs, audit exports, buyer handoff workflows, and privacy guardrails.
+              The trust claim is narrow: find row-level defects, keep supplier coordinates local first,
+              and return a cleanup boundary a buyer or consultant can inspect.
             </p>
           </div>
 

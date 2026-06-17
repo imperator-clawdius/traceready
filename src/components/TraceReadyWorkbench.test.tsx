@@ -201,21 +201,22 @@ describe("TraceReady conversion surface", () => {
     const operatorText = operatorSection?.textContent ?? "";
 
     expect(operatorText).toContain(
-      "Built by the kind of operator who notices when one missing column can ruin your week.",
+      "Built by the kind of operator who treats one missing column like a small fire.",
     );
     expect(operatorText).toContain(
-      "TraceReady is a spreadsheet bouncer: IDs at the door, coordinates checked against reality, over-4ha points sent back for polygons, and missing supplier facts left blank instead of dressed up.",
+      "TraceReady is a spreadsheet bouncer: IDs at the door, coordinates checked against reality, over-4ha points sent back for polygons, and missing supplier facts left blank instead of dressed up for the buyer.",
     );
     expect(operatorText).toContain("Public proof beats biography here");
     expect(operatorText).toContain("buyer handoff workflows");
-    expect(operatorText).toContain("compliance-heavy advisory operations");
+    expect(operatorText).toContain("regulated advisory work across hundreds of client files");
     expect(operatorText).toContain("AI systems delivery");
     expect(operatorText).toContain("launch QA");
     expect(operatorText).toContain("automation handoffs");
     expect(operatorText).toContain("audit exports");
     expect(operatorText).toContain("row-level defects");
     expect(operatorText).toContain("privacy guardrails");
-    expect(operatorText).toContain("Compliance-trained triage");
+    expect(operatorText).toContain("Regulated-file reflex");
+    expect(operatorText).toContain("Years around regulated tax and advisory files across hundreds of client matters");
     expect(operatorText).toContain("AI systems with receipts");
     expect(operatorText).toContain("Private data stays local first");
     expect(operatorText).toContain("Concierge cleanup desk");
