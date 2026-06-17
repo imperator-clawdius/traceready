@@ -46,6 +46,32 @@ describe("reply-capture challenge preparer", () => {
     expect(written.subject).toBe("TraceReady reply-capture test trc-test-1234");
   });
 
+  it("can prepare the challenge, handoff, and unsent email draft together", async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "traceready-reply-full-"));
+    const outputPath = path.join(tempDir, "reply-capture-challenge.json");
+    const handoffPath = path.join(tempDir, "reply-capture-handoff.md");
+    const emailDraftPath = path.join(tempDir, "reply-capture-email.eml");
+
+    const result = await prepareReplyCaptureChallenge({
+      outputPath,
+      handoffPath,
+      emailDraftPath,
+      contactEmail: "founder@traceready.online",
+      createdAt: "2026-06-17T03:00:00.000Z",
+      token: "trc-test-1234",
+    });
+    const handoff = await fs.readFile(handoffPath, "utf8");
+    const draft = await fs.readFile(emailDraftPath, "utf8");
+
+    expect(result.handoffPath).toBe(handoffPath);
+    expect(result.emailDraftPath).toBe(emailDraftPath);
+    expect(handoff).toContain("Subject: `TraceReady reply-capture test trc-test-1234`");
+    expect(handoff).toContain(`Optional local draft: \`${emailDraftPath}\``);
+    expect(draft).toContain("X-Unsent: 1");
+    expect(draft).toContain("Subject: TraceReady reply-capture test trc-test-1234");
+    expect(draft).toContain("Challenge token: trc-test-1234");
+  });
+
   it("parses the repeatable private challenge command", () => {
     expect(
       parseReplyCaptureChallengeArgs([
@@ -57,12 +83,18 @@ describe("reply-capture challenge preparer", () => {
         "2026-06-17T03:00:00.000Z",
         "--token",
         "trc-test-1234",
+        "--handoff-output",
+        "private/reply-capture-handoff.md",
+        "--email-draft-output",
+        "private/reply-capture-email.eml",
       ]),
     ).toEqual({
       outputPath: "private/reply-capture-challenge.json",
       contactEmail: "founder@traceready.online",
       createdAt: "2026-06-17T03:00:00.000Z",
       token: "trc-test-1234",
+      handoffPath: "private/reply-capture-handoff.md",
+      emailDraftPath: "private/reply-capture-email.eml",
     });
   });
 

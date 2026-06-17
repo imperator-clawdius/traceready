@@ -93,6 +93,7 @@ describe("TraceReady conversion surface", () => {
     const globals = fs.readFileSync("src/app/globals.css", "utf8");
 
     expect(globals).toMatch(/html,\s*body\s*{[\s\S]*min-height:\s*100%;[\s\S]*}/);
+    expect(globals).toMatch(/html\s*{[\s\S]*overflow-y:\s*auto;[\s\S]*}/);
     expect(globals).toMatch(/body\s*{[\s\S]*overflow-y:\s*auto;[\s\S]*}/);
     expect(globals).toMatch(/body\s*{[\s\S]*touch-action:\s*pan-y;[\s\S]*}/);
     expect(globals).toMatch(/body\s*{[\s\S]*overscroll-behavior-y:\s*auto;[\s\S]*}/);

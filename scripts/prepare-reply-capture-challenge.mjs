@@ -3,6 +3,11 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { DEFAULT_CONTACT_EMAIL } from "./verify-outreach-email.mjs";
+import {
+  evaluateReplyCaptureChallenge,
+  writeReplyCaptureChallengeEmailDraft,
+  writeReplyCaptureChallengeHandoff,
+} from "./verify-reply-capture-challenge.mjs";
 
 const DEFAULT_OUTPUT_PATH = "private/reply-capture-challenge.json";
 
@@ -32,6 +37,10 @@ export function parseReplyCaptureChallengeArgs(argv) {
       options.createdAt = value;
     } else if (flag === "--token") {
       options.token = value;
+    } else if (flag === "--handoff-output") {
+      options.handoffPath = value;
+    } else if (flag === "--email-draft-output") {
+      options.emailDraftPath = value;
     } else {
       throw new Error(`unknown flag: ${flag}`);
     }
@@ -75,12 +84,24 @@ export function buildReplyCaptureChallenge({
 export async function prepareReplyCaptureChallenge(options = {}) {
   const outputPath = options.outputPath ?? DEFAULT_OUTPUT_PATH;
   const challenge = buildReplyCaptureChallenge(options);
+  const evaluatedChallenge = evaluateReplyCaptureChallenge(challenge, { contactEmail: challenge.contactEmail });
 
   await fs.mkdir(path.dirname(outputPath), { recursive: true });
   await fs.writeFile(outputPath, `${JSON.stringify(challenge, null, 2)}\n`, "utf8");
+  await writeReplyCaptureChallengeHandoff(evaluatedChallenge, {
+    challengePath: outputPath,
+    evidencePath: options.evidencePath,
+    handoffPath: options.handoffPath,
+    emailDraftPath: options.emailDraftPath,
+  });
+  await writeReplyCaptureChallengeEmailDraft(evaluatedChallenge, {
+    emailDraftPath: options.emailDraftPath,
+  });
 
   return {
     outputPath,
+    handoffPath: options.handoffPath,
+    emailDraftPath: options.emailDraftPath,
     challenge,
   };
 }
@@ -98,6 +119,12 @@ async function main() {
     ].join(" "),
   );
   console.log(`REPLY_CAPTURE_CHALLENGE_SUBJECT=${quoteForLog(result.challenge.subject)}`);
+  if (result.handoffPath) {
+    console.log(`REPLY_CAPTURE_CHALLENGE_HANDOFF=${result.handoffPath}`);
+  }
+  if (result.emailDraftPath) {
+    console.log(`REPLY_CAPTURE_CHALLENGE_EMAIL_DRAFT=${result.emailDraftPath}`);
+  }
 }
 
 function generateChallengeToken() {

@@ -17,6 +17,10 @@ body {
   min-height: 100%;
 }
 
+html {
+  overflow-y: auto;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

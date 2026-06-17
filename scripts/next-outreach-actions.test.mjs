@@ -134,7 +134,7 @@ Next gate: \`verify_reply_capture_before_external_submission\`
       "Do not submit public forms or measure non-response until reply capture evidence is recorded.",
     );
     expect(markdown).toContain(
-      "npm run prepare:reply-capture -- --output private/reply-capture-challenge.json --contact founder@traceready.online",
+      "npm run prepare:reply-capture -- --output private/reply-capture-challenge.json --contact founder@traceready.online --handoff-output private/reply-capture-handoff.md --email-draft-output private/reply-capture-email.eml",
     );
     expect(markdown).toContain(
       "npm run verify:reply-capture-challenge -- --challenge private/reply-capture-challenge.json --evidence-output private/reply-capture-evidence.json --contact founder@traceready.online --handoff-output private/reply-capture-handoff.md --email-draft-output private/reply-capture-email.eml",
