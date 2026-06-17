@@ -1,4 +1,7 @@
 import { describe, expect, it } from "vitest";
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import {
   evaluateReplyCaptureEvidence,
   evaluateOutreachEmailDns,
@@ -179,6 +182,8 @@ describe("outreach email verifier", () => {
     expect(rendered).toContain("OUTREACH_EMAIL_DMARC_STARTER=TXT _dmarc");
     expect(rendered).toContain("OUTREACH_EMAIL_ALIAS_NEXT=create Namecheap Redirect Email alias founder");
     expect(rendered).toContain("npm run prepare:reply-capture");
+    expect(rendered).toContain("--handoff-output private/reply-capture-handoff.md");
+    expect(rendered).toContain("--email-draft-output private/reply-capture-email.eml");
     expect(rendered).toContain("record private reply-capture evidence");
     expect(rendered).toContain("then rerun with --reply-capture-evidence and --reply-capture-challenge");
   });
@@ -208,6 +213,42 @@ describe("outreach email verifier", () => {
     expect(report.domain).toBe("example.test");
     expect(report.contactEmail).toBe("founder@example.test");
     expect(report.ready).toBe(true);
+  });
+
+  it("keeps reply capture pending instead of crashing when the evidence file is missing", async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "traceready-missing-reply-"));
+    const missingEvidencePath = path.join(tempDir, "reply-capture-evidence.json");
+
+    const report = await inspectOutreachEmailDns({
+      replyCaptureEvidencePath: missingEvidencePath,
+      replyCaptureChallenge: {
+        contactEmail: "founder@traceready.online",
+        createdAt: "2026-06-17T03:00:00.000Z",
+        challengeToken: "trc-test-1234",
+        subject: "TraceReady reply-capture test trc-test-1234",
+      },
+      resolver: {
+        async mx() {
+          return NAMECHEAP_MX;
+        },
+        async txt(hostname) {
+          if (hostname === "traceready.online") {
+            return [["v=spf1 include:spf.efwd.registrar-servers.com ~all"]];
+          }
+          if (hostname === "_dmarc.traceready.online") {
+            return [["v=DMARC1; p=none"]];
+          }
+          return [["v=DKIM1; k=rsa; p=abc123"]];
+        },
+      },
+    });
+    const rendered = renderOutreachEmailReport(report);
+
+    expect(report.replyCaptureReady).toBe(false);
+    expect(report.ready).toBe(false);
+    expect(rendered).toContain("OUTREACH_EMAIL_ALIAS_TEST=pending");
+    expect(rendered).toContain(`reply-capture evidence file not found: ${missingEvidencePath}`);
+    expect(rendered).toContain("OUTREACH_EMAIL_ALIAS_NEXT=");
   });
 
   it("parses domain, contact, and extra DKIM selector options", () => {

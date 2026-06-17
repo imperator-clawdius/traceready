@@ -54,13 +54,30 @@ export async function inspectOutreachEmailDns(options = {}) {
   const contactEmail = options.contactEmail ?? `founder@${domain}`;
   const dkimSelectors = options.dkimSelectors ?? DEFAULT_DKIM_SELECTORS;
   const resolver = options.resolver ?? defaultResolver;
-  const replyCaptureEvidence = options.replyCaptureEvidencePath
-    ? await loadReplyCaptureEvidence(options.replyCaptureEvidencePath)
-    : options.replyCaptureEvidence;
+  let replyCaptureEvidence = options.replyCaptureEvidence;
+  let replyCaptureEvidenceResult = null;
+
+  if (options.replyCaptureEvidencePath) {
+    try {
+      replyCaptureEvidence = await loadReplyCaptureEvidence(options.replyCaptureEvidencePath);
+    } catch (error) {
+      if (error && typeof error === "object" && error.code === "ENOENT") {
+        replyCaptureEvidenceResult = {
+          ready: false,
+          receivedAt: null,
+          detail: `reply-capture evidence file not found: ${options.replyCaptureEvidencePath}`,
+          errors: [`reply-capture evidence file not found: ${options.replyCaptureEvidencePath}`],
+        };
+      } else {
+        throw error;
+      }
+    }
+  }
+
   const replyCaptureChallenge = options.replyCaptureChallengePath
     ? await loadReplyCaptureChallenge(options.replyCaptureChallengePath)
     : options.replyCaptureChallenge;
-  const replyCaptureEvidenceResult = replyCaptureEvidence
+  replyCaptureEvidenceResult ??= replyCaptureEvidence
     ? evaluateReplyCaptureEvidence(replyCaptureEvidence, { contactEmail, expectedChallenge: replyCaptureChallenge })
     : null;
   const aliasTested = Boolean(options.aliasTested || replyCaptureEvidenceResult?.ready);
@@ -283,7 +300,7 @@ export function renderOutreachEmailReport(report) {
     lines.push("OUTREACH_EMAIL_DKIM_NEXT=add the DKIM TXT/CNAME records from the outbound mail provider");
     if (!report.replyCaptureReady) {
       lines.push(
-        "OUTREACH_EMAIL_ALIAS_NEXT=create Namecheap Redirect Email alias founder -> controlled inbox; run `npm run prepare:reply-capture -- --output private/reply-capture-challenge.json --contact founder@traceready.online`; send the generated subject to founder@traceready.online; record private reply-capture evidence with `npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox`; then rerun with --reply-capture-evidence and --reply-capture-challenge",
+        "OUTREACH_EMAIL_ALIAS_NEXT=create Namecheap Redirect Email alias founder -> controlled inbox; run `npm run prepare:reply-capture -- --output private/reply-capture-challenge.json --contact founder@traceready.online --handoff-output private/reply-capture-handoff.md --email-draft-output private/reply-capture-email.eml`; send the generated subject to founder@traceready.online; record private reply-capture evidence with `npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox`; then rerun with --reply-capture-evidence and --reply-capture-challenge",
       );
     }
   }
