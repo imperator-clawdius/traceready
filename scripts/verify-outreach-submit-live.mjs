@@ -34,6 +34,32 @@ export function parseSubmitQueueRoutes(markdown) {
     .filter((route) => ROUTE_ID_PATTERN.test(route.route_id));
 }
 
+export function parseSubmitQueueSummary(markdown) {
+  const line = String(markdown ?? "")
+    .split(/\r?\n/)
+    .map((nextLine) => nextLine.trim())
+    .find((nextLine) => nextLine.startsWith("OUTREACH_SUBMIT_QUEUE="));
+
+  if (!line) {
+    return null;
+  }
+
+  const tokens = Object.fromEntries(
+    line
+      .split(/\s+/)
+      .map((token) => token.split("=", 2))
+      .filter(([key, value]) => key && value !== undefined),
+  );
+
+  return {
+    status: tokens.OUTREACH_SUBMIT_QUEUE,
+    readyRoutes: parseIntegerToken(tokens.ready_routes),
+    preflightReady: parseIntegerToken(tokens.preflight_ready),
+    heldPreflights: parseIntegerToken(tokens.held_preflights),
+    replyCapture: tokens.reply_capture ?? "",
+  };
+}
+
 export async function inspectLiveSubmitRoutes({
   queueMarkdown,
   sendabilityAudit,
@@ -45,8 +71,10 @@ export async function inspectLiveSubmitRoutes({
   }
 
   const queueRoutes = parseSubmitQueueRoutes(queueMarkdown);
+  const queueSummary = parseSubmitQueueSummary(queueMarkdown);
   const queueByRoute = new Map(queueRoutes.map((route) => [route.route_id, route]));
   const readyRoutes = (sendabilityAudit.routes ?? []).filter((route) => route.sendability === "browser_form_ready");
+  const queueHeaderErrors = validateSubmitQueueSummary(queueSummary, queueRoutes, readyRoutes);
   const routeReports = [];
   const missingQueueRoutes = [];
   const staleQueueRoutes = [];
@@ -149,6 +177,7 @@ export async function inspectLiveSubmitRoutes({
     blockedRoutes.length +
     captchaRoutes.length +
     fetchErrorRoutes.length +
+    queueHeaderErrors.length +
     replyCaptureRiskRoutes.length;
 
   return {
@@ -160,6 +189,7 @@ export async function inspectLiveSubmitRoutes({
     blockedRoutes,
     captchaRoutes,
     fetchErrorRoutes,
+    queueHeaderErrors,
     noFormMarkerRoutes,
     replyCaptureRiskRoutes,
     replyCaptureHeldRoutes,
@@ -190,6 +220,7 @@ ${routeRows.join("\n")}
 | --- | --- |
 | Missing from submit queue | ${formatRouteSet(report.missingQueueRoutes)} |
 | Queue URL differs from sendability audit | ${formatRouteSet(report.staleQueueRoutes)} |
+| Submit queue header errors | ${formatIssueSet(report.queueHeaderErrors)} |
 | Fetch errors | ${formatRouteSet(report.fetchErrorRoutes)} |
 | HTTP blocked | ${formatRouteSet(report.blockedRoutes)} |
 | CAPTCHA or browser challenge marker | ${formatRouteSet(report.captchaRoutes)} |
@@ -252,6 +283,52 @@ function stripBackticks(value) {
   return value.replace(/^`|`$/g, "");
 }
 
+function parseIntegerToken(value) {
+  if (value === undefined) {
+    return null;
+  }
+
+  const parsed = Number(value);
+  return Number.isInteger(parsed) ? parsed : null;
+}
+
+function validateSubmitQueueSummary(summary, queueRoutes, readyRoutes) {
+  const errors = [];
+  const readyRouteCount = readyRoutes.length;
+  const heldRouteCount = queueRoutes.filter((route) => route.reply_capture !== "ready").length;
+  const actionableRouteCount = queueRoutes.filter((route) => route.reply_capture === "ready").length;
+
+  if (!summary) {
+    return ["submit queue header is missing"];
+  }
+
+  if (summary.heldPreflights === null) {
+    errors.push("submit queue header must include held_preflights");
+  }
+
+  if (summary.status === "pass" && summary.replyCapture !== "ready") {
+    errors.push(`submit queue cannot pass while reply_capture is ${summary.replyCapture || "unknown"}`);
+  }
+
+  if (summary.status === "pass" && summary.heldPreflights !== null && summary.heldPreflights > 0) {
+    errors.push("submit queue cannot pass with held preflights");
+  }
+
+  if (summary.readyRoutes !== null && summary.readyRoutes !== readyRouteCount) {
+    errors.push(`submit queue ready_routes=${summary.readyRoutes} does not match ${readyRouteCount} browser_form_ready routes`);
+  }
+
+  if (summary.heldPreflights !== null && summary.heldPreflights !== heldRouteCount) {
+    errors.push(`submit queue held_preflights=${summary.heldPreflights} does not match ${heldRouteCount} held route rows`);
+  }
+
+  if (summary.preflightReady !== null && summary.preflightReady !== actionableRouteCount) {
+    errors.push(`submit queue preflight_ready=${summary.preflightReady} does not match ${actionableRouteCount} actionable route rows`);
+  }
+
+  return errors;
+}
+
 function normalizeUrl(value) {
   return String(value ?? "").replace(/\/+$/, "");
 }
@@ -290,6 +367,10 @@ async function fetchRoute(fetchImpl, url, timeoutMs) {
 
 function formatRouteSet(routeIds) {
   return routeIds.length ? routeIds.map((routeId) => `\`${routeId}\``).join(", ") : "none";
+}
+
+function formatIssueSet(issues = []) {
+  return issues.length ? issues.join("; ") : "none";
 }
 
 function todayIsoDate() {

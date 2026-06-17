@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   inspectLiveSubmitRoutes,
+  parseSubmitQueueSummary,
   parseSubmitQueueRoutes,
   parseSubmitRouteLiveArgs,
   renderLiveSubmitRouteReport,
@@ -8,7 +9,7 @@ import {
 
 const QUEUE_MARKDOWN = `# TraceReady submit queue - 2026-06-16
 
-OUTREACH_SUBMIT_QUEUE=pass ready_routes=2 preflight_ready=2 reply_capture=at_risk
+OUTREACH_SUBMIT_QUEUE=pending ready_routes=2 preflight_ready=0 held_preflights=2 reply_capture=at_risk
 
 | Route | Target | Public route | Send-ready packet | Submit preflight | Reply capture |
 | --- | --- | --- | --- | --- | --- |
@@ -60,9 +61,22 @@ describe("live submit route verifier", () => {
     ]);
   });
 
+  it("parses the private submit queue headline", () => {
+    expect(parseSubmitQueueSummary(QUEUE_MARKDOWN)).toEqual({
+      status: "pending",
+      readyRoutes: 2,
+      preflightReady: 0,
+      heldPreflights: 2,
+      replyCapture: "at_risk",
+    });
+  });
+
   it("passes when queued ready routes are still reachable without CAPTCHA markers", async () => {
     const report = await inspectLiveSubmitRoutes({
-      queueMarkdown: QUEUE_MARKDOWN.replaceAll("at_risk", "ready"),
+      queueMarkdown: QUEUE_MARKDOWN.replace(
+        "OUTREACH_SUBMIT_QUEUE=pending ready_routes=2 preflight_ready=0 held_preflights=2 reply_capture=at_risk",
+        "OUTREACH_SUBMIT_QUEUE=pass ready_routes=2 preflight_ready=2 held_preflights=0 reply_capture=ready",
+      ).replaceAll("at_risk", "ready"),
       sendabilityAudit: SENDABILITY_AUDIT,
       fetchImpl: async (url) => ({
         ok: true,
@@ -77,6 +91,7 @@ describe("live submit route verifier", () => {
     expect(report.liveReadyRoutes).toBe(2);
     expect(report.blockedRoutes).toEqual([]);
     expect(report.captchaRoutes).toEqual([]);
+    expect(report.queueHeaderErrors).toEqual([]);
     expect(markdown).toContain("OUTREACH_SUBMIT_LIVE=pass ready_routes=2 live_ready=2 blocked=0 captcha=0");
     expect(markdown).toContain("| `b02-r03` | Control Union | `200` | pass |");
     expect(markdown).toContain("| `b02-r04` | Bureau Veritas | `200` | pass |");
@@ -99,9 +114,33 @@ describe("live submit route verifier", () => {
     expect(report.liveReadyRoutes).toBe(0);
     expect(report.replyCaptureHeldRoutes).toEqual(["b02-r03", "b02-r04"]);
     expect(report.replyCaptureRiskRoutes).toEqual(["b02-r03", "b02-r04"]);
+    expect(report.queueHeaderErrors).toEqual([]);
     expect(markdown).toContain("OUTREACH_SUBMIT_LIVE=pending ready_routes=2 live_ready=0 blocked=0 captcha=0 reply_capture_held=2");
     expect(markdown).toContain("| Reachable but held by reply capture | `b02-r03`, `b02-r04` |");
     expect(markdown).toContain("| Reply capture not ready | `b02-r03`, `b02-r04` |");
+  });
+
+  it("flags a contradictory submit queue headline before treating live routes as actionable", async () => {
+    const staleQueue = QUEUE_MARKDOWN.replace(
+      "OUTREACH_SUBMIT_QUEUE=pending ready_routes=2 preflight_ready=0 held_preflights=2 reply_capture=at_risk",
+      "OUTREACH_SUBMIT_QUEUE=pass ready_routes=2 preflight_ready=2 reply_capture=at_risk",
+    );
+    const report = await inspectLiveSubmitRoutes({
+      queueMarkdown: staleQueue.replaceAll("at_risk", "ready"),
+      sendabilityAudit: SENDABILITY_AUDIT,
+      fetchImpl: async (url) => ({
+        ok: true,
+        status: 200,
+        url,
+        text: async () => "<html><form><input name='email'></form></html>",
+      }),
+    });
+    const markdown = renderLiveSubmitRouteReport(report, { generatedAt: "2026-06-16" });
+
+    expect(report.status).toBe("pending");
+    expect(report.liveReadyRoutes).toBe(2);
+    expect(report.queueHeaderErrors).toContain("submit queue header must include held_preflights");
+    expect(markdown).toContain("| Submit queue header errors | submit queue header must include held_preflights |");
   });
 
   it("flags stale queue rows, blocked fetches, and CAPTCHA markers", async () => {
