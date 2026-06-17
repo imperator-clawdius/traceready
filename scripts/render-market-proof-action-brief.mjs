@@ -11,6 +11,7 @@ import {
   loadSubmitPreflightPackets,
   scoreTractionReadiness,
 } from "./score-traction-readiness.mjs";
+import { buildSaleReadinessFromFiles } from "./verify-sale-readiness.mjs";
 
 const DEFAULT_PUBLIC_AUDIT_PATH = "docs/public-dataset-mini-audit.md";
 const DEFAULT_BATCH_PATH = "docs/proof-led-outreach-batch-02.csv";
@@ -90,6 +91,7 @@ export function parseMarketProofActionBriefArgs(argv) {
 export function renderMarketProofActionBrief(score, options = {}) {
   const generatedAt = options.generatedAt ?? new Date().toISOString().slice(0, 10);
   const replyCaptureChallenge = options.replyCaptureChallenge ?? null;
+  const saleReadiness = options.saleReadiness ?? null;
   const preflightQueuePath = options.preflightQueuePath ?? DEFAULT_PREFLIGHT_QUEUE_PATH;
   const routeLines = score.outreach.readyRoutes.length
     ? score.outreach.readyRoutes.map(
@@ -115,7 +117,7 @@ Next gate: \`${score.nextGate}\`
 
 This is public problem proof, not customer traction.
 
-## Quantified Problem
+${saleReadiness ? `${renderSaleReadinessSection(saleReadiness)}\n\n` : ""}## Quantified Problem
 
 - ${formatNumber(score.publicProof.recordsAnalyzed)} public rows analyzed.
 - ${formatNumber(score.publicProof.pointOnlyOver4ha)} point-only plots over 4 hectares.
@@ -228,6 +230,7 @@ export async function renderMarketProofActionBriefFromFiles(options = {}) {
     generatedAt: options.generatedAt,
     preflightQueuePath: options.preflightQueuePath,
     replyCaptureChallenge,
+    saleReadiness: await buildSaleReadinessFromFiles(options),
   });
 
   return {
@@ -235,6 +238,48 @@ export async function renderMarketProofActionBriefFromFiles(options = {}) {
     markdown,
     replyCaptureChallenge,
   };
+}
+
+function renderSaleReadinessSection(saleReadiness) {
+  const contactEmail = saleReadiness.checkout?.contactEmail ?? "founder@traceready.online";
+
+  return `## Sale Readiness
+
+SALE_READINESS=${saleReadiness.status} state=${saleReadiness.currentState} next_gate=${saleReadiness.nextGate}
+
+| Check | Status | Evidence |
+| --- | --- | --- |
+| Public proof | ${statusFor(saleReadiness.checks?.publicProofReady)} | ${formatNumber(saleReadiness.publicProof?.recordsAnalyzed)}-row problem proof is live |
+| Stripe checkout | ${statusFor(saleReadiness.checks?.checkoutReady)} | cleanup=${statusFor(saleReadiness.checkout?.stripeCleanupReady)} pilot=${statusFor(saleReadiness.checkout?.stripePilotReady)} |
+| Paid-file intake | ${statusFor(saleReadiness.checks?.paidFileIntakeReady)} | ${
+    saleReadiness.checks?.paidFileIntakeReady
+      ? `${contactEmail} is proven by reply-capture evidence`
+      : `${contactEmail} is not proven by reply-capture evidence`
+  } |
+| Outbound delivery auth | ${statusFor(saleReadiness.checks?.outboundReady)} | cleanup delivery email auth is ${statusFor(saleReadiness.checks?.outboundReady)} |
+| Real market signal | ${statusFor(saleReadiness.checks?.realMarketSignal)} | replies=${saleReadiness.traction?.replies ?? 0} file_checks=${saleReadiness.traction?.fileChecks ?? 0} pilot_requests=${saleReadiness.traction?.pilotRequests ?? 0} paid_orders=${saleReadiness.traction?.paidOrders ?? 0} |
+
+${saleReadinessDecision(saleReadiness)}`;
+}
+
+function saleReadinessDecision(saleReadiness) {
+  if (saleReadiness.currentState === "sale_blocked_email_intake_unverified") {
+    return "Do not treat Stripe checkout as sale-ready until the paid-file intake inbox is proven.";
+  }
+
+  if (saleReadiness.currentState === "sale_intake_ready_outbound_auth_pending") {
+    return "Paid-file intake is proven, but outbound cleanup delivery auth is still pending.";
+  }
+
+  if (saleReadiness.currentState === "sale_ops_ready_traction_unmeasured") {
+    return "The sales path is operational, but traction is still unmeasured.";
+  }
+
+  if (saleReadiness.currentState === "sale_ready_with_market_signal") {
+    return "Sale readiness has operational proof and at least one real market signal.";
+  }
+
+  return "Fix the sale-readiness next gate before treating this as overcome.";
 }
 
 async function loadEmailReport(options = {}) {
@@ -288,6 +333,10 @@ function renderReadyNextAction(preflightQueuePath) {
 
 function formatNumber(value) {
   return Number(value || 0).toLocaleString("en-US");
+}
+
+function statusFor(value) {
+  return value ? "pass" : "pending";
 }
 
 async function main() {

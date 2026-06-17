@@ -48,10 +48,38 @@ const SCORE = {
   },
 };
 
+const SALE_READINESS = {
+  status: "pending",
+  currentState: "sale_blocked_email_intake_unverified",
+  nextGate: "verify_reply_capture_before_accepting_paid_files",
+  checks: {
+    publicProofReady: true,
+    checkoutReady: true,
+    paidFileIntakeReady: false,
+    outboundReady: false,
+    realMarketSignal: false,
+  },
+  publicProof: {
+    recordsAnalyzed: 57658,
+  },
+  checkout: {
+    contactEmail: "founder@traceready.online",
+    stripeCleanupReady: true,
+    stripePilotReady: true,
+  },
+  traction: {
+    replies: 0,
+    fileChecks: 0,
+    pilotRequests: 0,
+    paidOrders: 0,
+  },
+};
+
 describe("market proof action brief", () => {
   it("renders a compact next-action brief without claiming traction", () => {
     const markdown = renderMarketProofActionBrief(SCORE, {
       generatedAt: "2026-06-17",
+      saleReadiness: SALE_READINESS,
       replyCaptureChallenge: {
         contactEmail: "founder@traceready.online",
         subject: "TraceReady reply-capture test trc-20260617-ae6acb63",
@@ -66,6 +94,16 @@ describe("market proof action brief", () => {
     expect(markdown).toContain("46,134 point-only plots over 4 hectares");
     expect(markdown).toContain("0 ready records");
     expect(markdown).toContain("This is public problem proof, not customer traction.");
+    expect(markdown).toContain("## Sale Readiness");
+    expect(markdown).toContain(
+      "SALE_READINESS=pending state=sale_blocked_email_intake_unverified next_gate=verify_reply_capture_before_accepting_paid_files",
+    );
+    expect(markdown).toContain("| Public proof | pass | 57,658-row problem proof is live |");
+    expect(markdown).toContain("| Stripe checkout | pass | cleanup=pass pilot=pass |");
+    expect(markdown).toContain("| Paid-file intake | pending | founder@traceready.online is not proven by reply-capture evidence |");
+    expect(markdown).toContain(
+      "Do not treat Stripe checkout as sale-ready until the paid-file intake inbox is proven.",
+    );
     expect(markdown).toContain("Reply capture is not proven yet.");
     expect(markdown).toContain("Subject: `TraceReady reply-capture test trc-20260617-ae6acb63`");
     expect(markdown).toContain("Save the received message source as `private/reply-capture-received.eml`");
@@ -103,11 +141,24 @@ describe("market proof action brief", () => {
           replyCaptureReady: true,
         },
       },
-      { generatedAt: "2026-06-17" },
+      {
+        generatedAt: "2026-06-17",
+        saleReadiness: {
+          ...SALE_READINESS,
+          status: "pending",
+          currentState: "sale_intake_ready_outbound_auth_pending",
+          nextGate: "publish_dmarc_dkim_and_outbound_sender_auth",
+          checks: {
+            ...SALE_READINESS.checks,
+            paidFileIntakeReady: true,
+          },
+        },
+      },
     );
 
     expect(markdown).toContain("Reply capture is proven.");
     expect(markdown).toContain("Use `private/preflight-submit-queue.md` for the next action-time confirmation.");
+    expect(markdown).toContain("SALE_READINESS=pending state=sale_intake_ready_outbound_auth_pending");
     expect(markdown).not.toContain("Reply capture is not proven yet.");
   });
 
