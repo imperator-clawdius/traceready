@@ -64,6 +64,7 @@ export function scoreTractionReadiness({
     liveSubmitVerification.replyCaptureRiskRoutes.length > 0 &&
     liveSubmitVerification.missingQueueRoutes.length === 0 &&
     liveSubmitVerification.staleQueueRoutes.length === 0 &&
+    liveSubmitVerification.queueHeaderErrors.length === 0 &&
     liveSubmitVerification.fetchErrorRoutes.length === 0 &&
     liveSubmitVerification.httpBlockedRouteIds.length === 0 &&
     liveSubmitVerification.captchaRouteIds.length === 0;
@@ -130,6 +131,7 @@ export function scoreTractionReadiness({
       liveSubmitReplyCaptureHeldRoutes: liveSubmitVerification.replyCaptureHeldRoutes,
       liveSubmitMissingQueueRoutes: liveSubmitVerification.missingQueueRoutes,
       liveSubmitStaleQueueRoutes: liveSubmitVerification.staleQueueRoutes,
+      liveSubmitQueueHeaderErrors: liveSubmitVerification.queueHeaderErrors,
       liveSubmitFetchErrorRoutes: liveSubmitVerification.fetchErrorRoutes,
       liveSubmitHttpBlockedRouteIds: liveSubmitVerification.httpBlockedRouteIds,
       liveSubmitCaptchaRouteIds: liveSubmitVerification.captchaRouteIds,
@@ -270,6 +272,7 @@ ${readyRouteLines.join("\n")}
 | --- | --- |
 | Missing from submit queue | ${(score.outreach.liveSubmitMissingQueueRoutes ?? []).length ? score.outreach.liveSubmitMissingQueueRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 | Queue URL differs from sendability audit | ${(score.outreach.liveSubmitStaleQueueRoutes ?? []).length ? score.outreach.liveSubmitStaleQueueRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
+| Submit queue header errors | ${(score.outreach.liveSubmitQueueHeaderErrors ?? []).length ? score.outreach.liveSubmitQueueHeaderErrors.join("; ") : "none"} |
 | Fetch errors | ${(score.outreach.liveSubmitFetchErrorRoutes ?? []).length ? score.outreach.liveSubmitFetchErrorRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 | HTTP blocked | ${(score.outreach.liveSubmitHttpBlockedRouteIds ?? []).length ? score.outreach.liveSubmitHttpBlockedRouteIds.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 | CAPTCHA or browser challenge marker | ${(score.outreach.liveSubmitCaptchaRouteIds ?? []).length ? score.outreach.liveSubmitCaptchaRouteIds.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
@@ -505,7 +508,7 @@ function verifySubmitPreflightPackets(readyRoutes, submitPreflightPackets) {
       submitPreflightPackets[`private/preflight-submit-${route.route_id}.md`] ??
       "";
     const expectedPassLine = `OUTREACH_SUBMIT_PREFLIGHT=pass route=${route.route_id} company="${route.company_or_channel}" reply_capture=ready`;
-    const expectedHeldLine = `OUTREACH_SUBMIT_PREFLIGHT=pass route=${route.route_id} company="${route.company_or_channel}" reply_capture=at_risk`;
+    const expectedHeldLine = `OUTREACH_SUBMIT_PREFLIGHT=pending route=${route.route_id} company="${route.company_or_channel}" reply_capture=at_risk`;
     const expectedConfirmation = `Confirm: submit ${route.route_id} to ${route.company_or_channel} using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-${route.route_id}.md.`;
 
     if (!packetText.trim()) {
@@ -548,6 +551,7 @@ function parseLiveSubmitReport(markdown) {
       captchaRoutes: undefined,
       missingQueueRoutes: [],
       staleQueueRoutes: [],
+      queueHeaderErrors: [],
       fetchErrorRoutes: [],
       httpBlockedRouteIds: [],
       captchaRouteIds: [],
@@ -565,6 +569,7 @@ function parseLiveSubmitReport(markdown) {
     captchaRoutes: Number(summary[5]),
     missingQueueRoutes: extractRouteSet(text, "Missing from submit queue"),
     staleQueueRoutes: extractRouteSet(text, "Queue URL differs from sendability audit"),
+    queueHeaderErrors: extractIssueSet(text, "Submit queue header errors"),
     fetchErrorRoutes: extractRouteSet(text, "Fetch errors"),
     httpBlockedRouteIds: extractRouteSet(text, "HTTP blocked"),
     captchaRouteIds: extractRouteSet(text, "CAPTCHA or browser challenge marker"),
@@ -626,6 +631,19 @@ function extractRouteSet(markdown, label) {
   const match = String(markdown ?? "").match(new RegExp(`^\\|\\s*\`?${escaped}\`?\\s*\\|\\s*([^|]+?)\\s*\\|\\s*$`, "im"));
   const routeCell = match ? match[1] : "";
   return Array.from(routeCell.matchAll(/\b(b\d{2}-r\d{2})\b/g)).map((match) => match[1]);
+}
+
+function extractIssueSet(markdown, label) {
+  const value = extractText(String(markdown ?? ""), label);
+
+  if (!value || /^none$/i.test(value)) {
+    return [];
+  }
+
+  return value
+    .split(/\s*;\s*/)
+    .map((issue) => issue.trim().replace(/^`|`$/g, ""))
+    .filter(Boolean);
 }
 
 function statusFor(value) {

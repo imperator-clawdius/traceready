@@ -76,8 +76,8 @@ const SUBMIT_PREFLIGHT_PACKETS = {
 };
 
 const SUBMIT_PREFLIGHT_PACKETS_AT_RISK = {
-  "b02-r03": 'OUTREACH_SUBMIT_PREFLIGHT=pass route=b02-r03 company="Control Union" reply_capture=at_risk\nConfirm: submit b02-r03 to Control Union using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-b02-r03.md.',
-  "b02-r04": 'OUTREACH_SUBMIT_PREFLIGHT=pass route=b02-r04 company="Bureau Veritas" reply_capture=at_risk\nConfirm: submit b02-r04 to Bureau Veritas using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-b02-r04.md.',
+  "b02-r03": 'OUTREACH_SUBMIT_PREFLIGHT=pending route=b02-r03 company="Control Union" reply_capture=at_risk\nConfirm: submit b02-r03 to Control Union using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-b02-r03.md.',
+  "b02-r04": 'OUTREACH_SUBMIT_PREFLIGHT=pending route=b02-r04 company="Bureau Veritas" reply_capture=at_risk\nConfirm: submit b02-r04 to Bureau Veritas using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-b02-r04.md.',
 };
 
 const LIVE_SUBMIT_REPORT_PASS = `# TraceReady live submit route check - 2026-06-17
@@ -127,6 +127,31 @@ OUTREACH_SUBMIT_LIVE=pending ready_routes=2 live_ready=0 blocked=0 captcha=0 rep
 | --- | --- |
 | Missing from submit queue | none |
 | Queue URL differs from sendability audit | none |
+| Fetch errors | none |
+| HTTP blocked | none |
+| CAPTCHA or browser challenge marker | none |
+| Reachable but held by reply capture | \`b02-r03\`, \`b02-r04\` |
+| Reply capture not ready | \`b02-r03\`, \`b02-r04\` |
+`;
+
+const LIVE_SUBMIT_REPORT_QUEUE_HEADER_ERROR = `# TraceReady live submit route check - 2026-06-17
+
+OUTREACH_SUBMIT_LIVE=pending ready_routes=2 live_ready=0 blocked=0 captcha=0 reply_capture_held=2
+
+## Route Checks
+
+| Route | Target | HTTP | Status | Issue | URL |
+| --- | --- | ---: | --- | --- | --- |
+| \`b02-r03\` | Control Union | \`200\` | pending | reply capture not ready | https://www.controlunion.com/eu-deforestation-regulation-eudr/ |
+| \`b02-r04\` | Bureau Veritas | \`200\` | pending | reply capture not ready | https://news.bureauveritas.net/l/591681/2024-10-25/3t89vtv |
+
+## Blocking Sets
+
+| Check | Route IDs |
+| --- | --- |
+| Missing from submit queue | none |
+| Queue URL differs from sendability audit | none |
+| Submit queue header errors | submit queue header must include held_preflights |
 | Fetch errors | none |
 | HTTP blocked | none |
 | CAPTCHA or browser challenge marker | none |
@@ -482,6 +507,48 @@ describe("traction readiness scorecard", () => {
     expect(markdown).toContain("| Live submit routes held by reply capture | 2 |");
     expect(markdown).toContain("| Reachable but held by reply capture | `b02-r03`, `b02-r04` |");
     expect(markdown).toContain("| Reply capture not ready | `b02-r03`, `b02-r04` |");
+  });
+
+  it("surfaces live submit queue header errors instead of hiding them behind reply-capture risk", () => {
+    const score = scoreTractionReadiness({
+      publicAuditMarkdown: PUBLIC_AUDIT,
+      batchRows: parseOutreachLedger(BATCH_CSV),
+      resultRows: parseOutreachResults(RESULTS_CSV),
+      sendabilityAudit: {
+        routes: [
+          {
+            route_id: "b02-r03",
+            company_or_channel: "Control Union",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://www.controlunion.com/eu-deforestation-regulation-eudr/",
+            requires_action_time_confirmation: true,
+          },
+          {
+            route_id: "b02-r04",
+            company_or_channel: "Bureau Veritas",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://news.bureauveritas.net/l/591681/2024-10-25/3t89vtv",
+            requires_action_time_confirmation: true,
+          },
+        ],
+      },
+      contactRecon: { summary: {} },
+      emailReport: REPLY_CAPTURE_AT_RISK_EMAIL,
+      sendReadyPackets: SEND_READY_PACKETS,
+      submitPreflightPackets: SUBMIT_PREFLIGHT_PACKETS_AT_RISK,
+      liveSubmitReport: LIVE_SUBMIT_REPORT_QUEUE_HEADER_ERROR,
+    });
+
+    expect(score.outreach.liveSubmitQueueHeaderErrors).toEqual([
+      "submit queue header must include held_preflights",
+    ]);
+    expect(score.currentState).toBe("proof_ready_live_submit_routes_blocked");
+    expect(score.nextGate).toBe("refresh_or_replace_blocked_submit_routes");
+
+    const markdown = renderTractionReadinessScorecard(score, { generatedAt: "2026-06-17" });
+    expect(markdown).toContain("| Submit queue header errors | submit queue header must include held_preflights |");
   });
 
   it("changes the next gate when a browser-form-ready route is missing a matching send packet", () => {
