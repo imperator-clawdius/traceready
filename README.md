@@ -43,7 +43,7 @@ The paid CTAs open `/checkout/cleanup/` and `/checkout/pilot/` first. Those page
 
 The 5-file pilot uses `NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK` when configured. The checkout page also includes the public fallback Payment Link: `https://buy.stripe.com/dRm6oH9SH8l671l59W8IU03`.
 
-After checkout, the launch app prompts customers to use `/order-intake/` and email the source file, receipt email, commodity, source country, deadline, and buyer requirements so the paid cleanup order can be fulfilled manually. TraceReady is operated by Passive Print Labs LLC, and the Stripe checkout surface is labeled as TraceReady.
+Before checkout, the launch app asks customers to confirm scope and avoid sending raw farm coordinates. After scope confirmation and checkout, `/order-intake/` prompts customers to email the scope thread, source file, receipt email, commodity, source country, deadline, and buyer requirements so the paid cleanup order can be fulfilled manually. TraceReady is operated by Passive Print Labs LLC, and the Stripe checkout surface is labeled as TraceReady.
 
 See `docs/launch-status.md` for the current deployment and DNS checklist.
 

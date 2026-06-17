@@ -151,6 +151,9 @@ CSV-1,Ama Mensah,Ghana,coffee,LOT-1,2.2,6.2031,-1.7082
     await expect(zip.file("traceready-paid-cleanup-intake.txt")?.async("string")).resolves.toContain(
       "Stripe receipt email",
     );
+    await expect(zip.file("traceready-paid-cleanup-intake.txt")?.async("string")).resolves.toContain(
+      "after scope confirmation and checkout",
+    );
     await expect(zip.file("traceready-eudr-checklist.json")?.async("string")).resolves.toContain(
       '"artifact": "EUDR readiness checklist"',
     );

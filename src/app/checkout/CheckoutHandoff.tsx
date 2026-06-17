@@ -41,6 +41,14 @@ export function CheckoutHandoff({ title, price, description, stripeHref, nextSte
               </p>
             </div>
 
+            <div className="mt-4 border border-emerald-200 bg-emerald-50 p-4 text-sm leading-6 text-emerald-950">
+              <p className="font-semibold">Scope-first payment</p>
+              <p className="mt-1">
+                Do not pay or send raw farm coordinates before scope confirmation. Use Stripe only after
+                TraceReady confirms the file is in launch scope and sends intake instructions.
+              </p>
+            </div>
+
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
               <a
                 href={stripeHref}
@@ -56,7 +64,7 @@ export function CheckoutHandoff({ title, price, description, stripeHref, nextSte
                 className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-zinc-300 bg-white px-4 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-100"
               >
                 <Mail className="size-4" aria-hidden="true" />
-                Ask a question first
+                Ask a scope question first
               </a>
             </div>
 

@@ -14,7 +14,7 @@
 - Public proof: `/proof/` leads with the public Colombian cocoa dataset pilot: messy public file in, exact issue counts out, and an honest cleaned-pack boundary.
 - Trust surfaces: `/methodology/`, `/proof/`, `/order-intake/`, and `/contact/` explain the checks, sample status, paid handoff, and operator contact path.
 - Conversion actions: `Buy 24-hour cleanup` CTA and `Buy 5-file pilot` CTA route to `/checkout/cleanup/` and `/checkout/pilot/` before TraceReady-labeled Stripe products.
-- Paid-order handoff: after checkout, customers are prompted to use `/order-intake/` and email the source file, receipt email, commodity, source country, deadline, and buyer requirements to `founder@traceready.online`.
+- Paid-order handoff: customers are told not to pay or send raw farm coordinates before scope confirmation. After scope confirmation and checkout, `/order-intake/` prompts them to email the scope thread, source file, receipt email, commodity, source country, deadline, and buyer requirements to `founder@traceready.online`.
 - Trust pages: `/privacy/` and `/terms/` explain browser-side validation, paid-cleanup handling, Stripe checkout, retention, deletion, confidentiality, no model training, and the no-legal-certification boundary.
 - Legal operator bridge: TraceReady is operated by Passive Print Labs LLC; Stripe products show the TraceReady offer while Passive Print Labs LLC remains the payment/legal operator.
 - Live Stripe cleanup product: `TraceReady 24-hour cleanup`

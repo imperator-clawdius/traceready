@@ -51,21 +51,28 @@ export default function TermsPage() {
             <h2 className="text-base font-semibold text-zinc-950">Paid cleanup</h2>
             <p className="mt-2">
               A cleanup pass covers one submitted source file or one clearly related shipment pack. The
-              24-hour turnaround starts after payment, receipt of the usable source file, and any essential
-              order context. If the file is outside the launch scope, we may request clarification, propose a
-              custom quote, or refund the order before work begins.
+              24-hour turnaround starts after scope confirmation, payment, receipt of the usable source
+              file, and any essential order context. Do not pay or send raw farm coordinates before scope
+              confirmation. Use Stripe only after TraceReady confirms the file is in launch scope. If the
+              file is outside the launch scope, we may request clarification, propose a custom quote, or
+              decline the order before work begins.
             </p>
             <p className="mt-2">
               The 5-file pilot covers up to five supplier files submitted together for batch cleanup review
-              and cleanup. The pilot is fulfilled manually after payment, receipt of usable source files, and
-              any buyer-specific requirements needed to prepare the returned pack.
+              and cleanup. The pilot is fulfilled manually after scope confirmation, payment, receipt of
+              usable source files, and any buyer-specific requirements needed to prepare the returned pack.
             </p>
             <ol className="mt-3 list-decimal space-y-2 pl-5">
-              <li>Buy cleanup in Stripe.</li>
+              <li>Confirm launch scope before payment.</li>
+              <li>Buy cleanup in Stripe only after TraceReady confirms the file is in launch scope.</li>
               <li>
-                Use the order intake checklist. Email the source file, receipt email, commodity, source country, deadline, and buyer requirements.
+                Use the order intake checklist after scope confirmation. Email the source file, receipt email,
+                commodity, source country, deadline, and buyer requirements.
               </li>
-              <li>Receive the cleaned ZIP pack within 24 hours after payment and usable file receipt.</li>
+              <li>
+                Receive the cleaned ZIP pack within 24 hours after scope confirmation, payment, and usable
+                file receipt.
+              </li>
             </ol>
             <Link
               href={ORDER_INTAKE_HREF}

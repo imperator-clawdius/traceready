@@ -14,9 +14,10 @@ export default function PilotCheckoutPage() {
       description="Check and clean up to five related supplier files for an importer, exporter, cooperative, or compliance consultant."
       stripeHref={OFFER_STATUS.pilot.stripeHref}
       nextSteps={[
-        "Pay through the TraceReady Stripe checkout operated by Passive Print Labs LLC.",
-        "Use the order intake checklist to email up to five source files with receipt email, commodity, source countries, deadline, and buyer requirements.",
-        "Receive a batch cleanup summary and cleaned packs after payment and usable file receipt.",
+        "Send a scope note first with file count, formats, commodities, source countries, deadline, and buyer requirements.",
+        "Pay through the TraceReady Stripe checkout operated by Passive Print Labs LLC only after launch scope is confirmed.",
+        "Use the order intake checklist after scope confirmation to email up to five source files with receipt email, commodity, source countries, deadline, and buyer requirements.",
+        "Receive a batch cleanup summary and cleaned packs after scope confirmation, payment, and usable file receipt.",
       ]}
     />
   );

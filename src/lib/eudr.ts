@@ -850,7 +850,7 @@ function buildPaidCleanupIntake(analysis: TraceReadyAnalysis, outreachAttributio
   return [
     "TraceReady Paid Cleanup Intake",
     "",
-    "Send this note with the source file or generated ZIP after checkout.",
+    "Send this note with the source file or generated ZIP after scope confirmation and checkout.",
     ...formatOutreachAttributionLines(outreachAttribution),
     "",
     "Customer details:",

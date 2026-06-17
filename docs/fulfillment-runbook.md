@@ -24,16 +24,17 @@ Treat paid cleanup files as confidential order material. Keep them only as long 
 
 ## Fulfillment Steps
 
-1. Confirm payment in Stripe before starting manual cleanup.
-2. Save the original source files outside the public repo.
-3. Run the files through TraceReady and export the pack.
-4. Read the issue log before editing anything.
-5. Fix only operational data problems the customer can authorize: field names, missing batch references supplied by the customer, duplicate IDs, coordinate formatting, and buyer-specific naming.
-6. Do not invent farm locations, supplier identity, polygons, or legal conclusions.
-7. Return the cleaned pack, issue log, buyer summary, and a short plain-English summary.
-8. Ask whether the buyer/importer accepted the pack or requested more data.
-9. Offer deletion of source files after delivery.
-10. Update the order ledger.
+1. Confirm the file is inside launch scope before asking for payment or raw farm coordinates.
+2. Confirm payment in Stripe before starting manual cleanup.
+3. Save the original source files outside the public repo.
+4. Run the files through TraceReady and export the pack.
+5. Read the issue log before editing anything.
+6. Fix only operational data problems the customer can authorize: field names, missing batch references supplied by the customer, duplicate IDs, coordinate formatting, and buyer-specific naming.
+7. Do not invent farm locations, supplier identity, polygons, or legal conclusions.
+8. Return the cleaned pack, issue log, buyer summary, and a short plain-English summary.
+9. Ask whether the buyer/importer accepted the pack or requested more data.
+10. Offer deletion of source files after delivery.
+11. Update the order ledger.
 
 ## Cleanup Boundaries
 
@@ -54,7 +55,7 @@ TraceReady must not:
 
 ## Turnaround Targets
 
-- Single-file cleanup: return within 24 hours after payment and usable file receipt.
+- Single-file cleanup: return within 24 hours after scope confirmation, payment, and usable file receipt.
 - 5-file pilot: return an initial cleanup summary within 24 hours and cleaned files within the agreed deadline.
 
 If a file is unusable or outside launch scope, send a clarification request or refund before doing unpaid custom work.

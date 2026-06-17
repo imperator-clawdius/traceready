@@ -245,15 +245,16 @@ export function TraceReadyWorkbench() {
       return buildPaidCleanupHandoffHref(analysis, outreachAttribution);
     }
 
-    const subject = encodeURIComponent("TraceReady paid cleanup file");
+    const subject = encodeURIComponent("TraceReady cleanup scope check");
     const body = encodeURIComponent(
       [
-        "I bought TraceReady cleanup and need to submit my file.",
+        "Please confirm launch scope before I pay or send raw farm coordinates.",
         "",
-        "Stripe receipt email:",
         "Commodity:",
         "Source country:",
+        "File format and rough row count:",
         "Deadline:",
+        "Buyer requirements:",
         ...formatOutreachAttributionLines(outreachAttribution),
         "Notes:",
       ].join("\n"),
@@ -769,9 +770,9 @@ export function TraceReadyWorkbench() {
           <section className="trace-card border border-[#d9bf92] bg-[#fffaf2]/95 p-5 shadow-sm">
             <h2 className="text-lg font-semibold text-[#2b190f]">After the diagnosis</h2>
             <p className="mt-2 text-sm leading-6 text-[#6a5137]">
-              If the free check shows blockers, buy cleanup only after you can see the issue list.
-              If you are not ready to send raw coordinates, request free issue-log triage with only
-              counts and field names first.
+              If the free check shows blockers, request scope review before paying. Do not send raw
+              coordinates until the file is scoped; use free issue-log triage with only counts and field
+              names first.
             </p>
             <a
               href={triageHref}
@@ -799,21 +800,25 @@ export function TraceReadyWorkbench() {
                 Fulfillment path
               </p>
               <ol className="mt-2 space-y-2 text-sm leading-6 text-[#6a5137]">
-                <li>Buy cleanup in Stripe.</li>
+                <li>Confirm launch scope before payment.</li>
                 <li>
-                  Use the order intake checklist to send the source file, receipt email, commodity,
-                  source country, deadline, and buyer requirements.
+                  Use the order intake checklist only after scope confirmation, with receipt email,
+                  commodity, source country, deadline, and buyer requirements.
                 </li>
-                <li>Receive the cleaned ZIP pack within 24 hours after payment and usable file receipt.</li>
+                <li>
+                  Receive the cleaned ZIP pack within 24 hours after scope confirmation, payment, and
+                  usable file receipt.
+                </li>
               </ol>
               <p className="mt-3 text-sm leading-6 text-[#6a5137]">
-                If the file is outside launch scope, we clarify or refund before work begins.
+                Do not send raw coordinates until the file is scoped. If the file is outside launch scope,
+                we clarify or refund before work begins.
               </p>
               <a
                 href={batchResults.length > 1 ? pilotHandoffHref : orderHandoffHref}
                 className="mt-3 inline-flex h-10 w-full items-center justify-center rounded-md border border-[#d3b887] bg-white px-3 text-sm font-semibold text-[#3a2517] transition hover:bg-[#fff3dd]"
               >
-                {batchResults.length > 1 ? "Send pilot files" : "Send paid-cleanup file"}
+                {batchResults.length > 1 ? "Send scoped pilot files" : "Send scoped cleanup file"}
               </a>
               <a
                 href={ORDER_INTAKE_HREF}
@@ -825,7 +830,8 @@ export function TraceReadyWorkbench() {
             <div className="mt-4 border-t border-[#eadcc8] pt-4 text-xs leading-5 text-[#7a6144]">
               <p className="font-semibold text-[#3a2517]">TraceReady cleanup desk</p>
               <p className="mt-1">
-                TraceReady checkout is labeled as TraceReady and operated by {LEGAL_OPERATOR}.
+                Scope first, payment second. TraceReady checkout is labeled as TraceReady and operated by{" "}
+                {LEGAL_OPERATOR}.
               </p>
               <a href={`mailto:${CONTACT_EMAIL}`} className="mt-2 inline-block font-semibold text-[#087f73] hover:text-[#05665d]">
                 {CONTACT_EMAIL}
@@ -840,8 +846,8 @@ export function TraceReadyWorkbench() {
       <footer className="relative z-10 border-t border-[#dec8a6] bg-[#fffaf1]/90 backdrop-blur">
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-5 text-sm text-[#6a5137] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <p>
-            Browser-side validation for launch. Paid cleanup files are submitted by email after checkout.
-            TraceReady is operated by {LEGAL_OPERATOR}.
+            Browser-side validation for launch. Paid cleanup files are submitted by email after scope
+            confirmation and checkout. TraceReady is operated by {LEGAL_OPERATOR}.
           </p>
           <nav className="flex gap-4 font-semibold text-[#3a2517]" aria-label="Trust links">
             <a href="/privacy/" className="hover:text-[#087f73]">
@@ -1220,7 +1226,7 @@ function buildBuyerBrief(analysis: TraceReadyAnalysis, outreachAttribution?: Out
     "",
     "Recommended next step:",
     blockers.length > 0
-      ? "Buy the 24-hour cleanup pass or 5-file pilot before sending this pack to an importer."
+      ? "Request a scope check before paying for the 24-hour cleanup pass or 5-file pilot."
       : "Download the compliance pack and attach it to the buyer/importer review record.",
     "",
     "Caveat: TraceReady is an operational readiness pack, not legal certification.",
@@ -1268,7 +1274,7 @@ function buildBatchPilotBrief(results: BatchResult[], outreachAttribution?: Outr
     "",
     "Recommended next step:",
     cleanupFiles.length > 0 || failedFiles.length > 0
-      ? "Buy the $745 5-file pilot and attach the original supplier files for manual cleanup."
+      ? "Request a scope check before paying for the $745 5-file pilot or sending original supplier files."
       : "Download individual compliance packs and use the pilot summary as the importer review cover note.",
     "",
     "Caveat: TraceReady is an operational readiness pack, not legal certification.",
@@ -1279,15 +1285,15 @@ function buildPaidCleanupHandoffHref(
   analysis: TraceReadyAnalysis,
   outreachAttribution?: OutreachAttribution | null,
 ): string {
-  const subject = encodeURIComponent(`TraceReady paid cleanup file - ${analysis.fileName}`);
+  const subject = encodeURIComponent(`TraceReady cleanup scope check - ${analysis.fileName}`);
   const body = encodeURIComponent(
     [
-      "I bought TraceReady cleanup and need to submit my file.",
+      "Please confirm launch scope before I pay or send raw farm coordinates.",
       "",
-      "Stripe receipt email:",
       "Company:",
       "Contact name:",
       "Deadline:",
+      "Buyer requirements:",
       "",
       buildBuyerBrief(analysis, outreachAttribution),
       "",
@@ -1299,13 +1305,12 @@ function buildPaidCleanupHandoffHref(
 }
 
 function buildPilotHandoffHref(batchBrief = "", outreachAttribution?: OutreachAttribution | null): string {
-  const subject = encodeURIComponent("TraceReady pilot files after checkout");
+  const subject = encodeURIComponent("TraceReady pilot scope check");
   const attributionLines = batchBrief ? [] : formatOutreachAttributionLines(outreachAttribution);
   const body = encodeURIComponent(
     [
-      "I bought the TraceReady 5-file pilot and need to submit files.",
+      "Please confirm launch scope before I pay or send raw farm coordinates for a 5-file pilot.",
       "",
-      "Stripe receipt email:",
       "Company:",
       "Contact name:",
       "Target deadline:",

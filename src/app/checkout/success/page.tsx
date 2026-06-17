@@ -19,11 +19,13 @@ export default function CheckoutSuccessPage() {
             Checkout received
           </p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-[#2b190f]">
-            Send your cleanup files.
+            Send scoped cleanup files.
           </h1>
           <p className="mt-4 text-sm leading-7 text-zinc-700">
-            Email your Stripe receipt email, source file, commodity, source country, deadline, and buyer
-            requirements to {CONTACT_EMAIL}. TraceReady is operated by {LEGAL_OPERATOR}.
+            Email your Stripe receipt email, scope confirmation thread, source file, commodity, source
+            country, deadline, and buyer requirements to {CONTACT_EMAIL}. If this file was not scoped
+            first, email a scope note before attaching raw farm coordinates. TraceReady is operated by{" "}
+            {LEGAL_OPERATOR}.
           </p>
           <div className="mt-5 flex flex-col gap-3 sm:flex-row">
             <Link

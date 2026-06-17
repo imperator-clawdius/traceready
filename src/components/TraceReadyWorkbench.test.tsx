@@ -73,7 +73,8 @@ describe("TraceReady conversion surface", () => {
     expect(container.querySelector("#checker")?.tagName).toBe("MAIN");
     expect(uploadAction?.tagName).toBe("BUTTON");
     expect(cleanupSectionText).toContain("After the diagnosis");
-    expect(cleanupSectionText).toContain("not ready to send raw coordinates");
+    expect(cleanupSectionText).toContain("request scope review before paying");
+    expect(cleanupSectionText).toContain("Do not send raw coordinates until the file is scoped");
     expect(triageLink?.getAttribute("href")).toBe("/file-triage/");
     expect(fieldNoteLink?.getAttribute("href")).toBe("/field-notes/eudr-file-errors/");
     expect(pilotProofLink?.getAttribute("href")).toBe("/pilot-proof/");
@@ -290,6 +291,8 @@ describe("TraceReady conversion surface", () => {
     expect(pageText).toContain("TraceReady checkout is labeled as TraceReady");
     expect(pageText).toContain("operated by Passive Print Labs LLC");
     expect(pageText).toContain("TraceReady cleanup desk");
+    expect(pageText).toContain("Scope first, payment second");
+    expect(pageText).toContain("Do not send raw coordinates until the file is scoped");
     expect(pageText).toContain("Review order intake checklist");
     expect(cleanupLink?.getAttribute("href")).toBe("/checkout/cleanup/");
     expect(pilotLink?.getAttribute("href")).toBe("/checkout/pilot/");
@@ -308,7 +311,7 @@ describe("TraceReady conversion surface", () => {
     expect(container.textContent).toContain("not customer proof, transaction proof, buyer approval, or legal certification");
   });
 
-  it("frames paid cleanup as a precise three-step handoff", () => {
+  it("frames paid cleanup as a scope-first handoff", () => {
     act(() => {
       root.render(<TraceReadyWorkbench />);
     });
@@ -316,16 +319,23 @@ describe("TraceReady conversion surface", () => {
     const cleanupLink = Array.from(container.querySelectorAll("a")).find((element) =>
       element.textContent?.includes("Buy 24-hour cleanup"),
     );
+    const scopedCleanupLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("Send scoped cleanup file"),
+    );
     const cleanupSectionText = cleanupLink?.closest("section")?.textContent ?? "";
+    const decodedHref = decodeURIComponent(scopedCleanupLink?.getAttribute("href") ?? "");
 
-    expect(cleanupSectionText).toContain("Buy cleanup in Stripe.");
+    expect(cleanupSectionText).toContain("Confirm launch scope before payment.");
     expect(cleanupSectionText).toContain(
-      "Use the order intake checklist to send the source file, receipt email, commodity, source country, deadline, and buyer requirements.",
+      "Use the order intake checklist only after scope confirmation, with receipt email, commodity, source country, deadline, and buyer requirements.",
     );
     expect(cleanupSectionText).toContain(
-      "Receive the cleaned ZIP pack within 24 hours after payment and usable file receipt.",
+      "Receive the cleaned ZIP pack within 24 hours after scope confirmation, payment, and usable file receipt.",
     );
+    expect(cleanupSectionText).toContain("Do not send raw coordinates until the file is scoped.");
     expect(cleanupSectionText).toContain("If the file is outside launch scope, we clarify or refund before work begins.");
+    expect(decodedHref).toContain("TraceReady cleanup scope check");
+    expect(decodedHref).toContain("Please confirm launch scope before I pay or send raw farm coordinates.");
   });
 
   it("does not ask for another upload after a clean file has been analyzed", async () => {

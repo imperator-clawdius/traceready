@@ -2,6 +2,7 @@ import Link from "next/link";
 import { CONTACT_EMAIL, LEGAL_OPERATOR, METHODOLOGY_HREF, PROOF_HREF } from "@/lib/site";
 
 const CHECKLIST = [
+  "scope confirmation thread",
   "Stripe receipt email",
   "company and contact name",
   "source files or related shipment pack",
@@ -21,6 +22,7 @@ export default function OrderIntakePage() {
     [
       "TraceReady order intake",
       "",
+      "Scope confirmation thread:",
       "Stripe receipt email:",
       "Company:",
       "Contact name:",
@@ -52,8 +54,9 @@ export default function OrderIntakePage() {
             Order intake checklist.
           </h1>
           <p className="mt-4 max-w-3xl text-sm leading-7 text-zinc-700">
-            After checkout, email the checklist below to {CONTACT_EMAIL}. The cleanup clock starts after
-            payment, usable source files, and essential buyer context are received.
+            After scope confirmation and checkout, email the checklist below to {CONTACT_EMAIL}. Do not
+            send raw farm coordinates before scope confirmation. The cleanup clock starts after scope
+            confirmation, payment, usable source files, and essential buyer context are received.
           </p>
         </section>
 

@@ -64,4 +64,16 @@ describe("launch verifier route manifest", () => {
     expect(script).toContain("Download pilot evidence template");
     expect(script).toContain("/traceready-documented-pilot-template.txt");
   });
+
+  it("checks the scope-first payment warning on paid checkout and order intake routes", () => {
+    const script = fs.readFileSync("scripts/verify-launch.mjs", "utf8");
+
+    expect(script).toContain('label: "CLEANUP_CHECKOUT_PAGE"');
+    expect(script).toContain('label: "PILOT_CHECKOUT_PAGE"');
+    expect(script).toContain('label: "ORDER_INTAKE_PAGE"');
+    expect(script).toContain("Scope-first payment");
+    expect(script).toContain("Do not pay or send raw farm coordinates before scope confirmation");
+    expect(script).toContain("Use Stripe only after TraceReady confirms the file is in launch scope");
+    expect(script).toContain("After scope confirmation and checkout");
+  });
 });
