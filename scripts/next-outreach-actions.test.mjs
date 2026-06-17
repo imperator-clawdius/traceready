@@ -113,6 +113,13 @@ Next gate: \`verify_reply_capture_before_external_submission\`
 | Check | Status |
 | --- | --- |
 | OUTREACH_EMAIL_REPLY_CAPTURE | pending |
+
+## Ready Send Block
+
+| Route | Target | Public route | Packet |
+| --- | --- | --- | --- |
+| \`b02-r03\` | Control Union | \`https://www.controlunion.com/eu-deforestation-regulation-eudr/\` | \`private/send-ready-b02-r03.md\` |
+| \`b02-r04\` | Bureau Veritas | \`https://news.bureauveritas.net/l/591681/2024-10-25/3t89vtv\` | \`private/send-ready-b02-r04.md\` |
 `);
     const markdown = renderOutreachActionQueue(queue, {
       resultsPath: "private/outreach-results.csv",
@@ -129,6 +136,20 @@ Next gate: \`verify_reply_capture_before_external_submission\`
       nextGate: "verify_reply_capture_before_external_submission",
       replyCaptureStatus: "pending",
       replyCaptureReady: false,
+      readyRoutes: [
+        {
+          routeId: "b02-r03",
+          target: "Control Union",
+          publicRoute: "https://www.controlunion.com/eu-deforestation-regulation-eudr/",
+          packet: "private/send-ready-b02-r03.md",
+        },
+        {
+          routeId: "b02-r04",
+          target: "Bureau Veritas",
+          publicRoute: "https://news.bureauveritas.net/l/591681/2024-10-25/3t89vtv",
+          packet: "private/send-ready-b02-r04.md",
+        },
+      ],
     });
     expect(markdown).toContain("## Readiness Gate");
     expect(markdown).toContain(
@@ -142,6 +163,9 @@ Next gate: \`verify_reply_capture_before_external_submission\`
     expect(markdown).toContain("Submit queue: `private/preflight-submit-queue.md`");
     expect(markdown).toContain("npm run render:reply-capture-unblock");
     expect(markdown).toContain("npm run render:outreach-email-runbook");
+    expect(markdown).toContain("Ready browser-form routes held by reply capture (2):");
+    expect(markdown).toContain("`b02-r03` Control Union - private/send-ready-b02-r03.md");
+    expect(markdown).toContain("`b02-r04` Bureau Veritas - private/send-ready-b02-r04.md");
     expect(markdown).toContain(
       "npm run prepare:reply-capture -- --output private/reply-capture-challenge.json --contact founder@traceready.online --handoff-output private/reply-capture-handoff.md --email-draft-output private/reply-capture-email.eml",
     );

@@ -115,6 +115,7 @@ export function parseTractionReadinessSummary(markdown) {
     nextGate,
     replyCaptureStatus,
     replyCaptureReady: replyCaptureStatus === "pass",
+    readyRoutes: parseReadySendBlock(markdown),
   };
 }
 
@@ -212,6 +213,8 @@ function renderReadinessGate(readiness, options = {}) {
           `\`npm run render:reply-capture-unblock\``,
           `\`npm run render:outreach-email-runbook\``,
           "",
+          ...renderReadyRoutesHeldByReplyCapture(readiness.readyRoutes ?? []),
+          "",
           "If the challenge needs to be regenerated, prepare a unique reply-capture challenge, send that subject to the alias from a separate mailbox, and record proof after it arrives:",
           `\`npm run prepare:reply-capture -- --output private/reply-capture-challenge.json --contact founder@traceready.online --handoff-output private/reply-capture-handoff.md --email-draft-output private/reply-capture-email.eml\``,
           `\`npm run verify:reply-capture-challenge -- --challenge private/reply-capture-challenge.json --evidence-output private/reply-capture-evidence.json --contact founder@traceready.online --handoff-output private/reply-capture-handoff.md --email-draft-output private/reply-capture-email.eml\``,
@@ -236,6 +239,34 @@ function isReplyCaptureGatePending(readiness) {
     readiness.nextGate === REPLY_CAPTURE_GATE ||
     /reply_capture_(at_risk|pending)/.test(readiness.currentState ?? "")
   );
+}
+
+function parseReadySendBlock(markdown) {
+  const section = markdown.match(/## Ready Send Block\s+([\s\S]*?)(?:\n## |\n$)/i)?.[1] ?? "";
+  return section
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith("| `"))
+    .map((line) => line.split("|").map((cell) => cell.trim()))
+    .filter((cells) => cells.length >= 5)
+    .map((cells) => ({
+      routeId: cells[1].replaceAll("`", ""),
+      target: cells[2],
+      publicRoute: cells[3].replaceAll("`", ""),
+      packet: cells[4].replaceAll("`", ""),
+    }))
+    .filter((route) => route.routeId && route.target);
+}
+
+function renderReadyRoutesHeldByReplyCapture(routes) {
+  if (routes.length === 0) {
+    return ["Ready browser-form route details were not found in the scorecard; inspect the submit queue before action."];
+  }
+
+  return [
+    `Ready browser-form routes held by reply capture (${routes.length}):`,
+    ...routes.map((route) => `- \`${route.routeId}\` ${route.target} - ${route.packet}`),
+  ];
 }
 
 function matchBacktickedValue(markdown, label) {
