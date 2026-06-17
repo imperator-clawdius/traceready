@@ -131,6 +131,8 @@ This is public problem proof, not customer traction.
 | Manually verified browser-form-ready routes | ${score.outreach.readyBrowserFormRoutes} |
 | Send-ready packets | ${score.outreach.packetReadyRoutes ?? "not checked"} |
 | Submit preflights ready | ${score.outreach.submitPreflightReadyRoutes ?? "not checked"} |
+| Live submit routes checked | ${score.outreach.liveSubmitCheckedRoutes ?? "not checked"} |
+| Live submit route report status | ${score.outreach.liveSubmitStatus ?? "not checked"} |
 | Live submit routes ready | ${score.outreach.liveSubmitReadyRoutes ?? "not checked"} |
 | Live submit routes held by reply capture | ${(score.outreach.liveSubmitReplyCaptureHeldRoutes ?? []).length} |
 | External submissions completed | ${score.outreach.sentOrBeyond} |

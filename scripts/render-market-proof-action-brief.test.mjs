@@ -21,6 +21,7 @@ const SCORE = {
     packetReadyRoutes: 4,
     submitPreflightReadyRoutes: 0,
     liveSubmitStatus: "pending",
+    liveSubmitCheckedRoutes: 4,
     liveSubmitReadyRoutes: 0,
     liveSubmitReplyCaptureHeldRoutes: ["b02-r03", "b02-r04", "b02-r09", "b02-r20"],
     sentOrBeyond: 0,
@@ -77,6 +78,8 @@ describe("market proof action brief", () => {
     expect(markdown).toContain("After a form shows success, record it with `npm run record:submission-evidence`.");
     expect(markdown).toContain("--confirm-visible-success");
     expect(markdown).toContain("External submissions completed | 0");
+    expect(markdown).toContain("Live submit routes checked | 4");
+    expect(markdown).toContain("Live submit route report status | pending");
     expect(markdown).toContain("Replies | 0");
     expect(markdown).toContain("Paid cleanup orders | 0");
   });
@@ -91,6 +94,7 @@ describe("market proof action brief", () => {
           ...SCORE.outreach,
           submitPreflightReadyRoutes: 4,
           liveSubmitStatus: "pass",
+          liveSubmitCheckedRoutes: 4,
           liveSubmitReadyRoutes: 4,
           liveSubmitReplyCaptureHeldRoutes: [],
         },

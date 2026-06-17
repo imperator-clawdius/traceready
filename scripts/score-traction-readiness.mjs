@@ -119,6 +119,7 @@ export function scoreTractionReadiness({
       missingSubmitPreflightConfirmationRoutes: submitPreflightVerification.missingConfirmationRoutes,
       submitPreflightReplyCaptureHeldRoutes: submitPreflightVerification.replyCaptureHeldRoutes,
       liveSubmitStatus: liveSubmitVerification.checked ? liveSubmitVerification.status : "not checked",
+      liveSubmitCheckedRoutes: liveSubmitVerification.checkedRoutes,
       liveSubmitReadyRoutes: liveSubmitVerification.liveReadyRoutes,
       liveSubmitBlockedRoutes: liveSubmitVerification.blockedRoutes,
       liveSubmitCaptchaRoutes: liveSubmitVerification.captchaRoutes,
@@ -220,7 +221,8 @@ Next gate: \`${score.nextGate}\`
 | Missing submit preflights | ${(score.outreach.missingSubmitPreflightRoutes ?? []).length} |
 | Submit preflights missing confirmation | ${(score.outreach.missingSubmitPreflightConfirmationRoutes ?? []).length} |
 | Submit preflights held by reply capture | ${(score.outreach.submitPreflightReplyCaptureHeldRoutes ?? []).length} |
-| Live submit routes checked | ${score.outreach.liveSubmitStatus ?? "not checked"} |
+| Live submit route report status | ${score.outreach.liveSubmitStatus ?? "not checked"} |
+| Live submit routes checked | ${score.outreach.liveSubmitCheckedRoutes ?? "not checked"} |
 | Live submit routes ready | ${score.outreach.liveSubmitReadyRoutes ?? "not checked"} |
 | Live submit routes HTTP-blocked | ${score.outreach.liveSubmitBlockedRoutes ?? "not checked"} |
 | Live submit routes CAPTCHA/challenge | ${score.outreach.liveSubmitCaptchaRoutes ?? "not checked"} |
@@ -526,6 +528,7 @@ function parseLiveSubmitReport(markdown) {
     return {
       checked: false,
       status: "not checked",
+      checkedRoutes: undefined,
       liveReadyRoutes: undefined,
       blockedRoutes: undefined,
       captchaRoutes: undefined,
@@ -542,7 +545,7 @@ function parseLiveSubmitReport(markdown) {
   return {
     checked: true,
     status: summary[1],
-    readyRoutes: Number(summary[2]),
+    checkedRoutes: Number(summary[2]),
     liveReadyRoutes: Number(summary[3]),
     blockedRoutes: Number(summary[4]),
     captchaRoutes: Number(summary[5]),
@@ -687,6 +690,7 @@ async function main() {
       `ready_routes=${score.outreach.readyBrowserFormRoutes}`,
       `packet_ready=${score.outreach.packetReadyRoutes}`,
       `preflight_ready=${score.outreach.submitPreflightReadyRoutes}`,
+      `live_checked=${score.outreach.liveSubmitCheckedRoutes ?? "not_checked"}`,
       `live_ready=${score.outreach.liveSubmitReadyRoutes ?? "not_checked"}`,
       `sent=${score.outreach.sentOrBeyond}`,
       `replies=${score.outreach.replies}`,

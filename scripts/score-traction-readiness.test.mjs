@@ -333,13 +333,15 @@ describe("traction readiness scorecard", () => {
     });
 
     expect(score.outreach.liveSubmitStatus).toBe("pass");
+    expect(score.outreach.liveSubmitCheckedRoutes).toBe(2);
     expect(score.outreach.liveSubmitReadyRoutes).toBe(2);
     expect(score.outreach.liveSubmitBlockedRoutes).toBe(0);
     expect(score.outreach.liveSubmitCaptchaRoutes).toBe(0);
     expect(score.currentState).toBe("proof_ready_live_submit_ready_traction_unmeasured");
 
     const markdown = renderTractionReadinessScorecard(score, { generatedAt: "2026-06-17" });
-    expect(markdown).toContain("| Live submit routes checked | pass |");
+    expect(markdown).toContain("| Live submit route report status | pass |");
+    expect(markdown).toContain("| Live submit routes checked | 2 |");
     expect(markdown).toContain("| Live submit routes ready | 2 |");
     expect(markdown).toContain("| Live submit routes HTTP-blocked | 0 |");
     expect(markdown).toContain("| Live submit routes CAPTCHA/challenge | 0 |");
@@ -421,6 +423,7 @@ describe("traction readiness scorecard", () => {
     });
 
     expect(score.outreach.liveSubmitStatus).toBe("pending");
+    expect(score.outreach.liveSubmitCheckedRoutes).toBe(2);
     expect(score.outreach.liveSubmitReadyRoutes).toBe(1);
     expect(score.outreach.liveSubmitBlockedRoutes).toBe(1);
     expect(score.currentState).toBe("proof_ready_live_submit_routes_blocked");
@@ -463,6 +466,7 @@ describe("traction readiness scorecard", () => {
     });
 
     expect(score.outreach.liveSubmitStatus).toBe("pending");
+    expect(score.outreach.liveSubmitCheckedRoutes).toBe(2);
     expect(score.outreach.liveSubmitReadyRoutes).toBe(0);
     expect(score.outreach.liveSubmitReplyCaptureHeldRoutes).toEqual(["b02-r03", "b02-r04"]);
     expect(score.outreach.liveSubmitReplyCaptureRiskRoutes).toEqual(["b02-r03", "b02-r04"]);
