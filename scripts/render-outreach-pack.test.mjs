@@ -19,6 +19,9 @@ describe("proof-led outreach send packet renderer", () => {
     expect(markdown).toContain("Messy public file in");
     expect(markdown).toContain("Exact issue counts out");
     expect(markdown).toContain("Cleaned pack boundary");
+    expect(markdown).toContain("Real-world bridge: EUDR due-diligence statements need plot coordinates");
+    expect(markdown).toContain("Daarnhouwer asks coffee and cocoa suppliers for WGS84 GeoJSON, CSV, or Excel geolocation files");
+    expect(markdown).toContain("That matters because the EUDR handoff is not just coordinates");
     expect(markdown).toContain("## 1. European Coffee Federation");
     expect(markdown).toContain("Subject: Free EUDR file-readiness example for coffee members");
     expect(markdown).toContain("Is there a member education channel where this would be useful?");
@@ -62,6 +65,8 @@ describe("proof-led outreach send packet renderer", () => {
     expect(errors).toContain("packet must include messy-file-in proof framing");
     expect(errors).toContain("packet must include exact-issues-out proof framing");
     expect(errors).toContain("packet must include cleaned-pack-boundary proof framing");
+    expect(errors).toContain("packet must include source-backed real-world proof bridge");
+    expect(errors).toContain("packet must include buyer handoff pressure source");
     expect(errors).toContain("packet must include tracked proof URL for Cafe Imports Europe");
     expect(errors).toContain("packet must include tracked field-note URL for Cafe Imports Europe");
     expect(errors).toContain("packet must include tracked file-check URL for Cafe Imports Europe");
@@ -81,6 +86,7 @@ describe("proof-led outreach send packet renderer", () => {
 
     expect(markdown).toContain("# TraceReady proof-led outreach send packet - batch 02");
     expect(markdown).toContain("utm_source=proof_led_batch_02");
+    expect(markdown).toContain("Daarnhouwer asks coffee and cocoa suppliers for WGS84 GeoJSON, CSV, or Excel geolocation files");
     expect(validateRenderedOutreachPacket(markdown, rows)).toEqual([]);
   });
 
@@ -90,5 +96,15 @@ describe("proof-led outreach send packet renderer", () => {
     const rows = parseOutreachLedger(csv);
 
     expect(validateRenderedOutreachPacket(markdown, rows)).toEqual([]);
+  });
+
+  it("keeps the committed overflow send packet aligned with the committed batch", () => {
+    const csv = fs.readFileSync("docs/proof-led-outreach-batch-02.csv", "utf8");
+    const markdown = fs.readFileSync("docs/proof-led-outreach-send-pack-02.md", "utf8");
+    const rows = parseOutreachLedger(csv);
+
+    expect(validateRenderedOutreachPacket(markdown, rows)).toEqual([]);
+    expect(markdown).toContain("Real-world bridge: EUDR due-diligence statements need plot coordinates");
+    expect(markdown).toContain("That matters because the EUDR handoff is not just coordinates");
   });
 });

@@ -4,6 +4,8 @@ Generated from `docs/proof-led-outreach-batch-01.csv`. Use company-level public 
 
 Core proof: TraceReady checked 57,658 public cocoa rows and found 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Proof flow: Messy public file in; Exact issue counts out; Cleaned pack boundary stated honestly instead of pretending missing IDs, suppliers, batches, or polygons can be invented.
+Real-world bridge: EUDR due-diligence statements need plot coordinates, plots over 4 hectares need polygon boundaries, and buyer handoffs need structured farm files.
+Buyer handoff source: Daarnhouwer asks coffee and cocoa suppliers for WGS84 GeoJSON, CSV, or Excel geolocation files with a unique and persistent farm ID.
 
 Base public pilot case: https://traceready.online/proof/public-cocoa-pilot/
 Base field note: https://traceready.online/field-notes/eudr-file-errors/
@@ -40,6 +42,7 @@ I published a public mini-audit using a 57,658-row cocoa farm-location dataset. 
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+That matters because the EUDR handoff is not just coordinates: the file also has to survive plot-level identifiers, polygon thresholds, and buyer/source file instructions.
 
 Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01
@@ -91,6 +94,7 @@ I published a public mini-audit using a 57,658-row cocoa farm-location dataset. 
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+That matters because the EUDR handoff is not just coordinates: the file also has to survive plot-level identifiers, polygon thresholds, and buyer/source file instructions.
 
 Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r02
@@ -142,6 +146,7 @@ I published a public mini-audit using a 57,658-row cocoa farm-location dataset. 
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+That matters because the EUDR handoff is not just coordinates: the file also has to survive plot-level identifiers, polygon thresholds, and buyer/source file instructions.
 
 Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r03
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r03
@@ -193,6 +198,7 @@ I published a public mini-audit using a 57,658-row cocoa farm-location dataset. 
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+That matters because the EUDR handoff is not just coordinates: the file also has to survive plot-level identifiers, polygon thresholds, and buyer/source file instructions.
 
 Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04
@@ -244,6 +250,7 @@ I published a public mini-audit using a 57,658-row cocoa farm-location dataset. 
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+That matters because the EUDR handoff is not just coordinates: the file also has to survive plot-level identifiers, polygon thresholds, and buyer/source file instructions.
 
 Public pilot case: https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r05
 Shareable field note: https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r05
@@ -293,6 +300,7 @@ Quick, specific note. I ran a public cocoa farm-location dataset through TraceRe
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+That matters because the EUDR handoff is not just coordinates: the file also has to survive plot-level identifiers, polygon thresholds, and buyer/source file instructions.
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
@@ -344,6 +352,7 @@ Quick, specific note. I ran a public cocoa farm-location dataset through TraceRe
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+That matters because the EUDR handoff is not just coordinates: the file also has to survive plot-level identifiers, polygon thresholds, and buyer/source file instructions.
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
@@ -395,6 +404,7 @@ Quick, specific note. I ran a public cocoa farm-location dataset through TraceRe
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+That matters because the EUDR handoff is not just coordinates: the file also has to survive plot-level identifiers, polygon thresholds, and buyer/source file instructions.
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
@@ -446,6 +456,7 @@ Quick, specific note. I ran a public cocoa farm-location dataset through TraceRe
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+That matters because the EUDR handoff is not just coordinates: the file also has to survive plot-level identifiers, polygon thresholds, and buyer/source file instructions.
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
@@ -497,6 +508,7 @@ Quick, specific note. I ran a public cocoa farm-location dataset through TraceRe
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+That matters because the EUDR handoff is not just coordinates: the file also has to survive plot-level identifiers, polygon thresholds, and buyer/source file instructions.
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
@@ -548,6 +560,7 @@ Quick, specific note. I ran a public cocoa farm-location dataset through TraceRe
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+That matters because the EUDR handoff is not just coordinates: the file also has to survive plot-level identifiers, polygon thresholds, and buyer/source file instructions.
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
@@ -599,6 +612,7 @@ Quick, specific note. I ran a public cocoa farm-location dataset through TraceRe
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+That matters because the EUDR handoff is not just coordinates: the file also has to survive plot-level identifiers, polygon thresholds, and buyer/source file instructions.
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
@@ -650,6 +664,7 @@ Quick, specific note. I ran a public cocoa farm-location dataset through TraceRe
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+That matters because the EUDR handoff is not just coordinates: the file also has to survive plot-level identifiers, polygon thresholds, and buyer/source file instructions.
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
@@ -701,6 +716,7 @@ Quick, specific note. I ran a public cocoa farm-location dataset through TraceRe
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+That matters because the EUDR handoff is not just coordinates: the file also has to survive plot-level identifiers, polygon thresholds, and buyer/source file instructions.
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
@@ -752,6 +768,7 @@ Quick, specific note. I ran a public cocoa farm-location dataset through TraceRe
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+That matters because the EUDR handoff is not just coordinates: the file also has to survive plot-level identifiers, polygon thresholds, and buyer/source file instructions.
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
@@ -803,6 +820,7 @@ Quick, specific note. I ran a public cocoa farm-location dataset through TraceRe
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+That matters because the EUDR handoff is not just coordinates: the file also has to survive plot-level identifiers, polygon thresholds, and buyer/source file instructions.
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
@@ -854,6 +872,7 @@ Quick, specific note. I ran a public cocoa farm-location dataset through TraceRe
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+That matters because the EUDR handoff is not just coordinates: the file also has to survive plot-level identifiers, polygon thresholds, and buyer/source file instructions.
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
@@ -905,6 +924,7 @@ Quick, specific note. I ran a public cocoa farm-location dataset through TraceRe
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+That matters because the EUDR handoff is not just coordinates: the file also has to survive plot-level identifiers, polygon thresholds, and buyer/source file instructions.
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
@@ -956,6 +976,7 @@ Quick, specific note. I ran a public cocoa farm-location dataset through TraceRe
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+That matters because the EUDR handoff is not just coordinates: the file also has to survive plot-level identifiers, polygon thresholds, and buyer/source file instructions.
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
@@ -1007,6 +1028,7 @@ Quick, specific note. I ran a public cocoa farm-location dataset through TraceRe
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
+That matters because the EUDR handoff is not just coordinates: the file also has to survive plot-level identifiers, polygon thresholds, and buyer/source file instructions.
 
 That is the narrow problem I am looking for: not "buy software," just "will this supplier CSV/KML/GeoJSON create buyer-review rework?"
 
