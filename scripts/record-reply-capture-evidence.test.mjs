@@ -120,6 +120,75 @@ describe("reply-capture evidence recorder", () => {
     expect(evaluateReplyCaptureEvidence(savedEvidence, { expectedChallenge: challenge }).ready).toBe(true);
   });
 
+  it("records evidence from a quoted-printable saved eml", () => {
+    const challenge = buildReplyCaptureChallenge({
+      contactEmail: "founder@traceready.online",
+      createdAt: "2026-06-17T03:00:00.000Z",
+      token: "trc-test-1234",
+    });
+    const eml = [
+      "From: sender@example.com",
+      "To: founder@traceready.online",
+      "Date: Wed, 17 Jun 2026 03:04:00 +0000",
+      "Subject: TraceReady reply-capture test trc-test-1234",
+      "Content-Type: text/plain; charset=UTF-8",
+      "Content-Transfer-Encoding: quoted-printable",
+      "",
+      "TraceReady reply-capture test for founder@traceready.online.",
+      "Challenge token: trc=2Dtest=2D1234",
+      "",
+    ].join("\r\n");
+
+    const evidence = buildReplyCaptureEvidenceFromEml({
+      contactEmail: "founder@traceready.online",
+      eml,
+      confirmedControlledInbox: true,
+      challenge,
+    });
+
+    expect(evidence.challengeToken).toBe("trc-test-1234");
+  });
+
+  it("records evidence from a base64 text/plain MIME part in a saved eml", () => {
+    const challenge = buildReplyCaptureChallenge({
+      contactEmail: "founder@traceready.online",
+      createdAt: "2026-06-17T03:00:00.000Z",
+      token: "trc-test-1234",
+    });
+    const encodedBody = Buffer.from(
+      [
+        "TraceReady reply-capture test for founder@traceready.online.",
+        "Challenge token: trc-test-1234",
+        "",
+      ].join("\r\n"),
+      "utf8",
+    ).toString("base64");
+    const eml = [
+      "From: sender@example.com",
+      "To: founder@traceready.online",
+      "Date: Wed, 17 Jun 2026 03:04:00 +0000",
+      "Subject: TraceReady reply-capture test trc-test-1234",
+      "Content-Type: multipart/alternative; boundary=\"reply-boundary\"",
+      "",
+      "--reply-boundary",
+      "Content-Type: text/plain; charset=UTF-8",
+      "Content-Transfer-Encoding: base64",
+      "",
+      encodedBody,
+      "--reply-boundary--",
+      "",
+    ].join("\r\n");
+
+    const evidence = buildReplyCaptureEvidenceFromEml({
+      contactEmail: "founder@traceready.online",
+      eml,
+      confirmedControlledInbox: true,
+      challenge,
+    });
+
+    expect(evidence.challengeToken).toBe("trc-test-1234");
+  });
+
   it("rejects a received subject that does not match the prepared challenge", () => {
     const challenge = buildReplyCaptureChallenge({
       contactEmail: "founder@traceready.online",
@@ -253,6 +322,7 @@ describe("reply-capture evidence recorder", () => {
       "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --from-eml private/reply-capture-received.eml --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
     );
     expect(readme).toContain("Once `private/reply-capture-received.eml` exists, `npm run finalize:reply-capture` can record it automatically");
+    expect(readme).toContain("quoted-printable, base64, and multipart MIME `.eml` bodies");
     expect(readme).not.toContain("--received-at <received-at-iso>");
     expect(readme).not.toContain("--received-subject <received-subject>");
   });

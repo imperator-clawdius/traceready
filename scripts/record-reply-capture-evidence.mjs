@@ -158,8 +158,18 @@ function parseEmlHeaders(eml) {
 }
 
 function parseEmlBody(eml) {
-  const parts = String(eml ?? "").split(/\r?\n\r?\n/);
-  return parts.slice(1).join("\n\n");
+  const { headers, body } = splitEmlSection(eml);
+  const chunks = [body, decodeTransferEncodedBody(body, headers["content-transfer-encoding"])];
+  const boundary = parseMimeBoundary(headers["content-type"]);
+
+  if (boundary) {
+    for (const part of splitMultipartBody(body, boundary)) {
+      const section = splitEmlSection(part);
+      chunks.push(section.body, decodeTransferEncodedBody(section.body, section.headers["content-transfer-encoding"]));
+    }
+  }
+
+  return chunks.filter(Boolean).join("\n\n");
 }
 
 function parseEmlDate(value) {
@@ -169,6 +179,94 @@ function parseEmlDate(value) {
 
   const timestamp = Date.parse(value);
   return Number.isNaN(timestamp) ? "" : new Date(timestamp).toISOString();
+}
+
+function splitEmlSection(value) {
+  const text = String(value ?? "");
+  const separatorMatch = /\r?\n\r?\n/.exec(text);
+
+  if (!separatorMatch) {
+    return { headers: {}, body: "" };
+  }
+
+  const headerText = text.slice(0, separatorMatch.index);
+  const body = text.slice(separatorMatch.index + separatorMatch[0].length);
+
+  return {
+    headers: parseHeaderText(headerText),
+    body,
+  };
+}
+
+function parseHeaderText(headerText) {
+  const unfolded = String(headerText ?? "").replace(/\r?\n[ \t]+/g, " ");
+  const headers = {};
+
+  for (const line of unfolded.split(/\r?\n/)) {
+    const separatorIndex = line.indexOf(":");
+
+    if (separatorIndex <= 0) {
+      continue;
+    }
+
+    const key = line.slice(0, separatorIndex).trim().toLowerCase();
+    const value = line.slice(separatorIndex + 1).trim();
+
+    if (!(key in headers)) {
+      headers[key] = value;
+    }
+  }
+
+  return headers;
+}
+
+function parseMimeBoundary(contentType) {
+  const match = String(contentType ?? "").match(/boundary=(?:"([^"]+)"|([^;\s]+))/i);
+  return match?.[1] ?? match?.[2] ?? "";
+}
+
+function splitMultipartBody(body, boundary) {
+  const marker = `--${boundary}`;
+  return String(body ?? "")
+    .split(marker)
+    .slice(1)
+    .filter((part) => !part.trimStart().startsWith("--"))
+    .map((part) => part.replace(/^\r?\n/, "").replace(/\r?\n$/, ""));
+}
+
+function decodeTransferEncodedBody(body, encoding) {
+  const normalizedEncoding = String(encoding ?? "").toLowerCase();
+
+  if (normalizedEncoding.includes("quoted-printable")) {
+    return decodeQuotedPrintable(body);
+  }
+
+  if (normalizedEncoding.includes("base64")) {
+    return decodeBase64Body(body);
+  }
+
+  return "";
+}
+
+function decodeQuotedPrintable(value) {
+  const withoutSoftBreaks = String(value ?? "").replace(/=\r?\n/g, "");
+  return withoutSoftBreaks.replace(/=([0-9a-fA-F]{2})/g, (_match, hex) =>
+    String.fromCharCode(Number.parseInt(hex, 16)),
+  );
+}
+
+function decodeBase64Body(value) {
+  const compact = String(value ?? "").replace(/\s+/g, "");
+
+  if (!compact) {
+    return "";
+  }
+
+  try {
+    return Buffer.from(compact, "base64").toString("utf8");
+  } catch {
+    return "";
+  }
 }
 
 async function main() {
