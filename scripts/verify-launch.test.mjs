@@ -39,10 +39,14 @@ describe("launch verifier route manifest", () => {
     const script = fs.readFileSync("scripts/verify-launch.mjs", "utf8");
     const appRootBlock = script.match(/label: "APP_ROOT"[\s\S]*?},\n  \{/)?.[0] ?? "";
 
+    expect(appRootBlock).toContain("Jump to checker");
+    expect(appRootBlock).toContain("One real public-data pilot");
+    expect(appRootBlock).toContain("Messy public file in. Exact blocker list out.");
     expect(appRootBlock).toContain("Messy public file in");
-    expect(appRootBlock).toContain("Exact issues found");
-    expect(appRootBlock).toContain("Cleaned pack out");
+    expect(appRootBlock).toContain("missing facts were not invented");
+    expect(appRootBlock).toContain("records ready for buyer handoff");
     expect(appRootBlock).toContain("Cleanup-desk credibility");
+    expect(appRootBlock).toContain("missing column can ruin your week");
     expect(appRootBlock).toContain("spreadsheet bouncer");
   });
 
