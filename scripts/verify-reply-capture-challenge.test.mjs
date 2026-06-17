@@ -21,7 +21,7 @@ const VALID_CHALLENGE = {
   body: [
     "TraceReady reply-capture test for founder@traceready.online.",
     "Challenge token: trc-test-1234",
-    "If this arrives in the controlled inbox, record private evidence with the received timestamp and this token.",
+    "If this arrives in the controlled inbox, save the received .eml message source so TraceReady can verify the alias delivery headers and this token.",
   ].join("\n"),
 };
 
@@ -64,7 +64,7 @@ describe("reply-capture challenge verifier", () => {
     expect(markdown).toContain("Challenge token: trc-test-1234");
     expect(markdown).toContain("Send this from a separate mailbox, not from the forwarding destination.");
     expect(markdown).toContain(
-      "[Open mail draft](mailto:founder%40traceready.online?subject=TraceReady%20reply-capture%20test%20trc-test-1234&body=TraceReady%20reply-capture%20test%20for%20founder%40traceready.online.%0AChallenge%20token%3A%20trc-test-1234%0AIf%20this%20arrives%20in%20the%20controlled%20inbox%2C%20record%20private%20evidence%20with%20the%20received%20timestamp%20and%20this%20token.)",
+      "[Open mail draft](mailto:founder%40traceready.online?subject=TraceReady%20reply-capture%20test%20trc-test-1234&body=TraceReady%20reply-capture%20test%20for%20founder%40traceready.online.%0AChallenge%20token%3A%20trc-test-1234%0AIf%20this%20arrives%20in%20the%20controlled%20inbox%2C%20save%20the%20received%20.eml%20message%20source%20so%20TraceReady%20can%20verify%20the%20alias%20delivery%20headers%20and%20this%20token.)",
     );
     expect(markdown).toContain("Optional local draft: `private/reply-capture-email.eml`");
     expect(markdown).toContain(
@@ -72,6 +72,9 @@ describe("reply-capture challenge verifier", () => {
     );
     expect(markdown).toContain(
       "It must also show `founder@traceready.online` in `To`, `Delivered-To`, `X-Original-To`, `Envelope-To`, or another recipient/delivery header.",
+    );
+    expect(markdown).toContain(
+      "Manually typed timestamps are not enough for challenge-bound reply capture; use the saved `.eml` message source so TraceReady can verify the alias delivery headers.",
     );
     expect(markdown).toContain(
       "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --from-eml private/reply-capture-received.eml --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",

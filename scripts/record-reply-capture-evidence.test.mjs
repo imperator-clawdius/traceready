@@ -58,6 +58,7 @@ describe("reply-capture evidence recorder", () => {
       receivedAt: "2026-06-17T03:04:00.000Z",
       confirmedControlledInbox: true,
       challenge,
+      receivedForContactEmail: true,
     });
     const evidence = await loadReplyCaptureEvidence(outputPath);
     const evaluation = evaluateReplyCaptureEvidence(evidence);
@@ -69,9 +70,28 @@ describe("reply-capture evidence recorder", () => {
       challengeToken: "trc-test-1234",
       challengeCreatedAt: "2026-06-17T03:00:00.000Z",
       challengeSubject: "TraceReady reply-capture test trc-test-1234",
+      receivedForContactEmail: true,
     });
     expect(evaluation.ready).toBe(true);
     expect(evaluation.detail).toContain("challenge=trc-test-1234");
+  });
+
+  it("rejects manually entered challenge evidence without alias delivery headers", () => {
+    const challenge = buildReplyCaptureChallenge({
+      contactEmail: "founder@traceready.online",
+      createdAt: "2026-06-17T03:00:00.000Z",
+      token: "trc-test-1234",
+    });
+
+    expect(() =>
+      buildReplyCaptureEvidence({
+        contactEmail: "founder@traceready.online",
+        receivedAt: "2026-06-17T03:04:00.000Z",
+        receivedSubject: "TraceReady reply-capture test trc-test-1234",
+        confirmedControlledInbox: true,
+        challenge,
+      }),
+    ).toThrow("receivedForContactEmail must be true when challenge metadata is present");
   });
 
   it("records verifier-compatible evidence from a saved received eml", async () => {
@@ -350,6 +370,9 @@ describe("reply-capture evidence recorder", () => {
     expect(readme).toContain("save the received message source as `private/reply-capture-received.eml`");
     expect(readme).toContain(
       "The saved `.eml` must show `founder@traceready.online` in `To`, `Delivered-To`, `X-Original-To`, `Envelope-To`, or another recipient/delivery header.",
+    );
+    expect(readme).toContain(
+      "Manually typed timestamps are not enough for challenge-bound reply capture; use the saved `.eml` message source so TraceReady can verify the alias delivery headers.",
     );
     expect(readme).toContain(
       "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --from-eml private/reply-capture-received.eml --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",

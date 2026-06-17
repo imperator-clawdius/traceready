@@ -89,6 +89,9 @@ describe("reply-capture unblock packet", () => {
     expect(markdown).toContain(
       "It must also show `founder@traceready.online` in `To`, `Delivered-To`, `X-Original-To`, `Envelope-To`, or another recipient/delivery header.",
     );
+    expect(markdown).toContain(
+      "Manually typed timestamps are not enough for challenge-bound reply capture; use the saved `.eml` message source so TraceReady can verify the alias delivery headers.",
+    );
     expect(markdown).toContain("npm run finalize:reply-capture");
     expect(markdown).toContain("npm run render:outreach-email-runbook");
     expect(markdown).toContain("| `b02-r03` | Control Union |");

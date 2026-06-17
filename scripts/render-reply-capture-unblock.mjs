@@ -168,6 +168,7 @@ export function renderReplyCaptureUnblockPacket(packet, options = {}) {
     "After the message arrives, save the received message source as `private/reply-capture-received.eml`.",
     "The saved `.eml` must include the original `Date` and `Subject` headers plus the message body carrying the challenge token.",
     `It must also show \`${CONTACT_EMAIL}\` in \`To\`, \`Delivered-To\`, \`X-Original-To\`, \`Envelope-To\`, or another recipient/delivery header.`,
+    "Manually typed timestamps are not enough for challenge-bound reply capture; use the saved `.eml` message source so TraceReady can verify the alias delivery headers.",
     "",
     "Then run:",
     "",

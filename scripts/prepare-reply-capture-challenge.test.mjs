@@ -24,7 +24,7 @@ describe("reply-capture challenge preparer", () => {
       body: [
         "TraceReady reply-capture test for founder@traceready.online.",
         "Challenge token: trc-test-1234",
-        "If this arrives in the controlled inbox, record private evidence with the received timestamp and this token.",
+        "If this arrives in the controlled inbox, save the received .eml message source so TraceReady can verify the alias delivery headers and this token.",
       ].join("\n"),
     });
   });

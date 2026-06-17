@@ -167,6 +167,10 @@ export function evaluateReplyCaptureEvidence(
     errors.push("challengeSubject must include challengeToken");
   }
 
+  if (hasChallengeMetadata && evidence?.receivedForContactEmail !== true) {
+    errors.push("receivedForContactEmail must be true when challenge metadata is present");
+  }
+
   if (expectedChallenge) {
     if (normalizeEmail(expectedChallenge.contactEmail) !== normalizeEmail(contactEmail)) {
       errors.push(`reply-capture challenge contactEmail must be ${contactEmail}`);
@@ -378,6 +382,7 @@ export function renderOutreachEmailRunbook(report, options = {}) {
     "After the message arrives, save the received message source as `private/reply-capture-received.eml`, then record evidence:",
     "The saved `.eml` must include the original `Date` and `Subject` headers plus the message body carrying the challenge token.",
     `It must also show \`${report.contactEmail}\` in \`To\`, \`Delivered-To\`, \`X-Original-To\`, \`Envelope-To\`, or another recipient/delivery header.`,
+    "Manually typed timestamps are not enough for challenge-bound reply capture; use the saved `.eml` message source so TraceReady can verify the alias delivery headers.",
     "",
     "If the `.eml` file is already saved, run the finalizer directly:",
     "",

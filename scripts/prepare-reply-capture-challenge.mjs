@@ -76,7 +76,7 @@ export function buildReplyCaptureChallenge({
     body: [
       `TraceReady reply-capture test for ${contactEmail}.`,
       `Challenge token: ${token}`,
-      "If this arrives in the controlled inbox, record private evidence with the received timestamp and this token.",
+      "If this arrives in the controlled inbox, save the received .eml message source so TraceReady can verify the alias delivery headers and this token.",
     ].join("\n"),
   };
 }

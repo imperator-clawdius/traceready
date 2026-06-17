@@ -180,6 +180,7 @@ export function renderReplyCaptureChallengeHandoff(result, options = {}) {
     "Save the received message source as `private/reply-capture-received.eml`, then record evidence:",
     "The saved `.eml` must include the original `Date` and `Subject` headers plus the message body carrying the challenge token.",
     `It must also show \`${challenge.contactEmail}\` in \`To\`, \`Delivered-To\`, \`X-Original-To\`, \`Envelope-To\`, or another recipient/delivery header.`,
+    "Manually typed timestamps are not enough for challenge-bound reply capture; use the saved `.eml` message source so TraceReady can verify the alias delivery headers.",
     "",
     "```powershell",
     recordReplyCaptureCommand({

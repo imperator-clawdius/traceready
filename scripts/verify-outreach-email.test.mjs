@@ -299,6 +299,9 @@ describe("outreach email verifier", () => {
     expect(markdown).toContain(
       "It must also show `founder@traceready.online` in `To`, `Delivered-To`, `X-Original-To`, `Envelope-To`, or another recipient/delivery header.",
     );
+    expect(markdown).toContain(
+      "Manually typed timestamps are not enough for challenge-bound reply capture; use the saved `.eml` message source so TraceReady can verify the alias delivery headers.",
+    );
     expect(markdown).toContain("If the `.eml` file is already saved, run the finalizer directly:");
     expect(markdown).toContain("npm run finalize:reply-capture");
     expect(markdown).toContain(

@@ -233,6 +233,7 @@ ${challengeSubject ? `Subject: \`${challengeSubject}\`` : `Challenge file: \`${c
 ${challengeToken ? `Token: \`${challengeToken}\`` : ""}
 Received message source: \`${emlPath}\`
 The saved \`.eml\` must show \`${contactEmail}\` in \`To\`, \`Delivered-To\`, \`X-Original-To\`, \`Envelope-To\`, or another recipient/delivery header.
+Manually typed timestamps are not enough for challenge-bound reply capture; use the saved \`.eml\` message source so TraceReady can verify the alias delivery headers.
 Evidence output: \`${evidencePath}\`
 
 \`\`\`powershell
