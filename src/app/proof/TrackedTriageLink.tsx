@@ -1,6 +1,7 @@
 "use client";
 
-import { type ReactNode, useMemo } from "react";
+import Link from "next/link";
+import { type ReactNode, useSyncExternalStore } from "react";
 import { appendOutreachSearch } from "@/lib/outreach-attribution";
 import { FILE_TRIAGE_HREF } from "@/lib/site";
 
@@ -10,17 +11,19 @@ type TrackedTriageLinkProps = {
 };
 
 export function TrackedTriageLink({ children, className }: TrackedTriageLinkProps) {
-  const href = useMemo(() => {
-    if (typeof window === "undefined") {
-      return FILE_TRIAGE_HREF;
-    }
-
-    return appendOutreachSearch(FILE_TRIAGE_HREF, window.location.search);
-  }, []);
+  const href = useTrackedHref(FILE_TRIAGE_HREF);
 
   return (
-    <a href={href} className={className}>
+    <Link href={href} className={className}>
       {children}
-    </a>
+    </Link>
   );
+}
+
+function useTrackedHref(baseHref: string) {
+  return useSyncExternalStore(subscribeToNoopStore, () => appendOutreachSearch(baseHref, window.location.search), () => baseHref);
+}
+
+function subscribeToNoopStore() {
+  return () => {};
 }

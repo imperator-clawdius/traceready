@@ -1,6 +1,7 @@
 import type { AnchorHTMLAttributes, ReactNode } from "react";
 import { act } from "react";
-import { createRoot, type Root } from "react-dom/client";
+import { createRoot, hydrateRoot, type Root } from "react-dom/client";
+import { renderToString } from "react-dom/server";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import CleanupCheckoutPage from "./checkout/cleanup/page";
 import PilotCheckoutPage from "./checkout/pilot/page";
@@ -11,6 +12,9 @@ import MethodologyPage from "./methodology/page";
 import OrderIntakePage from "./order-intake/page";
 import PilotProofPage from "./pilot-proof/page";
 import ProofPage from "./proof/page";
+import { TrackedHomeLink } from "./proof/TrackedHomeLink";
+import { TrackedPilotProofLink } from "./proof/TrackedPilotProofLink";
+import { TrackedTriageLink } from "./proof/TrackedTriageLink";
 import PublicCocoaPilotPage from "./proof/public-cocoa-pilot/page";
 import PrivacyPage from "./privacy/page";
 import TermsPage from "./terms/page";
@@ -247,6 +251,39 @@ describe("TraceReady trust pages", () => {
     expect(importerGuideLink?.getAttribute("href")).toBe("https://daarnhouwer.com/eudr/eudr-geolocation-data/");
   });
 
+  it("states the current trust ladder without pretending the first customer case is done", () => {
+    act(() => {
+      root.render(<ProofPage />);
+    });
+
+    const pageText = container.textContent ?? "";
+    const links = Array.from(container.querySelectorAll("a"));
+    const pilotProofLink = links.find((element) =>
+      element.textContent?.includes("Offer documented pilot"),
+    );
+    const cleanupLink = links.find((element) =>
+      element.textContent?.includes("Scope cleanup after proof"),
+    );
+    const trustLadderSection = Array.from(container.querySelectorAll("section")).find((section) =>
+      section.textContent?.includes("Current trust ladder"),
+    );
+    const trustLadderText = trustLadderSection?.textContent ?? "";
+
+    expect(pageText).toContain("Current trust ladder");
+    expect(trustLadderText).toContain("Proven now");
+    expect(trustLadderText).toContain("57,658 public rows checked");
+    expect(trustLadderText).toContain("Still missing");
+    expect(trustLadderText).toContain("one permissioned customer or file-owner case");
+    expect(trustLadderText).toContain("Payment boundary");
+    expect(trustLadderText).toContain("paid checkout stays gated until reply capture and launch scope are confirmed");
+    expect(trustLadderText).toContain("Market signal");
+    expect(trustLadderText).toContain("0 replies, 0 file checks, 0 pilot requests, and 0 paid orders");
+    expect(trustLadderText).not.toContain("customer quote");
+    expect(trustLadderText).not.toContain("buyer approval");
+    expect(pilotProofLink?.getAttribute("href")).toBe("/pilot-proof/");
+    expect(cleanupLink?.getAttribute("href")).toBe("/checkout/cleanup/");
+  });
+
   it("publishes a standalone public cocoa pilot case page for cold outreach proof", () => {
     act(() => {
       root.render(<PublicCocoaPilotPage />);
@@ -415,6 +452,49 @@ describe("TraceReady trust pages", () => {
     );
   });
 
+  it("repairs static-export tracked proof links after hydration", async () => {
+    const serverHtml = renderWithoutWindow(
+      <>
+        <TrackedHomeLink className="tracked">Run a file in the browser</TrackedHomeLink>
+        <TrackedTriageLink className="tracked">Request free issue-log triage</TrackedTriageLink>
+        <TrackedPilotProofLink className="tracked">Offer documented pilot</TrackedPilotProofLink>
+      </>,
+    );
+    const hydrationContainer = document.createElement("div");
+    hydrationContainer.innerHTML = serverHtml;
+    document.body.append(hydrationContainer);
+    window.history.pushState(
+      {},
+      "",
+      "/proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04",
+    );
+
+    let hydratedRoot: Root | null = null;
+    await act(async () => {
+      hydratedRoot = hydrateRoot(
+        hydrationContainer,
+        <>
+          <TrackedHomeLink className="tracked">Run a file in the browser</TrackedHomeLink>
+          <TrackedTriageLink className="tracked">Request free issue-log triage</TrackedTriageLink>
+          <TrackedPilotProofLink className="tracked">Offer documented pilot</TrackedPilotProofLink>
+        </>,
+      );
+    });
+
+    const hydratedLinks = Array.from(hydrationContainer.querySelectorAll("a"));
+
+    expect(hydratedLinks.map((link) => link.getAttribute("href"))).toEqual([
+      "/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04",
+      "/file-triage/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04",
+      "/pilot-proof/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r04",
+    ]);
+
+    act(() => {
+      hydratedRoot?.unmount();
+    });
+    hydrationContainer.remove();
+  });
+
   it("stamps proof-led route tracking into documented pilot email handoffs", () => {
     window.history.pushState(
       {},
@@ -515,3 +595,20 @@ describe("TraceReady trust pages", () => {
     expect(pageText).toContain("Passive Print Labs LLC");
   });
 });
+
+function renderWithoutWindow(node: ReactNode) {
+  const windowDescriptor = Object.getOwnPropertyDescriptor(globalThis, "window");
+
+  Object.defineProperty(globalThis, "window", {
+    configurable: true,
+    value: undefined,
+  });
+
+  try {
+    return renderToString(node);
+  } finally {
+    if (windowDescriptor) {
+      Object.defineProperty(globalThis, "window", windowDescriptor);
+    }
+  }
+}

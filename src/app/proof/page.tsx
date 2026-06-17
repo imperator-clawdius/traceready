@@ -40,6 +40,29 @@ const EU_EUDR_FAQ_HREF =
   "https://www.eeas.europa.eu/sites/default/files/documents/2024/240314_EN_FAQ%20EUDR%20%281%29_0.pdf";
 const DAARNHOUWER_GEOLOCATION_GUIDE_HREF = "https://daarnhouwer.com/eudr/eudr-geolocation-data/";
 
+const TRUST_LADDER = [
+  {
+    title: "Proven now",
+    detail:
+      "57,658 public rows checked, 46,134 point-only plots over 4 hectares, every row missing plot ID and supplier identity, and zero buyer-ready records.",
+  },
+  {
+    title: "Still missing",
+    detail:
+      "one permissioned customer or file-owner case showing messy file in, exact issues found, cleaned pack out, and written approval to publish anonymized facts.",
+  },
+  {
+    title: "Payment boundary",
+    detail:
+      "paid checkout stays gated until reply capture and launch scope are confirmed, so nobody is asked to trust a paid cleanup desk before intake works.",
+  },
+  {
+    title: "Market signal",
+    detail:
+      "0 replies, 0 file checks, 0 pilot requests, and 0 paid orders are counted until external outreach or a real file owner creates evidence.",
+  },
+];
+
 export const metadata = {
   title: "Proof | TraceReady",
   description: "TraceReady public-data pilot, exact issue counts, output format, and buyer-facing limits.",
@@ -144,6 +167,41 @@ export default function ProofPage() {
                 hectares, and every row missing plot ID and supplier identity.
               </p>
             </article>
+          </div>
+        </section>
+
+        <section className="mt-6 border border-[#d9bf92] bg-white p-6 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-700">
+            Current trust ladder
+          </p>
+          <h2 className="mt-3 text-2xl font-semibold tracking-tight text-[#2b190f]">
+            What is proven, and what still has to be earned.
+          </h2>
+          <p className="mt-4 max-w-3xl text-sm leading-7 text-zinc-700">
+            TraceReady does not ask a cold buyer to accept a founder story as proof. The public-data
+            pilot proves the file-handoff problem; the next upgrade is one permissioned real-world
+            cleanup with anonymized before/after facts.
+          </p>
+          <div className="mt-5 grid gap-3 lg:grid-cols-4">
+            {TRUST_LADDER.map((item) => (
+              <article key={item.title} className="border border-[#eadcc8] bg-[#fffaf2] p-4">
+                <h3 className="text-sm font-semibold text-[#2b190f]">{item.title}</h3>
+                <p className="mt-2 text-xs leading-5 text-zinc-600">{item.detail}</p>
+              </article>
+            ))}
+          </div>
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+            <TrackedPilotProofLink
+              className="inline-flex h-11 items-center justify-center rounded-md bg-zinc-950 px-4 text-sm font-semibold text-white transition hover:bg-zinc-800"
+            >
+              Offer documented pilot
+            </TrackedPilotProofLink>
+            <Link
+              href={CHECKOUT_CLEANUP_HREF}
+              className="inline-flex h-11 items-center justify-center rounded-md border border-zinc-300 bg-white px-4 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-100"
+            >
+              Scope cleanup after proof
+            </Link>
           </div>
         </section>
 
