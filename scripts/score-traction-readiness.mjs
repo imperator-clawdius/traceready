@@ -312,11 +312,6 @@ export function parseTractionReadinessArgs(argv) {
       continue;
     }
 
-    if (flag === "--alias-tested") {
-      options.aliasTested = true;
-      continue;
-    }
-
     if (value === undefined || value.startsWith("--")) {
       throw new Error(`${flag} requires a value`);
     }
@@ -333,6 +328,8 @@ export function parseTractionReadinessArgs(argv) {
       options.contactReconPath = value;
     } else if (flag === "--live-submit-report") {
       options.liveSubmitReportPath = value;
+    } else if (flag === "--reply-capture-evidence") {
+      options.replyCaptureEvidencePath = value;
     } else if (flag === "--output") {
       options.outputPath = value;
     } else if (flag === "--today") {
@@ -600,7 +597,7 @@ async function main() {
 
   const emailReport = options.skipEmail
     ? { ready: false, dnsReady: false, checks: [] }
-    : await inspectOutreachEmailDns({ aliasTested: Boolean(options.aliasTested) });
+    : await inspectOutreachEmailDns({ replyCaptureEvidencePath: options.replyCaptureEvidencePath });
   const readyRoutesForPackets = (sendabilityAudit.routes ?? [])
     .filter((route) => route.sendability === "browser_form_ready")
     .map((route) => ({

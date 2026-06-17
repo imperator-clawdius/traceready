@@ -243,11 +243,6 @@ export function parseOutreachSubmitPreflightArgs(argv) {
       continue;
     }
 
-    if (flag === "--alias-tested") {
-      parsed.aliasTested = true;
-      continue;
-    }
-
     if (flag === "--all-ready") {
       parsed.allReady = true;
       continue;
@@ -263,6 +258,8 @@ export function parseOutreachSubmitPreflightArgs(argv) {
       parsed.resultsPath = value;
     } else if (flag === "--sendability-audit") {
       parsed.sendabilityAuditPath = value;
+    } else if (flag === "--reply-capture-evidence") {
+      parsed.replyCaptureEvidencePath = value;
     } else if (flag === "--send-ready") {
       parsed.sendReadyPath = value;
     } else if (flag === "--route") {
@@ -358,7 +355,7 @@ async function main() {
 
   const emailReport = options.skipEmail
     ? { ready: false }
-    : await inspectOutreachEmailDns({ aliasTested: Boolean(options.aliasTested) });
+    : await inspectOutreachEmailDns({ replyCaptureEvidencePath: options.replyCaptureEvidencePath });
 
   if (options.allReady) {
     const readyRoutes = (sendabilityAudit.routes ?? []).filter((route) => route.sendability === "browser_form_ready");

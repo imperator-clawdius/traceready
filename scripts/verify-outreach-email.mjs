@@ -1,3 +1,4 @@
+import fs from "node:fs/promises";
 import { resolveMx, resolveTxt } from "node:dns/promises";
 import { fileURLToPath } from "node:url";
 
@@ -34,6 +35,9 @@ export function parseOutreachEmailArgs(argv) {
     } else if (arg === "--dkim-selector" && next) {
       options.dkimSelectors.push(next);
       index += 1;
+    } else if (arg === "--reply-capture-evidence" && next) {
+      options.replyCaptureEvidencePath = next;
+      index += 1;
     } else if (arg === "--alias-tested") {
       options.aliasTested = true;
     }
@@ -46,8 +50,14 @@ export async function inspectOutreachEmailDns(options = {}) {
   const domain = options.domain ?? DEFAULT_DOMAIN;
   const contactEmail = options.contactEmail ?? `founder@${domain}`;
   const dkimSelectors = options.dkimSelectors ?? DEFAULT_DKIM_SELECTORS;
-  const aliasTested = options.aliasTested ?? false;
   const resolver = options.resolver ?? defaultResolver;
+  const replyCaptureEvidence = options.replyCaptureEvidencePath
+    ? await loadReplyCaptureEvidence(options.replyCaptureEvidencePath)
+    : options.replyCaptureEvidence;
+  const replyCaptureEvidenceResult = replyCaptureEvidence
+    ? evaluateReplyCaptureEvidence(replyCaptureEvidence, { contactEmail })
+    : null;
+  const aliasTested = Boolean(options.aliasTested || replyCaptureEvidenceResult?.ready);
 
   const [mxRecords, apexTxtRecords, dmarcTxtRecords, ...dkimTxtRecordSets] = await Promise.all([
     resolver.mx(domain),
@@ -65,7 +75,41 @@ export async function inspectOutreachEmailDns(options = {}) {
     apexTxtRecords,
     dmarcTxtRecords,
     dkimTxtRecordSets,
+    replyCaptureEvidenceResult,
   });
+}
+
+export async function loadReplyCaptureEvidence(filePath) {
+  const raw = await fs.readFile(filePath, "utf8");
+  return JSON.parse(raw);
+}
+
+export function evaluateReplyCaptureEvidence(evidence, { contactEmail = DEFAULT_CONTACT_EMAIL } = {}) {
+  const errors = [];
+  const receivedAt = evidence?.receivedAt ?? evidence?.testReceivedAt;
+
+  if (!evidence || typeof evidence !== "object" || Array.isArray(evidence)) {
+    errors.push("evidence must be a JSON object");
+  }
+
+  if (normalizeEmail(evidence?.contactEmail) !== normalizeEmail(contactEmail)) {
+    errors.push(`contactEmail must be ${contactEmail}`);
+  }
+
+  if (evidence?.receivedInControlledInbox !== true) {
+    errors.push("receivedInControlledInbox must be true");
+  }
+
+  if (!receivedAt || Number.isNaN(Date.parse(receivedAt))) {
+    errors.push("receivedAt must be a valid ISO timestamp");
+  }
+
+  return {
+    ready: errors.length === 0,
+    receivedAt,
+    detail: errors.length === 0 ? `evidence receivedAt=${receivedAt}` : `invalid evidence: ${errors.join("; ")}`,
+    errors,
+  };
 }
 
 export function evaluateOutreachEmailDns({
@@ -77,6 +121,7 @@ export function evaluateOutreachEmailDns({
   apexTxtRecords = [],
   dmarcTxtRecords = [],
   dkimTxtRecordSets = [],
+  replyCaptureEvidenceResult = null,
 }) {
   const normalizedMxHosts = mxRecords.map((record) => normalizeHost(record.exchange ?? record.host ?? String(record)));
   const apexTxt = flattenTxt(apexTxtRecords);
@@ -139,8 +184,9 @@ export function evaluateOutreachEmailDns({
         label: "OUTREACH_EMAIL_ALIAS_TEST",
         ready: aliasTested,
         detail: aliasTested
-          ? `manual send/receive test acknowledged for ${contactEmail}`
-          : `DNS cannot prove ${contactEmail} forwards to a controlled mailbox; send and receive a test email, then rerun with --alias-tested`,
+          ? (replyCaptureEvidenceResult?.detail ?? `manual send/receive test acknowledged for ${contactEmail}`)
+          : (replyCaptureEvidenceResult?.detail ??
+            `DNS cannot prove ${contactEmail} forwards to a controlled mailbox; send and receive a test email, then rerun with --reply-capture-evidence`),
       },
       {
         label: "OUTREACH_EMAIL_REPLY_CAPTURE",
@@ -170,7 +216,7 @@ export function renderOutreachEmailReport(report) {
     lines.push("OUTREACH_EMAIL_DMARC_STARTER=TXT _dmarc v=DMARC1; p=none; rua=mailto:founder@traceready.online; adkim=r; aspf=r");
     lines.push("OUTREACH_EMAIL_DKIM_NEXT=add the DKIM TXT/CNAME records from the outbound mail provider");
     if (!report.replyCaptureReady) {
-      lines.push("OUTREACH_EMAIL_ALIAS_NEXT=create Namecheap Redirect Email alias founder -> controlled inbox, send a test to founder@traceready.online, then rerun with --alias-tested");
+      lines.push("OUTREACH_EMAIL_ALIAS_NEXT=create Namecheap Redirect Email alias founder -> controlled inbox, send a test to founder@traceready.online, record private reply-capture evidence, then rerun with --reply-capture-evidence");
     }
   }
 
@@ -211,6 +257,10 @@ function flattenTxt(records) {
 
 function normalizeHost(hostname) {
   return hostname.toLowerCase().replace(/\.$/, "");
+}
+
+function normalizeEmail(email) {
+  return String(email ?? "").trim().toLowerCase();
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

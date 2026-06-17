@@ -511,19 +511,20 @@ describe("traction readiness scorecard", () => {
     expect(score.nextGate).toBe("record_visible_success_evidence_before_measuring_traction");
   });
 
-  it("parses the manual alias-tested gate for reply-capture scoring", () => {
+  it("parses the private reply-capture evidence gate for scoring", () => {
     expect(
       parseTractionReadinessArgs([
         "--output",
         "private/traction-readiness-scorecard-2026-06-17.md",
         "--today",
         "2026-06-17",
-        "--alias-tested",
+        "--reply-capture-evidence",
+        "private/reply-capture-evidence.json",
       ]),
     ).toMatchObject({
       outputPath: "private/traction-readiness-scorecard-2026-06-17.md",
       generatedAt: "2026-06-17",
-      aliasTested: true,
+      replyCaptureEvidencePath: "private/reply-capture-evidence.json",
     });
   });
 });

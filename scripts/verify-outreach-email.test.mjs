@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  evaluateReplyCaptureEvidence,
   evaluateOutreachEmailDns,
   inspectOutreachEmailDns,
   parseOutreachEmailArgs,
@@ -47,12 +48,18 @@ describe("outreach email verifier", () => {
     expect(report.ready).toBe(false);
     expect(report.replyCaptureReady).toBe(false);
     expect(aliasCheck?.ready).toBe(false);
-    expect(aliasCheck?.detail).toContain("rerun with --alias-tested");
+    expect(aliasCheck?.detail).toContain("rerun with --reply-capture-evidence");
   });
 
-  it("lets browser-form reply capture pass after a manual alias test without pretending outbound auth is ready", () => {
+  it("lets browser-form reply capture pass after recorded evidence without pretending outbound auth is ready", () => {
+    const evidenceResult = evaluateReplyCaptureEvidence({
+      contactEmail: "founder@traceready.online",
+      receivedInControlledInbox: true,
+      receivedAt: "2026-06-17T02:30:00.000Z",
+    });
     const report = evaluateOutreachEmailDns({
-      aliasTested: true,
+      aliasTested: evidenceResult.ready,
+      replyCaptureEvidenceResult: evidenceResult,
       mxRecords: NAMECHEAP_MX,
       apexTxtRecords: [["v=spf1 include:spf.efwd.registrar-servers.com ~all"]],
       dmarcTxtRecords: [],
@@ -61,15 +68,29 @@ describe("outreach email verifier", () => {
     });
     const rendered = renderOutreachEmailReport(report);
 
+    expect(evidenceResult.ready).toBe(true);
     expect(report.replyCaptureReady).toBe(true);
     expect(report.ready).toBe(false);
-    expect(rendered).toContain("OUTREACH_EMAIL_ALIAS_TEST=pass manual send/receive test acknowledged");
+    expect(rendered).toContain("OUTREACH_EMAIL_ALIAS_TEST=pass evidence receivedAt=2026-06-17T02:30:00.000Z");
     expect(rendered).toContain(
       "OUTREACH_EMAIL_REPLY_CAPTURE=pass forwarding MX and manual alias delivery test are both present",
     );
     expect(rendered).toContain("OUTREACH_EMAIL_READY=false");
     expect(rendered).toContain("OUTREACH_EMAIL_NEXT=configure authenticated outbound sender, publish DKIM and DMARC");
     expect(rendered).not.toContain("OUTREACH_EMAIL_ALIAS_NEXT=");
+  });
+
+  it("rejects reply-capture evidence that does not prove the controlled inbox received the alias test", () => {
+    const evidenceResult = evaluateReplyCaptureEvidence({
+      contactEmail: "wrong@traceready.online",
+      receivedInControlledInbox: false,
+      receivedAt: "not-a-date",
+    });
+
+    expect(evidenceResult.ready).toBe(false);
+    expect(evidenceResult.errors).toContain("contactEmail must be founder@traceready.online");
+    expect(evidenceResult.errors).toContain("receivedInControlledInbox must be true");
+    expect(evidenceResult.errors).toContain("receivedAt must be a valid ISO timestamp");
   });
 
   it("flags the current pre-send failure mode when DMARC and DKIM are missing", () => {
@@ -91,6 +112,7 @@ describe("outreach email verifier", () => {
     expect(rendered).toContain("OUTREACH_EMAIL_READY=false");
     expect(rendered).toContain("OUTREACH_EMAIL_DMARC_STARTER=TXT _dmarc");
     expect(rendered).toContain("OUTREACH_EMAIL_ALIAS_NEXT=create Namecheap Redirect Email alias founder");
+    expect(rendered).toContain("record private reply-capture evidence");
   });
 
   it("supports injected DNS resolution for deterministic checks", async () => {
@@ -129,12 +151,15 @@ describe("outreach email verifier", () => {
         "desk@example.test",
         "--dkim-selector",
         "mailgun",
+        "--reply-capture-evidence",
+        "private/reply-capture-evidence.json",
         "--alias-tested",
       ]),
     ).toEqual({
       domain: "example.test",
       contactEmail: "desk@example.test",
       dkimSelectors: ["default", "google", "selector1", "selector2", "mailgun"],
+      replyCaptureEvidencePath: "private/reply-capture-evidence.json",
       aliasTested: true,
     });
   });

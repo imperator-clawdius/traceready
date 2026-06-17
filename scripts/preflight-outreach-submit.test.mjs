@@ -327,17 +327,18 @@ describe("outreach submit preflight", () => {
     });
   });
 
-  it("parses the manual alias-tested flag for submit preflights", () => {
+  it("parses the private reply-capture evidence flag for submit preflights", () => {
     expect(
       parseOutreachSubmitPreflightArgs([
         "--all-ready",
-        "--alias-tested",
+        "--reply-capture-evidence",
+        "private/reply-capture-evidence.json",
         "--today",
         "2026-06-17",
       ]),
     ).toMatchObject({
       allReady: true,
-      aliasTested: true,
+      replyCaptureEvidencePath: "private/reply-capture-evidence.json",
       generatedAt: "2026-06-17",
     });
   });
