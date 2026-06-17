@@ -27,6 +27,7 @@
     "render:outreach-replies": "node scripts/render-outreach-reply-playbook.mjs",
     "render:outreach-send-ready": "node scripts/render-outreach-send-ready.mjs",
     "render:outreach-send-checklist": "node scripts/render-outreach-send-checklist.mjs",
+    "render:reply-capture-unblock": "node scripts/render-reply-capture-unblock.mjs",
     "summarize:outreach": "node scripts/summarize-outreach-results.mjs",
     "update:outreach-result": "node scripts/update-outreach-result.mjs",
     "verify:outreach-email": "node scripts/verify-outreach-email.mjs",
