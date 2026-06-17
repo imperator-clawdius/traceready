@@ -94,6 +94,8 @@ describe("TraceReady conversion surface", () => {
 
     expect(globals).toMatch(/html,\s*body\s*{[\s\S]*min-height:\s*100%;[\s\S]*}/);
     expect(globals).toMatch(/body\s*{[\s\S]*overflow-y:\s*auto;[\s\S]*}/);
+    expect(globals).toMatch(/body\s*{[\s\S]*touch-action:\s*pan-y;[\s\S]*}/);
+    expect(globals).toMatch(/body\s*{[\s\S]*overscroll-behavior-y:\s*auto;[\s\S]*}/);
     expect(globals).not.toMatch(/overflow-y:\s*hidden/);
   });
 
@@ -194,6 +196,12 @@ describe("TraceReady conversion surface", () => {
     const operatorText = operatorSection?.textContent ?? "";
 
     expect(operatorText).toContain("Built by a file-cleanup oddball who knows paperwork has teeth.");
+    expect(operatorText).toContain(
+      "TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should have brought polygons, refuses to invent missing supplier facts, and hands back the repair list before your buyer has to.",
+    );
+    expect(operatorText).toContain("Public proof beats biography here");
+    expect(operatorText).toContain("57,658-row public audit");
+    expect(operatorText).toContain("buyer handoff workflows");
     expect(operatorText).toContain("regulated paperwork");
     expect(operatorText).toContain("software launch QA");
     expect(operatorText).toContain("automation systems");

@@ -194,7 +194,7 @@ const OPERATOR_PROOF_POINTS = [
   {
     title: "Compliance-paperwork instincts",
     detail:
-      "Built from regulated paperwork work where vague answers become client risk: issue logs, plain next steps, and handoffs that survive review.",
+      "Built from regulated paperwork work where vague answers become client risk: issue logs, plain next steps, and buyer handoff workflows that survive review.",
   },
   {
     title: "AI/product launch bench",
@@ -209,7 +209,7 @@ const OPERATOR_PROOF_POINTS = [
   {
     title: "Concierge cleanup, not seat licenses",
     detail:
-      "Small is the point: one weird CSV, KML, or GeoJSON can get row-level defects, a cleaned-pack boundary, and buyer-facing follow-ups without a platform rollout.",
+      "Small is the point: one weird CSV, KML, or GeoJSON can get row-level defects, a cleaned-pack boundary, and buyer-facing follow-ups without an enterprise rollout.",
   },
 ];
 
@@ -574,10 +574,16 @@ export function TraceReadyWorkbench() {
             <h2 className="mt-2 max-w-3xl text-2xl font-semibold leading-tight text-[#2b190f]">
               Built by a file-cleanup oddball who knows paperwork has teeth.
             </h2>
+            <p className="mt-3 max-w-3xl border-l-2 border-[#0aa394] bg-white/70 px-4 py-3 text-sm font-semibold leading-6 text-[#2b190f]">
+              TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should
+              have brought polygons, refuses to invent missing supplier facts, and hands back the
+              repair list before your buyer has to.
+            </p>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-[#6a5137]">
-              The useful background is regulated paperwork, software launch QA, automation systems,
-              data QA, and privacy boundaries. That maps to one job here: find row-level defects,
-              keep supplier coordinates local first, and return the cleanup pack a buyer or
+              Public proof beats biography here. The useful background is regulated paperwork,
+              software launch QA, automation systems, data QA, and privacy boundaries. The current
+              trust asset is the 57,658-row public audit, not a personal resume: find row-level
+              defects, keep supplier coordinates local first, and return the cleanup pack a buyer or
               consultant can inspect.
             </p>
           </div>
