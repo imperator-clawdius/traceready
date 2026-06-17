@@ -118,6 +118,9 @@ Next gate: \`verify_reply_capture_before_external_submission\`
       scorecardPath: "private/traction-readiness-scorecard-2026-06-17.md",
       today: "2026-06-20",
       readiness,
+      replyCaptureChallenge: {
+        subject: "TraceReady reply-capture test trc-test-1234",
+      },
     });
 
     expect(readiness).toEqual({
@@ -140,8 +143,9 @@ Next gate: \`verify_reply_capture_before_external_submission\`
       "npm run verify:reply-capture-challenge -- --challenge private/reply-capture-challenge.json --evidence-output private/reply-capture-evidence.json --contact founder@traceready.online --handoff-output private/reply-capture-handoff.md --email-draft-output private/reply-capture-email.eml",
     );
     expect(markdown).toContain(
-      "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --received-subject <received-subject> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
+      'npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --received-subject "TraceReady reply-capture test trc-test-1234" --challenge private/reply-capture-challenge.json --confirm-controlled-inbox',
     );
+    expect(markdown).not.toContain("--received-subject <received-subject>");
     expect(markdown).toContain("npm run finalize:reply-capture");
     expect(markdown).toContain(
       "npm run score:traction -- --reply-capture-evidence private/reply-capture-evidence.json --reply-capture-challenge private/reply-capture-challenge.json",
@@ -180,6 +184,7 @@ Next gate: \`verify_reply_capture_before_external_submission\`
       sendTier: "importer",
       scorecardPath: "private/traction-readiness-scorecard-2026-06-17.md",
       scorecardRequired: true,
+      replyCaptureChallengePath: "private/reply-capture-challenge.json",
     });
   });
 
@@ -191,6 +196,7 @@ Next gate: \`verify_reply_capture_before_external_submission\`
       followUpAfterDays: 4,
       scorecardPath: "private/traction-readiness-scorecard-2026-06-20.md",
       scorecardRequired: false,
+      replyCaptureChallengePath: "private/reply-capture-challenge.json",
     });
   });
 

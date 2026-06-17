@@ -7,6 +7,7 @@ const PRIVATE_RESULTS_PLACEHOLDER = "path/to/private-results.csv";
 const DEFAULT_SEND_LIMIT = 8;
 const DEFAULT_FOLLOW_UP_AFTER_DAYS = 4;
 const DEFAULT_SCORECARD_GATE = "run_score_traction_before_external_submission";
+const DEFAULT_REPLY_CAPTURE_CHALLENGE_PATH = "private/reply-capture-challenge.json";
 const REPLY_CAPTURE_GATE = "verify_reply_capture_before_external_submission";
 const FOLLOW_UP_STATUSES = new Set(["sent", "no_reply"]);
 const OPPORTUNITY_STATUSES = new Set(["replied", "file_checked", "pilot_requested"]);
@@ -77,7 +78,7 @@ export function renderOutreachActionQueue(queue, options = {}) {
     `| Follow-ups due | ${queue.summary.followUpsDue} |`,
     `| Active opportunities | ${queue.summary.activeOpportunities} |`,
     "",
-    ...renderReadinessGate(readiness, today),
+    ...renderReadinessGate(readiness, today, options.replyCaptureChallenge),
     ...(readiness ? [""] : []),
     sendBlocked ? "## Send Next (blocked)" : "## Send Next",
     "",
@@ -117,6 +118,7 @@ export function parseNextActionArgs(argv) {
     sendLimit: DEFAULT_SEND_LIMIT,
     followUpAfterDays: DEFAULT_FOLLOW_UP_AFTER_DAYS,
     scorecardRequired: false,
+    replyCaptureChallengePath: DEFAULT_REPLY_CAPTURE_CHALLENGE_PATH,
   };
   let scorecardExplicit = false;
 
@@ -146,6 +148,8 @@ export function parseNextActionArgs(argv) {
       parsed.scorecardPath = value;
       parsed.scorecardRequired = true;
       scorecardExplicit = true;
+    } else if (flag === "--reply-capture-challenge") {
+      parsed.replyCaptureChallengePath = value;
     } else {
       throw new Error(`unknown flag: ${flag}`);
     }
@@ -160,7 +164,7 @@ export function parseNextActionArgs(argv) {
   return parsed;
 }
 
-function renderReadinessGate(readiness, today) {
+function renderReadinessGate(readiness, today, replyCaptureChallenge) {
   if (!readiness) {
     return [];
   }
@@ -168,6 +172,12 @@ function renderReadinessGate(readiness, today) {
   const state = readiness.currentState ?? "unknown";
   const nextGate = readiness.nextGate ?? "unknown";
   const status = isReplyCaptureGatePending(readiness) ? "pending" : "pass";
+  const recordCommand = recordReplyCaptureCommand({
+    evidencePath: "private/reply-capture-evidence.json",
+    contactEmail: "founder@traceready.online",
+    receivedSubject: replyCaptureChallenge?.subject,
+    challengePath: "private/reply-capture-challenge.json",
+  });
 
   return [
     "## Readiness Gate",
@@ -181,7 +191,7 @@ function renderReadinessGate(readiness, today) {
           "Prepare a unique reply-capture challenge, send that subject to the alias from a separate mailbox, and record proof after it arrives:",
           `\`npm run prepare:reply-capture -- --output private/reply-capture-challenge.json --contact founder@traceready.online --handoff-output private/reply-capture-handoff.md --email-draft-output private/reply-capture-email.eml\``,
           `\`npm run verify:reply-capture-challenge -- --challenge private/reply-capture-challenge.json --evidence-output private/reply-capture-evidence.json --contact founder@traceready.online --handoff-output private/reply-capture-handoff.md --email-draft-output private/reply-capture-email.eml\``,
-          `\`npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --received-subject <received-subject> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox\``,
+          `\`${recordCommand}\``,
           "",
           "Then refresh the private readiness artifacts:",
           `\`npm run finalize:reply-capture\``,
@@ -206,6 +216,16 @@ function isReplyCaptureGatePending(readiness) {
 
 function matchBacktickedValue(markdown, label) {
   return markdown.match(new RegExp(`${label}:\\s+\`([^\`]+)\``, "i"))?.[1];
+}
+
+function recordReplyCaptureCommand({ evidencePath, contactEmail, receivedSubject, challengePath }) {
+  const subjectArg = receivedSubject ? quoteForCommand(receivedSubject) : "<received-subject>";
+
+  return `npm run record:reply-capture -- --output ${evidencePath} --contact ${contactEmail} --received-at <received-at-iso> --received-subject ${subjectArg} --challenge ${challengePath} --confirm-controlled-inbox`;
+}
+
+function quoteForCommand(value) {
+  return `"${String(value).replace(/"/g, '\\"')}"`;
 }
 
 function renderSendRows(rows, resultsPath, today, options = {}) {
@@ -347,11 +367,26 @@ async function loadTractionReadiness(scorecardPath, { required = false } = {}) {
   }
 }
 
+async function loadReplyCaptureChallenge(challengePath) {
+  if (!challengePath) {
+    return undefined;
+  }
+
+  try {
+    return JSON.parse(await fs.readFile(challengePath, "utf8"));
+  } catch {
+    return undefined;
+  }
+}
+
 async function main() {
   const options = parseNextActionArgs(process.argv.slice(2));
   const csv = await fs.readFile(options.resultsPath, "utf8");
   const rows = parseOutreachResults(csv);
-  const readiness = await loadTractionReadiness(options.scorecardPath, { required: options.scorecardRequired });
+  const [readiness, replyCaptureChallenge] = await Promise.all([
+    loadTractionReadiness(options.scorecardPath, { required: options.scorecardRequired }),
+    loadReplyCaptureChallenge(options.replyCaptureChallengePath),
+  ]);
   const errors = validateOutreachResults(rows);
 
   if (errors.length > 0) {
@@ -363,7 +398,7 @@ async function main() {
   }
 
   const queue = buildOutreachActionQueue(rows, options);
-  console.log(renderOutreachActionQueue(queue, { ...options, readiness }));
+  console.log(renderOutreachActionQueue(queue, { ...options, readiness, replyCaptureChallenge }));
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
