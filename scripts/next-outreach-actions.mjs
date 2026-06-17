@@ -6,6 +6,7 @@ const DEFAULT_RESULTS_PATH = "docs/proof-led-outreach-results-batch-01.csv";
 const PRIVATE_RESULTS_PLACEHOLDER = "path/to/private-results.csv";
 const DEFAULT_SEND_LIMIT = 8;
 const DEFAULT_FOLLOW_UP_AFTER_DAYS = 4;
+const REPLY_CAPTURE_GATE = "verify_reply_capture_before_external_submission";
 const FOLLOW_UP_STATUSES = new Set(["sent", "no_reply"]);
 const OPPORTUNITY_STATUSES = new Set(["replied", "file_checked", "pilot_requested"]);
 
@@ -50,11 +51,14 @@ export function renderOutreachActionQueue(queue, options = {}) {
   const isPublicPreview = normalizePath(resultsPath) === DEFAULT_RESULTS_PATH;
   const commandResultsPath = isPublicPreview ? PRIVATE_RESULTS_PLACEHOLDER : resultsPath;
   const today = options.today ?? queue.today;
+  const readiness = options.readiness;
+  const sendBlocked = isReplyCaptureGatePending(readiness);
 
   return [
     "# TraceReady next outreach actions",
     "",
     `Source: \`${resultsPath}\``,
+    ...(options.scorecardPath ? [`Scorecard: \`${options.scorecardPath}\``] : []),
     `Today: ${today}`,
     ...(queue.sendTier ? [`Send tier filter: ${queue.sendTier}`] : []),
     ...(isPublicPreview
@@ -72,9 +76,12 @@ export function renderOutreachActionQueue(queue, options = {}) {
     `| Follow-ups due | ${queue.summary.followUpsDue} |`,
     `| Active opportunities | ${queue.summary.activeOpportunities} |`,
     "",
-    "## Send Next",
+    ...renderReadinessGate(readiness, today),
+    ...(readiness ? [""] : []),
+    sendBlocked ? "## Send Next (blocked)" : "## Send Next",
     "",
-    ...renderSendRows(queue.sendRows, commandResultsPath, today),
+    ...(sendBlocked ? ["Reply capture gate is pending; queue shown for planning only.", ""] : []),
+    ...renderSendRows(queue.sendRows, commandResultsPath, today, { blocked: sendBlocked }),
     "",
     "## Follow Up Due",
     "",
@@ -85,6 +92,20 @@ export function renderOutreachActionQueue(queue, options = {}) {
     ...renderOpportunityRows(queue.opportunityRows),
     "",
   ].join("\n");
+}
+
+export function parseTractionReadinessSummary(markdown) {
+  const currentState = matchBacktickedValue(markdown, "Current state");
+  const nextGate = matchBacktickedValue(markdown, "Next gate");
+  const replyCaptureStatus =
+    markdown.match(/\|\s*OUTREACH_EMAIL_REPLY_CAPTURE\s*\|\s*([^|\s]+)\s*\|/i)?.[1]?.toLowerCase() ?? "unknown";
+
+  return {
+    currentState,
+    nextGate,
+    replyCaptureStatus,
+    replyCaptureReady: replyCaptureStatus === "pass",
+  };
 }
 
 export function parseNextActionArgs(argv) {
@@ -118,6 +139,8 @@ export function parseNextActionArgs(argv) {
       parsed.followUpAfterDays = parsePositiveInteger(value, flag);
     } else if (flag === "--send-tier") {
       parsed.sendTier = value;
+    } else if (flag === "--scorecard") {
+      parsed.scorecardPath = value;
     } else {
       throw new Error(`unknown flag: ${flag}`);
     }
@@ -128,25 +151,80 @@ export function parseNextActionArgs(argv) {
   return parsed;
 }
 
-function renderSendRows(rows, resultsPath, today) {
+function renderReadinessGate(readiness, today) {
+  if (!readiness) {
+    return [];
+  }
+
+  const state = readiness.currentState ?? "unknown";
+  const nextGate = readiness.nextGate ?? "unknown";
+  const status = isReplyCaptureGatePending(readiness) ? "pending" : "pass";
+
+  return [
+    "## Readiness Gate",
+    "",
+    `OUTREACH_NEXT_GATE=${status} state=${state} next_gate=${nextGate}`,
+    ...(status === "pending"
+      ? [
+          "",
+          "Do not submit public forms or measure non-response until reply capture evidence is recorded.",
+          "",
+          "Record reply-capture proof after a controlled inbox test arrives:",
+          `\`npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --confirm-controlled-inbox\``,
+          "",
+          "Then refresh the private readiness artifacts:",
+          `\`npm run score:traction -- --reply-capture-evidence private/reply-capture-evidence.json --output private/traction-readiness-scorecard-${today}.md --today ${today}\``,
+          `\`npm run preflight:outreach-submit -- --all-ready --reply-capture-evidence private/reply-capture-evidence.json --output-dir private --queue-output private/preflight-submit-queue.md --today ${today}\``,
+        ]
+      : ["", "Reply capture evidence is recorded; use the queue below against the current private ledger."]),
+  ];
+}
+
+function isReplyCaptureGatePending(readiness) {
+  if (!readiness) {
+    return false;
+  }
+
+  return (
+    readiness.replyCaptureReady !== true ||
+    readiness.nextGate === REPLY_CAPTURE_GATE ||
+    /reply_capture_(at_risk|pending)/.test(readiness.currentState ?? "")
+  );
+}
+
+function matchBacktickedValue(markdown, label) {
+  return markdown.match(new RegExp(`${label}:\\s+\`([^\`]+)\``, "i"))?.[1];
+}
+
+function renderSendRows(rows, resultsPath, today, options = {}) {
   if (rows.length === 0) {
     return ["No unsent routes remain in this ledger."];
   }
 
-  return rows.flatMap((row, index) => [
-    `${index + 1}. ${row.route_id} - ${row.company_or_channel}`,
-    `   - Tier: ${row.tier}`,
-    `   - Proof URL: ${row.proof_url}`,
-    `   - Field note URL: ${row.field_note_url}`,
-    `   - File check URL: ${row.file_check_url}`,
-    `   - Mark sent: \`${updateCommand(resultsPath, row.route_id, {
-      date_sent: today,
-      status: "sent",
-      response_type: "none",
-      reply_notes: "sent via public route",
-      next_action: "follow up in 4 business days",
-    })}\``,
-  ]);
+  return rows.flatMap((row, index) => {
+    const lines = [
+      `${index + 1}. ${row.route_id} - ${row.company_or_channel}`,
+      `   - Tier: ${row.tier}`,
+      `   - Proof URL: ${row.proof_url}`,
+      `   - Field note URL: ${row.field_note_url}`,
+      `   - File check URL: ${row.file_check_url}`,
+    ];
+
+    if (options.blocked) {
+      return [...lines, "   - Mark sent command withheld until reply capture passes."];
+    }
+
+    return [
+      ...lines,
+      `   - Mark sent: \`${updateCommand(resultsPath, row.route_id, {
+        date_sent: today,
+        status: "sent",
+        response_type: "none",
+        reply_notes: "sent via public route",
+        next_action: "follow up in 4 business days",
+      })}\``,
+    ];
+  });
 }
 
 function renderFollowUpRows(rows, resultsPath, today) {
@@ -236,6 +314,9 @@ async function main() {
   const options = parseNextActionArgs(process.argv.slice(2));
   const csv = await fs.readFile(options.resultsPath, "utf8");
   const rows = parseOutreachResults(csv);
+  const readiness = options.scorecardPath
+    ? parseTractionReadinessSummary(await fs.readFile(options.scorecardPath, "utf8"))
+    : undefined;
   const errors = validateOutreachResults(rows);
 
   if (errors.length > 0) {
@@ -247,7 +328,7 @@ async function main() {
   }
 
   const queue = buildOutreachActionQueue(rows, options);
-  console.log(renderOutreachActionQueue(queue, options));
+  console.log(renderOutreachActionQueue(queue, { ...options, readiness }));
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

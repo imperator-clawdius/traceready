@@ -3,6 +3,7 @@ import { parseOutreachResults } from "./summarize-outreach-results.mjs";
 import {
   buildOutreachActionQueue,
   parseNextActionArgs,
+  parseTractionReadinessSummary,
   renderOutreachActionQueue,
 } from "./next-outreach-actions.mjs";
 
@@ -96,6 +97,52 @@ describe("next outreach actions", () => {
     expect(markdown).toContain("Field-note clicks: 2");
   });
 
+  it("blocks send-next actions when the traction scorecard still needs reply-capture proof", () => {
+    const rows = parseOutreachResults(RESULTS_CSV);
+    const queue = buildOutreachActionQueue(rows, {
+      sendLimit: 1,
+      today: "2026-06-20",
+      followUpAfterDays: 4,
+    });
+    const readiness = parseTractionReadinessSummary(`# TraceReady traction readiness
+
+Current state: \`proof_ready_reply_capture_at_risk_traction_unmeasured\`
+Next gate: \`verify_reply_capture_before_external_submission\`
+
+| Check | Status |
+| --- | --- |
+| OUTREACH_EMAIL_REPLY_CAPTURE | pending |
+`);
+    const markdown = renderOutreachActionQueue(queue, {
+      resultsPath: "private/outreach-results.csv",
+      scorecardPath: "private/traction-readiness-scorecard-2026-06-17.md",
+      today: "2026-06-20",
+      readiness,
+    });
+
+    expect(readiness).toEqual({
+      currentState: "proof_ready_reply_capture_at_risk_traction_unmeasured",
+      nextGate: "verify_reply_capture_before_external_submission",
+      replyCaptureStatus: "pending",
+      replyCaptureReady: false,
+    });
+    expect(markdown).toContain("## Readiness Gate");
+    expect(markdown).toContain(
+      "OUTREACH_NEXT_GATE=pending state=proof_ready_reply_capture_at_risk_traction_unmeasured next_gate=verify_reply_capture_before_external_submission",
+    );
+    expect(markdown).toContain(
+      "Do not submit public forms or measure non-response until reply capture evidence is recorded.",
+    );
+    expect(markdown).toContain(
+      "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online",
+    );
+    expect(markdown).toContain("## Send Next (blocked)");
+    expect(markdown).toContain("Reply capture gate is pending; queue shown for planning only.");
+    expect(markdown).toContain("b01-r01 - European Coffee Federation");
+    expect(markdown).toContain("Mark sent command withheld until reply capture passes.");
+    expect(markdown).not.toContain("--route b01-r01 --date-sent 2026-06-20");
+  });
+
   it("parses CLI flags for private action queue generation", () => {
     expect(
       parseNextActionArgs([
@@ -109,6 +156,8 @@ describe("next outreach actions", () => {
         "5",
         "--send-tier",
         "importer",
+        "--scorecard",
+        "private/traction-readiness-scorecard-2026-06-17.md",
       ]),
     ).toEqual({
       resultsPath: "private/outreach-results.csv",
@@ -116,6 +165,7 @@ describe("next outreach actions", () => {
       sendLimit: 6,
       followUpAfterDays: 5,
       sendTier: "importer",
+      scorecardPath: "private/traction-readiness-scorecard-2026-06-17.md",
     });
   });
 
