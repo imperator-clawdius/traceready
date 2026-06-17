@@ -5,9 +5,11 @@ import { describe, expect, it } from "vitest";
 import {
   evaluateReplyCaptureChallenge,
   parseReplyCaptureChallengeVerificationArgs,
+  renderReplyCaptureChallengeEmailDraft,
   renderReplyCaptureChallengeHandoff,
   renderReplyCaptureChallengeReport,
   verifyReplyCaptureChallengeFile,
+  writeReplyCaptureChallengeEmailDraft,
   writeReplyCaptureChallengeHandoff,
 } from "./verify-reply-capture-challenge.mjs";
 
@@ -61,6 +63,7 @@ describe("reply-capture challenge verifier", () => {
     expect(markdown).toContain("Subject: `TraceReady reply-capture test trc-test-1234`");
     expect(markdown).toContain("Challenge token: trc-test-1234");
     expect(markdown).toContain("Send this from a separate mailbox, not from the forwarding destination.");
+    expect(markdown).toContain("Optional local draft: `private/reply-capture-email.eml`");
     expect(markdown).toContain(
       "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
     );
@@ -69,6 +72,20 @@ describe("reply-capture challenge verifier", () => {
     );
     expect(markdown).toContain("npm run finalize:reply-capture");
     expect(markdown).not.toContain("receivedInControlledInbox");
+  });
+
+  it("renders an unsent email draft for the verified challenge", () => {
+    const result = evaluateReplyCaptureChallenge(VALID_CHALLENGE, {
+      contactEmail: "founder@traceready.online",
+    });
+    const draft = renderReplyCaptureChallengeEmailDraft(result);
+
+    expect(draft).toContain("X-Unsent: 1");
+    expect(draft).toContain("To: founder@traceready.online");
+    expect(draft).toContain("Subject: TraceReady reply-capture test trc-test-1234");
+    expect(draft).toContain("Content-Type: text/plain; charset=utf-8");
+    expect(draft).toContain("Challenge token: trc-test-1234");
+    expect(draft).not.toContain("receivedInControlledInbox");
   });
 
   it("writes a reply-capture handoff file for the verified challenge", async () => {
@@ -87,6 +104,20 @@ describe("reply-capture challenge verifier", () => {
     const markdown = await fs.readFile(handoffPath, "utf8");
     expect(markdown).toContain("# TraceReady reply-capture handoff");
     expect(markdown).toContain("Subject: `TraceReady reply-capture test trc-test-1234`");
+  });
+
+  it("writes an unsent email draft file for the verified challenge", async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "traceready-reply-draft-"));
+    const emailDraftPath = path.join(tempDir, "reply-capture-email.eml");
+    const result = evaluateReplyCaptureChallenge(VALID_CHALLENGE, {
+      contactEmail: "founder@traceready.online",
+    });
+
+    await writeReplyCaptureChallengeEmailDraft(result, { emailDraftPath });
+
+    const draft = await fs.readFile(emailDraftPath, "utf8");
+    expect(draft).toContain("X-Unsent: 1");
+    expect(draft).toContain("Subject: TraceReady reply-capture test trc-test-1234");
   });
 
   it("rejects a challenge whose subject and body do not carry the token", () => {
@@ -129,12 +160,15 @@ describe("reply-capture challenge verifier", () => {
         "founder@traceready.online",
         "--handoff-output",
         "private/reply-capture-handoff.md",
+        "--email-draft-output",
+        "private/reply-capture-email.eml",
       ]),
     ).toEqual({
       challengePath: "private/reply-capture-challenge.json",
       evidencePath: "private/reply-capture-evidence.json",
       contactEmail: "founder@traceready.online",
       handoffPath: "private/reply-capture-handoff.md",
+      emailDraftPath: "private/reply-capture-email.eml",
     });
   });
 

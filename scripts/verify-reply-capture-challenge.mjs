@@ -5,6 +5,7 @@ import { DEFAULT_CONTACT_EMAIL } from "./verify-outreach-email.mjs";
 
 const DEFAULT_CHALLENGE_PATH = "private/reply-capture-challenge.json";
 const DEFAULT_EVIDENCE_PATH = "private/reply-capture-evidence.json";
+const DEFAULT_EMAIL_DRAFT_PATH = "private/reply-capture-email.eml";
 
 export function parseReplyCaptureChallengeVerificationArgs(argv) {
   const options = {
@@ -33,6 +34,8 @@ export function parseReplyCaptureChallengeVerificationArgs(argv) {
       options.contactEmail = value;
     } else if (flag === "--handoff-output") {
       options.handoffPath = value;
+    } else if (flag === "--email-draft-output") {
+      options.emailDraftPath = value;
     } else {
       throw new Error(`unknown flag: ${flag}`);
     }
@@ -139,6 +142,7 @@ export function renderReplyCaptureChallengeReport(result, options = {}) {
 export function renderReplyCaptureChallengeHandoff(result, options = {}) {
   const challengePath = options.challengePath ?? DEFAULT_CHALLENGE_PATH;
   const evidencePath = options.evidencePath ?? DEFAULT_EVIDENCE_PATH;
+  const emailDraftPath = options.emailDraftPath ?? DEFAULT_EMAIL_DRAFT_PATH;
   const challenge = result.challenge ?? {};
 
   if (!result.ready) {
@@ -167,6 +171,7 @@ export function renderReplyCaptureChallengeHandoff(result, options = {}) {
     "```",
     "",
     "Send this from a separate mailbox, not from the forwarding destination.",
+    `Optional local draft: \`${emailDraftPath}\``,
     "",
     "## After It Arrives",
     "",
@@ -193,6 +198,26 @@ export function renderReplyCaptureChallengeHandoff(result, options = {}) {
   ].join("\n");
 }
 
+export function renderReplyCaptureChallengeEmailDraft(result) {
+  const challenge = result.challenge ?? {};
+
+  if (!result.ready) {
+    throw new Error("reply-capture challenge must be ready before rendering an email draft");
+  }
+
+  return [
+    "X-Unsent: 1",
+    `To: ${safeHeader(challenge.contactEmail)}`,
+    `Subject: ${safeHeader(challenge.subject)}`,
+    "MIME-Version: 1.0",
+    "Content-Type: text/plain; charset=utf-8",
+    "Content-Transfer-Encoding: 8bit",
+    "",
+    normalizeEmailBody(challenge.body),
+    "",
+  ].join("\r\n");
+}
+
 export async function writeReplyCaptureChallengeHandoff(result, options = {}) {
   const handoffPath = options.handoffPath;
 
@@ -204,13 +229,28 @@ export async function writeReplyCaptureChallengeHandoff(result, options = {}) {
   await fs.writeFile(handoffPath, renderReplyCaptureChallengeHandoff(result, options), "utf8");
 }
 
+export async function writeReplyCaptureChallengeEmailDraft(result, options = {}) {
+  const emailDraftPath = options.emailDraftPath;
+
+  if (!emailDraftPath) {
+    return;
+  }
+
+  await fs.mkdir(path.dirname(emailDraftPath), { recursive: true });
+  await fs.writeFile(emailDraftPath, renderReplyCaptureChallengeEmailDraft(result), "utf8");
+}
+
 async function main() {
   const options = parseReplyCaptureChallengeVerificationArgs(process.argv.slice(2));
   const result = await verifyReplyCaptureChallengeFile(options);
   await writeReplyCaptureChallengeHandoff(result, options);
+  await writeReplyCaptureChallengeEmailDraft(result, options);
   process.stdout.write(renderReplyCaptureChallengeReport(result, options));
   if (result.ready && options.handoffPath) {
     process.stdout.write(`REPLY_CAPTURE_CHALLENGE_HANDOFF=${options.handoffPath}\n`);
+  }
+  if (result.ready && options.emailDraftPath) {
+    process.stdout.write(`REPLY_CAPTURE_CHALLENGE_EMAIL_DRAFT=${options.emailDraftPath}\n`);
   }
 
   if (!result.ready) {
@@ -224,6 +264,14 @@ function normalizeEmail(email) {
 
 function quoteForLog(value) {
   return `"${String(value).replace(/"/g, '\\"')}"`;
+}
+
+function safeHeader(value) {
+  return String(value ?? "").replace(/[\r\n]+/g, " ").trim();
+}
+
+function normalizeEmailBody(value) {
+  return String(value ?? "").replace(/\r?\n/g, "\r\n");
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
