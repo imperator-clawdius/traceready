@@ -195,22 +195,26 @@ describe("TraceReady conversion surface", () => {
     );
     const operatorText = operatorSection?.textContent ?? "";
 
-    expect(operatorText).toContain("Built by a file-cleanup oddball who knows paperwork has teeth.");
     expect(operatorText).toContain(
-      "TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should have brought polygons, refuses to invent missing supplier facts, and hands back the repair list before your buyer has to.",
+      "Built by a paperwork-and-systems operator who treats messy rows like liabilities.",
+    );
+    expect(operatorText).toContain(
+      "TraceReady is a spreadsheet bouncer: IDs at the door, coordinates checked against reality, over-4ha points sent back for polygons, and missing supplier facts left blank instead of dressed up.",
     );
     expect(operatorText).toContain("Public proof beats biography here");
     expect(operatorText).toContain("57,658-row public audit");
     expect(operatorText).toContain("buyer handoff workflows");
-    expect(operatorText).toContain("regulated paperwork");
-    expect(operatorText).toContain("software launch QA");
-    expect(operatorText).toContain("automation systems");
+    expect(operatorText).toContain("regulated tax/advisory compliance");
+    expect(operatorText).toContain("AI workflow builds");
+    expect(operatorText).toContain("product launch QA");
+    expect(operatorText).toContain("automation handoffs");
+    expect(operatorText).toContain("audit exports");
     expect(operatorText).toContain("row-level defects");
     expect(operatorText).toContain("privacy boundaries");
-    expect(operatorText).toContain("Compliance-paperwork instincts");
-    expect(operatorText).toContain("AI/product launch bench");
-    expect(operatorText).toContain("Private-file bias");
-    expect(operatorText).toContain("Concierge cleanup, not seat licenses");
+    expect(operatorText).toContain("Regulated cleanup reflex");
+    expect(operatorText).toContain("AI systems with audit trails");
+    expect(operatorText).toContain("Private data stays boring");
+    expect(operatorText).toContain("Concierge edge");
     expect(operatorText).not.toContain("Founder proof");
     expect(operatorText).not.toContain("teddyalston.com");
     expect(operatorText).not.toContain("Teddy");
