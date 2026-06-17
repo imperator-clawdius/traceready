@@ -171,6 +171,7 @@ function renderReadinessGate(readiness, today) {
           "",
           "Prepare a unique reply-capture challenge, send that subject to the alias from a separate mailbox, and record proof after it arrives:",
           `\`npm run prepare:reply-capture -- --output private/reply-capture-challenge.json --contact founder@traceready.online\``,
+          `\`npm run verify:reply-capture-challenge -- --challenge private/reply-capture-challenge.json --evidence-output private/reply-capture-evidence.json --contact founder@traceready.online\``,
           `\`npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox\``,
           "",
           "Then refresh the private readiness artifacts:",
