@@ -68,7 +68,9 @@ describe("TraceReady conversion surface", () => {
     expect(heading).toContain("Check a farm file before a buyer rejects it.");
     expect(headerText).toContain("Upload a farm file for free");
     expect(headerText).toContain("Try a sample file");
+    expect(headerText).toContain("Jump to checker");
     expect(headerText).not.toContain("Buy cleanup");
+    expect(container.querySelector("#checker")?.tagName).toBe("MAIN");
     expect(uploadAction?.tagName).toBe("BUTTON");
     expect(cleanupSectionText).toContain("After the diagnosis");
     expect(cleanupSectionText).toContain("not ready to send raw coordinates");
@@ -108,8 +110,9 @@ describe("TraceReady conversion surface", () => {
     const headerText = container.querySelector("header")?.textContent ?? "";
     const proofSection = container.querySelector("header + #pilot-case");
 
-    expect(headerText).not.toContain("57,658 real cocoa rows checked; 0 were buyer-ready.");
-    expect(proofSection?.textContent).toContain("57,658 real cocoa rows checked; 0 were buyer-ready.");
+    expect(headerText).not.toContain("Messy public file in. Exact blocker list out.");
+    expect(proofSection?.textContent).toContain("Messy public file in. Exact blocker list out.");
+    expect(proofSection?.textContent).toContain("One real public-data pilot");
     expect(proofSection?.textContent).toContain("public Colombian cocoa dataset");
     expect(proofSection?.textContent).toContain("View pilot case");
     expect(proofSection?.textContent).toContain("Download evidence pack");
@@ -143,19 +146,15 @@ describe("TraceReady conversion surface", () => {
     const pageText = container.textContent ?? "";
     const pilotCase = container.querySelector("#pilot-case")?.textContent ?? "";
 
-    expect(pilotCase).toContain("Public-data pilot");
-    expect(pilotCase).toContain("57,658 real cocoa rows checked; 0 were buyer-ready.");
+    expect(pilotCase).toContain("One real public-data pilot");
+    expect(pilotCase).toContain("Messy public file in. Exact blocker list out.");
     expect(pilotCase).toContain("public Colombian cocoa dataset");
-    expect(pilotCase).toContain("did not invent missing IDs, suppliers, batches, or polygons");
+    expect(pilotCase).toContain("missing facts were not invented");
     expect(pilotCase).toContain("46,134");
     expect(pilotCase).toContain("point-only plots over 4 ha");
     expect(pilotCase).toContain("missing plot IDs");
-    expect(pilotCase).toContain("ready records");
-    expect(pilotCase).toContain("Exact issue counts");
-    expect(pilotCase).toContain("buyer/supplier follow-up list");
-    expect(pilotCase).toContain("Messy public file in");
-    expect(pilotCase).toContain("Exact issues found");
-    expect(pilotCase).toContain("Cleaned pack out");
+    expect(pilotCase).toContain("records ready for buyer handoff");
+    expect(pilotCase).toContain("buyer-ready records");
     expect(pilotCase).toContain("repair brief, buyer summary, issue CSV, and evidence pack");
     expect(pilotCase).toContain("Download evidence pack");
     expect(pilotCase).toContain("Offer first real pilot");
@@ -202,25 +201,24 @@ describe("TraceReady conversion surface", () => {
     const operatorText = operatorSection?.textContent ?? "";
 
     expect(operatorText).toContain(
-      "Built by a paperwork-and-systems operator who treats messy rows like liabilities.",
+      "Built by the kind of operator who notices when one missing column can ruin your week.",
     );
     expect(operatorText).toContain(
       "TraceReady is a spreadsheet bouncer: IDs at the door, coordinates checked against reality, over-4ha points sent back for polygons, and missing supplier facts left blank instead of dressed up.",
     );
     expect(operatorText).toContain("Public proof beats biography here");
-    expect(operatorText).toContain("57,658-row public audit");
     expect(operatorText).toContain("buyer handoff workflows");
-    expect(operatorText).toContain("regulated tax/advisory compliance");
-    expect(operatorText).toContain("AI workflow builds");
-    expect(operatorText).toContain("product launch QA");
+    expect(operatorText).toContain("compliance-heavy advisory operations");
+    expect(operatorText).toContain("AI systems delivery");
+    expect(operatorText).toContain("launch QA");
     expect(operatorText).toContain("automation handoffs");
     expect(operatorText).toContain("audit exports");
     expect(operatorText).toContain("row-level defects");
-    expect(operatorText).toContain("privacy boundaries");
-    expect(operatorText).toContain("Regulated cleanup reflex");
-    expect(operatorText).toContain("AI systems with audit trails");
-    expect(operatorText).toContain("Private data stays boring");
-    expect(operatorText).toContain("Concierge edge");
+    expect(operatorText).toContain("privacy guardrails");
+    expect(operatorText).toContain("Compliance-trained triage");
+    expect(operatorText).toContain("AI systems with receipts");
+    expect(operatorText).toContain("Private data stays local first");
+    expect(operatorText).toContain("Concierge cleanup desk");
     expect(operatorText).not.toContain("Founder proof");
     expect(operatorText).not.toContain("teddyalston.com");
     expect(operatorText).not.toContain("Teddy");
@@ -249,14 +247,14 @@ describe("TraceReady conversion surface", () => {
       element.textContent?.includes("Offer first real pilot"),
     );
 
-    expect(pageText).toContain("Public-data pilot");
+    expect(pageText).toContain("One real public-data pilot");
     expect(pageText).toContain("57,658");
     expect(pageText).toContain("public cocoa rows checked");
-    expect(pageText).toContain("57,658 real cocoa rows checked; 0 were buyer-ready.");
+    expect(pageText).toContain("Messy public file in. Exact blocker list out.");
     expect(pageText).toContain("46,134 point-only plots over 4 hectares");
-    expect(pageText).toContain("57,658 rows without plot IDs");
-    expect(pageText).toContain("57,658 rows without supplier identity");
-    expect(pageText).toContain("did not invent missing IDs, suppliers, batches, or polygons");
+    expect(pageText).toContain("missing plot IDs");
+    expect(pageText).toContain("missing supplier identity");
+    expect(pageText).toContain("missing facts were not invented");
     expect(proofLink?.getAttribute("href")).toBe("/proof/public-cocoa-pilot/");
     expect(evidencePackLink?.getAttribute("href")).toBe("/traceready-public-cocoa-pilot-pack.zip");
     expect(realPilotLink?.getAttribute("href")).toBe("/pilot-proof/");

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import {
+  ArrowDown,
   AlertTriangle,
   CheckCircle2,
   CreditCard,
@@ -182,47 +183,32 @@ const PUBLIC_PILOT_STATS = [
   },
   {
     value: "57,658",
-    label: "rows missing supplier identity",
+    label: "rows missing IDs and supplier identity",
   },
   {
     value: "0",
-    label: "ready records",
-  },
-];
-
-const PUBLIC_PILOT_FLOW = [
-  {
-    title: "Messy public file in",
-    detail: "57,658 public cocoa rows with coordinates and area values, but no plot IDs or supplier identity.",
-  },
-  {
-    title: "Exact issues found",
-    detail: "46,134 point-only plots over 4 ha, plus missing plot ID and supplier identity on every row.",
-  },
-  {
-    title: "Cleaned pack out",
-    detail: "No fake certainty: repair brief, buyer summary, issue CSV, and evidence pack for source-owner follow-up.",
+    label: "records ready for buyer handoff",
   },
 ];
 
 const OPERATOR_PROOF_POINTS = [
   {
-    title: "Regulated cleanup reflex",
+    title: "Compliance-trained triage",
     detail:
-      "Regulated tax/advisory and insurance work trained the operating bias: every vague answer needs a source field, a decision log, and a reviewable next step.",
+      "High-liability advisory work trained the operating reflex: every vague answer needs a source field, a decision log, and a reviewable next step.",
   },
   {
-    title: "AI systems with audit trails",
+    title: "AI systems with receipts",
     detail:
-      "Portfolio work spans AI workflow builds, product launch QA, checkout handoffs, documentation, and audit exports, so TraceReady keeps the evidence inspectable.",
+      "AI workflow builds, test plans, checkout handoffs, documentation, and audit exports shape the product: useful automation with inspectable evidence.",
   },
   {
-    title: "Private data stays boring",
+    title: "Private data stays local first",
     detail:
       "Supplier coordinates are a competitive map. The first pass runs in the browser, and paid cleanup starts only after scoped issue evidence proves what needs human work.",
   },
   {
-    title: "Concierge edge",
+    title: "Concierge cleanup desk",
     detail:
       "No seats, no procurement theater: one weird CSV, KML, or GeoJSON can come back with row-level defects, a cleanup boundary, and buyer-facing follow-ups.",
   },
@@ -463,7 +449,7 @@ export function TraceReadyWorkbench() {
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(9,29,28,0.96)_0%,rgba(9,38,35,0.86)_37%,rgba(9,38,35,0.36)_68%,rgba(9,38,35,0.1)_100%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_48%,rgba(255,250,238,0.15),transparent_28rem)]" />
 
-        <div className="relative mx-auto flex min-h-[560px] w-full max-w-7xl flex-col px-4 py-5 sm:min-h-[620px] sm:px-6 lg:px-8">
+        <div className="relative mx-auto flex min-h-[500px] w-full max-w-7xl flex-col px-4 py-5 sm:min-h-[560px] sm:px-6 lg:min-h-[600px] lg:px-8">
           <nav className="flex items-center justify-between gap-4" aria-label="Primary">
             <div className="flex items-center gap-3">
               <span className="flex size-12 shrink-0 items-center justify-center rounded-md border border-white/[0.18] bg-white/[0.94] shadow-sm">
@@ -482,6 +468,12 @@ export function TraceReadyWorkbench() {
               </div>
             </div>
             <div className="hidden items-center gap-2 sm:flex">
+              <a
+                href="#checker"
+                className="h-10 items-center justify-center rounded-md border border-white/[0.18] bg-white/[0.1] px-4 text-sm font-semibold text-[#effdf4] backdrop-blur transition hover:bg-white/[0.16] sm:inline-flex"
+              >
+                Checker
+              </a>
               <a
                 href="#pilot-case"
                 className="h-10 items-center justify-center rounded-md border border-white/[0.18] bg-white/[0.1] px-4 text-sm font-semibold text-[#effdf4] backdrop-blur transition hover:bg-white/[0.16] sm:inline-flex"
@@ -524,6 +516,13 @@ export function TraceReadyWorkbench() {
                   <FileCheck2 className="size-4" aria-hidden="true" />
                   Try a sample file
                 </button>
+                <a
+                  href="#checker"
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-md border border-white/[0.22] bg-white/[0.08] px-5 text-sm font-semibold text-[#effdf4] backdrop-blur transition hover:bg-white/[0.14]"
+                >
+                  <ArrowDown className="size-4" aria-hidden="true" />
+                  Jump to checker
+                </a>
               </div>
               <p className="mt-4 max-w-xl text-sm leading-6 text-[#bcd6c4]">
                 The free diagnosis stays in your browser. Paid cleanup starts only after the issue
@@ -534,32 +533,21 @@ export function TraceReadyWorkbench() {
         </div>
       </header>
 
-      <section id="pilot-case" className="relative z-10 border-b border-[#dec8a6] bg-[#123f34] px-4 py-6 text-white">
-        <div className="mx-auto grid w-full max-w-7xl gap-5 sm:px-2 lg:grid-cols-[minmax(0,0.78fr)_minmax(360px,0.55fr)] lg:items-start lg:px-6">
+      <section id="pilot-case" className="relative z-10 border-b border-[#dec8a6] bg-[#123f34] px-4 py-5 text-white">
+        <div className="mx-auto grid w-full max-w-7xl gap-5 sm:px-2 lg:grid-cols-[minmax(0,0.88fr)_minmax(320px,0.46fr)] lg:items-start lg:px-6">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-100">
-              Public-data pilot
+              One real public-data pilot
             </p>
             <h2 className="mt-2 max-w-3xl text-2xl font-semibold leading-tight sm:text-3xl">
-              57,658 real cocoa rows checked; 0 were buyer-ready.
+              Messy public file in. Exact blocker list out.
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-emerald-50">
-              One public Colombian cocoa dataset went in. TraceReady found the exact issue counts and
-              produced a buyer/supplier follow-up pack. TraceReady did not invent missing IDs,
-              suppliers, batches, or polygons.
+              TraceReady checked 57,658 rows from a public Colombian cocoa dataset and found 46,134
+              point-only plots over 4 hectares, missing plot IDs, missing supplier identity, and zero
+              buyer-ready records. The output is a repair brief, buyer summary, issue CSV, and
+              evidence pack for source-owner follow-up; missing facts were not invented.
             </p>
-            <p className="mt-3 max-w-3xl text-sm leading-6 text-emerald-50">
-              Exact issue counts and buyer/supplier follow-up list: 46,134 point-only plots over 4
-              hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
-            </p>
-            <div className="mt-4 grid gap-3 sm:grid-cols-3">
-              {PUBLIC_PILOT_FLOW.map((step) => (
-                <div key={step.title} className="border-t border-white/[0.22] pt-3">
-                  <p className="text-sm font-semibold text-white">{step.title}</p>
-                  <p className="mt-1 text-xs leading-5 text-emerald-50">{step.detail}</p>
-                </div>
-              ))}
-            </div>
             <div className="mt-4 flex flex-col gap-2 sm:flex-row">
               <a
                 href={PUBLIC_PILOT_CASE_HREF}
@@ -581,7 +569,7 @@ export function TraceReadyWorkbench() {
               </a>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2">
             {PUBLIC_PILOT_STATS.map((stat) => (
               <div key={stat.label} className="border-t border-white/[0.18] pt-3">
                 <p className="text-xl font-semibold tabular-nums sm:text-2xl">{stat.value}</p>
@@ -601,7 +589,7 @@ export function TraceReadyWorkbench() {
               Cleanup-desk credibility
             </p>
             <h2 className="mt-2 max-w-3xl text-2xl font-semibold leading-tight text-[#2b190f]">
-              Built by a paperwork-and-systems operator who treats messy rows like liabilities.
+              Built by the kind of operator who notices when one missing column can ruin your week.
             </h2>
             <p className="mt-3 max-w-3xl border-l-2 border-[#0aa394] bg-white/70 px-4 py-3 text-sm font-semibold leading-6 text-[#2b190f]">
               TraceReady is a spreadsheet bouncer: IDs at the door, coordinates checked against reality,
@@ -609,11 +597,11 @@ export function TraceReadyWorkbench() {
               dressed up.
             </p>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-[#6a5137]">
-              Public proof beats biography here. The useful background is regulated tax/advisory
-              compliance, AI workflow builds, product launch QA, automation handoffs, audit exports,
-              buyer handoff workflows, and privacy boundaries. The current trust asset is the
-              57,658-row public audit, not a personal resume: find row-level defects, keep supplier
-              coordinates local first, and return the cleanup pack a buyer or consultant can inspect.
+              Public proof beats biography here. The useful background is compliance-heavy advisory
+              operations, AI systems delivery, launch QA, automation handoffs, audit exports, buyer
+              handoff workflows, and privacy guardrails. The trust claim is narrow: find row-level
+              defects, keep supplier coordinates local first, and return a cleanup boundary a buyer or
+              consultant can inspect.
             </p>
           </div>
 
@@ -628,7 +616,7 @@ export function TraceReadyWorkbench() {
         </div>
       </section>
 
-      <main className="relative z-10 mx-auto grid w-full max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:px-8">
+      <main id="checker" className="relative z-10 mx-auto grid w-full max-w-7xl scroll-mt-4 gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:px-8">
         <section className="space-y-6">
           <div
             className="trace-card relative overflow-hidden border border-dashed border-[#c8a56f] bg-[#fffaf2]/95 p-6 shadow-sm"
