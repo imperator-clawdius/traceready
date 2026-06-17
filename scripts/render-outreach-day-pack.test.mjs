@@ -48,16 +48,18 @@ describe("proof-led outreach day pack", () => {
     expect(markdown).toContain("Subject: Free EUDR file-readiness example for coffee members");
     expect(markdown).toContain("Is there a member education channel where this would be useful?");
     expect(markdown).not.toContain("### b01-r03 - Cafe Imports Europe");
-    expect(markdown).toContain(
-      "npm run update:outreach-result -- --results private/outreach-results.csv --route b01-r01 --date-sent 2026-06-20 --status sent --response-type none",
-    );
-    expect(markdown).toContain('--notes "sent via public route; visible form success observed"');
+    expect(markdown).toContain("npm run record:submission-evidence --");
+    expect(markdown).toContain("--results private/outreach-results.csv --route b01-r01");
+    expect(markdown).toContain("--submitted-at 2026-06-20T12:00:00.000Z");
+    expect(markdown).toContain('--success-url "https://www.ecf-coffee.org/"');
+    expect(markdown).toContain('--success-text "PASTE_VISIBLE_SUCCESS_TEXT"');
+    expect(markdown).toContain("--output private/submission-evidence-b01-r01.json --confirm-visible-success");
     expect(markdown).toContain("## Follow Up Today");
     expect(markdown).toContain("### b01-r02 - EUDR Coffee / German Coffee Association");
     expect(markdown).toContain("sent 4 days ago");
     expect(markdown).toContain("Subject: Re: EUDR file-readiness check");
     expect(markdown).toContain("If this is not the right route");
-    expect(markdown).toContain('--notes "followed up via public route after earlier visible form success observed"');
+    expect(markdown).toContain("Follow-up update withheld until submission evidence is recorded for this route.");
     expect(markdown).toContain("## Active Opportunities");
     expect(markdown).toContain("### b01-r04 - Preferred by Nature");
     expect(markdown).toContain("ask whether they want the cleaned pack");

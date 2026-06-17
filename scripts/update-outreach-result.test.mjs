@@ -106,6 +106,17 @@ describe("outreach result updater", () => {
         reply_notes: "sent manually; visible form success observed",
         next_action: "follow up in 4 business days",
       }),
+    ).toThrow("row b01-r06 status sent requires reply_notes to include submission evidence");
+
+    expect(() =>
+      updateOutreachResult(rows, "b01-r06", {
+        date_sent: "2026-06-16",
+        status: "sent",
+        response_type: "none",
+        reply_notes:
+          "sent manually; visible form success observed; submission evidence: submission-evidence-b01-r06.json",
+        next_action: "follow up in 4 business days",
+      }),
     ).not.toThrow();
   });
 

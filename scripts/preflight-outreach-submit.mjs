@@ -27,6 +27,7 @@ export function preflightOutreachSubmit({
   sendReadyPath,
   resultsPath = DEFAULT_RESULTS_PATH,
   emailReport = { ready: false },
+  allowPendingReplyCapture = false,
 }) {
   if (!routeId) {
     throw new Error("routeId is required");
@@ -73,7 +74,9 @@ export function preflightOutreachSubmit({
     throw new Error(`send-ready packet for ${routeId} is missing the verified public route`);
   }
 
-  if (!replyCaptureReadyFromEmailReport(emailReport)) {
+  const replyCaptureReady = replyCaptureReadyFromEmailReport(emailReport);
+
+  if (!replyCaptureReady && !allowPendingReplyCapture) {
     throw new Error(`reply capture must be verified before creating submit preflight for ${routeId}`);
   }
 
@@ -87,7 +90,7 @@ export function preflightOutreachSubmit({
     sendReadyPath: normalizedSendReadyPath,
     resultsPath: normalizePath(resultsPath),
     resultStatus: resultRow.status,
-    replyCapture: replyCaptureReadyFromEmailReport(emailReport) ? "ready" : "at_risk",
+    replyCapture: replyCaptureReady ? "ready" : "at_risk",
     emailReady: Boolean(emailReport.ready),
     auditDate: sendabilityAudit.auditDate,
   };
@@ -95,15 +98,15 @@ export function preflightOutreachSubmit({
 
 export function renderOutreachSubmitPreflight(preflight, options = {}) {
   const generatedAt = options.generatedAt ?? todayIsoDate();
-  const updateCommand = [
-    "npm run update:outreach-result --",
+  const submissionEvidenceCommand = [
+    "npm run record:submission-evidence --",
     `--results ${preflight.resultsPath}`,
     `--route ${preflight.routeId}`,
-    `--date-sent ${generatedAt}`,
-    "--status sent",
-    "--response-type none",
-    `--notes ${quoteIfNeeded(`sent via ${preflight.companyName} public contact form; visible form success observed`)}`,
-    `--next-action ${quoteIfNeeded("follow up in 4 business days")}`,
+    `--submitted-at ${generatedAt}T12:00:00.000Z`,
+    `--success-url ${quoteForShell(preflight.publicRoute)}`,
+    `--success-text ${quoteForShell("PASTE_VISIBLE_SUCCESS_TEXT")}`,
+    `--output private/submission-evidence-${preflight.routeId}.json`,
+    "--confirm-visible-success",
   ].join(" ");
 
   return `# TraceReady submit preflight: ${preflight.routeId}
@@ -121,6 +124,7 @@ Generated: ${generatedAt}
 - Send-ready packet: \`${preflight.sendReadyPath}\`
 - Result ledger status: \`${preflight.resultStatus}\`
 - Reply capture: \`${preflight.replyCapture}\`
+${preflight.replyCapture === "ready" ? "" : "\nReply capture is `at_risk`; do not submit this route yet."}
 
 ## Exact Action-Time Confirmation
 
@@ -144,7 +148,7 @@ ${preflight.confirmationLine}
 Only run this after visible browser success. If the form errors, do not mark sent; record the generic blocker in private notes.
 
 \`\`\`bash
-${updateCommand}
+${submissionEvidenceCommand}
 npm run summarize:outreach -- ${preflight.resultsPath}
 npm run render:outreach-replies -- --results ${preflight.resultsPath} --route ${preflight.routeId} --output private/replies-${preflight.routeId}.md
 \`\`\`
@@ -160,6 +164,7 @@ export function preflightAllReadyOutreachSubmits({
   emailReport = { ready: false },
   outputDir = DEFAULT_PRIVATE_DIR,
   sendReadyDir = DEFAULT_PRIVATE_DIR,
+  allowPendingReplyCapture = false,
 }) {
   const readyRoutes = (sendabilityAudit.routes ?? []).filter((route) => route.sendability === "browser_form_ready");
   const replyCaptureReady = replyCaptureReadyFromEmailReport(emailReport);
@@ -174,7 +179,7 @@ export function preflightAllReadyOutreachSubmits({
     return { route, sendReadyPath, sendReadyMarkdown };
   });
 
-  if (!replyCaptureReady) {
+  if (!replyCaptureReady && !allowPendingReplyCapture) {
     throw new Error("reply capture must be verified before creating submit preflight queue");
   }
 
@@ -189,6 +194,7 @@ export function preflightAllReadyOutreachSubmits({
         sendReadyPath,
         resultsPath,
         emailReport,
+        allowPendingReplyCapture,
       }),
       preflightPath: normalizePath(`${outputDir}/preflight-submit-${route.route_id}.md`),
     };
@@ -216,6 +222,7 @@ export function renderOutreachSubmitQueue(queue, options = {}) {
 OUTREACH_SUBMIT_QUEUE=pass ready_routes=${queue.readyRoutes} preflight_ready=${queue.preflightReadyRoutes} reply_capture=${queue.replyCapture}
 
 External browser-form submission still requires exact action-time confirmation for each route.
+${queue.replyCapture === "ready" ? "" : "\nReply capture is not ready; keep these preflights held."}
 
 ## Ready Routes
 
@@ -253,6 +260,11 @@ export function parseOutreachSubmitPreflightArgs(argv) {
 
     if (flag === "--skip-email") {
       parsed.skipEmail = true;
+      continue;
+    }
+
+    if (flag === "--allow-pending-reply-capture") {
+      parsed.allowPendingReplyCapture = true;
       continue;
     }
 
@@ -335,9 +347,8 @@ function replyCaptureReadyFromEmailReport(emailReport = {}) {
   return Boolean(checks.OUTREACH_EMAIL_MX && checks.OUTREACH_EMAIL_ALIAS_TEST);
 }
 
-function quoteIfNeeded(value) {
-  const text = String(value);
-  return /\s/.test(text) ? `"${text.replace(/"/g, '\\"')}"` : text;
+function quoteForShell(value) {
+  return `"${String(value).replace(/"/g, '\\"')}"`;
 }
 
 function todayIsoDate() {
@@ -393,6 +404,7 @@ async function main() {
       resultsPath: options.resultsPath,
       emailReport,
       outputDir: options.outputDir,
+      allowPendingReplyCapture: options.allowPendingReplyCapture,
     });
 
     await fs.mkdir(options.outputDir, { recursive: true });
@@ -421,6 +433,7 @@ async function main() {
     sendReadyPath: options.sendReadyPath,
     resultsPath: options.resultsPath,
     emailReport,
+    allowPendingReplyCapture: options.allowPendingReplyCapture,
   });
   const markdown = renderOutreachSubmitPreflight(preflight, { generatedAt: options.generatedAt });
 

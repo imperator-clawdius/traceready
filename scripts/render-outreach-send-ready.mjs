@@ -107,7 +107,7 @@ export function renderOutreachSendReadyPacket(batchRows, resultRows, sendability
     "Only run this after visible browser success. If the form errors, do not mark sent; record the generic blocker in private notes.",
     "",
     "```bash",
-    updateCommand(resultsPath, routeId, today, batchRow.company_or_channel),
+    submissionEvidenceCommand(resultsPath, routeId, today, publicRoute),
     "```",
     "",
     "Then render summary and reply handling:",
@@ -186,22 +186,21 @@ function normalizedPrivatePath(outputPath) {
   return outputPath.replace(/\\/g, "/");
 }
 
-function updateCommand(resultsPath, routeId, today, companyName) {
+function submissionEvidenceCommand(resultsPath, routeId, today, successUrl) {
   return [
-    "npm run update:outreach-result --",
+    "npm run record:submission-evidence --",
     `--results ${resultsPath}`,
     `--route ${routeId}`,
-    `--date-sent ${today}`,
-    "--status sent",
-    "--response-type none",
-    `--notes ${quoteIfNeeded(`sent via ${companyName} public contact form; visible form success observed`)}`,
-    `--next-action ${quoteIfNeeded("follow up in 4 business days")}`,
+    `--submitted-at ${today}T12:00:00.000Z`,
+    `--success-url ${quoteForShell(successUrl)}`,
+    `--success-text ${quoteForShell("PASTE_VISIBLE_SUCCESS_TEXT")}`,
+    `--output private/submission-evidence-${routeId}.json`,
+    "--confirm-visible-success",
   ].join(" ");
 }
 
-function quoteIfNeeded(value) {
-  const text = String(value);
-  return /\s/.test(text) ? `"${text.replace(/"/g, '\\"')}"` : text;
+function quoteForShell(value) {
+  return `"${String(value).replace(/"/g, '\\"')}"`;
 }
 
 function todayIsoDate() {

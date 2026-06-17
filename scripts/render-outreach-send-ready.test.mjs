@@ -73,7 +73,14 @@ describe("outreach send-ready packet renderer", () => {
     expect(markdown).toContain("Public proof beats biography here");
     expect(markdown).toContain("Worth testing one messy supplier file?");
     expect(markdown).toContain("Only run this after visible browser success");
-    expect(markdown).toContain("--route b01-r11 --date-sent 2026-06-16 --status sent");
+    expect(markdown).toContain("npm run record:submission-evidence --");
+    expect(markdown).toContain("--route b01-r11");
+    expect(markdown).toContain("--submitted-at 2026-06-16T12:00:00.000Z");
+    expect(markdown).toContain('--success-url "https://interamericancoffee.de/contact/"');
+    expect(markdown).toContain('--success-text "PASTE_VISIBLE_SUCCESS_TEXT"');
+    expect(markdown).toContain("--output private/submission-evidence-b01-r11.json");
+    expect(markdown).toContain("--confirm-visible-success");
+    expect(markdown).not.toContain("npm run update:outreach-result");
     expect(markdown).toContain("npm run summarize:outreach -- private/outreach-results-batch-01.csv");
   });
 

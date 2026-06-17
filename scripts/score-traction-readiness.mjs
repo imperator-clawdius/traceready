@@ -13,6 +13,8 @@ const DEFAULT_SENDABILITY_AUDIT_PATH = "private/outreach-sendability-audit-batch
 const DEFAULT_CONTACT_RECON_PATH = "private/outreach-contact-recon-batch-02.json";
 const DEFAULT_LIVE_SUBMIT_REPORT_PATH = "private/submit-route-live-check.md";
 const SEND_PACKET_TRUST_BRIDGE_MARKER = "Trust bridge: TraceReady is a spreadsheet bouncer";
+const SEND_PACKET_SUBMISSION_EVIDENCE_MARKER = "npm run record:submission-evidence --";
+const STALE_OUTREACH_UPDATE_MARKER = "npm run update:outreach-result";
 
 export function scoreTractionReadiness({
   publicAuditMarkdown,
@@ -46,7 +48,8 @@ export function scoreTractionReadiness({
     packetVerification.checked &&
     packetVerification.missingPacketRoutes.length +
       packetVerification.missingConfirmationRoutes.length +
-      packetVerification.missingTrustBridgeRoutes.length >
+      packetVerification.missingTrustBridgeRoutes.length +
+      packetVerification.missingSubmissionEvidenceRoutes.length >
       0;
   const submitPreflightNeedsWork =
     submitPreflightVerification.checked &&
@@ -114,6 +117,7 @@ export function scoreTractionReadiness({
       missingPacketRoutes: packetVerification.missingPacketRoutes,
       missingConfirmationRoutes: packetVerification.missingConfirmationRoutes,
       missingPacketTrustBridgeRoutes: packetVerification.missingTrustBridgeRoutes,
+      missingPacketSubmissionEvidenceRoutes: packetVerification.missingSubmissionEvidenceRoutes,
       submitPreflightReadyRoutes: submitPreflightVerification.preflightReadyRoutes,
       missingSubmitPreflightRoutes: submitPreflightVerification.missingPreflightRoutes,
       missingSubmitPreflightConfirmationRoutes: submitPreflightVerification.missingConfirmationRoutes,
@@ -250,6 +254,7 @@ ${readyRouteLines.join("\n")}
 | Missing packet files | ${(score.outreach.missingPacketRoutes ?? []).length ? score.outreach.missingPacketRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 | Missing confirmation text | ${(score.outreach.missingConfirmationRoutes ?? []).length ? score.outreach.missingConfirmationRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 | Send-ready packets missing trust bridge | ${(score.outreach.missingPacketTrustBridgeRoutes ?? []).length ? score.outreach.missingPacketTrustBridgeRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
+| Send-ready packets missing submission-evidence recorder | ${(score.outreach.missingPacketSubmissionEvidenceRoutes ?? []).length ? score.outreach.missingPacketSubmissionEvidenceRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 
 ## Submit Preflight Guard
 
@@ -275,7 +280,7 @@ ${readyRouteLines.join("\n")}
 
 | Check | Route IDs |
 | --- | --- |
-| Sent rows missing visible-success or response evidence | ${(score.outreach.unevidencedSentRoutes ?? []).length ? score.outreach.unevidencedSentRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
+| Sent rows missing submission receipt or response evidence | ${(score.outreach.unevidencedSentRoutes ?? []).length ? score.outreach.unevidencedSentRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 
 ## Reply-Capture Risk
 
@@ -436,12 +441,14 @@ function verifySendReadyPackets(readyRoutes, sendReadyPackets) {
       missingPacketRoutes: [],
       missingConfirmationRoutes: [],
       missingTrustBridgeRoutes: [],
+      missingSubmissionEvidenceRoutes: [],
     };
   }
 
   const missingPacketRoutes = [];
   const missingConfirmationRoutes = [];
   const missingTrustBridgeRoutes = [];
+  const missingSubmissionEvidenceRoutes = [];
 
   for (const route of readyRoutes) {
     const packetText = sendReadyPackets[route.route_id] ?? sendReadyPackets[`private/send-ready-${route.route_id}.md`] ?? "";
@@ -453,12 +460,18 @@ function verifySendReadyPackets(readyRoutes, sendReadyPackets) {
       missingConfirmationRoutes.push(route.route_id);
     } else if (!packetText.includes(SEND_PACKET_TRUST_BRIDGE_MARKER)) {
       missingTrustBridgeRoutes.push(route.route_id);
+    } else if (
+      !packetText.includes(SEND_PACKET_SUBMISSION_EVIDENCE_MARKER) ||
+      packetText.includes(STALE_OUTREACH_UPDATE_MARKER)
+    ) {
+      missingSubmissionEvidenceRoutes.push(route.route_id);
     }
   }
   const notReadyRouteCount = new Set([
     ...missingPacketRoutes,
     ...missingConfirmationRoutes,
     ...missingTrustBridgeRoutes,
+    ...missingSubmissionEvidenceRoutes,
   ]).size;
 
   return {
@@ -467,6 +480,7 @@ function verifySendReadyPackets(readyRoutes, sendReadyPackets) {
     missingPacketRoutes,
     missingConfirmationRoutes,
     missingTrustBridgeRoutes,
+    missingSubmissionEvidenceRoutes,
   };
 }
 
@@ -585,11 +599,15 @@ function hasSubmissionEvidence(row) {
     return hasText(row.reply_notes);
   }
 
-  return /\bvisible form success observed\b/i.test(row.reply_notes);
+  return /\bvisible form success observed\b/i.test(row.reply_notes) && hasSubmissionEvidenceMarker(row.reply_notes);
 }
 
 function hasText(value) {
   return typeof value === "string" && value.trim().length > 0;
+}
+
+function hasSubmissionEvidenceMarker(notes) {
+  return /\bsubmission evidence:\s*[-\w./]+\.json\b/i.test(String(notes ?? ""));
 }
 
 function extractNumber(markdown, label) {

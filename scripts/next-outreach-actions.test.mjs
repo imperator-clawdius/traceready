@@ -64,7 +64,7 @@ describe("next outreach actions", () => {
     expect(markdown).not.toContain("b01-r01 - European Coffee Federation");
   });
 
-  it("renders a copy-pasteable action queue with update commands", () => {
+  it("renders a copy-pasteable action queue without weak sent-update commands", () => {
     const rows = parseOutreachResults(RESULTS_CSV);
     const queue = buildOutreachActionQueue(rows, {
       sendLimit: 1,
@@ -83,11 +83,11 @@ describe("next outreach actions", () => {
     expect(markdown).toContain(
       "https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_01&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b01-r01",
     );
-    expect(markdown).toContain(
-      "npm run update:outreach-result -- --results private/outreach-results.csv --route b01-r01 --date-sent 2026-06-20 --status sent --response-type none",
-    );
-    expect(markdown).toContain('--notes "sent via public route; visible form success observed"');
-    expect(markdown).toContain('--notes "followed up via public route after earlier visible form success observed"');
+    expect(markdown).toContain("Render the route-specific send-ready packet, then use its `record:submission-evidence` command after visible success.");
+    expect(markdown).toContain("Follow-up update withheld until submission evidence is recorded for this route.");
+    expect(markdown).not.toContain("npm run update:outreach-result -- --results private/outreach-results.csv --route b01-r01 --date-sent");
+    expect(markdown).not.toContain('--notes "sent via public route; visible form success observed"');
+    expect(markdown).not.toContain('--notes "followed up via public route after earlier visible form success observed"');
     expect(markdown).not.toContain("--reply-notes");
     expect(markdown).toContain("## Follow Up Due");
     expect(markdown).toContain("b01-r02 - EUDR Coffee / German Coffee Association");
@@ -238,7 +238,7 @@ Next gate: \`verify_reply_capture_before_external_submission\`
     });
   });
 
-  it("renders public initialized ledger previews with private-file update commands", () => {
+  it("renders public initialized ledger previews without ledger update commands", () => {
     const rows = parseOutreachResults(RESULTS_CSV);
     const queue = buildOutreachActionQueue(rows, {
       sendLimit: 1,
@@ -254,7 +254,10 @@ Next gate: \`verify_reply_capture_before_external_submission\`
     expect(markdown).toContain(
       "Copy `docs/proof-led-outreach-results-batch-01.csv` to a private results file before updating rows.",
     );
-    expect(markdown).toContain("--results path/to/private-results.csv --route b01-r01");
+    expect(markdown).toContain("Render the route-specific send-ready packet");
+    expect(markdown).toContain("Follow-up update withheld until submission evidence is recorded for this route.");
+    expect(markdown).not.toContain("npm run update:outreach-result");
+    expect(markdown).not.toContain("--results path/to/private-results.csv --route b01-r01");
     expect(markdown).not.toContain("--results docs/proof-led-outreach-results-batch-01.csv --route b01-r01");
   });
 });

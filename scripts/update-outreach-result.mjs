@@ -160,6 +160,10 @@ function assertEvidenceBackedUpdate(row) {
     );
   }
 
+  if (["sent", "no_reply"].includes(row.status) && !hasSubmissionEvidenceMarker(row.reply_notes)) {
+    throw new Error(`row ${row.route_id} status ${row.status} requires reply_notes to include submission evidence`);
+  }
+
   if (row.status === "file_checked" && Number(row.file_check_count || 0) <= 0) {
     throw new Error(`row ${row.route_id} status file_checked requires file_check_count above 0`);
   }
@@ -187,6 +191,10 @@ function appendVisibleSuccessMarker(notes = "") {
 
 function hasVisibleSuccessEvidence(notes) {
   return /\bvisible form success observed\b/i.test(String(notes ?? ""));
+}
+
+function hasSubmissionEvidenceMarker(notes) {
+  return /\bsubmission evidence:\s*[-\w./]+\.json\b/i.test(String(notes ?? ""));
 }
 
 async function main() {

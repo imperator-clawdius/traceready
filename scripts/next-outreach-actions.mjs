@@ -13,7 +13,6 @@ const DEFAULT_SUBMIT_QUEUE_PATH = "private/preflight-submit-queue.md";
 const REPLY_CAPTURE_GATE = "verify_reply_capture_before_external_submission";
 const FOLLOW_UP_STATUSES = new Set(["sent", "no_reply"]);
 const OPPORTUNITY_STATUSES = new Set(["replied", "file_checked", "pilot_requested"]);
-const VISIBLE_SUCCESS_NOTE = "visible form success observed";
 
 export function buildOutreachActionQueue(rows, options = {}) {
   const today = options.today ?? todayIsoDate();
@@ -302,13 +301,7 @@ function renderSendRows(rows, resultsPath, today, options = {}) {
 
     return [
       ...lines,
-      `   - Mark sent: \`${updateCommand(resultsPath, row.route_id, {
-        date_sent: today,
-        status: "sent",
-        response_type: "none",
-        reply_notes: `sent via public route; ${VISIBLE_SUCCESS_NOTE}`,
-        next_action: "follow up in 4 business days",
-      })}\``,
+      "   - Record sent state: Render the route-specific send-ready packet, then use its `record:submission-evidence` command after visible success.",
     ];
   });
 }
@@ -318,18 +311,24 @@ function renderFollowUpRows(rows, resultsPath, today) {
     return ["No follow-ups are due by the configured threshold."];
   }
 
-  return rows.flatMap((row, index) => [
-    `${index + 1}. ${row.route_id} - ${row.company_or_channel} (sent ${daysBetween(row.date_sent, today)} days ago)`,
-    `   - Current next action: ${row.next_action || "follow up"}`,
-    `   - Follow-up URL: ${row.proof_url}`,
-    `   - Field note URL: ${row.field_note_url}`,
-    `   - Mark followed up: \`${updateCommand(resultsPath, row.route_id, {
-      status: "no_reply",
-      response_type: "none",
-      reply_notes: `followed up via public route after earlier ${VISIBLE_SUCCESS_NOTE}`,
-      next_action: "wait for reply or change channel",
-    })}\``,
-  ]);
+  return rows.flatMap((row, index) => {
+    const submissionEvidenceMarker = extractSubmissionEvidenceMarker(row.reply_notes);
+
+    return [
+      `${index + 1}. ${row.route_id} - ${row.company_or_channel} (sent ${daysBetween(row.date_sent, today)} days ago)`,
+      `   - Current next action: ${row.next_action || "follow up"}`,
+      `   - Follow-up URL: ${row.proof_url}`,
+      `   - Field note URL: ${row.field_note_url}`,
+      submissionEvidenceMarker
+        ? `   - Mark followed up: \`${updateCommand(resultsPath, row.route_id, {
+            status: "no_reply",
+            response_type: "none",
+            reply_notes: `followed up via public route after earlier visible form success observed; ${submissionEvidenceMarker}`,
+            next_action: "wait for reply or change channel",
+          })}\``
+        : "   - Follow-up update withheld until submission evidence is recorded for this route.",
+    ];
+  });
 }
 
 function renderOpportunityRows(rows) {
@@ -367,6 +366,11 @@ function flagForPatchKey(key) {
 function quoteIfNeeded(value) {
   const text = String(value);
   return /\s/.test(text) ? `"${text.replace(/"/g, '\\"')}"` : text;
+}
+
+function extractSubmissionEvidenceMarker(notes) {
+  const match = String(notes ?? "").match(/\bsubmission evidence:\s*[-\w./]+\.json\b/i);
+  return match ? match[0] : "";
 }
 
 function parsePositiveInteger(value, flag) {

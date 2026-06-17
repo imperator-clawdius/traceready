@@ -13,8 +13,6 @@ const DEFAULT_OUTPUT_PATH = "private/send-execution-checklist.md";
 const DEFAULT_DAY_PACK_PATH = "private/outreach-day-pack.md";
 const DEFAULT_SEND_LIMIT = 3;
 const DEFAULT_SENDABILITY_AUDIT_PATH = "private/outreach-sendability-audit-importer.json";
-const VISIBLE_SUCCESS_NOTE = "visible form success observed";
-
 export function renderOutreachSendChecklist(batchRows, resultRows, options = {}) {
   const batchPath = options.batchPath ?? DEFAULT_BATCH_PATH;
   const resultsPath = options.resultsPath ?? DEFAULT_RESULTS_PATH;
@@ -153,15 +151,7 @@ function renderSendTasks(sendRows, batchByRoute, batchPath, resultsPath, today, 
       `- [ ] Render send-ready packet: \`${sendReadyCommand(batchPath, resultsPath, resultRow.route_id, today, sendabilityAuditPath)}\``,
       "- [ ] Paste the subject and body exactly as shown below.",
       "- [ ] Submit once. Do not send duplicates from multiple channels on the same day.",
-      `- [ ] Mark sent: \`${updateCommand(resultsPath, resultRow.route_id, {
-        date_sent: today,
-        status: "sent",
-        response_type: "none",
-        reply_notes: sendability?.contact_method === "public_browser_form"
-          ? `sent via public browser form; ${VISIBLE_SUCCESS_NOTE}`
-          : `sent via public route; ${VISIBLE_SUCCESS_NOTE}`,
-        next_action: "follow up in 4 business days",
-      })}\``,
+      `- [ ] Record submission evidence after visible success: \`${submissionEvidenceCommand(resultsPath, resultRow.route_id, today, sourceUrl)}\``,
       `- [ ] Prepare reply handling: \`npm run render:outreach-replies -- --results ${resultsPath} --route ${resultRow.route_id} --output private/replies-${resultRow.route_id}.md\``,
       "",
       "```text",
@@ -275,26 +265,21 @@ function sendabilityAuditMap(sendabilityAudit) {
   return new Map((sendabilityAudit.routes ?? []).map((route) => [route.route_id, route]));
 }
 
-function updateCommand(resultsPath, routeId, patch) {
+function submissionEvidenceCommand(resultsPath, routeId, today, successUrl) {
   return [
-    "npm run update:outreach-result --",
+    "npm run record:submission-evidence --",
     `--results ${resultsPath}`,
     `--route ${routeId}`,
-    ...Object.entries(patch).map(([key, value]) => `${flagForPatchKey(key)} ${quoteIfNeeded(value)}`),
+    `--submitted-at ${today}T12:00:00.000Z`,
+    `--success-url ${quoteForShell(successUrl)}`,
+    `--success-text ${quoteForShell("PASTE_VISIBLE_SUCCESS_TEXT")}`,
+    `--output private/submission-evidence-${routeId}.json`,
+    "--confirm-visible-success",
   ].join(" ");
 }
 
-function flagForPatchKey(key) {
-  if (key === "reply_notes") {
-    return "--notes";
-  }
-
-  return `--${key.replace(/_/g, "-")}`;
-}
-
-function quoteIfNeeded(value) {
-  const text = String(value);
-  return /\s/.test(text) ? `"${text.replace(/"/g, '\\"')}"` : text;
+function quoteForShell(value) {
+  return `"${String(value).replace(/"/g, '\\"')}"`;
 }
 
 function parsePositiveInteger(value, flag) {

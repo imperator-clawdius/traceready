@@ -18,7 +18,6 @@ const DEFAULT_RESULTS_PATH = "docs/proof-led-outreach-results-batch-01.csv";
 const PRIVATE_RESULTS_PLACEHOLDER = "path/to/private-results.csv";
 const DEFAULT_SEND_LIMIT = 8;
 const DEFAULT_FOLLOW_UP_AFTER_DAYS = 4;
-const VISIBLE_SUCCESS_NOTE = "visible form success observed";
 
 export function renderOutreachDayPack(batchRows, resultRows, options = {}) {
   const batchPath = options.batchPath ?? DEFAULT_BATCH_PATH;
@@ -164,13 +163,7 @@ function renderSendToday(rows, batchByRoute, resultsPath, today) {
       bodyFor(batchRow),
       "```",
       "",
-      `Mark sent: \`${updateCommand(resultsPath, resultRow.route_id, {
-        date_sent: today,
-        status: "sent",
-        response_type: "none",
-        reply_notes: `sent via public route; ${VISIBLE_SUCCESS_NOTE}`,
-        next_action: "follow up in 4 business days",
-      })}\``,
+      `Record submission evidence after visible success: \`${submissionEvidenceCommand(resultsPath, resultRow.route_id, today, batchRow.source_url)}\``,
       "",
     ];
   });
@@ -183,6 +176,7 @@ function renderFollowUpToday(rows, batchByRoute, resultsPath, today) {
 
   return rows.flatMap((resultRow) => {
     const batchRow = batchByRoute.get(resultRow.route_id);
+    const submissionEvidenceMarker = extractSubmissionEvidenceMarker(resultRow.reply_notes);
 
     return [
       `### ${resultRow.route_id} - ${resultRow.company_or_channel}`,
@@ -197,12 +191,14 @@ function renderFollowUpToday(rows, batchByRoute, resultsPath, today) {
       followUpFor(batchRow),
       "```",
       "",
-      `Mark followed up: \`${updateCommand(resultsPath, resultRow.route_id, {
-        status: "no_reply",
-        response_type: "none",
-        reply_notes: `followed up via public route after earlier ${VISIBLE_SUCCESS_NOTE}`,
-        next_action: "wait for reply or change channel",
-      })}\``,
+      submissionEvidenceMarker
+        ? `Mark followed up: \`${updateCommand(resultsPath, resultRow.route_id, {
+            status: "no_reply",
+            response_type: "none",
+            reply_notes: `followed up via public route after earlier visible form success observed; ${submissionEvidenceMarker}`,
+            next_action: "wait for reply or change channel",
+          })}\``
+        : "Follow-up update withheld until submission evidence is recorded for this route.",
       "",
     ];
   });
@@ -226,6 +222,19 @@ function renderActiveOpportunities(rows) {
   ]);
 }
 
+function submissionEvidenceCommand(resultsPath, routeId, today, successUrl) {
+  return [
+    "npm run record:submission-evidence --",
+    `--results ${resultsPath}`,
+    `--route ${routeId}`,
+    `--submitted-at ${today}T12:00:00.000Z`,
+    `--success-url ${quoteForShell(successUrl)}`,
+    `--success-text ${quoteForShell("PASTE_VISIBLE_SUCCESS_TEXT")}`,
+    `--output private/submission-evidence-${routeId}.json`,
+    "--confirm-visible-success",
+  ].join(" ");
+}
+
 function updateCommand(resultsPath, routeId, patch) {
   return [
     "npm run update:outreach-result --",
@@ -246,6 +255,15 @@ function flagForPatchKey(key) {
 function quoteIfNeeded(value) {
   const text = String(value);
   return /\s/.test(text) ? `"${text.replace(/"/g, '\\"')}"` : text;
+}
+
+function quoteForShell(value) {
+  return `"${String(value).replace(/"/g, '\\"')}"`;
+}
+
+function extractSubmissionEvidenceMarker(notes) {
+  const match = String(notes ?? "").match(/\bsubmission evidence:\s*[-\w./]+\.json\b/i);
+  return match ? match[0] : "";
 }
 
 function parsePositiveInteger(value, flag) {

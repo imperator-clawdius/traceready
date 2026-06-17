@@ -43,10 +43,13 @@ describe("outreach send checklist", () => {
     expect(markdown).toContain("- [ ] Paste the subject and body exactly as shown below.");
     expect(markdown).toContain("Subject: Row-level check for messy EUDR farm files");
     expect(markdown).toContain("Worth testing one messy supplier file?");
-    expect(markdown).toContain(
-      "npm run update:outreach-result -- --results private/outreach-results-batch-01.csv --route b01-r06 --date-sent 2026-06-16 --status sent",
-    );
-    expect(markdown).toContain('--notes "sent via public route; visible form success observed"');
+    expect(markdown).toContain("npm run record:submission-evidence --");
+    expect(markdown).toContain("--results private/outreach-results-batch-01.csv --route b01-r06");
+    expect(markdown).toContain("--submitted-at 2026-06-16T12:00:00.000Z");
+    expect(markdown).toContain('--success-url "https://www.cafeimports.com/europe/blog/general-contact/"');
+    expect(markdown).toContain('--success-text "PASTE_VISIBLE_SUCCESS_TEXT"');
+    expect(markdown).toContain("--output private/submission-evidence-b01-r06.json --confirm-visible-success");
+    expect(markdown).not.toContain("npm run update:outreach-result --");
     expect(markdown).toContain(
       "npm run render:outreach-replies -- --results private/outreach-results-batch-01.csv --route b01-r06 --output private/replies-b01-r06.md",
     );
@@ -145,8 +148,10 @@ describe("outreach send checklist", () => {
     expect(markdown).toContain(
       "npm run render:outreach-send-ready -- --batch docs/proof-led-outreach-batch-01.csv --results private/outreach-results-batch-01.csv --sendability-audit private/outreach-sendability-audit-importer.json --route b01-r11 --today 2026-06-16 --output private/send-ready-b01-r11.md",
     );
-    expect(markdown).toContain("--route b01-r11 --date-sent 2026-06-16 --status sent");
-    expect(markdown).toContain('--notes "sent via public browser form; visible form success observed"');
+    expect(markdown).toContain("npm run record:submission-evidence --");
+    expect(markdown).toContain("--results private/outreach-results-batch-01.csv --route b01-r11");
+    expect(markdown).toContain('--success-url "https://interamericancoffee.de/contact/"');
+    expect(markdown).not.toContain("--route b01-r11 --date-sent 2026-06-16 --status sent");
     expect(markdown).not.toContain("## 1. b01-r06 - Cafe Imports Europe");
     expect(markdown).toContain("## Skipped By Sendability");
     expect(markdown).toContain("- b01-r06 - Cafe Imports Europe: blocked, requires phone and reCAPTCHA");
