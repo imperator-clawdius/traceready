@@ -195,12 +195,12 @@ const OPERATOR_PROOF_POINTS = [
   {
     title: "Regulated-file reflex",
     detail:
-      "Years around regulated tax and advisory files across hundreds of client matters trained the habit this product needs: every vague answer gets a source field, a decision log, and a reviewable next step.",
+      "Regulated advisory work trains boring habits that matter here: every vague answer needs a source field, a decision log, and a reviewable next step.",
   },
   {
     title: "AI systems with receipts",
     detail:
-      "Product builds, LLM workflows, test plans, checkout handoffs, documentation, and audit exports shape the product: useful automation with inspectable evidence.",
+      "Traceability cleanup, SaaS prototypes, automation workflows, test plans, checkout handoffs, documentation, and audit exports all shape the product: useful automation with inspectable evidence.",
   },
   {
     title: "Private data stays local first",
@@ -208,9 +208,9 @@ const OPERATOR_PROOF_POINTS = [
       "Supplier coordinates are a competitive map. The first pass runs in the browser, and paid cleanup starts only after scoped issue evidence proves what needs human work.",
   },
   {
-    title: "Concierge cleanup desk",
+    title: "Buyer handoff over theater",
     detail:
-      "No seats, no procurement theater: one weird CSV, KML, or GeoJSON can come back with row-level defects, a cleanup boundary, and buyer-facing follow-ups.",
+      "No demo maze or seat rollout: one weird CSV, KML, or GeoJSON can come back with row-level defects, a cleanup boundary, and buyer-facing follow-ups.",
   },
 ];
 
@@ -589,19 +589,19 @@ export function TraceReadyWorkbench() {
               Cleanup-desk credibility
             </p>
             <h2 className="mt-2 max-w-3xl text-2xl font-semibold leading-tight text-[#2b190f]">
-              Built by the kind of operator who treats one missing column like a small fire.
+              Built by an operator with a file-room brain and a launch checklist.
             </h2>
             <p className="mt-3 max-w-3xl border-l-2 border-[#0aa394] bg-white/70 px-4 py-3 text-sm font-semibold leading-6 text-[#2b190f]">
-              TraceReady is a spreadsheet bouncer: IDs at the door, coordinates checked against
-              reality, over-4ha points sent back for polygons, and missing supplier facts left blank
-              instead of dressed up for the buyer.
+              TraceReady is a spreadsheet bouncer: IDs at the door, coordinates sober-checked,
+              over-4ha points kicked back for polygons, and unknown supplier facts left blank until
+              someone can prove them.
             </p>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-[#6a5137]">
-              Public proof beats biography here, but the operating background matters: regulated
-              advisory work across hundreds of client files, AI systems delivery, launch QA,
-              automation handoffs, audit exports, buyer handoff workflows, and privacy guardrails.
-              The trust claim is narrow: find row-level defects, keep supplier coordinates local first,
-              and return a cleanup boundary a buyer or consultant can inspect.
+              The relevant background is narrow: regulated advisory files, client-facing compliance
+              operations, AI workflow builds, payment handoffs, QA evidence, audit exports, and privacy
+              boundaries. That is the same muscle TraceReady uses for EUDR cleanup: mark exact
+              row-level defects, keep coordinates local first, and return a buyer-readable repair
+              boundary instead of a heroic story.
             </p>
           </div>
 

@@ -102,6 +102,15 @@ describe("TraceReady conversion surface", () => {
     expect(globals).not.toMatch(/overflow-y:\s*hidden/);
   });
 
+  it("does not force the root document into fixed-height utility classes", () => {
+    const layout = fs.readFileSync("src/app/layout.tsx", "utf8");
+
+    expect(layout).toContain("className={`${geistSans.variable} ${geistMono.variable} antialiased`}");
+    expect(layout).toContain('className="flex min-h-screen flex-col"');
+    expect(layout).not.toContain("h-full antialiased");
+    expect(layout).not.toContain("min-h-full flex flex-col");
+  });
+
   it("keeps the real proof asset directly after the hero instead of inside it", () => {
     act(() => {
       root.render(<TraceReadyWorkbench />);
@@ -179,6 +188,8 @@ describe("TraceReady conversion surface", () => {
     expect(headerText).not.toContain("public and private product launches");
     expect(headerText).not.toContain("enough spreadsheet mileage");
     expect(headerText).not.toContain("No enterprise theater");
+    expect(headerText).not.toContain("file-room brain");
+    expect(headerText).not.toContain("spreadsheet bouncer");
     expect(headerText).not.toContain("teddyalston.com");
     expect(headerText).not.toContain("Teddy");
     expect(headerText).not.toContain("Orlando");
@@ -201,25 +212,27 @@ describe("TraceReady conversion surface", () => {
     const operatorText = operatorSection?.textContent ?? "";
 
     expect(operatorText).toContain(
-      "Built by the kind of operator who treats one missing column like a small fire.",
+      "Built by an operator with a file-room brain and a launch checklist.",
     );
     expect(operatorText).toContain(
-      "TraceReady is a spreadsheet bouncer: IDs at the door, coordinates checked against reality, over-4ha points sent back for polygons, and missing supplier facts left blank instead of dressed up for the buyer.",
+      "TraceReady is a spreadsheet bouncer: IDs at the door, coordinates sober-checked, over-4ha points kicked back for polygons, and unknown supplier facts left blank until someone can prove them.",
     );
-    expect(operatorText).toContain("Public proof beats biography here");
-    expect(operatorText).toContain("buyer handoff workflows");
-    expect(operatorText).toContain("regulated advisory work across hundreds of client files");
-    expect(operatorText).toContain("AI systems delivery");
-    expect(operatorText).toContain("launch QA");
-    expect(operatorText).toContain("automation handoffs");
+    expect(operatorText).toContain("client-facing compliance operations");
+    expect(operatorText).toContain("AI workflow builds");
+    expect(operatorText).toContain("payment handoffs");
+    expect(operatorText).toContain("QA evidence");
     expect(operatorText).toContain("audit exports");
     expect(operatorText).toContain("row-level defects");
-    expect(operatorText).toContain("privacy guardrails");
+    expect(operatorText).toContain("privacy boundaries");
+    expect(operatorText).toContain("buyer-readable repair boundary");
     expect(operatorText).toContain("Regulated-file reflex");
-    expect(operatorText).toContain("Years around regulated tax and advisory files across hundreds of client matters");
+    expect(operatorText).toContain("Regulated advisory work trains boring habits");
     expect(operatorText).toContain("AI systems with receipts");
+    expect(operatorText).toContain("Traceability cleanup");
+    expect(operatorText).toContain("SaaS prototypes");
+    expect(operatorText).toContain("automation workflows");
     expect(operatorText).toContain("Private data stays local first");
-    expect(operatorText).toContain("Concierge cleanup desk");
+    expect(operatorText).toContain("Buyer handoff over theater");
     expect(operatorText).not.toContain("Founder proof");
     expect(operatorText).not.toContain("teddyalston.com");
     expect(operatorText).not.toContain("Teddy");

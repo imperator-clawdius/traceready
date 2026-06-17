@@ -46,8 +46,9 @@ describe("launch verifier route manifest", () => {
     expect(appRootBlock).toContain("missing facts were not invented");
     expect(appRootBlock).toContain("records ready for buyer handoff");
     expect(appRootBlock).toContain("Cleanup-desk credibility");
-    expect(appRootBlock).toContain("one missing column like a small fire");
+    expect(appRootBlock).toContain("file-room brain and a launch checklist");
     expect(appRootBlock).toContain("spreadsheet bouncer");
+    expect(appRootBlock).toContain("buyer-readable repair boundary");
   });
 
   it("checks the documented pilot route in live launch verification", () => {
