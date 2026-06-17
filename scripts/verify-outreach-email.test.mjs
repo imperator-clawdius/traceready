@@ -107,6 +107,33 @@ describe("outreach email verifier", () => {
     expect(evidenceResult.errors).toContain("receivedAt must be after challengeCreatedAt");
   });
 
+  it("rejects incomplete challenge metadata in reply-capture evidence", () => {
+    const evidenceResult = evaluateReplyCaptureEvidence({
+      contactEmail: "founder@traceready.online",
+      receivedInControlledInbox: true,
+      receivedAt: "2026-06-17T03:04:00.000Z",
+      challengeToken: "trc-test-1234",
+    });
+
+    expect(evidenceResult.ready).toBe(false);
+    expect(evidenceResult.errors).toContain("challengeCreatedAt must be a valid ISO timestamp when challenge metadata is present");
+    expect(evidenceResult.errors).toContain("challengeSubject must be a non-empty string when challenge metadata is present");
+  });
+
+  it("rejects challenge evidence whose subject does not contain the challenge token", () => {
+    const evidenceResult = evaluateReplyCaptureEvidence({
+      contactEmail: "founder@traceready.online",
+      receivedInControlledInbox: true,
+      receivedAt: "2026-06-17T03:04:00.000Z",
+      challengeToken: "trc-test-1234",
+      challengeCreatedAt: "2026-06-17T03:00:00.000Z",
+      challengeSubject: "TraceReady reply-capture test wrong-token",
+    });
+
+    expect(evidenceResult.ready).toBe(false);
+    expect(evidenceResult.errors).toContain("challengeSubject must include challengeToken");
+  });
+
   it("flags the current pre-send failure mode when DMARC and DKIM are missing", () => {
     const report = evaluateOutreachEmailDns({
       mxRecords: NAMECHEAP_MX,

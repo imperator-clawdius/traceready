@@ -104,12 +104,25 @@ export function evaluateReplyCaptureEvidence(evidence, { contactEmail = DEFAULT_
     errors.push("receivedAt must be a valid ISO timestamp");
   }
 
-  if ("challengeToken" in evidence && !String(evidence.challengeToken ?? "").trim()) {
-    errors.push("challengeToken must be a non-empty string when present");
+  const hasChallengeMetadata =
+    "challengeToken" in evidence || "challengeCreatedAt" in evidence || "challengeSubject" in evidence;
+  const challengeToken = String(evidence?.challengeToken ?? "").trim();
+  const challengeSubject = String(evidence?.challengeSubject ?? "").trim();
+
+  if (hasChallengeMetadata && !challengeToken) {
+    errors.push("challengeToken must be a non-empty string when challenge metadata is present");
   }
 
-  if ("challengeCreatedAt" in evidence && Number.isNaN(Date.parse(evidence.challengeCreatedAt))) {
-    errors.push("challengeCreatedAt must be a valid ISO timestamp when present");
+  if (hasChallengeMetadata && (!evidence.challengeCreatedAt || Number.isNaN(Date.parse(evidence.challengeCreatedAt)))) {
+    errors.push("challengeCreatedAt must be a valid ISO timestamp when challenge metadata is present");
+  }
+
+  if (hasChallengeMetadata && !challengeSubject) {
+    errors.push("challengeSubject must be a non-empty string when challenge metadata is present");
+  }
+
+  if (challengeToken && challengeSubject && !challengeSubject.includes(challengeToken)) {
+    errors.push("challengeSubject must include challengeToken");
   }
 
   if (
