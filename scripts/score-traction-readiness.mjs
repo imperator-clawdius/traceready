@@ -11,6 +11,7 @@ const DEFAULT_BATCH_PATH = "docs/proof-led-outreach-batch-02.csv";
 const DEFAULT_RESULTS_PATH = "private/outreach-results-batch-02.csv";
 const DEFAULT_SENDABILITY_AUDIT_PATH = "private/outreach-sendability-audit-batch-02.json";
 const DEFAULT_CONTACT_RECON_PATH = "private/outreach-contact-recon-batch-02.json";
+const DEFAULT_LIVE_SUBMIT_REPORT_PATH = "private/submit-route-live-check.md";
 
 export function scoreTractionReadiness({
   publicAuditMarkdown,
@@ -21,6 +22,7 @@ export function scoreTractionReadiness({
   emailReport,
   sendReadyPackets,
   submitPreflightPackets,
+  liveSubmitReport,
 }) {
   const publicProof = parsePublicProof(publicAuditMarkdown);
   const resultsSummary = summarizeOutreachResults(resultRows);
@@ -34,6 +36,7 @@ export function scoreTractionReadiness({
   }));
   const packetVerification = verifySendReadyPackets(readyRouteSummaries, sendReadyPackets);
   const submitPreflightVerification = verifySubmitPreflightPackets(readyRouteSummaries, submitPreflightPackets);
+  const liveSubmitVerification = parseLiveSubmitReport(liveSubmitReport);
   const submissionEvidence = verifySubmissionEvidence(resultRows);
   const reconSummary = contactRecon?.summary ?? {};
   const emailChecks = Object.fromEntries((emailReport?.checks ?? []).map((check) => [check.label, check.ready]));
@@ -45,6 +48,10 @@ export function scoreTractionReadiness({
             submitPreflightVerification.missingConfirmationRoutes.length >
             0
         ? "proof_ready_routes_need_submit_preflights"
+        : liveSubmitVerification.checked && liveSubmitVerification.status !== "pass"
+          ? "proof_ready_live_submit_routes_blocked"
+        : liveSubmitVerification.checked && submitPreflightVerification.checked && resultsSummary.sentOrBeyond === 0 && readyRoutes.length > 0
+          ? "proof_ready_live_submit_ready_traction_unmeasured"
         : submitPreflightVerification.checked && resultsSummary.sentOrBeyond === 0 && readyRoutes.length > 0
           ? "proof_ready_submit_preflight_ready_traction_unmeasured"
       : resultsSummary.sentOrBeyond === 0 && readyRoutes.length > 0
@@ -74,6 +81,15 @@ export function scoreTractionReadiness({
       submitPreflightReadyRoutes: submitPreflightVerification.preflightReadyRoutes,
       missingSubmitPreflightRoutes: submitPreflightVerification.missingPreflightRoutes,
       missingSubmitPreflightConfirmationRoutes: submitPreflightVerification.missingConfirmationRoutes,
+      liveSubmitStatus: liveSubmitVerification.checked ? liveSubmitVerification.status : "not checked",
+      liveSubmitReadyRoutes: liveSubmitVerification.liveReadyRoutes,
+      liveSubmitBlockedRoutes: liveSubmitVerification.blockedRoutes,
+      liveSubmitCaptchaRoutes: liveSubmitVerification.captchaRoutes,
+      liveSubmitMissingQueueRoutes: liveSubmitVerification.missingQueueRoutes,
+      liveSubmitStaleQueueRoutes: liveSubmitVerification.staleQueueRoutes,
+      liveSubmitFetchErrorRoutes: liveSubmitVerification.fetchErrorRoutes,
+      liveSubmitHttpBlockedRouteIds: liveSubmitVerification.httpBlockedRouteIds,
+      liveSubmitCaptchaRouteIds: liveSubmitVerification.captchaRouteIds,
       sentOrBeyond: resultsSummary.sentOrBeyond,
       evidenceBackedSubmissions: submissionEvidence.evidenceBackedSubmissions,
       unevidencedSentRoutes: submissionEvidence.unevidencedSentRoutes,
@@ -97,6 +113,8 @@ export function scoreTractionReadiness({
               submitPreflightVerification.missingConfirmationRoutes.length >
               0
           ? "render_missing_submit_preflights"
+          : liveSubmitVerification.checked && liveSubmitVerification.status !== "pass"
+            ? "refresh_or_replace_blocked_submit_routes"
         : submissionEvidence.unevidencedSentRoutes.length > 0
           ? "record_visible_success_evidence_before_measuring_traction"
         : resultsSummary.sentOrBeyond === 0 && readyRoutes.length > 0
@@ -156,6 +174,10 @@ Next gate: \`${score.nextGate}\`
 | Submit preflights with matching confirmation | ${score.outreach.submitPreflightReadyRoutes ?? "not checked"} |
 | Missing submit preflights | ${(score.outreach.missingSubmitPreflightRoutes ?? []).length} |
 | Submit preflights missing confirmation | ${(score.outreach.missingSubmitPreflightConfirmationRoutes ?? []).length} |
+| Live submit routes checked | ${score.outreach.liveSubmitStatus ?? "not checked"} |
+| Live submit routes ready | ${score.outreach.liveSubmitReadyRoutes ?? "not checked"} |
+| Live submit routes HTTP-blocked | ${score.outreach.liveSubmitBlockedRoutes ?? "not checked"} |
+| Live submit routes CAPTCHA/challenge | ${score.outreach.liveSubmitCaptchaRoutes ?? "not checked"} |
 | Blocked sendability routes | ${score.outreach.blockedSendabilityRoutes} |
 | External submissions completed | ${score.outreach.sentOrBeyond} |
 | Evidence-backed submissions | ${score.outreach.evidenceBackedSubmissions} |
@@ -185,6 +207,16 @@ ${readyRouteLines.join("\n")}
 | --- | --- |
 | Missing submit preflight files | ${(score.outreach.missingSubmitPreflightRoutes ?? []).length ? score.outreach.missingSubmitPreflightRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 | Submit preflights missing confirmation | ${(score.outreach.missingSubmitPreflightConfirmationRoutes ?? []).length ? score.outreach.missingSubmitPreflightConfirmationRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
+
+## Live Submit Route Guard
+
+| Check | Route IDs |
+| --- | --- |
+| Missing from submit queue | ${(score.outreach.liveSubmitMissingQueueRoutes ?? []).length ? score.outreach.liveSubmitMissingQueueRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
+| Queue URL differs from sendability audit | ${(score.outreach.liveSubmitStaleQueueRoutes ?? []).length ? score.outreach.liveSubmitStaleQueueRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
+| Fetch errors | ${(score.outreach.liveSubmitFetchErrorRoutes ?? []).length ? score.outreach.liveSubmitFetchErrorRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
+| HTTP blocked | ${(score.outreach.liveSubmitHttpBlockedRouteIds ?? []).length ? score.outreach.liveSubmitHttpBlockedRouteIds.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
+| CAPTCHA or browser challenge marker | ${(score.outreach.liveSubmitCaptchaRouteIds ?? []).length ? score.outreach.liveSubmitCaptchaRouteIds.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 
 ## Submission Evidence Guard
 
@@ -235,6 +267,7 @@ export function parseTractionReadinessArgs(argv) {
     resultsPath: DEFAULT_RESULTS_PATH,
     sendabilityAuditPath: DEFAULT_SENDABILITY_AUDIT_PATH,
     contactReconPath: DEFAULT_CONTACT_RECON_PATH,
+    liveSubmitReportPath: DEFAULT_LIVE_SUBMIT_REPORT_PATH,
     generatedAt: new Date().toISOString().slice(0, 10),
   };
 
@@ -265,6 +298,8 @@ export function parseTractionReadinessArgs(argv) {
       options.sendabilityAuditPath = value;
     } else if (flag === "--contact-recon") {
       options.contactReconPath = value;
+    } else if (flag === "--live-submit-report") {
+      options.liveSubmitReportPath = value;
     } else if (flag === "--output") {
       options.outputPath = value;
     } else if (flag === "--today") {
@@ -309,6 +344,14 @@ export async function loadSubmitPreflightPackets(readyRoutes) {
   );
 
   return Object.fromEntries(entries);
+}
+
+export async function loadLiveSubmitReport(reportPath = DEFAULT_LIVE_SUBMIT_REPORT_PATH) {
+  try {
+    return await fs.readFile(reportPath, "utf8");
+  } catch {
+    return "";
+  }
 }
 
 function parsePublicProof(markdown) {
@@ -392,6 +435,42 @@ function verifySubmitPreflightPackets(readyRoutes, submitPreflightPackets) {
   };
 }
 
+function parseLiveSubmitReport(markdown) {
+  const text = String(markdown ?? "");
+  const summary = text.match(
+    /OUTREACH_SUBMIT_LIVE=(\w+)\s+ready_routes=(\d+)\s+live_ready=(\d+)\s+blocked=(\d+)\s+captcha=(\d+)/,
+  );
+
+  if (!summary) {
+    return {
+      checked: false,
+      status: "not checked",
+      liveReadyRoutes: undefined,
+      blockedRoutes: undefined,
+      captchaRoutes: undefined,
+      missingQueueRoutes: [],
+      staleQueueRoutes: [],
+      fetchErrorRoutes: [],
+      httpBlockedRouteIds: [],
+      captchaRouteIds: [],
+    };
+  }
+
+  return {
+    checked: true,
+    status: summary[1],
+    readyRoutes: Number(summary[2]),
+    liveReadyRoutes: Number(summary[3]),
+    blockedRoutes: Number(summary[4]),
+    captchaRoutes: Number(summary[5]),
+    missingQueueRoutes: extractRouteSet(text, "Missing from submit queue"),
+    staleQueueRoutes: extractRouteSet(text, "Queue URL differs from sendability audit"),
+    fetchErrorRoutes: extractRouteSet(text, "Fetch errors"),
+    httpBlockedRouteIds: extractRouteSet(text, "HTTP blocked"),
+    captchaRouteIds: extractRouteSet(text, "CAPTCHA or browser challenge marker"),
+  };
+}
+
 function verifySubmissionEvidence(resultRows) {
   const sentRows = resultRows.filter((row) => row.status !== "not_sent");
   const evidenceBackedRows = sentRows.filter((row) => hasSubmissionEvidence(row));
@@ -434,6 +513,11 @@ function extractText(markdown, label) {
   const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const match = markdown.match(new RegExp(`\\|\\s*\`?${escaped}\`?\\s*\\|\\s*([^|]+?)\\s*\\|`, "i"));
   return match ? match[1].trim().replace(/^`|`$/g, "") : "";
+}
+
+function extractRouteSet(markdown, label) {
+  const routeCell = extractText(markdown, label);
+  return Array.from(routeCell.matchAll(/\b(b\d{2}-r\d{2})\b/g)).map((match) => match[1]);
 }
 
 function statusFor(value) {
@@ -481,8 +565,11 @@ async function main() {
       company_or_channel: route.company_or_channel ?? batchRows.find((row) => row.route_id === route.route_id)?.company_or_channel ?? route.route_id,
       route_url: route.route_url,
     }));
-  const sendReadyPackets = await loadSendReadyPackets(readyRoutesForPackets);
-  const submitPreflightPackets = await loadSubmitPreflightPackets(readyRoutesForPackets);
+  const [sendReadyPackets, submitPreflightPackets, liveSubmitReport] = await Promise.all([
+    loadSendReadyPackets(readyRoutesForPackets),
+    loadSubmitPreflightPackets(readyRoutesForPackets),
+    loadLiveSubmitReport(options.liveSubmitReportPath),
+  ]);
   const score = scoreTractionReadiness({
     publicAuditMarkdown,
     batchRows,
@@ -492,6 +579,7 @@ async function main() {
     emailReport,
     sendReadyPackets,
     submitPreflightPackets,
+    liveSubmitReport,
   });
   const markdown = renderTractionReadinessScorecard(score, { generatedAt: options.generatedAt });
 
@@ -509,6 +597,7 @@ async function main() {
       `ready_routes=${score.outreach.readyBrowserFormRoutes}`,
       `packet_ready=${score.outreach.packetReadyRoutes}`,
       `preflight_ready=${score.outreach.submitPreflightReadyRoutes}`,
+      `live_ready=${score.outreach.liveSubmitReadyRoutes ?? "not_checked"}`,
       `sent=${score.outreach.sentOrBeyond}`,
       `replies=${score.outreach.replies}`,
       `file_checks=${score.outreach.fileChecks}`,

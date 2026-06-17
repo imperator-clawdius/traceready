@@ -51,6 +51,36 @@ const SUBMIT_PREFLIGHT_PACKETS = {
   "b02-r04": 'OUTREACH_SUBMIT_PREFLIGHT=pass route=b02-r04 company="Bureau Veritas" reply_capture=at_risk\nConfirm: submit b02-r04 to Bureau Veritas using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-b02-r04.md.',
 };
 
+const LIVE_SUBMIT_REPORT_PASS = `# TraceReady live submit route check - 2026-06-17
+
+OUTREACH_SUBMIT_LIVE=pass ready_routes=2 live_ready=2 blocked=0 captcha=0
+
+## Blocking Sets
+
+| Check | Route IDs |
+| --- | --- |
+| Missing from submit queue | none |
+| Queue URL differs from sendability audit | none |
+| Fetch errors | none |
+| HTTP blocked | none |
+| CAPTCHA or browser challenge marker | none |
+`;
+
+const LIVE_SUBMIT_REPORT_PENDING = `# TraceReady live submit route check - 2026-06-17
+
+OUTREACH_SUBMIT_LIVE=pending ready_routes=2 live_ready=1 blocked=1 captcha=0
+
+## Blocking Sets
+
+| Check | Route IDs |
+| --- | --- |
+| Missing from submit queue | none |
+| Queue URL differs from sendability audit | none |
+| Fetch errors | none |
+| HTTP blocked | \`b02-r04\` |
+| CAPTCHA or browser challenge marker | none |
+`;
+
 describe("traction readiness scorecard", () => {
   it("separates quantified proof, ready routes, unmeasured traction, and email risk", () => {
     const score = scoreTractionReadiness({
@@ -162,6 +192,94 @@ describe("traction readiness scorecard", () => {
     expect(markdown).toContain("| Missing submit preflights | 0 |");
     expect(markdown).toContain("| Submit preflights missing confirmation | 0 |");
     expect(markdown).toContain("## Submit Preflight Guard");
+  });
+
+  it("promotes submit-ready routes when a live submit route report is passing", () => {
+    const score = scoreTractionReadiness({
+      publicAuditMarkdown: PUBLIC_AUDIT,
+      batchRows: parseOutreachLedger(BATCH_CSV),
+      resultRows: parseOutreachResults(RESULTS_CSV),
+      sendabilityAudit: {
+        routes: [
+          {
+            route_id: "b02-r03",
+            company_or_channel: "Control Union",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://www.controlunion.com/eu-deforestation-regulation-eudr/",
+            requires_action_time_confirmation: true,
+          },
+          {
+            route_id: "b02-r04",
+            company_or_channel: "Bureau Veritas",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://news.bureauveritas.net/l/591681/2024-10-25/3t89vtv",
+            requires_action_time_confirmation: true,
+          },
+        ],
+      },
+      contactRecon: { summary: {} },
+      emailReport: { ready: false, dnsReady: false, checks: [] },
+      sendReadyPackets: SEND_READY_PACKETS,
+      submitPreflightPackets: SUBMIT_PREFLIGHT_PACKETS,
+      liveSubmitReport: LIVE_SUBMIT_REPORT_PASS,
+    });
+
+    expect(score.outreach.liveSubmitStatus).toBe("pass");
+    expect(score.outreach.liveSubmitReadyRoutes).toBe(2);
+    expect(score.outreach.liveSubmitBlockedRoutes).toBe(0);
+    expect(score.outreach.liveSubmitCaptchaRoutes).toBe(0);
+    expect(score.currentState).toBe("proof_ready_live_submit_ready_traction_unmeasured");
+
+    const markdown = renderTractionReadinessScorecard(score, { generatedAt: "2026-06-17" });
+    expect(markdown).toContain("| Live submit routes checked | pass |");
+    expect(markdown).toContain("| Live submit routes ready | 2 |");
+    expect(markdown).toContain("| Live submit routes HTTP-blocked | 0 |");
+    expect(markdown).toContain("| Live submit routes CAPTCHA/challenge | 0 |");
+    expect(markdown).toContain("## Live Submit Route Guard");
+  });
+
+  it("blocks action-time submission when the live submit route report has route blockers", () => {
+    const score = scoreTractionReadiness({
+      publicAuditMarkdown: PUBLIC_AUDIT,
+      batchRows: parseOutreachLedger(BATCH_CSV),
+      resultRows: parseOutreachResults(RESULTS_CSV),
+      sendabilityAudit: {
+        routes: [
+          {
+            route_id: "b02-r03",
+            company_or_channel: "Control Union",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://www.controlunion.com/eu-deforestation-regulation-eudr/",
+            requires_action_time_confirmation: true,
+          },
+          {
+            route_id: "b02-r04",
+            company_or_channel: "Bureau Veritas",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://news.bureauveritas.net/l/591681/2024-10-25/3t89vtv",
+            requires_action_time_confirmation: true,
+          },
+        ],
+      },
+      contactRecon: { summary: {} },
+      emailReport: { ready: false, dnsReady: false, checks: [] },
+      sendReadyPackets: SEND_READY_PACKETS,
+      submitPreflightPackets: SUBMIT_PREFLIGHT_PACKETS,
+      liveSubmitReport: LIVE_SUBMIT_REPORT_PENDING,
+    });
+
+    expect(score.outreach.liveSubmitStatus).toBe("pending");
+    expect(score.outreach.liveSubmitReadyRoutes).toBe(1);
+    expect(score.outreach.liveSubmitBlockedRoutes).toBe(1);
+    expect(score.currentState).toBe("proof_ready_live_submit_routes_blocked");
+    expect(score.nextGate).toBe("refresh_or_replace_blocked_submit_routes");
+
+    const markdown = renderTractionReadinessScorecard(score, { generatedAt: "2026-06-17" });
+    expect(markdown).toContain("| HTTP blocked | `b02-r04` |");
   });
 
   it("changes the next gate when a browser-form-ready route is missing a matching send packet", () => {
