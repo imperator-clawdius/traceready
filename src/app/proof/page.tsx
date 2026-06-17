@@ -35,6 +35,10 @@ const AUDIT_STATS = [
   },
 ];
 
+const EU_EUDR_FAQ_HREF =
+  "https://www.eeas.europa.eu/sites/default/files/documents/2024/240314_EN_FAQ%20EUDR%20%281%29_0.pdf";
+const DAARNHOUWER_GEOLOCATION_GUIDE_HREF = "https://daarnhouwer.com/eudr/eudr-geolocation-data/";
+
 export const metadata = {
   title: "Proof | TraceReady",
   description: "TraceReady public-data pilot, exact issue counts, output format, and buyer-facing limits.",
@@ -88,6 +92,59 @@ export default function ProofPage() {
             </p>
           </section>
         </div>
+
+        <section className="mt-6 border border-[#d9bf92] bg-[#fffaf2] p-6 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-700">
+            Real-world problem
+          </p>
+          <h2 className="mt-3 text-2xl font-semibold tracking-tight text-[#2b190f]">
+            The buyer handoff fails before legal review starts.
+          </h2>
+          <p className="mt-4 max-w-3xl text-sm leading-7 text-zinc-700">
+            TraceReady&apos;s public proof is not founder biography. It is a measured file problem:
+            the regulation asks for plot-level geolocation, buyers ask suppliers for structured
+            farm files, and 57,658 rows with coordinates still produced a repair brief instead of a
+            buyer-ready pack.
+          </p>
+
+          <div className="mt-5 grid gap-3 lg:grid-cols-3">
+            <article className="border border-[#eadcc8] bg-white p-4">
+              <h3 className="text-sm font-semibold text-[#2b190f]">Regulatory pressure</h3>
+              <p className="mt-2 text-xs leading-5 text-zinc-600">
+                The{" "}
+                <a
+                  href={EU_EUDR_FAQ_HREF}
+                  className="font-semibold text-emerald-700 hover:text-emerald-800"
+                >
+                  EU EUDR FAQ
+                </a>{" "}
+                says due diligence statements need plot coordinates, and plots over 4 hectares
+                need polygon boundaries instead of a single point.
+              </p>
+            </article>
+            <article className="border border-[#eadcc8] bg-white p-4">
+              <h3 className="text-sm font-semibold text-[#2b190f]">Buyer handoff pressure</h3>
+              <p className="mt-2 text-xs leading-5 text-zinc-600">
+                The{" "}
+                <a
+                  href={DAARNHOUWER_GEOLOCATION_GUIDE_HREF}
+                  className="font-semibold text-emerald-700 hover:text-emerald-800"
+                >
+                  Daarnhouwer supplier geolocation guide
+                </a>{" "}
+                asks coffee and cocoa suppliers for WGS84 GeoJSON, CSV, or Excel geolocation
+                files with a unique and persistent farm ID.
+              </p>
+            </article>
+            <article className="border border-[#eadcc8] bg-white p-4">
+              <h3 className="text-sm font-semibold text-[#2b190f]">Measured TraceReady proof</h3>
+              <p className="mt-2 text-xs leading-5 text-zinc-600">
+                Public audit result: 0 buyer-ready records, 46,134 point-only plots over 4
+                hectares, and every row missing plot ID and supplier identity.
+              </p>
+            </article>
+          </div>
+        </section>
 
         <section className="mt-6 border border-emerald-800 bg-[#123f34] p-6 text-white shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-100">

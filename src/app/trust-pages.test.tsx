@@ -200,6 +200,33 @@ describe("TraceReady trust pages", () => {
     expect(cbiLink?.getAttribute("href")).toBe("https://www.cbi.eu/market-information/coffee/tips-become-eudr-compliant");
   });
 
+  it("connects the measured public audit to real EUDR buyer handoff pressure", () => {
+    act(() => {
+      root.render(<ProofPage />);
+    });
+
+    const pageText = container.textContent ?? "";
+    const sourceLinks = Array.from(container.querySelectorAll("a"));
+    const euFaqLink = sourceLinks.find((element) => element.textContent?.includes("EU EUDR FAQ"));
+    const importerGuideLink = sourceLinks.find((element) =>
+      element.textContent?.includes("Daarnhouwer supplier geolocation guide"),
+    );
+
+    expect(pageText).toContain("Real-world problem");
+    expect(pageText).toContain("The buyer handoff fails before legal review starts");
+    expect(pageText).toContain("0 buyer-ready records");
+    expect(pageText).toContain("57,658 rows with coordinates still produced a repair brief");
+    expect(pageText).toContain("46,134 point-only plots over 4 hectares");
+    expect(pageText).toContain("every row missing plot ID and supplier identity");
+    expect(pageText).toContain("WGS84 GeoJSON, CSV, or Excel");
+    expect(pageText).toContain("unique and persistent farm ID");
+    expect(pageText).toContain("not founder biography");
+    expect(euFaqLink?.getAttribute("href")).toBe(
+      "https://www.eeas.europa.eu/sites/default/files/documents/2024/240314_EN_FAQ%20EUDR%20%281%29_0.pdf",
+    );
+    expect(importerGuideLink?.getAttribute("href")).toBe("https://daarnhouwer.com/eudr/eudr-geolocation-data/");
+  });
+
   it("publishes a standalone public cocoa pilot case page for cold outreach proof", () => {
     act(() => {
       root.render(<PublicCocoaPilotPage />);
