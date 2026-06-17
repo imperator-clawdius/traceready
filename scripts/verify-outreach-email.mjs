@@ -319,7 +319,7 @@ export function renderOutreachEmailReport(report) {
     lines.push("OUTREACH_EMAIL_DKIM_NEXT=add the DKIM TXT/CNAME records from the outbound mail provider");
     if (!report.replyCaptureReady) {
       lines.push(
-        `OUTREACH_EMAIL_ALIAS_NEXT=create Namecheap Redirect Email alias founder -> controlled inbox; run \`npm run prepare:reply-capture -- --output private/reply-capture-challenge.json --contact founder@traceready.online --handoff-output private/reply-capture-handoff.md --email-draft-output private/reply-capture-email.eml\`; send the generated subject to founder@traceready.online; record private reply-capture evidence with \`${recordCommand}\`; then rerun with --reply-capture-evidence and --reply-capture-challenge`,
+        `OUTREACH_EMAIL_ALIAS_NEXT=create Namecheap Redirect Email alias founder -> controlled inbox; run \`npm run prepare:reply-capture -- --output private/reply-capture-challenge.json --contact founder@traceready.online --handoff-output private/reply-capture-handoff.md --email-draft-output private/reply-capture-email.eml\`; send the generated subject to founder@traceready.online; record private reply-capture evidence with \`${recordCommand}\`, or save private/reply-capture-received.eml and run \`npm run finalize:reply-capture\`; then rerun with --reply-capture-evidence and --reply-capture-challenge`,
       );
     }
   }
@@ -376,6 +376,14 @@ export function renderOutreachEmailRunbook(report, options = {}) {
     "- Send from a separate mailbox, not from the forwarding destination.",
     "",
     "After the message arrives, save the received message source as `private/reply-capture-received.eml`, then record evidence:",
+    "",
+    "If the `.eml` file is already saved, run the finalizer directly:",
+    "",
+    "```powershell",
+    "npm run finalize:reply-capture",
+    "```",
+    "",
+    "Or record the evidence explicitly:",
     "",
     "```powershell",
     recordCommand,

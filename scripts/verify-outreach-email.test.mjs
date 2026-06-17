@@ -187,6 +187,7 @@ describe("outreach email verifier", () => {
     expect(rendered).toContain("--email-draft-output private/reply-capture-email.eml");
     expect(rendered).toContain("record private reply-capture evidence");
     expect(rendered).toContain("--from-eml private/reply-capture-received.eml");
+    expect(rendered).toContain("or save private/reply-capture-received.eml and run `npm run finalize:reply-capture`");
     expect(rendered).toContain("then rerun with --reply-capture-evidence and --reply-capture-challenge");
   });
 
@@ -292,6 +293,8 @@ describe("outreach email verifier", () => {
     expect(markdown).toContain("private/reply-capture-handoff.md");
     expect(markdown).toContain("private/reply-capture-email.eml");
     expect(markdown).toContain("Current challenge subject: `TraceReady reply-capture test trc-test-1234`");
+    expect(markdown).toContain("If the `.eml` file is already saved, run the finalizer directly:");
+    expect(markdown).toContain("npm run finalize:reply-capture");
     expect(markdown).toContain(
       "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --from-eml private/reply-capture-received.eml --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
     );

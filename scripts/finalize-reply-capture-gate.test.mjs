@@ -28,6 +28,7 @@ describe("reply-capture gate finalizer", () => {
     expect(result.reason).toBe("missing_reply_capture_evidence");
     expect(report).toContain("REPLY_CAPTURE_GATE=pending reason=missing_reply_capture_evidence");
     expect(report).toContain("send the email in private/reply-capture-handoff.md");
+    expect(report).toContain("REPLY_CAPTURE_GATE_EML=private/reply-capture-received.eml");
     expect(report).toContain(
       "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --from-eml private/reply-capture-received.eml --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
     );
@@ -100,6 +101,76 @@ describe("reply-capture gate finalizer", () => {
     expect(report).toContain("preflight_queue=private/preflight-submit-queue.md");
   });
 
+  it("records a saved received eml before refreshing scorecard and submit queue", async () => {
+    const calls = [];
+    const recordCalls = [];
+    const result = await finalizeReplyCaptureGate(
+      {
+        today: "2026-06-20",
+        evidencePath: "private/reply-capture-evidence.json",
+        challengePath: "private/reply-capture-challenge.json",
+        emlPath: "private/reply-capture-received.eml",
+        scorecardPath: "private/traction-readiness-scorecard-2026-06-20.md",
+      },
+      {
+        exists: async (filePath) =>
+          filePath === "private/reply-capture-challenge.json" ||
+          filePath === "private/reply-capture-received.eml",
+        loadChallenge: async () => ({
+          contactEmail: "founder@traceready.online",
+          createdAt: "2026-06-17T03:00:00.000Z",
+          challengeToken: "trc-test-1234",
+          subject: "TraceReady reply-capture test trc-test-1234",
+        }),
+        recordEvidence: async (options) => {
+          recordCalls.push(options);
+          return {
+            outputPath: options.outputPath,
+            evidence: {
+              contactEmail: options.contactEmail,
+              receivedInControlledInbox: true,
+              receivedAt: "2026-06-17T03:04:00.000Z",
+              challengeToken: "trc-test-1234",
+              challengeCreatedAt: "2026-06-17T03:00:00.000Z",
+              challengeSubject: "TraceReady reply-capture test trc-test-1234",
+            },
+          };
+        },
+        inspectEmail: async () => ({
+          ready: false,
+          replyCaptureReady: true,
+          checks: [
+            { label: "OUTREACH_EMAIL_MX", ready: true },
+            { label: "OUTREACH_EMAIL_ALIAS_TEST", ready: true },
+          ],
+        }),
+        runNodeScript: async (scriptPath, args) => {
+          calls.push({ scriptPath, args });
+          return { stdout: `${scriptPath} ok`, stderr: "" };
+        },
+      },
+    );
+    const report = renderReplyCaptureGateReport(result);
+
+    expect(result.ready).toBe(true);
+    expect(result.autoRecordedEvidence).toBe(true);
+    expect(recordCalls).toEqual([
+      {
+        outputPath: "private/reply-capture-evidence.json",
+        contactEmail: "founder@traceready.online",
+        emlPath: "private/reply-capture-received.eml",
+        challengePath: "private/reply-capture-challenge.json",
+        confirmedControlledInbox: true,
+      },
+    ]);
+    expect(calls.map((call) => call.scriptPath)).toEqual([
+      "scripts/score-traction-readiness.mjs",
+      "scripts/preflight-outreach-submit.mjs",
+    ]);
+    expect(report).toContain("REPLY_CAPTURE_GATE=pass reply_capture_ready=true email_ready=false");
+    expect(report).toContain("REPLY_CAPTURE_GATE_AUTO_RECORDED=private/reply-capture-evidence.json");
+  });
+
   it("parses the finalizer command defaults and overrides", () => {
     expect(
       parseReplyCaptureGateArgs([
@@ -111,6 +182,8 @@ describe("reply-capture gate finalizer", () => {
         "private/custom-challenge.json",
         "--scorecard-output",
         "private/custom-scorecard.md",
+        "--eml",
+        "private/custom-received.eml",
         "--preflight-queue-output",
         "private/custom-queue.md",
       ]),
@@ -119,6 +192,7 @@ describe("reply-capture gate finalizer", () => {
       evidencePath: "private/custom-evidence.json",
       challengePath: "private/custom-challenge.json",
       handoffPath: "private/reply-capture-handoff.md",
+      emlPath: "private/custom-received.eml",
       scorecardPath: "private/custom-scorecard.md",
       preflightOutputDir: "private",
       preflightQueuePath: "private/custom-queue.md",

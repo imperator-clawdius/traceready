@@ -198,6 +198,7 @@ describe("reply-capture evidence recorder", () => {
     expect(readme).toContain(
       "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --from-eml private/reply-capture-received.eml --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
     );
+    expect(readme).toContain("Once `private/reply-capture-received.eml` exists, `npm run finalize:reply-capture` can record it automatically");
     expect(readme).not.toContain("--received-at <received-at-iso>");
     expect(readme).not.toContain("--received-subject <received-subject>");
   });

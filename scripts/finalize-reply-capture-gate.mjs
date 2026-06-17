@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
+import { recordReplyCaptureEvidence } from "./record-reply-capture-evidence.mjs";
 import { inspectOutreachEmailDns } from "./verify-outreach-email.mjs";
 
 const execFileAsync = promisify(execFile);
@@ -9,6 +10,7 @@ const execFileAsync = promisify(execFile);
 const DEFAULT_EVIDENCE_PATH = "private/reply-capture-evidence.json";
 const DEFAULT_CHALLENGE_PATH = "private/reply-capture-challenge.json";
 const DEFAULT_HANDOFF_PATH = "private/reply-capture-handoff.md";
+const DEFAULT_EML_PATH = "private/reply-capture-received.eml";
 const DEFAULT_PREFLIGHT_OUTPUT_DIR = "private";
 const DEFAULT_PREFLIGHT_QUEUE_PATH = "private/preflight-submit-queue.md";
 const CONTACT_EMAIL = "founder@traceready.online";
@@ -19,6 +21,7 @@ export function parseReplyCaptureGateArgs(argv) {
     evidencePath: DEFAULT_EVIDENCE_PATH,
     challengePath: DEFAULT_CHALLENGE_PATH,
     handoffPath: DEFAULT_HANDOFF_PATH,
+    emlPath: DEFAULT_EML_PATH,
     preflightOutputDir: DEFAULT_PREFLIGHT_OUTPUT_DIR,
     preflightQueuePath: DEFAULT_PREFLIGHT_QUEUE_PATH,
   };
@@ -43,6 +46,8 @@ export function parseReplyCaptureGateArgs(argv) {
       parsed.challengePath = value;
     } else if (flag === "--handoff") {
       parsed.handoffPath = value;
+    } else if (flag === "--eml") {
+      parsed.emlPath = value;
     } else if (flag === "--scorecard-output") {
       parsed.scorecardPath = value;
     } else if (flag === "--preflight-output-dir") {
@@ -65,6 +70,7 @@ export async function finalizeReplyCaptureGate(options = {}, dependencies = {}) 
   const evidencePath = options.evidencePath ?? DEFAULT_EVIDENCE_PATH;
   const challengePath = options.challengePath ?? DEFAULT_CHALLENGE_PATH;
   const handoffPath = options.handoffPath ?? DEFAULT_HANDOFF_PATH;
+  const emlPath = options.emlPath ?? DEFAULT_EML_PATH;
   const scorecardPath = options.scorecardPath ?? `private/traction-readiness-scorecard-${today}.md`;
   const preflightOutputDir = options.preflightOutputDir ?? DEFAULT_PREFLIGHT_OUTPUT_DIR;
   const preflightQueuePath = options.preflightQueuePath ?? DEFAULT_PREFLIGHT_QUEUE_PATH;
@@ -72,17 +78,44 @@ export async function finalizeReplyCaptureGate(options = {}, dependencies = {}) 
   const inspectEmail = dependencies.inspectEmail ?? inspectOutreachEmailDns;
   const runNodeScript = dependencies.runNodeScript ?? runNodeScriptDefault;
   const loadChallenge = dependencies.loadChallenge ?? loadReplyCaptureChallenge;
+  const recordEvidence = dependencies.recordEvidence ?? recordReplyCaptureEvidence;
   const replyCaptureChallenge = await loadChallengeIfPresent(challengePath, { exists, loadChallenge });
+  let autoRecordedEvidence = false;
 
   if (!(await exists(evidencePath))) {
-    return {
-      ready: false,
-      reason: "missing_reply_capture_evidence",
-      evidencePath,
-      challengePath,
-      handoffPath,
-      replyCaptureChallenge,
-    };
+    if (await exists(emlPath)) {
+      try {
+        await recordEvidence({
+          outputPath: evidencePath,
+          contactEmail: CONTACT_EMAIL,
+          emlPath,
+          challengePath,
+          confirmedControlledInbox: true,
+        });
+        autoRecordedEvidence = true;
+      } catch (error) {
+        return {
+          ready: false,
+          reason: "reply_capture_eml_not_recorded",
+          evidencePath,
+          challengePath,
+          handoffPath,
+          emlPath,
+          replyCaptureChallenge,
+          error: error instanceof Error ? error.message : String(error),
+        };
+      }
+    } else {
+      return {
+        ready: false,
+        reason: "missing_reply_capture_evidence",
+        evidencePath,
+        challengePath,
+        handoffPath,
+        emlPath,
+        replyCaptureChallenge,
+      };
+    }
   }
 
   const emailReport = await inspectEmail({
@@ -135,10 +168,12 @@ export async function finalizeReplyCaptureGate(options = {}, dependencies = {}) 
     evidencePath,
     challengePath,
     handoffPath,
+    emlPath,
     scorecardPath,
     preflightQueuePath,
     replyCaptureReady,
     emailReady: Boolean(emailReport.ready),
+    autoRecordedEvidence,
     scorecardRun,
     preflightRun,
   };
@@ -150,6 +185,7 @@ export function renderReplyCaptureGateReport(result) {
       `REPLY_CAPTURE_GATE=pending reason=${result.reason}`,
       `REPLY_CAPTURE_GATE_EVIDENCE=${result.evidencePath}`,
       `REPLY_CAPTURE_GATE_CHALLENGE=${result.challengePath}`,
+      `REPLY_CAPTURE_GATE_EML=${result.emlPath}`,
     ];
 
     if (result.reason === "missing_reply_capture_evidence") {
@@ -158,20 +194,28 @@ export function renderReplyCaptureGateReport(result) {
         `REPLY_CAPTURE_GATE_RECORD=\`${recordReplyCaptureCommand({
           evidencePath: result.evidencePath,
           contactEmail: CONTACT_EMAIL,
-          receivedSubject: result.replyCaptureChallenge?.subject,
           challengePath: result.challengePath,
+          emlPath: result.emlPath,
         })}\``,
       );
+    } else if (result.reason === "reply_capture_eml_not_recorded") {
+      lines.push(`REPLY_CAPTURE_GATE_ERROR=${result.error}`);
     }
 
     return `${lines.join("\n")}\n`;
   }
 
-  return `${[
+  const lines = [
     `REPLY_CAPTURE_GATE=pass reply_capture_ready=${result.replyCaptureReady} email_ready=${result.emailReady}`,
     `REPLY_CAPTURE_GATE_SCORECARD=scorecard=${result.scorecardPath}`,
     `REPLY_CAPTURE_GATE_PREFLIGHT=preflight_queue=${result.preflightQueuePath}`,
-  ].join("\n")}\n`;
+  ];
+
+  if (result.autoRecordedEvidence) {
+    lines.push(`REPLY_CAPTURE_GATE_AUTO_RECORDED=${result.evidencePath}`);
+  }
+
+  return `${lines.join("\n")}\n`;
 }
 
 async function pathExists(filePath) {
