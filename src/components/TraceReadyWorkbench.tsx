@@ -192,19 +192,24 @@ const PUBLIC_PILOT_STATS = [
 
 const OPERATOR_PROOF_POINTS = [
   {
-    title: "Regulated-workflow muscle memory",
+    title: "Compliance-paperwork instincts",
     detail:
-      "Built from years of turning ambiguous client paperwork into clean logs, defensible next steps, and boringly clear handoffs.",
+      "Built from regulated paperwork work where vague answers become client risk: issue logs, plain next steps, and handoffs that survive review.",
   },
   {
-    title: "AI systems plus file QA",
+    title: "AI/product launch bench",
     detail:
-      "The same operator bench covers automation, data parsing, browser-side privacy, launch QA, and documentation a buyer can actually inspect.",
+      "The operator bench spans AI systems, automation workflows, launch QA, checkout handoffs, and documentation, so the evidence stays inspectable.",
+  },
+  {
+    title: "Private-file bias",
+    detail:
+      "Supplier coordinates are a competitive map. The first pass runs in the browser, and paid cleanup starts with scoped issue evidence before raw files move anywhere.",
   },
   {
     title: "Concierge cleanup, not seat licenses",
     detail:
-      "Small is the point: one weird CSV, KML, or GeoJSON can get a direct issue log and cleaned-pack boundary before anyone buys a platform.",
+      "Small is the point: one weird CSV, KML, or GeoJSON can get row-level defects, a cleaned-pack boundary, and buyer-facing follow-ups without a platform rollout.",
   },
 ];
 
@@ -567,13 +572,13 @@ export function TraceReadyWorkbench() {
               Cleanup-desk credibility
             </p>
             <h2 className="mt-2 max-w-3xl text-2xl font-semibold leading-tight text-[#2b190f]">
-              Built by a paperwork mechanic, not a procurement committee.
+              Built by a file-cleanup oddball who knows paperwork has teeth.
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-[#6a5137]">
-              TraceReady is operated as a small systems desk for messy buyer handoffs. The useful
-              background is regulated client operations, AI tooling, data QA, privacy boundaries,
-              and launch documentation: all the unglamorous pieces between a broken-file diagnosis
-              and the exact cleanup pack a human can review.
+              The useful background is regulated paperwork, software launch QA, automation systems,
+              data QA, and privacy boundaries. That maps to one job here: find row-level defects,
+              keep supplier coordinates local first, and return the cleanup pack a buyer or
+              consultant can inspect.
             </p>
           </div>
 

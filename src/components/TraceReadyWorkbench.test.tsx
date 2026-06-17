@@ -1,4 +1,5 @@
 import { act } from "react";
+import fs from "node:fs";
 import type { ImgHTMLAttributes } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -86,6 +87,14 @@ describe("TraceReady conversion surface", () => {
     expect(shellClasses).toContain("overflow-x-clip");
     expect(shellClasses).not.toContain("overflow-x-hidden");
     expect(shellClasses).not.toContain("overflow-hidden");
+  });
+
+  it("keeps document-level vertical scrolling explicit", () => {
+    const globals = fs.readFileSync("src/app/globals.css", "utf8");
+
+    expect(globals).toMatch(/html,\s*body\s*{[\s\S]*min-height:\s*100%;[\s\S]*}/);
+    expect(globals).toMatch(/body\s*{[\s\S]*overflow-y:\s*auto;[\s\S]*}/);
+    expect(globals).not.toMatch(/overflow-y:\s*hidden/);
   });
 
   it("keeps the real proof asset directly after the hero instead of inside it", () => {
@@ -184,13 +193,15 @@ describe("TraceReady conversion surface", () => {
     );
     const operatorText = operatorSection?.textContent ?? "";
 
-    expect(operatorText).toContain("Built by a paperwork mechanic");
-    expect(operatorText).toContain("messy buyer handoffs");
-    expect(operatorText).toContain("regulated client operations");
-    expect(operatorText).toContain("AI tooling");
-    expect(operatorText).toContain("data QA");
+    expect(operatorText).toContain("Built by a file-cleanup oddball who knows paperwork has teeth.");
+    expect(operatorText).toContain("regulated paperwork");
+    expect(operatorText).toContain("software launch QA");
+    expect(operatorText).toContain("automation systems");
+    expect(operatorText).toContain("row-level defects");
     expect(operatorText).toContain("privacy boundaries");
-    expect(operatorText).toContain("Regulated-workflow muscle memory");
+    expect(operatorText).toContain("Compliance-paperwork instincts");
+    expect(operatorText).toContain("AI/product launch bench");
+    expect(operatorText).toContain("Private-file bias");
     expect(operatorText).toContain("Concierge cleanup, not seat licenses");
     expect(operatorText).not.toContain("Founder proof");
     expect(operatorText).not.toContain("teddyalston.com");
