@@ -69,6 +69,8 @@ describe("outreach send-ready packet renderer", () => {
     expect(markdown).toContain("- Honeypot / company website: leave blank");
     expect(markdown).toContain("Subject: `Row-level check for messy EUDR farm files`");
     expect(markdown).toContain("46,134 point-only plots over 4 hectares");
+    expect(markdown).toContain("TraceReady is a spreadsheet bouncer");
+    expect(markdown).toContain("Public proof beats biography here");
     expect(markdown).toContain("Worth testing one messy supplier file?");
     expect(markdown).toContain("Only run this after visible browser success");
     expect(markdown).toContain("--route b01-r11 --date-sent 2026-06-16 --status sent");

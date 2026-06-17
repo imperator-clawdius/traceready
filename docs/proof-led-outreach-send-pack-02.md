@@ -6,6 +6,8 @@ Core proof: TraceReady checked 57,658 public cocoa rows and found 46,134 point-o
 Proof flow: Messy public file in; Exact issue counts out; Cleaned pack boundary stated honestly instead of pretending missing IDs, suppliers, batches, or polygons can be invented.
 Real-world bridge: EUDR due-diligence statements need plot coordinates, plots over 4 hectares need polygon boundaries, and buyer handoffs need structured farm files.
 Buyer handoff source: Daarnhouwer asks coffee and cocoa suppliers for WGS84 GeoJSON, CSV, or Excel geolocation files with a unique and persistent farm ID.
+Trust bridge: TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should have brought polygons, refuses to invent missing supplier facts, and hands back the repair list before your buyer has to.
+Public proof beats biography here: the trust asset is the 57,658-row public audit, not a personal resume.
 
 Base public pilot case: https://traceready.online/proof/public-cocoa-pilot/
 Base field note: https://traceready.online/field-notes/eudr-file-errors/
@@ -38,6 +40,9 @@ Hi Preferred by Nature,
 I am looking for EUDR consultants and advisors who run into broken coffee/cocoa supplier files before the real due diligence work can even start.
 
 TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.
+
+Trust bridge: TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should have brought polygons, refuses to invent missing supplier facts, and hands back the repair list before your buyer has to.
+Public proof beats biography here: the trust asset is the 57,658-row public audit, not a personal resume.
 
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
@@ -89,6 +94,9 @@ I am looking for EUDR consultants and advisors who run into broken coffee/cocoa 
 
 TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.
 
+Trust bridge: TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should have brought polygons, refuses to invent missing supplier facts, and hands back the repair list before your buyer has to.
+Public proof beats biography here: the trust asset is the 57,658-row public audit, not a personal resume.
+
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
@@ -138,6 +146,9 @@ Hi Control Union,
 I am looking for EUDR consultants and advisors who run into broken coffee/cocoa supplier files before the real due diligence work can even start.
 
 TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.
+
+Trust bridge: TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should have brought polygons, refuses to invent missing supplier facts, and hands back the repair list before your buyer has to.
+Public proof beats biography here: the trust asset is the 57,658-row public audit, not a personal resume.
 
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
@@ -189,6 +200,9 @@ I am looking for EUDR consultants and advisors who run into broken coffee/cocoa 
 
 TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.
 
+Trust bridge: TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should have brought polygons, refuses to invent missing supplier facts, and hands back the repair list before your buyer has to.
+Public proof beats biography here: the trust asset is the 57,658-row public audit, not a personal resume.
+
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
@@ -238,6 +252,9 @@ Hi Rainforest Alliance,
 I am looking for EUDR consultants and advisors who run into broken coffee/cocoa supplier files before the real due diligence work can even start.
 
 TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.
+
+Trust bridge: TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should have brought polygons, refuses to invent missing supplier facts, and hands back the repair list before your buyer has to.
+Public proof beats biography here: the trust asset is the 57,658-row public audit, not a personal resume.
 
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
@@ -289,6 +306,9 @@ I am looking for EUDR consultants and advisors who run into broken coffee/cocoa 
 
 TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.
 
+Trust bridge: TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should have brought polygons, refuses to invent missing supplier facts, and hands back the repair list before your buyer has to.
+Public proof beats biography here: the trust asset is the 57,658-row public audit, not a personal resume.
+
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
@@ -338,6 +358,9 @@ Hi Anthesis Group,
 I am looking for EUDR consultants and advisors who run into broken coffee/cocoa supplier files before the real due diligence work can even start.
 
 TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.
+
+Trust bridge: TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should have brought polygons, refuses to invent missing supplier facts, and hands back the repair list before your buyer has to.
+Public proof beats biography here: the trust asset is the 57,658-row public audit, not a personal resume.
 
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
@@ -389,6 +412,9 @@ I am looking for EUDR consultants and advisors who run into broken coffee/cocoa 
 
 TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.
 
+Trust bridge: TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should have brought polygons, refuses to invent missing supplier facts, and hands back the repair list before your buyer has to.
+Public proof beats biography here: the trust asset is the 57,658-row public audit, not a personal resume.
+
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
@@ -438,6 +464,9 @@ Hi Global Traceability,
 I am looking for EUDR consultants and advisors who run into broken coffee/cocoa supplier files before the real due diligence work can even start.
 
 TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.
+
+Trust bridge: TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should have brought polygons, refuses to invent missing supplier facts, and hands back the repair list before your buyer has to.
+Public proof beats biography here: the trust asset is the 57,658-row public audit, not a personal resume.
 
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
@@ -489,6 +518,9 @@ I am looking for EUDR consultants and advisors who run into broken coffee/cocoa 
 
 TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.
 
+Trust bridge: TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should have brought polygons, refuses to invent missing supplier facts, and hands back the repair list before your buyer has to.
+Public proof beats biography here: the trust asset is the 57,658-row public audit, not a personal resume.
+
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
@@ -538,6 +570,9 @@ Hi Satelligence,
 I am looking for EUDR consultants and advisors who run into broken coffee/cocoa supplier files before the real due diligence work can even start.
 
 TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.
+
+Trust bridge: TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should have brought polygons, refuses to invent missing supplier facts, and hands back the repair list before your buyer has to.
+Public proof beats biography here: the trust asset is the 57,658-row public audit, not a personal resume.
 
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
@@ -589,6 +624,9 @@ I am looking for EUDR consultants and advisors who run into broken coffee/cocoa 
 
 TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.
 
+Trust bridge: TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should have brought polygons, refuses to invent missing supplier facts, and hands back the repair list before your buyer has to.
+Public proof beats biography here: the trust asset is the 57,658-row public audit, not a personal resume.
+
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
@@ -638,6 +676,9 @@ Hi Geocledian,
 I am looking for EUDR consultants and advisors who run into broken coffee/cocoa supplier files before the real due diligence work can even start.
 
 TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.
+
+Trust bridge: TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should have brought polygons, refuses to invent missing supplier facts, and hands back the repair list before your buyer has to.
+Public proof beats biography here: the trust asset is the 57,658-row public audit, not a personal resume.
 
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
@@ -689,6 +730,9 @@ I am looking for EUDR consultants and advisors who run into broken coffee/cocoa 
 
 TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.
 
+Trust bridge: TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should have brought polygons, refuses to invent missing supplier facts, and hands back the repair list before your buyer has to.
+Public proof beats biography here: the trust asset is the 57,658-row public audit, not a personal resume.
+
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
@@ -738,6 +782,9 @@ Hi Sourcemap,
 I am looking for EUDR consultants and advisors who run into broken coffee/cocoa supplier files before the real due diligence work can even start.
 
 TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.
+
+Trust bridge: TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should have brought polygons, refuses to invent missing supplier facts, and hands back the repair list before your buyer has to.
+Public proof beats biography here: the trust asset is the 57,658-row public audit, not a personal resume.
 
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
@@ -789,6 +836,9 @@ I am looking for EUDR consultants and advisors who run into broken coffee/cocoa 
 
 TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.
 
+Trust bridge: TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should have brought polygons, refuses to invent missing supplier facts, and hands back the repair list before your buyer has to.
+Public proof beats biography here: the trust asset is the 57,658-row public audit, not a personal resume.
+
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
@@ -838,6 +888,9 @@ Hi Koltiva,
 I am looking for EUDR consultants and advisors who run into broken coffee/cocoa supplier files before the real due diligence work can even start.
 
 TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.
+
+Trust bridge: TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should have brought polygons, refuses to invent missing supplier facts, and hands back the repair list before your buyer has to.
+Public proof beats biography here: the trust asset is the 57,658-row public audit, not a personal resume.
 
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
@@ -889,6 +942,9 @@ I am looking for EUDR consultants and advisors who run into broken coffee/cocoa 
 
 TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.
 
+Trust bridge: TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should have brought polygons, refuses to invent missing supplier facts, and hands back the repair list before your buyer has to.
+Public proof beats biography here: the trust asset is the 57,658-row public audit, not a personal resume.
+
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
@@ -939,6 +995,9 @@ I am looking for EUDR consultants and advisors who run into broken coffee/cocoa 
 
 TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.
 
+Trust bridge: TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should have brought polygons, refuses to invent missing supplier facts, and hands back the repair list before your buyer has to.
+Public proof beats biography here: the trust asset is the 57,658-row public audit, not a personal resume.
+
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.
 Cleaned pack boundary: TraceReady did not invent missing plot IDs, suppliers, batches, or polygons.
@@ -988,6 +1047,9 @@ Hi Orbify,
 I am looking for EUDR consultants and advisors who run into broken coffee/cocoa supplier files before the real due diligence work can even start.
 
 TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.
+
+Trust bridge: TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should have brought polygons, refuses to invent missing supplier facts, and hands back the repair list before your buyer has to.
+Public proof beats biography here: the trust asset is the 57,658-row public audit, not a personal resume.
 
 Messy public file in: a public Colombian cocoa dataset with coordinates and area values.
 Exact issue counts out: 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.

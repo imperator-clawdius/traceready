@@ -6,6 +6,7 @@ import {
 import {
   bodyFor,
   followUpFor,
+  OPERATOR_TRUST_BRIDGE_LINES,
   REAL_WORLD_BRIDGE_LINES,
   subjectFor,
 } from "./render-outreach-pack.mjs";
@@ -54,6 +55,8 @@ export function renderOutreachDayPack(batchRows, resultRows, options = {}) {
     "Proof to lead with: 57,658 public cocoa rows checked; 46,134 point-only plots over 4 hectares; 57,658 rows missing plot IDs; 57,658 rows missing supplier identity.",
     `Proof bridge to lead with: ${REAL_WORLD_BRIDGE_LINES[0].replace("Real-world bridge: ", "")}`,
     REAL_WORLD_BRIDGE_LINES[1],
+    `Trust bridge to lead with: ${OPERATOR_TRUST_BRIDGE_LINES[0].replace("Trust bridge: ", "")}`,
+    OPERATOR_TRUST_BRIDGE_LINES[1],
     "",
     "## Send Today",
     "",

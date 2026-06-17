@@ -12,6 +12,7 @@ const DEFAULT_RESULTS_PATH = "private/outreach-results-batch-02.csv";
 const DEFAULT_SENDABILITY_AUDIT_PATH = "private/outreach-sendability-audit-batch-02.json";
 const DEFAULT_CONTACT_RECON_PATH = "private/outreach-contact-recon-batch-02.json";
 const DEFAULT_LIVE_SUBMIT_REPORT_PATH = "private/submit-route-live-check.md";
+const SEND_PACKET_TRUST_BRIDGE_MARKER = "Trust bridge: TraceReady is a spreadsheet bouncer";
 
 export function scoreTractionReadiness({
   publicAuditMarkdown,
@@ -41,7 +42,11 @@ export function scoreTractionReadiness({
   const reconSummary = contactRecon?.summary ?? {};
   const emailChecks = Object.fromEntries((emailReport?.checks ?? []).map((check) => [check.label, check.ready]));
   const currentState =
-    packetVerification.checked && packetVerification.missingPacketRoutes.length + packetVerification.missingConfirmationRoutes.length > 0
+    packetVerification.checked &&
+    packetVerification.missingPacketRoutes.length +
+      packetVerification.missingConfirmationRoutes.length +
+      packetVerification.missingTrustBridgeRoutes.length >
+      0
       ? "proof_ready_routes_need_send_packets"
       : submitPreflightVerification.checked &&
           submitPreflightVerification.missingPreflightRoutes.length +
@@ -78,6 +83,7 @@ export function scoreTractionReadiness({
       packetReadyRoutes: packetVerification.packetReadyRoutes,
       missingPacketRoutes: packetVerification.missingPacketRoutes,
       missingConfirmationRoutes: packetVerification.missingConfirmationRoutes,
+      missingPacketTrustBridgeRoutes: packetVerification.missingTrustBridgeRoutes,
       submitPreflightReadyRoutes: submitPreflightVerification.preflightReadyRoutes,
       missingSubmitPreflightRoutes: submitPreflightVerification.missingPreflightRoutes,
       missingSubmitPreflightConfirmationRoutes: submitPreflightVerification.missingConfirmationRoutes,
@@ -106,7 +112,11 @@ export function scoreTractionReadiness({
     },
     currentState,
     nextGate:
-      packetVerification.checked && packetVerification.missingPacketRoutes.length + packetVerification.missingConfirmationRoutes.length > 0
+      packetVerification.checked &&
+      packetVerification.missingPacketRoutes.length +
+        packetVerification.missingConfirmationRoutes.length +
+        packetVerification.missingTrustBridgeRoutes.length >
+        0
         ? "render_missing_send_ready_packets"
         : submitPreflightVerification.checked &&
             submitPreflightVerification.missingPreflightRoutes.length +
@@ -200,6 +210,7 @@ ${readyRouteLines.join("\n")}
 | --- | --- |
 | Missing packet files | ${(score.outreach.missingPacketRoutes ?? []).length ? score.outreach.missingPacketRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 | Missing confirmation text | ${(score.outreach.missingConfirmationRoutes ?? []).length ? score.outreach.missingConfirmationRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
+| Send-ready packets missing trust bridge | ${(score.outreach.missingPacketTrustBridgeRoutes ?? []).length ? score.outreach.missingPacketTrustBridgeRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 
 ## Submit Preflight Guard
 
@@ -374,11 +385,13 @@ function verifySendReadyPackets(readyRoutes, sendReadyPackets) {
       packetReadyRoutes: undefined,
       missingPacketRoutes: [],
       missingConfirmationRoutes: [],
+      missingTrustBridgeRoutes: [],
     };
   }
 
   const missingPacketRoutes = [];
   const missingConfirmationRoutes = [];
+  const missingTrustBridgeRoutes = [];
 
   for (const route of readyRoutes) {
     const packetText = sendReadyPackets[route.route_id] ?? sendReadyPackets[`private/send-ready-${route.route_id}.md`] ?? "";
@@ -388,14 +401,22 @@ function verifySendReadyPackets(readyRoutes, sendReadyPackets) {
       missingPacketRoutes.push(route.route_id);
     } else if (!packetText.includes(expectedConfirmation)) {
       missingConfirmationRoutes.push(route.route_id);
+    } else if (!packetText.includes(SEND_PACKET_TRUST_BRIDGE_MARKER)) {
+      missingTrustBridgeRoutes.push(route.route_id);
     }
   }
+  const notReadyRouteCount = new Set([
+    ...missingPacketRoutes,
+    ...missingConfirmationRoutes,
+    ...missingTrustBridgeRoutes,
+  ]).size;
 
   return {
     checked: true,
-    packetReadyRoutes: readyRoutes.length - missingPacketRoutes.length - missingConfirmationRoutes.length,
+    packetReadyRoutes: readyRoutes.length - notReadyRouteCount,
     missingPacketRoutes,
     missingConfirmationRoutes,
+    missingTrustBridgeRoutes,
   };
 }
 

@@ -27,6 +27,8 @@ describe("outreach reply playbook", () => {
     expect(markdown).toContain("File check URL: https://traceready.online/?utm_source=proof_led_batch_01");
     expect(markdown).toContain("## Who are you?");
     expect(markdown).toContain("I am not asking you to trust credentials first");
+    expect(markdown).toContain("TraceReady is a spreadsheet bouncer");
+    expect(markdown).toContain("Public proof beats biography here");
     expect(markdown).toContain("TraceReady checked 57,658 public cocoa rows");
     expect(markdown).toContain("EUDR due-diligence statements need plot coordinates");
     expect(markdown).toContain("Daarnhouwer asks coffee and cocoa suppliers for WGS84 GeoJSON, CSV, or Excel geolocation files");

@@ -38,6 +38,8 @@ describe("proof-led outreach day pack", () => {
     expect(markdown).toContain("Results: `private/outreach-results.csv`");
     expect(markdown).toContain("Proof bridge to lead with: EUDR due-diligence statements need plot coordinates");
     expect(markdown).toContain("Daarnhouwer asks coffee and cocoa suppliers for WGS84 GeoJSON, CSV, or Excel geolocation files");
+    expect(markdown).toContain("Trust bridge to lead with: TraceReady is a spreadsheet bouncer");
+    expect(markdown).toContain("Public proof beats biography here");
     expect(markdown).toContain("## Send Today");
     expect(markdown).toContain("### b01-r01 - European Coffee Federation");
     expect(markdown).toContain(

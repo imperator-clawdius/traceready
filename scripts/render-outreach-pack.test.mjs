@@ -22,6 +22,9 @@ describe("proof-led outreach send packet renderer", () => {
     expect(markdown).toContain("Real-world bridge: EUDR due-diligence statements need plot coordinates");
     expect(markdown).toContain("Daarnhouwer asks coffee and cocoa suppliers for WGS84 GeoJSON, CSV, or Excel geolocation files");
     expect(markdown).toContain("That matters because the EUDR handoff is not just coordinates");
+    expect(markdown).toContain("Trust bridge: TraceReady is a spreadsheet bouncer");
+    expect(markdown).toContain("Public proof beats biography here");
+    expect(markdown).toContain("not a personal resume");
     expect(markdown).toContain("## 1. European Coffee Federation");
     expect(markdown).toContain("Subject: Free EUDR file-readiness example for coffee members");
     expect(markdown).toContain("Is there a member education channel where this would be useful?");
@@ -67,6 +70,7 @@ describe("proof-led outreach send packet renderer", () => {
     expect(errors).toContain("packet must include cleaned-pack-boundary proof framing");
     expect(errors).toContain("packet must include source-backed real-world proof bridge");
     expect(errors).toContain("packet must include buyer handoff pressure source");
+    expect(errors).toContain("packet must include operator trust bridge");
     expect(errors).toContain("packet must include tracked proof URL for Cafe Imports Europe");
     expect(errors).toContain("packet must include tracked field-note URL for Cafe Imports Europe");
     expect(errors).toContain("packet must include tracked file-check URL for Cafe Imports Europe");
@@ -106,5 +110,6 @@ describe("proof-led outreach send packet renderer", () => {
     expect(validateRenderedOutreachPacket(markdown, rows)).toEqual([]);
     expect(markdown).toContain("Real-world bridge: EUDR due-diligence statements need plot coordinates");
     expect(markdown).toContain("That matters because the EUDR handoff is not just coordinates");
+    expect(markdown).toContain("TraceReady is a spreadsheet bouncer");
   });
 });

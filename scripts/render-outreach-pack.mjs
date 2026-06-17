@@ -21,6 +21,10 @@ export const REAL_WORLD_BRIDGE_LINES = [
 ];
 export const BUYER_PRESSURE_LINE =
   "That matters because the EUDR handoff is not just coordinates: the file also has to survive plot-level identifiers, polygon thresholds, and buyer/source file instructions.";
+export const OPERATOR_TRUST_BRIDGE_LINES = [
+  "Trust bridge: TraceReady is a spreadsheet bouncer: it checks the IDs, catches coordinates that should have brought polygons, refuses to invent missing supplier facts, and hands back the repair list before your buyer has to.",
+  "Public proof beats biography here: the trust asset is the 57,658-row public audit, not a personal resume.",
+];
 export const OUTREACH_CORE_PROOF_LINE = CORE_PROOF_LINE;
 
 export function renderOutreachPacket(rows, options = {}) {
@@ -35,6 +39,7 @@ export function renderOutreachPacket(rows, options = {}) {
     `Core proof: ${CORE_PROOF_LINE}`,
     "Proof flow: Messy public file in; Exact issue counts out; Cleaned pack boundary stated honestly instead of pretending missing IDs, suppliers, batches, or polygons can be invented.",
     ...REAL_WORLD_BRIDGE_LINES,
+    ...OPERATOR_TRUST_BRIDGE_LINES,
     "",
     `Base public pilot case: ${PROOF_BASE_URL}`,
     `Base field note: ${FIELD_NOTE_BASE_URL}`,
@@ -87,6 +92,10 @@ export function validateRenderedOutreachPacket(markdown, rows) {
 
   if (!markdown.includes("Daarnhouwer asks coffee and cocoa suppliers for WGS84 GeoJSON, CSV, or Excel geolocation files")) {
     errors.push("packet must include buyer handoff pressure source");
+  }
+
+  if (!markdown.includes("Trust bridge: TraceReady is a spreadsheet bouncer")) {
+    errors.push("packet must include operator trust bridge");
   }
 
   if (EMAIL_PATTERN.test(markdown)) {
@@ -187,6 +196,8 @@ export function bodyFor(row) {
       "",
       "I built TraceReady as a narrow cleanup desk for coffee and cocoa CSV/KML/GeoJSON files before buyer review.",
       "",
+      ...OPERATOR_TRUST_BRIDGE_LINES,
+      "",
       "I published a public mini-audit using a 57,658-row cocoa farm-location dataset. The useful part for members is practical: even with latitude, longitude, and area fields, the file still surfaced 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.",
       "",
       ...PROOF_FLOW_LINES,
@@ -210,6 +221,8 @@ export function bodyFor(row) {
       "",
       "TraceReady is deliberately narrow: CSV/KML/GeoJSON readiness checks, row-level issue logs, cleaned CSV, normalized GeoJSON, and a buyer summary. It does not certify compliance, submit to TRACES, or replace legal review.",
       "",
+      ...OPERATOR_TRUST_BRIDGE_LINES,
+      "",
       ...PROOF_FLOW_LINES,
       BUYER_PRESSURE_LINE,
       "",
@@ -225,6 +238,8 @@ export function bodyFor(row) {
     `Hi ${row.company_or_channel},`,
     "",
     "Quick, specific note. I ran a public cocoa farm-location dataset through TraceReady, a file-readiness checker for coffee and cocoa handoff files. Even after assuming the file was Colombian cocoa, it still had 46,134 point-only plots over 4 hectares, 57,658 rows without plot IDs, and 57,658 rows without supplier identity.",
+    "",
+    ...OPERATOR_TRUST_BRIDGE_LINES,
     "",
     ...PROOF_FLOW_LINES,
     BUYER_PRESSURE_LINE,

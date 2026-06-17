@@ -41,10 +41,19 @@ b02-r03,2026-06-16,Control Union,overflow,https://traceready.online/proof/public
 b02-r04,,Bureau Veritas,overflow,https://traceready.online/proof/public-cocoa-pilot/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,https://traceready.online/field-notes/eudr-file-errors/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,https://traceready.online/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,https://traceready.online/pilot-proof/?utm_source=proof_led_batch_02&utm_medium=outreach&utm_campaign=eudr_file_readiness&utm_content=b02-r04,not_sent,none,0,0,0,no,,send first message
 `;
 
-const SEND_READY_PACKETS = {
+const TRUST_BRIDGE_LINE = "Trust bridge: TraceReady is a spreadsheet bouncer";
+
+const SEND_READY_CONFIRMATIONS = {
   "b02-r03": "Confirm: submit b02-r03 to Control Union using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-b02-r03.md.",
   "b02-r04": "Confirm: submit b02-r04 to Bureau Veritas using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-b02-r04.md.",
 };
+
+const SEND_READY_PACKETS = Object.fromEntries(
+  Object.entries(SEND_READY_CONFIRMATIONS).map(([routeId, confirmation]) => [
+    routeId,
+    `${TRUST_BRIDGE_LINE}\n${confirmation}`,
+  ]),
+);
 
 const SUBMIT_PREFLIGHT_PACKETS = {
   "b02-r03": 'OUTREACH_SUBMIT_PREFLIGHT=pass route=b02-r03 company="Control Union" reply_capture=at_risk\nConfirm: submit b02-r03 to Control Union using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-b02-r03.md.',
@@ -310,7 +319,7 @@ describe("traction readiness scorecard", () => {
       contactRecon: { summary: {} },
       emailReport: { ready: false, dnsReady: false, checks: [] },
       sendReadyPackets: {
-        "b02-r03": "Confirm: submit b02-r03 to Control Union using TraceReady Desk, founder@traceready.online, Passive Print Labs LLC / TraceReady, and the message in private/send-ready-b02-r03.md.",
+        "b02-r03": SEND_READY_PACKETS["b02-r03"],
       },
     });
 
@@ -318,6 +327,48 @@ describe("traction readiness scorecard", () => {
     expect(score.outreach.missingPacketRoutes).toEqual(["b02-r04"]);
     expect(score.currentState).toBe("proof_ready_routes_need_send_packets");
     expect(score.nextGate).toBe("render_missing_send_ready_packets");
+  });
+
+  it("flags send-ready packets that have confirmation but stale message copy", () => {
+    const score = scoreTractionReadiness({
+      publicAuditMarkdown: PUBLIC_AUDIT,
+      batchRows: parseOutreachLedger(BATCH_CSV),
+      resultRows: parseOutreachResults(RESULTS_CSV),
+      sendabilityAudit: {
+        routes: [
+          {
+            route_id: "b02-r03",
+            company_or_channel: "Control Union",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://www.controlunion.com/eu-deforestation-regulation-eudr/",
+            requires_action_time_confirmation: true,
+          },
+          {
+            route_id: "b02-r04",
+            company_or_channel: "Bureau Veritas",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://news.bureauveritas.net/l/591681/2024-10-25/3t89vtv",
+            requires_action_time_confirmation: true,
+          },
+        ],
+      },
+      contactRecon: { summary: {} },
+      emailReport: { ready: false, dnsReady: false, checks: [] },
+      sendReadyPackets: {
+        "b02-r03": SEND_READY_PACKETS["b02-r03"],
+        "b02-r04": SEND_READY_CONFIRMATIONS["b02-r04"],
+      },
+    });
+
+    expect(score.outreach.packetReadyRoutes).toBe(1);
+    expect(score.outreach.missingPacketTrustBridgeRoutes).toEqual(["b02-r04"]);
+    expect(score.currentState).toBe("proof_ready_routes_need_send_packets");
+    expect(score.nextGate).toBe("render_missing_send_ready_packets");
+
+    const markdown = renderTractionReadinessScorecard(score, { generatedAt: "2026-06-17" });
+    expect(markdown).toContain("| Send-ready packets missing trust bridge | `b02-r04` |");
   });
 
   it("counts external submissions only when the sent row carries visible-success evidence", () => {
