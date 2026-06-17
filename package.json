@@ -30,6 +30,7 @@
     "render:reply-capture-unblock": "node scripts/render-reply-capture-unblock.mjs",
     "summarize:outreach": "node scripts/summarize-outreach-results.mjs",
     "update:outreach-result": "node scripts/update-outreach-result.mjs",
+    "verify:public-pilot-pack": "node scripts/verify-public-pilot-pack.mjs",
     "verify:outreach-email": "node scripts/verify-outreach-email.mjs",
     "verify:reply-capture-challenge": "node scripts/verify-reply-capture-challenge.mjs",
     "verify:outreach-submit-live": "node scripts/verify-outreach-submit-live.mjs",
@@ -38,7 +39,7 @@
     "verify:sale-readiness": "node scripts/verify-sale-readiness.mjs",
     "finalize:reply-capture": "node scripts/finalize-reply-capture-gate.mjs",
     "verify:launch": "node scripts/verify-launch.mjs",
-    "check": "npm run verify:outreach && npm run lint && npm run test && npm run build"
+    "check": "npm run verify:outreach && npm run verify:public-pilot-pack && npm run lint && npm run test && npm run build"
   },
   "dependencies": {
     "jszip": "^3.10.1",
