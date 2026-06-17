@@ -88,49 +88,60 @@ describe("TraceReady trust pages", () => {
     expect(pilotLink?.getAttribute("href")).toBe("/checkout/pilot/");
   });
 
-  it("shows TraceReady and legal-operator context before the single-file Stripe handoff", () => {
+  it("gates the single-file Stripe handoff until paid intake is proven", () => {
     act(() => {
       root.render(<CleanupCheckoutPage />);
     });
 
     const pageText = container.textContent ?? "";
     const stripeLink = Array.from(container.querySelectorAll("a")).find((element) =>
-      element.textContent?.includes("Continue to Stripe checkout"),
+      element.getAttribute("href")?.includes("https://buy.stripe.com/"),
+    );
+    const scopeLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("Email scope request first"),
     );
 
     expect(pageText).toContain("TraceReady 24-hour cleanup");
     expect(pageText).toContain("Operator and payment");
     expect(pageText).toContain("TraceReady checkout is labeled as TraceReady");
     expect(pageText).toContain("Passive Print Labs LLC");
-    expect(pageText).toContain("Scope-first payment");
+    expect(pageText).toContain("Paid intake gate");
     expect(pageText).toContain("Do not pay or send raw farm coordinates before scope confirmation");
-    expect(pageText).toContain("Use Stripe only after TraceReady confirms the file is in launch scope");
-    expect(pageText).toContain("Ask a scope question first");
+    expect(pageText).toContain("Stripe opens only after reply capture and launch scope are confirmed");
+    expect(pageText).toContain("Email scope request first");
     expect(pageText).toContain("Download representative sample pack");
     expect(pageText).toContain("Review order intake checklist");
-    expect(stripeLink?.getAttribute("href")).toContain("https://buy.stripe.com/");
+    expect(pageText).not.toContain("Continue to Stripe checkout");
+    expect(stripeLink).toBeUndefined();
+    expect(scopeLink?.getAttribute("href")).toContain("mailto:founder@traceready.online");
   });
 
-  it("shows TraceReady and legal-operator context before the pilot Stripe handoff", () => {
+  it("gates the pilot Stripe handoff until paid intake is proven", () => {
     act(() => {
       root.render(<PilotCheckoutPage />);
     });
 
     const pageText = container.textContent ?? "";
     const stripeLink = Array.from(container.querySelectorAll("a")).find((element) =>
-      element.textContent?.includes("Continue to Stripe checkout"),
+      element.getAttribute("href")?.includes("https://buy.stripe.com/"),
+    );
+    const scopeLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("Email scope request first"),
     );
 
     expect(pageText).toContain("TraceReady 5-file pilot");
     expect(pageText).toContain("Operator and payment");
     expect(pageText).toContain("TraceReady checkout is labeled as TraceReady");
     expect(pageText).toContain("Passive Print Labs LLC");
-    expect(pageText).toContain("Scope-first payment");
+    expect(pageText).toContain("Paid intake gate");
     expect(pageText).toContain("Do not pay or send raw farm coordinates before scope confirmation");
-    expect(pageText).toContain("Use Stripe only after TraceReady confirms the file is in launch scope");
+    expect(pageText).toContain("Stripe opens only after reply capture and launch scope are confirmed");
+    expect(pageText).toContain("Email scope request first");
     expect(pageText).toContain("Receive a batch cleanup summary and cleaned packs");
     expect(pageText).toContain("Review order intake checklist");
-    expect(stripeLink?.getAttribute("href")).toBe("https://buy.stripe.com/dRm6oH9SH8l671l59W8IU03");
+    expect(pageText).not.toContain("Continue to Stripe checkout");
+    expect(stripeLink).toBeUndefined();
+    expect(scopeLink?.getAttribute("href")).toContain("mailto:founder@traceready.online");
   });
 
   it("explains the deterministic cleanup methodology and limits", () => {

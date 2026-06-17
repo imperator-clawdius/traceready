@@ -5,6 +5,7 @@ import {
   LEGAL_OPERATOR,
   METHODOLOGY_HREF,
   ORDER_INTAKE_HREF,
+  PAID_ORDER_INTAKE_READY,
   PROOF_HREF,
   SAMPLE_PACK_HREF,
 } from "@/lib/site";
@@ -42,23 +43,35 @@ export function CheckoutHandoff({ title, price, description, stripeHref, nextSte
             </div>
 
             <div className="mt-4 border border-emerald-200 bg-emerald-50 p-4 text-sm leading-6 text-emerald-950">
-              <p className="font-semibold">Scope-first payment</p>
+              <p className="font-semibold">{PAID_ORDER_INTAKE_READY ? "Scope-first payment" : "Paid intake gate"}</p>
               <p className="mt-1">
-                Do not pay or send raw farm coordinates before scope confirmation. Use Stripe only after
-                TraceReady confirms the file is in launch scope and sends intake instructions.
+                Do not pay or send raw farm coordinates before scope confirmation.{" "}
+                {PAID_ORDER_INTAKE_READY
+                  ? "Use Stripe only after TraceReady confirms the file is in launch scope and sends intake instructions."
+                  : "Stripe opens only after reply capture and launch scope are confirmed."}
               </p>
             </div>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              <a
-                href={stripeHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-zinc-950 px-4 text-sm font-semibold text-white transition hover:bg-zinc-800"
-              >
-                <CreditCard className="size-4" aria-hidden="true" />
-                Continue to Stripe checkout
-              </a>
+              {PAID_ORDER_INTAKE_READY ? (
+                <a
+                  href={stripeHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-zinc-950 px-4 text-sm font-semibold text-white transition hover:bg-zinc-800"
+                >
+                  <CreditCard className="size-4" aria-hidden="true" />
+                  Continue to Stripe checkout
+                </a>
+              ) : (
+                <a
+                  href={scopeRequestHref(title)}
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-zinc-950 px-4 text-sm font-semibold text-white transition hover:bg-zinc-800"
+                >
+                  <Mail className="size-4" aria-hidden="true" />
+                  Email scope request first
+                </a>
+              )}
               <a
                 href={`mailto:${CONTACT_EMAIL}`}
                 className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-zinc-300 bg-white px-4 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-100"
@@ -118,4 +131,24 @@ export function CheckoutHandoff({ title, price, description, stripeHref, nextSte
       </div>
     </main>
   );
+}
+
+function scopeRequestHref(title: string) {
+  const subject = encodeURIComponent(`${title} scope request`);
+  const body = encodeURIComponent(
+    [
+      "Please confirm launch scope before I pay or send raw farm coordinates.",
+      "",
+      "Company:",
+      "Contact name:",
+      "Commodity:",
+      "Source country:",
+      "File format and rough row count:",
+      "Deadline:",
+      "Buyer requirements:",
+      "Notes:",
+    ].join("\n"),
+  );
+
+  return `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
 }

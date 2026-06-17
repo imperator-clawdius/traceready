@@ -23,6 +23,8 @@ export const STRIPE_CLEANUP_LINK =
 export const STRIPE_PILOT_LINK =
   process.env.NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK || "https://buy.stripe.com/dRm6oH9SH8l671l59W8IU03";
 
+export const PAID_ORDER_INTAKE_READY = process.env.NEXT_PUBLIC_PAID_ORDER_INTAKE_READY === "true";
+
 export const OFFER_STATUS = {
   cleanup: {
     title: "TraceReady 24-hour cleanup",
