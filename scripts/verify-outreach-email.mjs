@@ -112,6 +112,16 @@ export function evaluateReplyCaptureEvidence(evidence, { contactEmail = DEFAULT_
     errors.push("challengeCreatedAt must be a valid ISO timestamp when present");
   }
 
+  if (
+    receivedAt &&
+    evidence?.challengeCreatedAt &&
+    !Number.isNaN(Date.parse(receivedAt)) &&
+    !Number.isNaN(Date.parse(evidence.challengeCreatedAt)) &&
+    Date.parse(receivedAt) < Date.parse(evidence.challengeCreatedAt)
+  ) {
+    errors.push("receivedAt must be after challengeCreatedAt");
+  }
+
   return {
     ready: errors.length === 0,
     receivedAt,
