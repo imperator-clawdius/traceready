@@ -16,7 +16,10 @@ describe("reply-capture gate finalizer", () => {
         handoffPath: "private/reply-capture-handoff.md",
       },
       {
-        exists: async () => false,
+        exists: async (filePath) => filePath === "private/reply-capture-challenge.json",
+        loadChallenge: async () => ({
+          subject: "TraceReady reply-capture test trc-test-1234",
+        }),
       },
     );
     const report = renderReplyCaptureGateReport(result);
@@ -26,7 +29,7 @@ describe("reply-capture gate finalizer", () => {
     expect(report).toContain("REPLY_CAPTURE_GATE=pending reason=missing_reply_capture_evidence");
     expect(report).toContain("send the email in private/reply-capture-handoff.md");
     expect(report).toContain(
-      "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --received-subject <received-subject> --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
+      'npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --received-at <received-at-iso> --received-subject "TraceReady reply-capture test trc-test-1234" --challenge private/reply-capture-challenge.json --confirm-controlled-inbox',
     );
   });
 

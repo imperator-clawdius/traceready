@@ -71,6 +71,8 @@ export async function finalizeReplyCaptureGate(options = {}, dependencies = {}) 
   const exists = dependencies.exists ?? pathExists;
   const inspectEmail = dependencies.inspectEmail ?? inspectOutreachEmailDns;
   const runNodeScript = dependencies.runNodeScript ?? runNodeScriptDefault;
+  const loadChallenge = dependencies.loadChallenge ?? loadReplyCaptureChallenge;
+  const replyCaptureChallenge = await loadChallengeIfPresent(challengePath, { exists, loadChallenge });
 
   if (!(await exists(evidencePath))) {
     return {
@@ -79,6 +81,7 @@ export async function finalizeReplyCaptureGate(options = {}, dependencies = {}) 
       evidencePath,
       challengePath,
       handoffPath,
+      replyCaptureChallenge,
     };
   }
 
@@ -152,7 +155,12 @@ export function renderReplyCaptureGateReport(result) {
     if (result.reason === "missing_reply_capture_evidence") {
       lines.push(`REPLY_CAPTURE_GATE_NEXT=send the email in ${result.handoffPath}`);
       lines.push(
-        `REPLY_CAPTURE_GATE_RECORD=\`npm run record:reply-capture -- --output ${result.evidencePath} --contact ${CONTACT_EMAIL} --received-at <received-at-iso> --received-subject <received-subject> --challenge ${result.challengePath} --confirm-controlled-inbox\``,
+        `REPLY_CAPTURE_GATE_RECORD=\`${recordReplyCaptureCommand({
+          evidencePath: result.evidencePath,
+          contactEmail: CONTACT_EMAIL,
+          receivedSubject: result.replyCaptureChallenge?.subject,
+          challengePath: result.challengePath,
+        })}\``,
       );
     }
 
@@ -175,6 +183,23 @@ async function pathExists(filePath) {
   }
 }
 
+async function loadReplyCaptureChallenge(filePath) {
+  const raw = await fs.readFile(filePath, "utf8");
+  return JSON.parse(raw);
+}
+
+async function loadChallengeIfPresent(challengePath, { exists, loadChallenge }) {
+  try {
+    if (!(await exists(challengePath))) {
+      return null;
+    }
+
+    return await loadChallenge(challengePath);
+  } catch {
+    return null;
+  }
+}
+
 async function runNodeScriptDefault(scriptPath, args) {
   const { stdout, stderr } = await execFileAsync(process.execPath, [scriptPath, ...args], {
     windowsHide: true,
@@ -194,6 +219,16 @@ function replyCaptureReadyFromEmailReport(emailReport = {}) {
 
 function todayIsoDate() {
   return new Date().toISOString().slice(0, 10);
+}
+
+function quoteForCommand(value) {
+  return `"${String(value).replace(/"/g, '\\"')}"`;
+}
+
+function recordReplyCaptureCommand({ evidencePath, contactEmail, receivedSubject, challengePath }) {
+  const subjectArg = receivedSubject ? quoteForCommand(receivedSubject) : "<received-subject>";
+
+  return `npm run record:reply-capture -- --output ${evidencePath} --contact ${contactEmail} --received-at <received-at-iso> --received-subject ${subjectArg} --challenge ${challengePath} --confirm-controlled-inbox`;
 }
 
 async function main() {
