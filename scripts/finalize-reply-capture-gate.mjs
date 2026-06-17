@@ -187,6 +187,16 @@ export function renderReplyCaptureGateReport(result) {
       `REPLY_CAPTURE_GATE_CHALLENGE=${result.challengePath}`,
       `REPLY_CAPTURE_GATE_EML=${result.emlPath}`,
     ];
+    const challengeSubject = String(result.replyCaptureChallenge?.subject ?? "").trim();
+    const challengeToken = String(result.replyCaptureChallenge?.challengeToken ?? "").trim();
+
+    if (challengeSubject) {
+      lines.push(`REPLY_CAPTURE_GATE_SUBJECT=${challengeSubject}`);
+    }
+
+    if (challengeToken) {
+      lines.push(`REPLY_CAPTURE_GATE_TOKEN=${challengeToken}`);
+    }
 
     if (result.reason === "missing_reply_capture_evidence") {
       lines.push(`REPLY_CAPTURE_GATE_NEXT=send the email in ${result.handoffPath}`);

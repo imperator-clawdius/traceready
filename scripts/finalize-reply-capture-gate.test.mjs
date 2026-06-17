@@ -18,6 +18,7 @@ describe("reply-capture gate finalizer", () => {
       {
         exists: async (filePath) => filePath === "private/reply-capture-challenge.json",
         loadChallenge: async () => ({
+          challengeToken: "trc-test-1234",
           subject: "TraceReady reply-capture test trc-test-1234",
         }),
       },
@@ -29,6 +30,8 @@ describe("reply-capture gate finalizer", () => {
     expect(report).toContain("REPLY_CAPTURE_GATE=pending reason=missing_reply_capture_evidence");
     expect(report).toContain("send the email in private/reply-capture-handoff.md");
     expect(report).toContain("REPLY_CAPTURE_GATE_EML=private/reply-capture-received.eml");
+    expect(report).toContain("REPLY_CAPTURE_GATE_SUBJECT=TraceReady reply-capture test trc-test-1234");
+    expect(report).toContain("REPLY_CAPTURE_GATE_TOKEN=trc-test-1234");
     expect(report).toContain(
       "npm run record:reply-capture -- --output private/reply-capture-evidence.json --contact founder@traceready.online --from-eml private/reply-capture-received.eml --challenge private/reply-capture-challenge.json --confirm-controlled-inbox",
     );
