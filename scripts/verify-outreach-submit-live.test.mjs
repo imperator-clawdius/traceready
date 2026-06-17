@@ -62,7 +62,7 @@ describe("live submit route verifier", () => {
 
   it("passes when queued ready routes are still reachable without CAPTCHA markers", async () => {
     const report = await inspectLiveSubmitRoutes({
-      queueMarkdown: QUEUE_MARKDOWN,
+      queueMarkdown: QUEUE_MARKDOWN.replaceAll("at_risk", "ready"),
       sendabilityAudit: SENDABILITY_AUDIT,
       fetchImpl: async (url) => ({
         ok: true,
@@ -80,6 +80,26 @@ describe("live submit route verifier", () => {
     expect(markdown).toContain("OUTREACH_SUBMIT_LIVE=pass ready_routes=2 live_ready=2 blocked=0 captcha=0");
     expect(markdown).toContain("| `b02-r03` | Control Union | `200` | pass |");
     expect(markdown).toContain("| `b02-r04` | Bureau Veritas | `200` | pass |");
+  });
+
+  it("does not count reachable form routes as live-ready while reply capture is at risk", async () => {
+    const report = await inspectLiveSubmitRoutes({
+      queueMarkdown: QUEUE_MARKDOWN,
+      sendabilityAudit: SENDABILITY_AUDIT,
+      fetchImpl: async (url) => ({
+        ok: true,
+        status: 200,
+        url,
+        text: async () => "<html><form><input name='email'></form></html>",
+      }),
+    });
+    const markdown = renderLiveSubmitRouteReport(report, { generatedAt: "2026-06-16" });
+
+    expect(report.status).toBe("pending");
+    expect(report.liveReadyRoutes).toBe(0);
+    expect(report.replyCaptureRiskRoutes).toEqual(["b02-r03", "b02-r04"]);
+    expect(markdown).toContain("OUTREACH_SUBMIT_LIVE=pending ready_routes=2 live_ready=0");
+    expect(markdown).toContain("| Reply capture not ready | `b02-r03`, `b02-r04` |");
   });
 
   it("flags stale queue rows, blocked fetches, and CAPTCHA markers", async () => {

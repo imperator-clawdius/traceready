@@ -53,6 +53,16 @@ export function scoreTractionReadiness({
     submitPreflightVerification.missingPreflightRoutes.length +
       submitPreflightVerification.missingConfirmationRoutes.length >
       0;
+  const liveSubmitBlockedOnlyByReplyCapture =
+    liveSubmitVerification.checked &&
+    liveSubmitVerification.status !== "pass" &&
+    !replyCaptureReady &&
+    liveSubmitVerification.replyCaptureRiskRoutes.length > 0 &&
+    liveSubmitVerification.missingQueueRoutes.length === 0 &&
+    liveSubmitVerification.staleQueueRoutes.length === 0 &&
+    liveSubmitVerification.fetchErrorRoutes.length === 0 &&
+    liveSubmitVerification.httpBlockedRouteIds.length === 0 &&
+    liveSubmitVerification.captchaRouteIds.length === 0;
   const liveSubmitRoutesBlocked = liveSubmitVerification.checked && liveSubmitVerification.status !== "pass";
   const replyCaptureAtRiskBeforeExternalSubmission =
     !replyCaptureReady && resultsSummary.sentOrBeyond === 0 && readyRoutes.length > 0;
@@ -66,7 +76,9 @@ export function scoreTractionReadiness({
   const currentState =
     sendPacketNeedsWork
       ? "proof_ready_routes_need_send_packets"
-      : liveSubmitRoutesBlocked
+      : liveSubmitBlockedOnlyByReplyCapture
+        ? "proof_ready_reply_capture_at_risk_traction_unmeasured"
+        : liveSubmitRoutesBlocked
           ? "proof_ready_live_submit_routes_blocked"
           : liveSubmitReadyButReplyCaptureAtRisk || replyCaptureAtRiskBeforeExternalSubmission
             ? "proof_ready_reply_capture_at_risk_traction_unmeasured"
@@ -113,6 +125,7 @@ export function scoreTractionReadiness({
       liveSubmitFetchErrorRoutes: liveSubmitVerification.fetchErrorRoutes,
       liveSubmitHttpBlockedRouteIds: liveSubmitVerification.httpBlockedRouteIds,
       liveSubmitCaptchaRouteIds: liveSubmitVerification.captchaRouteIds,
+      liveSubmitReplyCaptureRiskRoutes: liveSubmitVerification.replyCaptureRiskRoutes,
       sentOrBeyond: resultsSummary.sentOrBeyond,
       evidenceBackedSubmissions: submissionEvidence.evidenceBackedSubmissions,
       unevidencedSentRoutes: submissionEvidence.unevidencedSentRoutes,
@@ -132,7 +145,9 @@ export function scoreTractionReadiness({
     nextGate:
       sendPacketNeedsWork
         ? "render_missing_send_ready_packets"
-        : liveSubmitRoutesBlocked
+        : liveSubmitBlockedOnlyByReplyCapture
+          ? "verify_reply_capture_before_external_submission"
+          : liveSubmitRoutesBlocked
             ? "refresh_or_replace_blocked_submit_routes"
             : liveSubmitReadyButReplyCaptureAtRisk || replyCaptureAtRiskBeforeExternalSubmission
               ? "verify_reply_capture_before_external_submission"
@@ -245,6 +260,7 @@ ${readyRouteLines.join("\n")}
 | Fetch errors | ${(score.outreach.liveSubmitFetchErrorRoutes ?? []).length ? score.outreach.liveSubmitFetchErrorRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 | HTTP blocked | ${(score.outreach.liveSubmitHttpBlockedRouteIds ?? []).length ? score.outreach.liveSubmitHttpBlockedRouteIds.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 | CAPTCHA or browser challenge marker | ${(score.outreach.liveSubmitCaptchaRouteIds ?? []).length ? score.outreach.liveSubmitCaptchaRouteIds.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
+| Reply capture not ready | ${(score.outreach.liveSubmitReplyCaptureRiskRoutes ?? []).length ? score.outreach.liveSubmitReplyCaptureRiskRoutes.map((routeId) => `\`${routeId}\``).join(", ") : "none"} |
 
 ## Submission Evidence Guard
 
@@ -499,6 +515,7 @@ function parseLiveSubmitReport(markdown) {
       fetchErrorRoutes: [],
       httpBlockedRouteIds: [],
       captchaRouteIds: [],
+      replyCaptureRiskRoutes: [],
     };
   }
 
@@ -514,6 +531,7 @@ function parseLiveSubmitReport(markdown) {
     fetchErrorRoutes: extractRouteSet(text, "Fetch errors"),
     httpBlockedRouteIds: extractRouteSet(text, "HTTP blocked"),
     captchaRouteIds: extractRouteSet(text, "CAPTCHA or browser challenge marker"),
+    replyCaptureRiskRoutes: extractRouteSet(text, "Reply capture not ready"),
   };
 }
 
@@ -562,7 +580,9 @@ function extractText(markdown, label) {
 }
 
 function extractRouteSet(markdown, label) {
-  const routeCell = extractText(markdown, label);
+  const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = String(markdown ?? "").match(new RegExp(`^\\|\\s*\`?${escaped}\`?\\s*\\|\\s*([^|]+?)\\s*\\|\\s*$`, "im"));
+  const routeCell = match ? match[1] : "";
   return Array.from(routeCell.matchAll(/\b(b\d{2}-r\d{2})\b/g)).map((match) => match[1]);
 }
 

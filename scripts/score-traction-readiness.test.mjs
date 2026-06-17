@@ -105,6 +105,29 @@ OUTREACH_SUBMIT_LIVE=pending ready_routes=2 live_ready=1 blocked=1 captcha=0
 | CAPTCHA or browser challenge marker | none |
 `;
 
+const LIVE_SUBMIT_REPORT_REPLY_CAPTURE_RISK = `# TraceReady live submit route check - 2026-06-17
+
+OUTREACH_SUBMIT_LIVE=pending ready_routes=2 live_ready=0 blocked=0 captcha=0
+
+## Route Checks
+
+| Route | Target | HTTP | Status | Issue | URL |
+| --- | --- | ---: | --- | --- | --- |
+| \`b02-r03\` | Control Union | \`200\` | pending | reply capture not ready | https://www.controlunion.com/eu-deforestation-regulation-eudr/ |
+| \`b02-r04\` | Bureau Veritas | \`200\` | pending | reply capture not ready | https://news.bureauveritas.net/l/591681/2024-10-25/3t89vtv |
+
+## Blocking Sets
+
+| Check | Route IDs |
+| --- | --- |
+| Missing from submit queue | none |
+| Queue URL differs from sendability audit | none |
+| Fetch errors | none |
+| HTTP blocked | none |
+| CAPTCHA or browser challenge marker | none |
+| Reply capture not ready | \`b02-r03\`, \`b02-r04\` |
+`;
+
 const REPLY_CAPTURE_READY_EMAIL = {
   ready: false,
   dnsReady: false,
@@ -402,6 +425,48 @@ describe("traction readiness scorecard", () => {
 
     const markdown = renderTractionReadinessScorecard(score, { generatedAt: "2026-06-17" });
     expect(markdown).toContain("| HTTP blocked | `b02-r04` |");
+  });
+
+  it("keeps reply-capture-at-risk as the next gate when live routes are blocked only by reply capture", () => {
+    const score = scoreTractionReadiness({
+      publicAuditMarkdown: PUBLIC_AUDIT,
+      batchRows: parseOutreachLedger(BATCH_CSV),
+      resultRows: parseOutreachResults(RESULTS_CSV),
+      sendabilityAudit: {
+        routes: [
+          {
+            route_id: "b02-r03",
+            company_or_channel: "Control Union",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://www.controlunion.com/eu-deforestation-regulation-eudr/",
+            requires_action_time_confirmation: true,
+          },
+          {
+            route_id: "b02-r04",
+            company_or_channel: "Bureau Veritas",
+            sendability: "browser_form_ready",
+            contact_method: "public_browser_form",
+            route_url: "https://news.bureauveritas.net/l/591681/2024-10-25/3t89vtv",
+            requires_action_time_confirmation: true,
+          },
+        ],
+      },
+      contactRecon: { summary: {} },
+      emailReport: REPLY_CAPTURE_AT_RISK_EMAIL,
+      sendReadyPackets: SEND_READY_PACKETS,
+      submitPreflightPackets: SUBMIT_PREFLIGHT_PACKETS_AT_RISK,
+      liveSubmitReport: LIVE_SUBMIT_REPORT_REPLY_CAPTURE_RISK,
+    });
+
+    expect(score.outreach.liveSubmitStatus).toBe("pending");
+    expect(score.outreach.liveSubmitReadyRoutes).toBe(0);
+    expect(score.outreach.liveSubmitReplyCaptureRiskRoutes).toEqual(["b02-r03", "b02-r04"]);
+    expect(score.currentState).toBe("proof_ready_reply_capture_at_risk_traction_unmeasured");
+    expect(score.nextGate).toBe("verify_reply_capture_before_external_submission");
+
+    const markdown = renderTractionReadinessScorecard(score, { generatedAt: "2026-06-17" });
+    expect(markdown).toContain("| Reply capture not ready | `b02-r03`, `b02-r04` |");
   });
 
   it("changes the next gate when a browser-form-ready route is missing a matching send packet", () => {

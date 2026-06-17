@@ -54,6 +54,7 @@ export async function inspectLiveSubmitRoutes({
   const captchaRoutes = [];
   const fetchErrorRoutes = [];
   const noFormMarkerRoutes = [];
+  const replyCaptureRiskRoutes = [];
 
   for (const readyRoute of readyRoutes) {
     const queueRoute = queueByRoute.get(readyRoute.route_id);
@@ -81,8 +82,15 @@ export async function inspectLiveSubmitRoutes({
     const body = response.body ?? "";
     const hasCaptcha = CAPTCHA_PATTERN.test(body);
     const hasFormMarker = FORM_MARKER_PATTERN.test(body);
+    const replyCaptureReady = queueRoute.reply_capture === "ready";
     let status = "pass";
     const issues = [];
+
+    if (!replyCaptureReady) {
+      status = "pending";
+      replyCaptureRiskRoutes.push(readyRoute.route_id);
+      issues.push("reply capture not ready");
+    }
 
     if (stale) {
       status = "pending";
@@ -122,7 +130,12 @@ export async function inspectLiveSubmitRoutes({
 
   const liveReadyRoutes = routeReports.filter((route) => route.status === "pass").length;
   const blockingCount =
-    missingQueueRoutes.length + staleQueueRoutes.length + blockedRoutes.length + captchaRoutes.length + fetchErrorRoutes.length;
+    missingQueueRoutes.length +
+    staleQueueRoutes.length +
+    blockedRoutes.length +
+    captchaRoutes.length +
+    fetchErrorRoutes.length +
+    replyCaptureRiskRoutes.length;
 
   return {
     status: blockingCount === 0 ? "pass" : "pending",
@@ -134,6 +147,7 @@ export async function inspectLiveSubmitRoutes({
     captchaRoutes,
     fetchErrorRoutes,
     noFormMarkerRoutes,
+    replyCaptureRiskRoutes,
     routeReports,
   };
 }
@@ -164,6 +178,7 @@ ${routeRows.join("\n")}
 | Fetch errors | ${formatRouteSet(report.fetchErrorRoutes)} |
 | HTTP blocked | ${formatRouteSet(report.blockedRoutes)} |
 | CAPTCHA or browser challenge marker | ${formatRouteSet(report.captchaRoutes)} |
+| Reply capture not ready | ${formatRouteSet(report.replyCaptureRiskRoutes)} |
 | No form marker found | ${formatRouteSet(report.noFormMarkerRoutes)} |
 
 ## Rule
