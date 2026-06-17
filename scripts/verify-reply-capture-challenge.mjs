@@ -170,6 +170,8 @@ export function renderReplyCaptureChallengeHandoff(result, options = {}) {
     challenge.body,
     "```",
     "",
+    `[Open mail draft](${replyCaptureMailtoHref(challenge)})`,
+    "",
     "Send this from a separate mailbox, not from the forwarding destination.",
     `Optional local draft: \`${emailDraftPath}\``,
     "",
@@ -287,6 +289,14 @@ function safeHeader(value) {
 
 function normalizeEmailBody(value) {
   return String(value ?? "").replace(/\r?\n/g, "\r\n");
+}
+
+function replyCaptureMailtoHref(challenge) {
+  const recipient = encodeURIComponent(challenge.contactEmail ?? "");
+  const subject = encodeURIComponent(challenge.subject ?? "");
+  const body = encodeURIComponent(String(challenge.body ?? "").replace(/\r?\n/g, "\n"));
+
+  return `mailto:${recipient}?subject=${subject}&body=${body}`;
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

@@ -63,6 +63,9 @@ describe("reply-capture challenge verifier", () => {
     expect(markdown).toContain("Subject: `TraceReady reply-capture test trc-test-1234`");
     expect(markdown).toContain("Challenge token: trc-test-1234");
     expect(markdown).toContain("Send this from a separate mailbox, not from the forwarding destination.");
+    expect(markdown).toContain(
+      "[Open mail draft](mailto:founder%40traceready.online?subject=TraceReady%20reply-capture%20test%20trc-test-1234&body=TraceReady%20reply-capture%20test%20for%20founder%40traceready.online.%0AChallenge%20token%3A%20trc-test-1234%0AIf%20this%20arrives%20in%20the%20controlled%20inbox%2C%20record%20private%20evidence%20with%20the%20received%20timestamp%20and%20this%20token.)",
+    );
     expect(markdown).toContain("Optional local draft: `private/reply-capture-email.eml`");
     expect(markdown).toContain(
       "The saved `.eml` must include the original `Date` and `Subject` headers plus the message body carrying the challenge token.",
