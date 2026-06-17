@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { createHash } from "node:crypto";
 import JSZip from "jszip";
 
 export const PUBLIC_PILOT_PACK_DIR = "samples/traceready-public-cocoa-pilot";
@@ -34,7 +35,7 @@ const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..
 const PACK_DATE = new Date("2026-06-16T12:00:00.000Z");
 
 export function renderPublicPilotPackFiles(audit = PUBLIC_COCOA_PILOT_AUDIT) {
-  return {
+  const files = {
     "README.txt": renderReadme(audit),
     "public-cocoa-pilot-case-study.txt": renderCaseStudy(audit),
     "public-cocoa-pilot-readiness-report.txt": renderReadinessReport(audit),
@@ -44,6 +45,9 @@ export function renderPublicPilotPackFiles(audit = PUBLIC_COCOA_PILOT_AUDIT) {
     "public-cocoa-pilot-reproducibility-manifest.txt": renderReproducibilityManifest(audit),
     "public-cocoa-pilot-audit.json": `${JSON.stringify(audit, null, 2)}\n`,
   };
+
+  files["public-cocoa-pilot-pack-manifest.json"] = renderPackManifest(audit, files);
+  return files;
 }
 
 export async function writePublicPilotPack(options = {}) {
@@ -94,12 +98,53 @@ Included files:
 - public-cocoa-pilot-buyer-followups.txt
 - public-cocoa-pilot-reproducibility-manifest.txt
 - public-cocoa-pilot-audit.json
+- public-cocoa-pilot-pack-manifest.json
 
 Important boundary:
 This ZIP does not redistribute raw source rows, latitude/longitude records, supplier lists, buyer files, or customer material. It contains derived issue counts, method notes, and buyer follow-up output only.
 
 This is not a customer case, paid transaction, buyer approval, legal certification, audit assurance, TRACES submission, or due-diligence statement.
 `;
+}
+
+function renderPackManifest(audit, files) {
+  const artifacts = Object.entries(files)
+    .map(([filename, content]) => ({
+      filename,
+      bytes: Buffer.byteLength(content, "utf8"),
+      sha256: sha256(content),
+    }))
+    .sort((left, right) => left.filename.localeCompare(right.filename));
+
+  return `${JSON.stringify(
+    {
+      packType: "public-data-pilot",
+      generatedAt: audit.generatedAt,
+      dataset: {
+        title: audit.datasetTitle,
+        url: audit.datasetUrl,
+        license: audit.sourceLicense,
+      },
+      audit: {
+        recordsAnalyzed: audit.analyzedRecords,
+        pointOnlyOver4Ha: audit.pointOnlyOver4Ha,
+        rowsWithoutPlotIds: audit.issueCounts.missing_farmId,
+        rowsWithoutSupplierIdentity: audit.issueCounts.missing_supplier,
+        readyRecords: audit.readyRecords,
+        readinessScore: audit.readinessScore,
+      },
+      boundary: {
+        noRawSourceRows: true,
+        noRawCoordinates: true,
+        noCustomerMaterial: true,
+        noBuyerApprovalClaim: true,
+        noLegalCertificationClaim: true,
+      },
+      artifacts,
+    },
+    null,
+    2,
+  )}\n`;
 }
 
 function renderCaseStudy(audit) {
@@ -280,6 +325,10 @@ function formatNumber(value) {
 function csvCell(value) {
   const text = String(value ?? "");
   return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+}
+
+function sha256(value) {
+  return createHash("sha256").update(value, "utf8").digest("hex");
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

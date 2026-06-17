@@ -3,6 +3,8 @@ export const LEGAL_OPERATOR = "Passive Print Labs LLC";
 
 export const SAMPLE_PACK_HREF = "/traceready-sample-output.zip";
 export const PUBLIC_PILOT_PACK_HREF = "/traceready-public-cocoa-pilot-pack.zip";
+export const PUBLIC_PILOT_PACK_MANIFEST_HREF =
+  "/samples/traceready-public-cocoa-pilot/public-cocoa-pilot-pack-manifest.json";
 export const DOCUMENTED_PILOT_TEMPLATE_HREF = "/traceready-documented-pilot-template.txt";
 export const CHECKOUT_CLEANUP_HREF = "/checkout/cleanup/";
 export const CHECKOUT_PILOT_HREF = "/checkout/pilot/";

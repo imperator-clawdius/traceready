@@ -1,0 +1,66 @@
+{
+  "packType": "public-data-pilot",
+  "generatedAt": "2026-06-16T10:58:05.523Z",
+  "dataset": {
+    "title": "Colombian-Cocoa-Dataset",
+    "url": "https://www.kaggle.com/datasets/lehetasa/colombian-cocoa-dataset",
+    "license": "CC BY-NC-SA 4.0"
+  },
+  "audit": {
+    "recordsAnalyzed": 57658,
+    "pointOnlyOver4Ha": 46134,
+    "rowsWithoutPlotIds": 57658,
+    "rowsWithoutSupplierIdentity": 57658,
+    "readyRecords": 0,
+    "readinessScore": 0
+  },
+  "boundary": {
+    "noRawSourceRows": true,
+    "noRawCoordinates": true,
+    "noCustomerMaterial": true,
+    "noBuyerApprovalClaim": true,
+    "noLegalCertificationClaim": true
+  },
+  "artifacts": [
+    {
+      "filename": "public-cocoa-pilot-audit.json",
+      "bytes": 642,
+      "sha256": "35b1e2bb6e52ecd2befc2246213c57048ea5b684feb60e09be148551d254421e"
+    },
+    {
+      "filename": "public-cocoa-pilot-buyer-followups.txt",
+      "bytes": 682,
+      "sha256": "88e8cabe0b05ab9919077280deb4f76c484d1c6657ef2f64dff647edc552699d"
+    },
+    {
+      "filename": "public-cocoa-pilot-buyer-summary.txt",
+      "bytes": 1369,
+      "sha256": "49863fb37802f9a6108ade79417435c227c8e12dafbab1169d3901ad9bb733ce"
+    },
+    {
+      "filename": "public-cocoa-pilot-case-study.txt",
+      "bytes": 1962,
+      "sha256": "82abf8bff62715e3c841c0b4c3a34e65a9c3ea8eebf40f5681aece02a2013d7e"
+    },
+    {
+      "filename": "public-cocoa-pilot-issue-summary.csv",
+      "bytes": 654,
+      "sha256": "7056d117bda888d67fa85778cc85c4cd64c1607fda8abedc203b7affa65db988"
+    },
+    {
+      "filename": "public-cocoa-pilot-readiness-report.txt",
+      "bytes": 1126,
+      "sha256": "039d5617405b02a95360a3c73e4e3b18682b45a215c194aba9a58e245c7f4fd9"
+    },
+    {
+      "filename": "public-cocoa-pilot-reproducibility-manifest.txt",
+      "bytes": 1409,
+      "sha256": "521f7788fbc93bdb220b05628231ce87702a6f4e62cd7cf9a25e1020de8c9b6c"
+    },
+    {
+      "filename": "README.txt",
+      "bytes": 1156,
+      "sha256": "73c40868b46e16ecaf8e38afa3db5e4dd8f068db160fc86b71844e7ed67a4521"
+    }
+  ]
+}

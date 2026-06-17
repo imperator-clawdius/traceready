@@ -17,6 +17,7 @@ Included files:
 - public-cocoa-pilot-buyer-followups.txt
 - public-cocoa-pilot-reproducibility-manifest.txt
 - public-cocoa-pilot-audit.json
+- public-cocoa-pilot-pack-manifest.json
 
 Important boundary:
 This ZIP does not redistribute raw source rows, latitude/longitude records, supplier lists, buyer files, or customer material. It contains derived issue counts, method notes, and buyer follow-up output only.

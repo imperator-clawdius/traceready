@@ -6,6 +6,7 @@ import {
   FIELD_NOTE_EUDR_FILE_ERRORS_HREF,
   LEGAL_OPERATOR,
   PUBLIC_PILOT_CASE_HREF,
+  PUBLIC_PILOT_PACK_MANIFEST_HREF,
   PUBLIC_PILOT_PACK_HREF,
 } from "@/lib/site";
 import { TrackedHomeLink } from "./TrackedHomeLink";
@@ -170,6 +171,12 @@ export default function ProofPage() {
             className="mt-3 inline-flex h-11 items-center justify-center rounded-md border border-emerald-100 px-4 text-sm font-semibold text-white transition hover:bg-emerald-900 sm:ml-3 sm:mt-5"
           >
             Download public pilot evidence pack
+          </a>
+          <a
+            href={PUBLIC_PILOT_PACK_MANIFEST_HREF}
+            className="mt-3 inline-flex h-11 items-center justify-center rounded-md border border-emerald-100 px-4 text-sm font-semibold text-white transition hover:bg-emerald-900 sm:ml-3 sm:mt-5"
+          >
+            View checksum manifest
           </a>
         </section>
 

@@ -35,6 +35,16 @@ describe("launch verifier route manifest", () => {
     expect(script).not.toContain("Format example pack");
   });
 
+  it("checks the public pilot manifest in live launch verification", () => {
+    const script = fs.readFileSync("scripts/verify-launch.mjs", "utf8");
+
+    expect(script).toContain('label: "PUBLIC_COCOA_PILOT_MANIFEST"');
+    expect(script).toContain('path: "/samples/traceready-public-cocoa-pilot/public-cocoa-pilot-pack-manifest.json"');
+    expect(script).toContain('"packType": "public-data-pilot"');
+    expect(script).toContain('"noRawCoordinates": true');
+    expect(script).toContain('"sha256"');
+  });
+
   it("checks the homepage public pilot proof strip in live launch verification", () => {
     const script = fs.readFileSync("scripts/verify-launch.mjs", "utf8");
     const appRootBlock = script.match(/label: "APP_ROOT"[\s\S]*?},\n  \{/)?.[0] ?? "";

@@ -3,6 +3,7 @@ import {
   FIELD_NOTE_EUDR_FILE_ERRORS_HREF,
   FILE_TRIAGE_HREF,
   PROOF_HREF,
+  PUBLIC_PILOT_PACK_MANIFEST_HREF,
   PUBLIC_PILOT_PACK_HREF,
 } from "@/lib/site";
 
@@ -114,6 +115,12 @@ export default function PublicCocoaPilotPage() {
               className="inline-flex h-11 items-center justify-center rounded-md bg-white px-4 text-sm font-semibold text-[#123f34] transition hover:bg-emerald-50"
             >
               Download evidence pack
+            </a>
+            <a
+              href={PUBLIC_PILOT_PACK_MANIFEST_HREF}
+              className="inline-flex h-11 items-center justify-center rounded-md border border-emerald-100 px-4 text-sm font-semibold text-white transition hover:bg-emerald-900"
+            >
+              View checksum manifest
             </a>
             <Link
               href={FILE_TRIAGE_HREF}
