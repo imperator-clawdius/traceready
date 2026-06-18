@@ -191,26 +191,22 @@ const PUBLIC_PILOT_STATS = [
   },
 ];
 
-const OPERATOR_PROOF_POINTS = [
+const TUTORIAL_STEPS = [
   {
-    title: "Regulated-file reflex",
-    detail:
-      "Regulated advisory work trains boring habits that matter here: every vague answer needs a source field, a decision log, and a reviewable next step.",
+    title: "Try the sample",
+    detail: "Click Try CSV, Try KML, or Try GeoJSON. You will see the same checker a real file uses.",
   },
   {
-    title: "AI systems with receipts",
-    detail:
-      "Traceability cleanup, SaaS prototypes, automation workflows, test plans, checkout handoffs, documentation, and audit exports all shape the product: useful automation with inspectable evidence.",
+    title: "Upload your file",
+    detail: "Use CSV, KML, GeoJSON, or JSON GeoJSON. The free check runs in your browser.",
   },
   {
-    title: "Private data stays local first",
-    detail:
-      "Supplier coordinates are a competitive map. The first pass runs in the browser, and paid cleanup starts only after scoped issue evidence proves what needs human work.",
+    title: "Read the blocker list",
+    detail: "TraceReady shows the row, field, problem, and suggested fix before payment.",
   },
   {
-    title: "Buyer handoff over theater",
-    detail:
-      "No demo maze or seat rollout: one weird CSV, KML, or GeoJSON can come back with row-level defects, a cleanup boundary, and buyer-facing follow-ups.",
+    title: "Download or scope cleanup",
+    detail: "Download the pack, copy the buyer summary, or request cleanup after the issue list is clear.",
   },
 ];
 
@@ -223,6 +219,7 @@ type BatchResult = {
 
 export function TraceReadyWorkbench() {
   const inputRef = useRef<HTMLInputElement>(null);
+  const checkerRef = useRef<HTMLElement>(null);
   const issueLogRef = useRef<HTMLDivElement>(null);
   const [analysis, setAnalysis] = useState<TraceReadyAnalysis | null>(null);
   const [activeFile, setActiveFile] = useState<File | null>(null);
@@ -334,6 +331,7 @@ export function TraceReadyWorkbench() {
     const files = Array.from(event.target.files ?? []);
 
     if (files.length > 0) {
+      scrollToChecker();
       void runAnalysis(files);
     }
   }
@@ -343,6 +341,7 @@ export function TraceReadyWorkbench() {
     const files = Array.from(event.dataTransfer.files);
 
     if (files.length > 0) {
+      scrollToChecker();
       void runAnalysis(files);
     }
   }
@@ -366,6 +365,7 @@ export function TraceReadyWorkbench() {
       },
     }[kind];
     const file = new File([sample.body], sample.name, { type: sample.type });
+    scrollToChecker();
     await runAnalysis([file]);
     scrollToIssueLog();
   }
@@ -377,12 +377,23 @@ export function TraceReadyWorkbench() {
       new File([SAMPLE_KML], "pilot-uganda-coffee.kml", { type: "application/vnd.google-earth.kml+xml" }),
     ];
 
+    scrollToChecker();
     await runAnalysis(files);
     scrollToIssueLog();
   }
 
+  function openFilePicker() {
+    scrollToChecker();
+    inputRef.current?.click();
+  }
+
+  function scrollToChecker() {
+    checkerRef.current?.scrollIntoView({ behavior: "auto", block: "start" });
+  }
+
   function scrollToIssueLog() {
-    issueLogRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const target = issueLogRef.current ?? checkerRef.current;
+    target?.scrollIntoView({ behavior: "auto", block: "start" });
   }
 
   async function downloadPack() {
@@ -473,19 +484,19 @@ export function TraceReadyWorkbench() {
                 href="#checker"
                 className="h-10 items-center justify-center rounded-md border border-white/[0.18] bg-white/[0.1] px-4 text-sm font-semibold text-[#effdf4] backdrop-blur transition hover:bg-white/[0.16] sm:inline-flex"
               >
-                Checker
+                Try it
               </a>
               <a
                 href="#pilot-case"
                 className="h-10 items-center justify-center rounded-md border border-white/[0.18] bg-white/[0.1] px-4 text-sm font-semibold text-[#effdf4] backdrop-blur transition hover:bg-white/[0.16] sm:inline-flex"
               >
-                Pilot case
+                Proof
               </a>
               <a
-                href={METHODOLOGY_HREF}
+                href="#tutorial"
                 className="h-10 items-center justify-center rounded-md border border-white/[0.18] bg-white/[0.1] px-4 text-sm font-semibold text-[#effdf4] backdrop-blur transition hover:bg-white/[0.16] sm:inline-flex"
               >
-                Method
+                Tutorial
               </a>
             </div>
           </nav>
@@ -496,18 +507,17 @@ export function TraceReadyWorkbench() {
                 Check a farm file before a buyer rejects it.
               </h1>
               <p className="mt-5 max-w-2xl text-base leading-7 text-[#d8eadf] sm:text-lg">
-                Upload a CSV, KML, or GeoJSON file for coffee or cocoa. TraceReady finds missing
-                fields, duplicate farms, bad coordinates, and cleanup blockers before the file reaches
-                an importer.
+                Upload a coffee or cocoa CSV, KML, or GeoJSON. TraceReady returns the exact row,
+                field, problem, and fix.
               </p>
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                 <button
                   type="button"
                   className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-[#0aa394] px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0b8f83]"
-                  onClick={() => inputRef.current?.click()}
+                  onClick={openFilePicker}
                 >
                   <UploadCloud className="size-4" aria-hidden="true" />
-                  Upload a farm file for free
+                  Upload file
                 </button>
                 <button
                   type="button"
@@ -515,19 +525,19 @@ export function TraceReadyWorkbench() {
                   onClick={() => void loadSample("csv")}
                 >
                   <FileCheck2 className="size-4" aria-hidden="true" />
-                  Try a sample file
+                  Try sample
                 </button>
                 <a
-                  href="#checker"
+                  href="#pilot-case"
                   className="inline-flex h-12 items-center justify-center gap-2 rounded-md border border-white/[0.22] bg-white/[0.08] px-5 text-sm font-semibold text-[#effdf4] backdrop-blur transition hover:bg-white/[0.14]"
                 >
-                  <ArrowDown className="size-4" aria-hidden="true" />
-                  Jump to checker
+                  <CheckCircle2 className="size-4" aria-hidden="true" />
+                  See proof
                 </a>
               </div>
               <p className="mt-4 max-w-xl text-sm leading-6 text-[#bcd6c4]">
-                The free diagnosis stays in your browser. Paid cleanup starts only after the issue
-                list proves there is real buyer-review rework to fix.
+                Free diagnosis stays in your browser. Pay only after the issue list shows useful
+                cleanup work.
               </p>
             </section>
           </div>
@@ -538,16 +548,16 @@ export function TraceReadyWorkbench() {
         <div className="mx-auto grid w-full max-w-7xl gap-5 sm:px-2 lg:grid-cols-[minmax(0,0.88fr)_minmax(320px,0.46fr)] lg:items-start lg:px-6">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-100">
-              One real public-data pilot
+              One documented pilot
             </p>
             <h2 className="mt-2 max-w-3xl text-2xl font-semibold leading-tight sm:text-3xl">
-              Messy public file in. Exact blocker list out.
+              Messy file in. Exact issues found. Cleaned pack out.
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-emerald-50">
-              TraceReady checked 57,658 rows from a public Colombian cocoa dataset and found 46,134
-              point-only plots over 4 hectares, missing plot IDs, missing supplier identity, and zero
-              buyer-ready records. The output is a repair brief, buyer summary, issue CSV, and
-              evidence pack for source-owner follow-up; missing facts were not invented.
+              Current proof is one real public cocoa dataset, not a customer quote. 57,658 rows went
+              in. TraceReady found 46,134 over-4ha point-only plots, missing plot IDs, missing supplier
+              identity, and zero buyer-ready records. The output pack contains the repair brief, issue
+              CSV, buyer summary, follow-up list, audit JSON, and checksum manifest.
             </p>
             <div className="mt-4 flex flex-col gap-2 sm:flex-row">
               <a
@@ -566,7 +576,7 @@ export function TraceReadyWorkbench() {
                 href={PILOT_PROOF_HREF}
                 className="inline-flex h-10 items-center justify-center rounded-md border border-emerald-100 px-3 text-sm font-semibold text-white transition hover:bg-emerald-900"
               >
-                Offer first real pilot
+                Offer customer pilot
               </a>
             </div>
           </div>
@@ -583,41 +593,42 @@ export function TraceReadyWorkbench() {
         </div>
       </section>
 
-      <section className="relative z-10 border-b border-[#ead8bd] bg-[#fff7e8] px-4 py-7">
-        <div className="mx-auto grid w-full max-w-7xl gap-5 sm:px-2 lg:grid-cols-[minmax(0,0.74fr)_minmax(360px,0.58fr)] lg:items-start lg:px-6">
+      <section id="tutorial" className="relative z-10 border-b border-[#ead8bd] bg-[#fff7e8] px-4 py-7">
+        <div className="mx-auto w-full max-w-7xl sm:px-2 lg:px-6">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#087f73]">
-              Cleanup-desk credibility
+              Tutorial
             </p>
-            <h2 className="mt-2 max-w-3xl text-2xl font-semibold leading-tight text-[#2b190f]">
-              Built by an operator with a file-room brain and a launch checklist.
+            <h2 className="mt-2 text-2xl font-semibold leading-tight text-[#2b190f]">
+              Four clicks. No demo maze.
             </h2>
-            <p className="mt-3 max-w-3xl border-l-2 border-[#0aa394] bg-white/70 px-4 py-3 text-sm font-semibold leading-6 text-[#2b190f]">
-              TraceReady is a spreadsheet bouncer: IDs at the door, coordinates sober-checked,
-              over-4ha points kicked back for polygons, and unknown supplier facts left blank until
-              someone can prove them.
-            </p>
-            <p className="mt-3 max-w-3xl text-sm leading-6 text-[#6a5137]">
-              The relevant background is narrow: regulated advisory files, client-facing compliance
-              operations, AI workflow builds, payment handoffs, QA evidence, audit exports, and privacy
-              boundaries. That is the same muscle TraceReady uses for EUDR cleanup: mark exact
-              row-level defects, keep coordinates local first, and return a buyer-readable repair
-              boundary instead of a heroic story.
-            </p>
           </div>
-
-          <div className="grid gap-3">
-            {OPERATOR_PROOF_POINTS.map((point) => (
-              <div key={point.title} className="border-l-2 border-[#0aa394] pl-4">
-                <p className="text-sm font-semibold text-[#2b190f]">{point.title}</p>
-                <p className="mt-1 text-sm leading-6 text-[#6a5137]">{point.detail}</p>
-              </div>
+          <div className="mt-5 grid gap-3 md:grid-cols-4">
+            {TUTORIAL_STEPS.map((step, index) => (
+              <article key={step.title} className="border border-[#e0c79d] bg-white/78 p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#087f73]">
+                  Step {index + 1}
+                </p>
+                <h3 className="mt-2 text-base font-semibold text-[#2b190f]">{step.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-[#6a5137]">{step.detail}</p>
+              </article>
             ))}
           </div>
+          <a
+            href="#checker"
+            className="mt-5 inline-flex h-11 items-center justify-center gap-2 rounded-md bg-[#087f73] px-4 text-sm font-semibold text-white transition hover:bg-[#05665d]"
+          >
+            <ArrowDown className="size-4" aria-hidden="true" />
+            Start tutorial
+          </a>
         </div>
       </section>
 
-      <main id="checker" className="relative z-10 mx-auto grid w-full max-w-7xl scroll-mt-4 gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:px-8">
+      <main
+        id="checker"
+        ref={checkerRef}
+        className="relative z-10 mx-auto grid w-full max-w-7xl scroll-mt-4 gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:px-8"
+      >
         <section className="space-y-6">
           <div
             className="trace-card relative overflow-hidden border border-dashed border-[#c8a56f] bg-[#fffaf2]/95 p-6 shadow-sm"
@@ -629,10 +640,10 @@ export function TraceReadyWorkbench() {
                 <div className="flex size-11 items-center justify-center rounded-md bg-[#dff5e8] text-[#087f73]">
                   <UploadCloud className="size-5" aria-hidden="true" />
                 </div>
-                <h2 className="mt-4 text-xl font-semibold text-[#2b190f]">Upload farm source file</h2>
+                <h2 className="mt-4 text-xl font-semibold text-[#2b190f]">Choose a file</h2>
                 <p className="mt-2 text-sm leading-6 text-[#6a5137]">
-                  Accepted formats: CSV, KML, GeoJSON, and JSON GeoJSON. Select one file for a quick
-                  diagnosis or up to 5 files when comparing a small supplier batch.
+                  Use CSV, KML, GeoJSON, or JSON GeoJSON. One file is enough. Up to 5 works for a
+                  small supplier batch.
                 </p>
                 {batchResults.length > 1 ? (
                   <p className="mt-3 text-sm font-medium text-[#3f2a1b]">
@@ -657,7 +668,7 @@ export function TraceReadyWorkbench() {
                 <button
                   type="button"
                   className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-[#087f73] px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#05665d]"
-                  onClick={() => inputRef.current?.click()}
+                  onClick={openFilePicker}
                 >
                   <UploadCloud className="size-4" aria-hidden="true" />
                   Choose file
@@ -668,7 +679,7 @@ export function TraceReadyWorkbench() {
                   onClick={() => void loadSample("csv")}
                 >
                   <FileCheck2 className="size-4" aria-hidden="true" />
-                  Sample CSV
+                  Try CSV
                 </button>
                 <button
                   type="button"
@@ -676,7 +687,7 @@ export function TraceReadyWorkbench() {
                   onClick={() => void loadSample("kml")}
                 >
                   <FileCheck2 className="size-4" aria-hidden="true" />
-                  Sample KML
+                  Try KML
                 </button>
                 <button
                   type="button"
@@ -684,7 +695,7 @@ export function TraceReadyWorkbench() {
                   onClick={() => void loadSample("geojson")}
                 >
                   <FileCheck2 className="size-4" aria-hidden="true" />
-                  Sample GeoJSON
+                  Try GeoJSON
                 </button>
                 <button
                   type="button"
@@ -692,7 +703,7 @@ export function TraceReadyWorkbench() {
                   onClick={() => void loadPilotSample()}
                 >
                   <FileCheck2 className="size-4" aria-hidden="true" />
-                  Pilot sample
+                  Try 3-file pilot
                 </button>
               </div>
             </div>
@@ -768,11 +779,10 @@ export function TraceReadyWorkbench() {
           </section>
 
           <section className="trace-card border border-[#d9bf92] bg-[#fffaf2]/95 p-5 shadow-sm">
-            <h2 className="text-lg font-semibold text-[#2b190f]">After the diagnosis</h2>
+            <h2 className="text-lg font-semibold text-[#2b190f]">Use the result</h2>
             <p className="mt-2 text-sm leading-6 text-[#6a5137]">
-              If the free check shows blockers, request scope review before paying. Do not send raw
-              coordinates until the file is scoped; use free issue-log triage with only counts and field
-              names first.
+              If blockers appear, scope cleanup before payment. Do not send raw coordinates until
+              the file is scoped.
             </p>
             <a
               href={triageHref}

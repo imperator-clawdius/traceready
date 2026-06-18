@@ -49,7 +49,7 @@ describe("TraceReady conversion surface", () => {
     const headerText = container.querySelector("header")?.textContent ?? "";
     const heading = container.querySelector("h1")?.textContent ?? "";
     const uploadAction = Array.from(container.querySelectorAll("button, a")).find((element) =>
-      element.textContent?.includes("Upload a farm file for free"),
+      element.textContent?.includes("Upload file"),
     );
     const cleanupLink = Array.from(container.querySelectorAll("a")).find((element) =>
       element.textContent?.includes("Buy 24-hour cleanup"),
@@ -66,14 +66,14 @@ describe("TraceReady conversion surface", () => {
     const cleanupSectionText = cleanupLink?.closest("section")?.textContent ?? "";
 
     expect(heading).toContain("Check a farm file before a buyer rejects it.");
-    expect(headerText).toContain("Upload a farm file for free");
-    expect(headerText).toContain("Try a sample file");
-    expect(headerText).toContain("Jump to checker");
+    expect(headerText).toContain("Upload file");
+    expect(headerText).toContain("Try sample");
+    expect(headerText).toContain("See proof");
     expect(headerText).not.toContain("Buy cleanup");
     expect(container.querySelector("#checker")?.tagName).toBe("MAIN");
     expect(uploadAction?.tagName).toBe("BUTTON");
-    expect(cleanupSectionText).toContain("After the diagnosis");
-    expect(cleanupSectionText).toContain("request scope review before paying");
+    expect(cleanupSectionText).toContain("Use the result");
+    expect(cleanupSectionText).toContain("scope cleanup before payment");
     expect(cleanupSectionText).toContain("Do not send raw coordinates until the file is scoped");
     expect(triageLink?.getAttribute("href")).toBe("/file-triage/");
     expect(fieldNoteLink?.getAttribute("href")).toBe("/field-notes/eudr-file-errors/");
@@ -120,10 +120,10 @@ describe("TraceReady conversion surface", () => {
     const headerText = container.querySelector("header")?.textContent ?? "";
     const proofSection = container.querySelector("header + #pilot-case");
 
-    expect(headerText).not.toContain("Messy public file in. Exact blocker list out.");
-    expect(proofSection?.textContent).toContain("Messy public file in. Exact blocker list out.");
-    expect(proofSection?.textContent).toContain("One real public-data pilot");
-    expect(proofSection?.textContent).toContain("public Colombian cocoa dataset");
+    expect(headerText).not.toContain("Messy file in. Exact issues found. Cleaned pack out.");
+    expect(proofSection?.textContent).toContain("Messy file in. Exact issues found. Cleaned pack out.");
+    expect(proofSection?.textContent).toContain("One documented pilot");
+    expect(proofSection?.textContent).toContain("real public cocoa dataset");
     expect(proofSection?.textContent).toContain("View pilot case");
     expect(proofSection?.textContent).toContain("Download evidence pack");
   });
@@ -156,21 +156,21 @@ describe("TraceReady conversion surface", () => {
     const pageText = container.textContent ?? "";
     const pilotCase = container.querySelector("#pilot-case")?.textContent ?? "";
 
-    expect(pilotCase).toContain("One real public-data pilot");
-    expect(pilotCase).toContain("Messy public file in. Exact blocker list out.");
-    expect(pilotCase).toContain("public Colombian cocoa dataset");
-    expect(pilotCase).toContain("missing facts were not invented");
+    expect(pilotCase).toContain("One documented pilot");
+    expect(pilotCase).toContain("Messy file in. Exact issues found. Cleaned pack out.");
+    expect(pilotCase).toContain("real public cocoa dataset");
+    expect(pilotCase).toContain("not a customer quote");
     expect(pilotCase).toContain("46,134");
-    expect(pilotCase).toContain("point-only plots over 4 ha");
+    expect(pilotCase).toContain("over-4ha point-only plots");
     expect(pilotCase).toContain("missing plot IDs");
     expect(pilotCase).toContain("records ready for buyer handoff");
     expect(pilotCase).toContain("buyer-ready records");
-    expect(pilotCase).toContain("repair brief, buyer summary, issue CSV, and evidence pack");
+    expect(pilotCase).toContain("repair brief, issue");
     expect(pilotCase).toContain("Download evidence pack");
-    expect(pilotCase).toContain("Offer first real pilot");
+    expect(pilotCase).toContain("Offer customer pilot");
     expect(pilotCase).not.toContain("fictional sample fixture");
     expect(pilotCase).not.toContain("Founder proof");
-    expect(pageText).toContain("The free diagnosis stays in your browser.");
+    expect(pageText).toContain("Free diagnosis stays in your browser.");
   });
 
   it("removes generic founder biography from the hero proof area", () => {
@@ -202,48 +202,32 @@ describe("TraceReady conversion surface", () => {
     expect(headerText).not.toContain("Florida");
   });
 
-  it("adds specific cleanup-desk credibility without personal bio details", () => {
+  it("removes the founder credibility block and replaces it with a tutorial", () => {
     act(() => {
       root.render(<TraceReadyWorkbench />);
     });
 
-    const operatorSection = Array.from(container.querySelectorAll("section")).find((section) =>
-      section.textContent?.includes("Cleanup-desk credibility"),
-    );
-    const operatorText = operatorSection?.textContent ?? "";
+    const pageText = container.textContent ?? "";
+    const tutorial = container.querySelector("#tutorial")?.textContent ?? "";
 
-    expect(operatorText).toContain(
-      "Built by an operator with a file-room brain and a launch checklist.",
-    );
-    expect(operatorText).toContain(
-      "TraceReady is a spreadsheet bouncer: IDs at the door, coordinates sober-checked, over-4ha points kicked back for polygons, and unknown supplier facts left blank until someone can prove them.",
-    );
-    expect(operatorText).toContain("client-facing compliance operations");
-    expect(operatorText).toContain("AI workflow builds");
-    expect(operatorText).toContain("payment handoffs");
-    expect(operatorText).toContain("QA evidence");
-    expect(operatorText).toContain("audit exports");
-    expect(operatorText).toContain("row-level defects");
-    expect(operatorText).toContain("privacy boundaries");
-    expect(operatorText).toContain("buyer-readable repair boundary");
-    expect(operatorText).toContain("Regulated-file reflex");
-    expect(operatorText).toContain("Regulated advisory work trains boring habits");
-    expect(operatorText).toContain("AI systems with receipts");
-    expect(operatorText).toContain("Traceability cleanup");
-    expect(operatorText).toContain("SaaS prototypes");
-    expect(operatorText).toContain("automation workflows");
-    expect(operatorText).toContain("Private data stays local first");
-    expect(operatorText).toContain("Buyer handoff over theater");
-    expect(operatorText).not.toContain("Founder proof");
-    expect(operatorText).not.toContain("teddyalston.com");
-    expect(operatorText).not.toContain("Teddy");
-    expect(operatorText).not.toContain("Orlando");
-    expect(operatorText).not.toContain("$1M");
-    expect(operatorText).not.toContain("500+");
-    expect(operatorText).not.toContain("12+");
-    expect(operatorText).not.toContain("theodore.alston@gmail.com");
-    expect(operatorText).not.toContain("IRS");
-    expect(operatorText).not.toContain("Florida");
+    expect(pageText).not.toContain("Cleanup-desk credibility");
+    expect(pageText).not.toContain("Founder proof");
+    expect(pageText).not.toContain("teddyalston.com");
+    expect(pageText).not.toContain("Teddy");
+    expect(pageText).not.toContain("Orlando");
+    expect(pageText).not.toContain("$1M");
+    expect(pageText).not.toContain("500+");
+    expect(pageText).not.toContain("12+");
+    expect(pageText).not.toContain("theodore.alston@gmail.com");
+    expect(pageText).not.toContain("IRS");
+    expect(pageText).not.toContain("Florida");
+    expect(tutorial).toContain("Tutorial");
+    expect(tutorial).toContain("Four clicks. No demo maze.");
+    expect(tutorial).toContain("Try the sample");
+    expect(tutorial).toContain("Upload your file");
+    expect(tutorial).toContain("Read the blocker list");
+    expect(tutorial).toContain("Download or scope cleanup");
+    expect(tutorial).toContain("Start tutorial");
   });
 
   it("surfaces the public dataset audit on the main landing page", () => {
@@ -258,21 +242,21 @@ describe("TraceReady conversion surface", () => {
     const evidencePackLink = Array.from(container.querySelectorAll("a")).find((element) =>
       element.textContent?.includes("Download evidence pack"),
     );
-    const realPilotLink = Array.from(container.querySelectorAll("a")).find((element) =>
-      element.textContent?.includes("Offer first real pilot"),
+    const customerPilotLink = Array.from(container.querySelectorAll("a")).find((element) =>
+      element.textContent?.includes("Offer customer pilot"),
     );
 
-    expect(pageText).toContain("One real public-data pilot");
+    expect(pageText).toContain("One documented pilot");
     expect(pageText).toContain("57,658");
     expect(pageText).toContain("public cocoa rows checked");
-    expect(pageText).toContain("Messy public file in. Exact blocker list out.");
-    expect(pageText).toContain("46,134 point-only plots over 4 hectares");
+    expect(pageText).toContain("Messy file in. Exact issues found. Cleaned pack out.");
+    expect(pageText).toContain("46,134 over-4ha point-only plots");
     expect(pageText).toContain("missing plot IDs");
     expect(pageText).toContain("missing supplier identity");
-    expect(pageText).toContain("missing facts were not invented");
+    expect(pageText).toContain("checksum manifest");
     expect(proofLink?.getAttribute("href")).toBe("/proof/public-cocoa-pilot/");
     expect(evidencePackLink?.getAttribute("href")).toBe("/traceready-public-cocoa-pilot-pack.zip");
-    expect(realPilotLink?.getAttribute("href")).toBe("/pilot-proof/");
+    expect(customerPilotLink?.getAttribute("href")).toBe("/pilot-proof/");
   });
 
   it("discloses the legal operator before a buyer opens Stripe checkout", () => {
@@ -412,7 +396,7 @@ QA-1,Ama Mensah,Ghana,coffee,LOT-QA,2.2,6.2031,-1.7082
     });
 
     const sampleKmlButton = Array.from(container.querySelectorAll("button")).find((element) =>
-      element.textContent?.includes("Sample KML"),
+      element.textContent?.includes("Try KML"),
     ) as HTMLButtonElement | undefined;
 
     await act(async () => {
@@ -435,7 +419,7 @@ QA-1,Ama Mensah,Ghana,coffee,LOT-QA,2.2,6.2031,-1.7082
     });
 
     const sampleGeoJsonButton = Array.from(container.querySelectorAll("button")).find((element) =>
-      element.textContent?.includes("Sample GeoJSON"),
+      element.textContent?.includes("Try GeoJSON"),
     ) as HTMLButtonElement | undefined;
 
     await act(async () => {
