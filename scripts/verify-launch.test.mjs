@@ -49,16 +49,21 @@ describe("launch verifier route manifest", () => {
     const script = fs.readFileSync("scripts/verify-launch.mjs", "utf8");
     const appRootBlock = script.match(/label: "APP_ROOT"[\s\S]*?},\n  \{/)?.[0] ?? "";
 
-    expect(appRootBlock).toContain("Jump to checker");
-    expect(appRootBlock).toContain("One real public-data pilot");
-    expect(appRootBlock).toContain("Messy public file in. Exact blocker list out.");
-    expect(appRootBlock).toContain("Messy public file in");
-    expect(appRootBlock).toContain("missing facts were not invented");
+    expect(appRootBlock).toContain("Try sample");
+    expect(appRootBlock).toContain("See proof");
+    expect(appRootBlock).toContain("One documented pilot");
+    expect(appRootBlock).toContain("Messy file in. Exact issues found. Cleaned pack out.");
+    expect(appRootBlock).toContain("46,134 over-4ha point-only plots");
+    expect(appRootBlock).toContain("not a customer quote");
+    expect(appRootBlock).toContain("checksum manifest");
     expect(appRootBlock).toContain("records ready for buyer handoff");
-    expect(appRootBlock).toContain("Cleanup-desk credibility");
-    expect(appRootBlock).toContain("file-room brain and a launch checklist");
-    expect(appRootBlock).toContain("spreadsheet bouncer");
-    expect(appRootBlock).toContain("buyer-readable repair boundary");
+    expect(appRootBlock).toContain("Four clicks. No demo maze.");
+    expect(appRootBlock).toContain("Read the blocker list");
+    expect(appRootBlock).toContain("Start tutorial");
+    expect(appRootBlock).toContain("Use the result");
+    expect(appRootBlock).not.toContain("Cleanup-desk credibility");
+    expect(appRootBlock).not.toContain("file-room brain and a launch checklist");
+    expect(appRootBlock).not.toContain("spreadsheet bouncer");
   });
 
   it("checks the documented pilot route in live launch verification", () => {
