@@ -1,5 +1,5 @@
 import fs from "node:fs/promises";
-import { resolveMx, resolveTxt } from "node:dns/promises";
+import { resolveCname, resolveMx, resolveTxt } from "node:dns/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -13,7 +13,7 @@ export const EXPECTED_FORWARDING_MX = [
   "eforward5.registrar-servers.com",
 ];
 export const NAMECHEAP_FORWARDING_SPF = "include:spf.efwd.registrar-servers.com";
-export const DEFAULT_DKIM_SELECTORS = ["default", "google", "selector1", "selector2"];
+export const DEFAULT_DKIM_SELECTORS = ["default", "google", "selector1", "selector2", "brevo1", "brevo2"];
 const DEFAULT_REPLY_CAPTURE_EVIDENCE_PATH = "private/reply-capture-evidence.json";
 const DEFAULT_REPLY_CAPTURE_CHALLENGE_PATH = "private/reply-capture-challenge.json";
 const DEFAULT_REPLY_CAPTURE_HANDOFF_PATH = "private/reply-capture-handoff.md";
@@ -63,7 +63,7 @@ export async function inspectOutreachEmailDns(options = {}) {
   const domain = options.domain ?? DEFAULT_DOMAIN;
   const contactEmail = options.contactEmail ?? `founder@${domain}`;
   const dkimSelectors = options.dkimSelectors ?? DEFAULT_DKIM_SELECTORS;
-  const resolver = options.resolver ?? defaultResolver;
+  const resolver = { ...defaultResolver, ...(options.resolver ?? {}) };
   let replyCaptureEvidence = options.replyCaptureEvidence;
   let replyCaptureEvidenceResult = null;
 
@@ -92,11 +92,12 @@ export async function inspectOutreachEmailDns(options = {}) {
     : null;
   const aliasTested = Boolean(options.aliasTested || replyCaptureEvidenceResult?.ready);
 
-  const [mxRecords, apexTxtRecords, dmarcTxtRecords, ...dkimTxtRecordSets] = await Promise.all([
+  const [mxRecords, apexTxtRecords, dmarcTxtRecords, dkimTxtRecordSets, dkimCnameRecordSets] = await Promise.all([
     resolver.mx(domain),
     resolver.txt(domain),
     resolver.txt(`_dmarc.${domain}`),
-    ...dkimSelectors.map((selector) => resolver.txt(`${selector}._domainkey.${domain}`)),
+    Promise.all(dkimSelectors.map((selector) => resolver.txt(`${selector}._domainkey.${domain}`))),
+    Promise.all(dkimSelectors.map((selector) => resolver.cname(`${selector}._domainkey.${domain}`))),
   ]);
 
   return evaluateOutreachEmailDns({
@@ -108,6 +109,7 @@ export async function inspectOutreachEmailDns(options = {}) {
     apexTxtRecords,
     dmarcTxtRecords,
     dkimTxtRecordSets,
+    dkimCnameRecordSets,
     replyCaptureEvidenceResult,
     replyCaptureChallenge,
   });
@@ -219,6 +221,7 @@ export function evaluateOutreachEmailDns({
   apexTxtRecords = [],
   dmarcTxtRecords = [],
   dkimTxtRecordSets = [],
+  dkimCnameRecordSets = [],
   replyCaptureEvidenceResult = null,
   replyCaptureChallenge = null,
 }) {
@@ -228,12 +231,17 @@ export function evaluateOutreachEmailDns({
   const dkimRecords = dkimSelectors.map((selector, index) => ({
     selector,
     txt: flattenTxt(dkimTxtRecordSets[index] ?? []),
+    cname: flattenCname(dkimCnameRecordSets[index] ?? []),
   }));
   const expectedMxMissing = EXPECTED_FORWARDING_MX.filter((host) => !normalizedMxHosts.includes(host));
   const spfRecords = apexTxt.filter((value) => value.toLowerCase().startsWith("v=spf1"));
   const dmarcRecords = dmarcTxt.filter((value) => value.toLowerCase().startsWith("v=dmarc1"));
   const dkimReadySelectors = dkimRecords
-    .filter((record) => record.txt.some((value) => value.toLowerCase().startsWith("v=dkim1")))
+    .filter(
+      (record) =>
+        record.txt.some((value) => isDkimTxtRecord(value)) ||
+        record.cname.some((value) => value.length > 0),
+    )
     .map((record) => record.selector);
 
   const mxReady = expectedMxMissing.length === 0;
@@ -451,14 +459,41 @@ const defaultResolver = {
       return [];
     }
   },
+  async cname(hostname) {
+    try {
+      return await resolveCname(hostname);
+    } catch {
+      return [];
+    }
+  },
 };
 
 function flattenTxt(records) {
   return records.map((record) => (Array.isArray(record) ? record.join("") : String(record))).filter(Boolean);
 }
 
+function flattenCname(records) {
+  return records
+    .map((record) => {
+      if (Array.isArray(record)) {
+        return record.join("");
+      }
+      if (record && typeof record === "object") {
+        return record.nameHost ?? record.value ?? record.target ?? String(record);
+      }
+      return String(record ?? "");
+    })
+    .map(normalizeHost)
+    .filter(Boolean);
+}
+
 function normalizeHost(hostname) {
   return hostname.toLowerCase().replace(/\.$/, "");
+}
+
+function isDkimTxtRecord(value) {
+  const normalized = String(value ?? "").trim().toLowerCase();
+  return normalized.startsWith("v=dkim1") || normalized.startsWith("k=rsa;");
 }
 
 function recordReplyCaptureCommand({

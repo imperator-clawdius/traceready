@@ -28,6 +28,7 @@
     "render:outreach-send-ready": "node scripts/render-outreach-send-ready.mjs",
     "render:outreach-send-checklist": "node scripts/render-outreach-send-checklist.mjs",
     "render:reply-capture-unblock": "node scripts/render-reply-capture-unblock.mjs",
+    "send:direct-outreach": "node scripts/send-direct-outreach-email.mjs",
     "summarize:outreach": "node scripts/summarize-outreach-results.mjs",
     "update:outreach-result": "node scripts/update-outreach-result.mjs",
     "verify:public-pilot-pack": "node scripts/verify-public-pilot-pack.mjs",

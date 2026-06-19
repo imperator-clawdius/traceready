@@ -84,6 +84,32 @@ describe("outreach email verifier", () => {
     expect(rendered).not.toContain("OUTREACH_EMAIL_ALIAS_NEXT=");
   });
 
+  it("accepts Brevo CNAME DKIM records as authenticated outbound mail", () => {
+    const report = evaluateOutreachEmailDns({
+      aliasTested: true,
+      mxRecords: NAMECHEAP_MX,
+      apexTxtRecords: [
+        ["v=spf1 include:spf.efwd.registrar-servers.com ~all"],
+        ["brevo-code:f00dbff30ff27ed4a8d49ce90de5398c"],
+      ],
+      dmarcTxtRecords: [["v=DMARC1; p=none; rua=mailto:founder@traceready.online"]],
+      dkimSelectors: ["brevo1", "brevo2"],
+      dkimTxtRecordSets: [[], []],
+      dkimCnameRecordSets: [
+        ["b1.traceready-online.dkim.brevo.com"],
+        ["b2.traceready-online.dkim.brevo.com"],
+      ],
+    });
+
+    const dkimCheck = report.checks.find((check) => check.label === "OUTREACH_EMAIL_DKIM");
+
+    expect(report.ready).toBe(true);
+    expect(report.dnsReady).toBe(true);
+    expect(dkimCheck?.ready).toBe(true);
+    expect(dkimCheck?.detail).toContain("brevo1");
+    expect(dkimCheck?.detail).toContain("brevo2");
+  });
+
   it("rejects reply-capture evidence that does not prove the controlled inbox received the alias test", () => {
     const evidenceResult = evaluateReplyCaptureEvidence({
       contactEmail: "wrong@traceready.online",
@@ -337,7 +363,7 @@ describe("outreach email verifier", () => {
     ).toEqual({
       domain: "example.test",
       contactEmail: "desk@example.test",
-      dkimSelectors: ["default", "google", "selector1", "selector2", "mailgun"],
+      dkimSelectors: ["default", "google", "selector1", "selector2", "brevo1", "brevo2", "mailgun"],
       replyCaptureEvidencePath: "private/reply-capture-evidence.json",
       replyCaptureChallengePath: "private/reply-capture-challenge.json",
       runbookOutputPath: "private/outreach-email-runbook.md",
