@@ -1,10 +1,11 @@
 # Stripe branding runbook
 
 Latest inspection: 2026-10-02. The $149 cleanup link renders the correct active
-offer. The $745 pilot link renders "The link is no longer active." Its checkout
-handoff therefore stays scope-request only until the provider link is repaired.
-No payment was submitted. The historical Dashboard record below is not current
-activation evidence for the pilot.
+offer. The authenticated TraceReady Dashboard also contains an existing active
+$745 `TraceReady 5-file importer pilot` at
+`https://buy.stripe.com/3cIdRbc8g9OX3BL1WZ93y02`; its rendered live checkout confirms
+the product, currency and price. The old website URL was a different inactive
+link. No payment was submitted and no Stripe setting or product was changed.
 
 The TraceReady site now routes paid CTAs through TraceReady-owned checkout handoff pages before sending buyers to Stripe:
 
@@ -17,15 +18,19 @@ Those pages disclose that TraceReady is operated by Passive Print Labs LLC befor
 
 Stripe checkout should make the purchased TraceReady product clear, with Passive Print Labs LLC presented honestly as the legal operator/payment entity where Stripe requires it.
 
-## Verified Dashboard state
+## Operator setup
+
+The owner reconfirmed Passive Print Labs LLC as the operator on 2026-10-02.
+The business/support settings below retain the earlier setup record; they were
+not modified during this checkout-link repair.
 
 - Legal entity remains `Passive Print Labs LLC`.
-- Buyer-facing product titles are `TraceReady 24-hour cleanup` and `TraceReady 5-file pilot`.
+- Buyer-facing product titles are `TraceReady 24-hour cleanup` and `TraceReady 5-file importer pilot`.
 - Support email is `founder@traceready.online`.
 - Website is `https://traceready.online/`.
 - Statement descriptor is `TRACEREADY`.
 - Cleanup checkout link: `https://buy.stripe.com/8x27sN6NW3qzb4d6df93y01`.
-- Pilot checkout link: `https://buy.stripe.com/dRm6oH9SH8l671l59W8IU03`.
+- Pilot checkout link: `https://buy.stripe.com/3cIdRbc8g9OX3BL1WZ93y02`.
 - Optional Stripe logo/wordmark asset for later upload: `/traceready-stripe-wordmark.png`.
 
 Do not change shared legal-entity fields. Passive Print Labs LLC remains the legal operator.

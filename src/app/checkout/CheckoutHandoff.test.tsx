@@ -3,6 +3,16 @@ import { afterEach, expect, it, vi } from "vitest";
 
 afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); });
 
+it("renders the verified pilot destination behind scope confirmation", async () => {
+  vi.stubEnv("NEXT_PUBLIC_PAID_ORDER_INTAKE_READY", "true");
+  vi.stubEnv("NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK", "");
+  const { CheckoutHandoff } = await import("./CheckoutHandoff");
+  const html = renderToStaticMarkup(<CheckoutHandoff title="TraceReady 5-file pilot" price="$745" description="Pilot" stripeHref="https://buy.stripe.com/3cIdRbc8g9OX3BL1WZ93y02" nextSteps={[]} />);
+  expect(html).toContain('data-checkout-url="https://buy.stripe.com/3cIdRbc8g9OX3BL1WZ93y02"');
+  expect(html).toContain("Confirm scope to continue");
+  expect(html).not.toContain('href="https://buy.stripe.com/');
+});
+
 it("does not unlock the pilot with the cheaper cleanup URL", async () => {
   vi.stubEnv("NEXT_PUBLIC_PAID_ORDER_INTAKE_READY", "true");
   vi.stubEnv("NEXT_PUBLIC_STRIPE_PAYMENT_LINK", "");

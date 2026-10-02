@@ -5,7 +5,7 @@
 - Repository: https://github.com/imperator-clawdius/traceready
 - Deployment target: GitHub Pages
 - Custom domain configured in GitHub Pages: `traceready.online`
-- Last verified launch state: 2026-06-14
+- Last verified provider state: 2026-10-02; both scoped offers have active checkouts.
 - Static export output: `out/`
 - HTTPS: GitHub Pages certificate approved for `traceready.online` and `www.traceready.online`; HTTPS enforcement enabled.
 - Launch feature: browser-side CSV, KML, and GeoJSON validator that creates a downloadable buyer-readiness pack for coffee and cocoa farm files.
@@ -20,7 +20,7 @@
 - Live Stripe cleanup product: `TraceReady 24-hour cleanup`
 - Live Stripe cleanup payment link: `https://buy.stripe.com/8x27sN6NW3qzb4d6df93y01`
 - Live Stripe pilot Payment Link: configured for the 5-file pilot checkout.
-- Live Stripe pilot payment link: `https://buy.stripe.com/dRm6oH9SH8l671l59W8IU03`
+- Live Stripe pilot payment link: `https://buy.stripe.com/3cIdRbc8g9OX3BL1WZ93y02`
 - Stripe branding record: `docs/stripe-branding-runbook.md` documents the verified Dashboard and rendered-checkout state.
 
 ## Verification Commands

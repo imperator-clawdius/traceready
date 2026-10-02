@@ -21,14 +21,15 @@
       "verificationMethod": "rendered_stripe_checkout"
     },
     "pilot": {
-      "href": "https://buy.stripe.com/dRm6oH9SH8l671l59W8IU03",
+      "href": "https://buy.stripe.com/3cIdRbc8g9OX3BL1WZ93y02",
       "title": "TraceReady 5-file pilot",
       "amount": 74500,
       "currency": "usd",
-      "active": false,
-      "verifiedAt": "2026-10-02T14:08:31.000Z",
+      "active": true,
+      "verifiedAt": "2026-10-02T15:36:00.000Z",
       "verificationMethod": "rendered_stripe_checkout",
-      "note": "Stripe renders: The link is no longer active. Keep scope-request only until repaired and verified."
+      "providerTitle": "TraceReady 5-file importer pilot",
+      "note": "Authenticated TraceReady Dashboard shows this existing link active. Rendered live checkout confirms TraceReady branding, the five-file importer pilot, and USD 745. The previous website URL was a different inactive link. No payment or Stripe settings change performed."
     }
   }
 }
