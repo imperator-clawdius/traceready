@@ -37,9 +37,10 @@ Custom domain: `traceready.online`
 
 ## Conversion
 
-The $149 cleanup offer is available after email scope confirmation. The $745
-pilot currently accepts scope requests only: its previous Stripe link was found
-inactive on 2026-10-02. Do not send that inactive link to customers.
+The $149 cleanup and $745 five-file pilot offers are available after email scope
+confirmation. Both live Stripe checkouts were inspected on 2026-10-02. The pilot
+now uses the existing active link found in the authenticated TraceReady Dashboard;
+the previous website URL pointed to a different, inactive link.
 
 Public payment controls are built with `NEXT_PUBLIC_PAID_ORDER_INTAKE_READY=true`
 and the per-offer record in `docs/paid-intake-approval.json`. The Pages workflow
@@ -60,10 +61,11 @@ The paid CTAs open `/checkout/cleanup/` and `/checkout/pilot/` first. Those page
 
 `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` is configured in GitHub Actions variables for the live $149 cleanup Payment Link. The checkout page also includes the public fallback link: `https://buy.stripe.com/8x27sN6NW3qzb4d6df93y01`.
 
-The 5-file pilot uses `NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK` when configured.
-Its old fallback `https://buy.stripe.com/dRm6oH9SH8l671l59W8IU03` is inactive.
-After repairing it in Stripe, inspect the rendered product title and $745 price,
-update the offer evidence and URL, rebuild, and verify the full buyer path.
+The 5-file pilot uses `NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK` when configured,
+with verified fallback `https://buy.stripe.com/3cIdRbc8g9OX3BL1WZ93y02`. Stripe calls
+the product `TraceReady 5-file importer pilot` and shows $745. Update both the
+build variable and dated offer evidence when replacing a link, then rebuild and
+verify the full buyer path. An old or unverified URL keeps that offer disabled.
 
 Before checkout, the launch app asks customers to confirm scope and avoid sending raw farm coordinates. After scope confirmation and checkout, `/order-intake/` prompts customers to email the scope thread, source file, receipt email, commodity, source country, deadline, and buyer requirements so the paid cleanup order can be fulfilled manually. TraceReady is operated by Passive Print Labs LLC, and the Stripe checkout surface is labeled as TraceReady.
 

@@ -22,7 +22,7 @@ export const CHECKOUT_OFFERS = {
   pilot: {
     title: "TraceReady 5-file pilot",
     price: "$745",
-    stripeHref: "https://buy.stripe.com/dRm6oH9SH8l671l59W8IU03",
+    stripeHref: "https://buy.stripe.com/3cIdRbc8g9OX3BL1WZ93y02",
   },
 };
 

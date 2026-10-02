@@ -23,7 +23,7 @@ export const STRIPE_CLEANUP_LINK =
   process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK || "https://buy.stripe.com/8x27sN6NW3qzb4d6df93y01";
 
 export const STRIPE_PILOT_LINK =
-  process.env.NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK || "https://buy.stripe.com/dRm6oH9SH8l671l59W8IU03";
+  process.env.NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK || "https://buy.stripe.com/3cIdRbc8g9OX3BL1WZ93y02";
 
 export const PAID_ORDER_INTAKE_READY = process.env.NEXT_PUBLIC_PAID_ORDER_INTAKE_READY === "true";
 
@@ -42,5 +42,5 @@ export const OFFER_STATUS = {
     checkoutReady: PAID_ORDER_INTAKE_READY && paidIntakeApproval.offers.pilot.active &&
       paidIntakeApproval.offers.pilot.href === STRIPE_PILOT_LINK,
   },
-  verifiedDate: "2026-06-14",
+  verifiedDate: "2026-10-02",
 };
