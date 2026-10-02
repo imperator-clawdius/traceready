@@ -1,4 +1,6 @@
 import type { AnchorHTMLAttributes, ReactNode } from "react";
+// These assertions cover the deliberately locked variant, independently of build env.
+vi.hoisted(() => { vi.stubEnv("NEXT_PUBLIC_PAID_ORDER_INTAKE_READY", "false"); });
 import { act } from "react";
 import { createRoot, hydrateRoot, type Root } from "react-dom/client";
 import { renderToString } from "react-dom/server";
@@ -37,7 +39,7 @@ describe("TraceReady trust pages", () => {
   let root: Root;
 
   beforeAll(() => {
-    globalThis.IS_REACT_ACT_ENVIRONMENT = true;
+    Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
   });
 
   beforeEach(() => {
@@ -109,9 +111,9 @@ describe("TraceReady trust pages", () => {
     expect(pageText).toContain("Operator and payment");
     expect(pageText).toContain("TraceReady checkout is labeled as TraceReady");
     expect(pageText).toContain("Passive Print Labs LLC");
-    expect(pageText).toContain("Paid intake gate");
+    expect(pageText).toContain("Scope-first payment");
     expect(pageText).toContain("Do not pay or send raw farm coordinates before scope confirmation");
-    expect(pageText).toContain("Stripe opens only after reply capture and launch scope are confirmed");
+    expect(pageText).toContain("Request a scope review by email");
     expect(pageText).toContain("Email scope request first");
     expect(pageText).toContain("Download representative sample pack");
     expect(pageText).toContain("Review order intake checklist");
@@ -137,9 +139,9 @@ describe("TraceReady trust pages", () => {
     expect(pageText).toContain("Operator and payment");
     expect(pageText).toContain("TraceReady checkout is labeled as TraceReady");
     expect(pageText).toContain("Passive Print Labs LLC");
-    expect(pageText).toContain("Paid intake gate");
+    expect(pageText).toContain("Scope-first payment");
     expect(pageText).toContain("Do not pay or send raw farm coordinates before scope confirmation");
-    expect(pageText).toContain("Stripe opens only after reply capture and launch scope are confirmed");
+    expect(pageText).toContain("Request a scope review by email");
     expect(pageText).toContain("Email scope request first");
     expect(pageText).toContain("Receive a batch cleanup summary and cleaned packs");
     expect(pageText).toContain("Review order intake checklist");
@@ -275,7 +277,7 @@ describe("TraceReady trust pages", () => {
     expect(trustLadderText).toContain("Still missing");
     expect(trustLadderText).toContain("one permissioned customer or file-owner case");
     expect(trustLadderText).toContain("Payment boundary");
-    expect(trustLadderText).toContain("paid checkout stays gated until reply capture and launch scope are confirmed");
+    expect(trustLadderText).toContain("confirm file scope by email before payment");
     expect(trustLadderText).toContain("Market signal");
     expect(trustLadderText).toContain("0 replies, 0 file checks, 0 pilot requests, and 0 paid orders");
     expect(trustLadderText).not.toContain("customer quote");

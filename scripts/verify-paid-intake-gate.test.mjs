@@ -1,13 +1,31 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   renderPaidIntakeGateVerification,
   verifyPaidIntakeGate,
 } from "./verify-paid-intake-gate.mjs";
 
+function operationalApproval() {
+  return {
+    schemaVersion: 2, replyCaptureReady: true, outboundReady: true,
+    approvedForPublicCheckout: true, approvedAt: "2026-10-02T14:08:31.000Z",
+    approver: "Test operator",
+    evidence: { replyCaptureEvidencePath: "private/evidence.json", emailVerifiedAt: "2026-10-02T14:08:31.000Z", fulfillmentRunbook: "docs/fulfillment-runbook.md" },
+    offers: {
+      cleanup: { href: "https://buy.stripe.com/cleanup123", active: true, amount: 14900, currency: "usd", title: "TraceReady 24-hour cleanup", verifiedAt: "2026-10-02T14:08:31.000Z", verificationMethod: "rendered_stripe_checkout" },
+      pilot: { active: false },
+    },
+  };
+}
+
 describe("paid intake gate verifier", () => {
+  beforeEach(() => {
+    vi.stubEnv("NEXT_PUBLIC_STRIPE_PAYMENT_LINK", "");
+    vi.stubEnv("NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK", "");
+  });
+  afterEach(() => vi.unstubAllEnvs());
   it("passes by default while public checkout is locked", async () => {
     const approvalPath = path.join(os.tmpdir(), "missing-paid-intake-approval.json");
 
@@ -38,7 +56,7 @@ describe("paid intake gate verifier", () => {
     );
   });
 
-  it("fails when the approval record does not prove reply capture and market signal readiness", async () => {
+  it("rejects the old market-signal record without operational checkout evidence", async () => {
     const { approvalPath } = await writeApproval({
       replyCaptureReady: true,
       approvedForPublicCheckout: true,
@@ -59,23 +77,12 @@ describe("paid intake gate verifier", () => {
 
     expect(result.ready).toBe(false);
     expect(result.state).toBe("approval_invalid");
-    expect(result.errors).toContain("approval evidence.saleReadinessState must be sale_ready_with_market_signal");
-    expect(result.errors).toContain("approval evidence.realMarketSignal must be true");
+    expect(result.errors).toContain("approval schemaVersion must be 2");
+    expect(result.errors).toContain("approval outboundReady must be true");
   });
 
-  it("passes when public checkout has an explicit approval record with operational and market proof", async () => {
-    const { approvalPath } = await writeApproval({
-      replyCaptureReady: true,
-      approvedForPublicCheckout: true,
-      approvedAt: "2026-06-17T20:30:00.000Z",
-      approver: "TraceReady operator",
-      evidence: {
-        replyCaptureEvidencePath: "private/reply-capture-evidence.json",
-        saleReadinessState: "sale_ready_with_market_signal",
-        realMarketSignal: true,
-        tractionEvidencePath: "private/traction-readiness-scorecard-2026-06-17.md",
-      },
-    });
+  it("enables the verified offer before the first sale while leaving an inactive offer locked", async () => {
+    const { approvalPath } = await writeApproval(operationalApproval());
 
     const result = await verifyPaidIntakeGate({
       publicFlag: "true",
@@ -90,11 +97,32 @@ describe("paid intake gate verifier", () => {
     expect(report).toContain(`approval=${approvalPath}`);
   });
 
+  it.each([
+    ["unverified email", (record) => { record.outboundReady = false; }],
+    ["inactive offers", (record) => { record.offers.cleanup.active = false; }],
+    ["wrong price", (record) => { record.offers.cleanup.amount = 1; }],
+    ["unverified provider", (record) => { record.offers.cleanup.verificationMethod = "http_200"; }],
+    ["untrusted destination", (record) => { record.offers.cleanup.href = "https://buy.stripe.com.evil.test/pay"; }],
+  ])("blocks %s", async (_label, mutate) => {
+    const approval = operationalApproval();
+    mutate(approval);
+    const { approvalPath } = await writeApproval(approval);
+    const result = await verifyPaidIntakeGate({ publicFlag: "true", approvalPath });
+    expect(result.ready).toBe(false);
+  });
+
   it("is part of the main check gate", async () => {
     const packageJson = JSON.parse(await fs.readFile("package.json", "utf8"));
 
     expect(packageJson.scripts["verify:paid-intake-gate"]).toBe("node scripts/verify-paid-intake-gate.mjs");
     expect(packageJson.scripts.check).toContain("npm run verify:paid-intake-gate");
+  });
+
+  it("rejects a configured payment destination that differs from the verified offer", async () => {
+    vi.stubEnv("NEXT_PUBLIC_STRIPE_PAYMENT_LINK", "https://buy.stripe.com/different123");
+    const { approvalPath } = await writeApproval(operationalApproval());
+    const result = await verifyPaidIntakeGate({ publicFlag: "true", approvalPath });
+    expect(result.errors).toContain("approval offers.cleanup.href differs from the build payment link");
   });
 });
 

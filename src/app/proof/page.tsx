@@ -54,7 +54,7 @@ const TRUST_LADDER = [
   {
     title: "Payment boundary",
     detail:
-      "paid checkout stays gated until reply capture and launch scope are confirmed, so nobody is asked to trust a paid cleanup desk before intake works.",
+      "confirm file scope by email before payment. The cleanup offer supports scoped orders; the five-file pilot currently accepts scope requests while payment availability is restored.",
   },
   {
     title: "Market signal",

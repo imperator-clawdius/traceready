@@ -243,7 +243,7 @@ function parseKml(text: string): ParsedInput {
     throw new Error("The KML file is not valid XML.");
   }
 
-  const placemarks = Array.from(xml.getElementsByTagName("Placemark"));
+  const placemarks = Array.from(xml.getElementsByTagNameNS("*", "Placemark"));
 
   if (placemarks.length === 0) {
     throw new Error("No KML placemarks were found.");
@@ -507,15 +507,15 @@ function validateGeometry(issues: ValidationIssue[], record: FarmRecord) {
     });
   }
 
-  if (record.geometryType === "Polygon" && record.geometry && !isPolygonClosed(record.geometry.coordinates)) {
+  if (record.geometry && !isValidGeometry(record.geometry)) {
     issues.push({
       severity: "blocker",
-      code: "open_polygon",
+      code: "invalid_geometry",
       sourceLabel: record.sourceLabel,
       farmId: record.farmId,
       field: "geometry",
-      message: "Polygon geometry is not closed.",
-      suggestion: "Close the polygon ring by repeating the first coordinate at the end.",
+      message: "Geometry has invalid coordinates, unsupported structure, or an incomplete polygon ring.",
+      suggestion: "Check every coordinate and every polygon boundary, including holes. Rings need at least three distinct vertices and must repeat the first position at the end.",
     });
   }
 }
@@ -528,7 +528,10 @@ function extractGeoJsonFeatures(value: unknown): Array<{ id?: unknown; propertie
   const object = value as JsonObject;
 
   if (object.type === "FeatureCollection" && Array.isArray(object.features)) {
-    return object.features.filter(asObject) as Array<{ id?: unknown; properties?: unknown; geometry?: unknown }>;
+    if (object.features.some(feature => !asObject(feature) || feature.type !== "Feature")) {
+      throw new Error("Every GeoJSON FeatureCollection entry must be a Feature. Invalid entries have not been dropped.");
+    }
+    return object.features as Array<{ id?: unknown; properties?: unknown; geometry?: unknown }>;
   }
 
   if (object.type === "Feature") {
@@ -558,7 +561,7 @@ function toTraceGeometry(value: unknown): TraceGeometry | null {
 function extractKmlProperties(placemark: Element): Record<string, string> {
   const raw: Record<string, string> = {};
 
-  for (const data of Array.from(placemark.getElementsByTagName("Data"))) {
+  for (const data of Array.from(placemark.getElementsByTagNameNS("*", "Data"))) {
     const name = data.getAttribute("name");
     const value = textFromFirstTag(data, "value");
 
@@ -567,7 +570,7 @@ function extractKmlProperties(placemark: Element): Record<string, string> {
     }
   }
 
-  for (const data of Array.from(placemark.getElementsByTagName("SimpleData"))) {
+  for (const data of Array.from(placemark.getElementsByTagNameNS("*", "SimpleData"))) {
     const name = data.getAttribute("name");
     const value = data.textContent?.trim() ?? "";
 
@@ -580,44 +583,57 @@ function extractKmlProperties(placemark: Element): Record<string, string> {
 }
 
 function extractKmlGeometry(placemark: Element): TraceGeometry | null {
-  const polygon = placemark.getElementsByTagName("Polygon")[0];
-
-  if (polygon) {
-    const coordinates = parseKmlCoordinates(textFromFirstTag(polygon, "coordinates"));
-
-    if (coordinates.length > 0) {
-      return {
-        type: "Polygon",
-        coordinates: [coordinates],
-      };
-    }
-  }
-
-  const point = placemark.getElementsByTagName("Point")[0];
-
-  if (point) {
-    const coordinates = parseKmlCoordinates(textFromFirstTag(point, "coordinates"));
-
-    if (coordinates[0]) {
-      return {
-        type: "Point",
-        coordinates: coordinates[0],
-      };
-    }
-  }
-
-  return null;
+  const geometries = Array.from(placemark.children).filter(element =>
+    ["Point", "Polygon", "MultiGeometry", "LineString", "LinearRing", "Model", "Track", "MultiTrack"].includes(element.localName),
+  );
+  if (geometries.length === 0) return null;
+  if (geometries.length !== 1) throw new Error("A KML placemark must have one geometry. Put multiple polygons inside MultiGeometry.");
+  return readKmlGeometry(geometries[0]);
 }
 
-function parseKmlCoordinates(value: string): Coordinate[] {
-  return value
-    .trim()
-    .split(/\s+/)
-    .map((entry) => {
-      const [lon, lat] = entry.split(",").map((part) => Number(part));
-      return Number.isFinite(lon) && Number.isFinite(lat) ? ([lon, lat] as Coordinate) : null;
-    })
-    .filter((coordinate): coordinate is Coordinate => coordinate !== null);
+function readKmlGeometry(element: Element): TraceGeometry {
+  if (element.localName === "Point") {
+    const positions = parseKmlCoordinates(textFromFirstTag(element, "coordinates"));
+    if (positions.length !== 1) throw new Error("A KML Point must contain exactly one coordinate.");
+    return { type: "Point", coordinates: positions[0] };
+  }
+  if (element.localName === "Polygon") {
+    const boundaries = Array.from(element.children);
+    const outer = boundaries.filter(child => child.localName === "outerBoundaryIs");
+    const holes = boundaries.filter(child => child.localName === "innerBoundaryIs");
+    if (outer.length !== 1) throw new Error("A KML polygon must contain one outer boundary.");
+    return {
+      type: "Polygon",
+      coordinates: [...outer, ...holes].map(boundary => {
+        const rings = Array.from(boundary.children).filter(child => child.localName === "LinearRing");
+        if (rings.length !== 1) throw new Error("Each KML polygon boundary must contain one LinearRing.");
+        return parseKmlCoordinates(textFromFirstTag(rings[0], "coordinates"));
+      }),
+    };
+  }
+  if (element.localName === "MultiGeometry") {
+    const geometries = Array.from(element.children).map(readKmlGeometry);
+    if (!geometries.length || geometries.some(geometry => !["Polygon", "MultiPolygon"].includes(geometry.type))) {
+      throw new Error("KML MultiGeometry must contain polygons only. Export point and mixed geometry as separate farm records.");
+    }
+    return {
+      type: "MultiPolygon",
+      coordinates: geometries.flatMap(geometry => geometry.type === "Polygon" ? [geometry.coordinates] : geometry.coordinates as unknown[]),
+    };
+  }
+  throw new Error(`Unsupported KML geometry: ${element.localName}. Use a point or polygon for each farm.`);
+}
+
+function parseKmlCoordinates(value: string): number[][] {
+  if (!value.trim()) throw new Error("KML geometry contains no coordinates.");
+  return value.trim().split(/\s+/).map(entry => {
+    const parts = entry.split(",");
+    const position = parts.map(Number);
+    if (parts.length < 2 || parts.length > 3 || parts.some(part => !part.trim()) || !isValidPosition(position)) {
+      throw new Error("KML geometry contains an invalid coordinate. No vertices have been removed or repaired.");
+    }
+    return position;
+  });
 }
 
 function getRepresentativePoint(geometry: TraceGeometry | null): Coordinate | null {
@@ -669,16 +685,31 @@ function isCoordinate(value: unknown): value is Coordinate {
   );
 }
 
-function isPolygonClosed(coordinates: unknown): boolean {
-  if (!Array.isArray(coordinates) || !Array.isArray(coordinates[0])) {
-    return false;
-  }
+function isValidPosition(value: unknown): value is number[] {
+  return Array.isArray(value) && value.length >= 2 &&
+    value.every(entry => typeof entry === "number" && Number.isFinite(entry)) &&
+    Math.abs(value[0]) <= 180 && Math.abs(value[1]) <= 90;
+}
 
-  const ring = coordinates[0] as unknown[];
+function isValidRing(ring: unknown): boolean {
+  if (!Array.isArray(ring) || ring.length < 4 || !ring.every(isValidPosition)) return false;
   const first = ring[0];
   const last = ring[ring.length - 1];
+  return first.length === last.length && first.every((value, index) => value === last[index]) &&
+    new Set(ring.map(position => `${position[0]},${position[1]}`)).size >= 3;
+}
 
-  return ring.length >= 4 && isCoordinate(first) && isCoordinate(last) && first[0] === last[0] && first[1] === last[1];
+function isValidPolygon(coordinates: unknown): boolean {
+  return Array.isArray(coordinates) && coordinates.length > 0 && coordinates.every(isValidRing);
+}
+
+function isValidGeometry(geometry: TraceGeometry): boolean {
+  if (geometry.type === "Point") return isValidPosition(geometry.coordinates);
+  if (geometry.type === "Polygon") return isValidPolygon(geometry.coordinates);
+  if (geometry.type === "MultiPolygon") {
+    return Array.isArray(geometry.coordinates) && geometry.coordinates.length > 0 && geometry.coordinates.every(isValidPolygon);
+  }
+  return false;
 }
 
 function getAliasedValue(row: Record<string, string>, aliases: string[]): string {
@@ -750,7 +781,7 @@ function asObject(value: unknown): JsonObject | null {
 }
 
 function textFromFirstTag(element: Element, tagName: string): string {
-  return element.getElementsByTagName(tagName)[0]?.textContent?.trim() ?? "";
+  return element.getElementsByTagNameNS("*", tagName)[0]?.textContent?.trim() ?? "";
 }
 
 function buildReport(analysis: TraceReadyAnalysis, outreachAttribution?: OutreachAttribution | null): string {
@@ -933,15 +964,15 @@ function buildEudrChecklist(analysis: TraceReadyAnalysis, outreachAttribution?: 
       checklistItem(
         "geolocation_present",
         "Geolocation is present and coordinates are valid",
-        !hasIssue(analysis, ["missing_geolocation", "invalid_coordinates"]),
-        hasIssue(analysis, ["missing_geolocation", "invalid_coordinates"]),
+        !hasIssue(analysis, ["missing_geolocation", "invalid_coordinates", "invalid_geometry"]),
+        hasIssue(analysis, ["missing_geolocation", "invalid_coordinates", "invalid_geometry"]),
         `${analysis.records.filter((record) => record.latitude !== null && record.longitude !== null).length}/${analysis.summary.totalRecords} records geolocated`,
       ),
       checklistItem(
         "polygon_threshold",
         "Plots over 4 hectares use polygon geometry",
-        !hasIssue(analysis, ["polygon_required", "open_polygon"]),
-        hasIssue(analysis, ["polygon_required", "open_polygon"]),
+        !hasIssue(analysis, ["polygon_required", "invalid_geometry"]),
+        hasIssue(analysis, ["polygon_required", "invalid_geometry"]),
         `${analysis.records.filter((record) => record.geometryType === "Polygon" || record.geometryType === "MultiPolygon").length} polygon records`,
       ),
       checklistItem(
@@ -958,7 +989,12 @@ function buildEudrChecklist(analysis: TraceReadyAnalysis, outreachAttribution?: 
         evidence:
           "cleaned CSV, issue CSV, readiness report, normalized GeoJSON, EUDR checklist, and paid-cleanup intake note",
       },
-    ],
+    ].map(check => {
+      if (check.id === "pack_contents") return check;
+      if (hasIssue(analysis, ["unsupported_format", "parse_error"])) return { ...check, status: "blocker_or_review" };
+      if (analysis.records.length === 0) return { ...check, status: "review", evidence: "No farm records were analyzed" };
+      return check;
+    }),
   };
 }
 
@@ -972,7 +1008,7 @@ function checklistItem(
   return {
     id,
     label,
-    status: passes ? "pass" : needsAttention ? "blocker_or_review" : "review",
+    status: needsAttention ? "blocker_or_review" : passes ? "pass" : "review",
     evidence: evidence || "not detected",
   };
 }
@@ -1090,6 +1126,8 @@ function toCsv(columns: string[], rows: Array<Record<string, string | number | n
 }
 
 function csvCell(value: string | number | null | undefined): string {
-  const text = value === null || value === undefined ? "" : String(value);
+  let text = value === null || value === undefined ? "" : String(value);
+  // Preserve numeric coordinates while making untrusted text safe to open in a spreadsheet.
+  if (typeof value === "string" && /^[\s]*[=+@-]|^[\t\r\n]/.test(value)) text = `'${text}`;
   return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 }

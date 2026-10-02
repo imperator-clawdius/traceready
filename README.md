@@ -37,11 +37,33 @@ Custom domain: `traceready.online`
 
 ## Conversion
 
+The $149 cleanup offer is available after email scope confirmation. The $745
+pilot currently accepts scope requests only: its previous Stripe link was found
+inactive on 2026-10-02. Do not send that inactive link to customers.
+
+Public payment controls are built with `NEXT_PUBLIC_PAID_ORDER_INTAKE_READY=true`
+and the per-offer record in `docs/paid-intake-approval.json`. The Pages workflow
+passes this repository variable through to the static build. Only a recorded
+active offer whose verified URL matches the configured destination is exposed,
+and the customer confirms scope before the payment link appears. The default
+local build remains scope-request only.
+
+Run `npm run verify:sale-readiness` **after building**. It inspects the rendered
+checkout and intake pages plus dated provider evidence; source code containing a
+Stripe URL or an HTTP 200 response is not sufficient. Individual available offers
+are reported separately. Market traction is reported honestly but is not required
+to open an operational checkout. Overall readiness stays pending until both
+advertised offers work. `npm run verify:launch` checks the deployed experience;
+`--allow-locked-checkout` is only for diagnosing a deliberately locked site.
+
 The paid CTAs open `/checkout/cleanup/` and `/checkout/pilot/` first. Those pages keep the TraceReady name visible, explain that Passive Print Labs LLC operates the payment workflow, and then link to TraceReady-labeled Stripe products.
 
 `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` is configured in GitHub Actions variables for the live $149 cleanup Payment Link. The checkout page also includes the public fallback link: `https://buy.stripe.com/8x27sN6NW3qzb4d6df93y01`.
 
-The 5-file pilot uses `NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK` when configured. The checkout page also includes the public fallback Payment Link: `https://buy.stripe.com/dRm6oH9SH8l671l59W8IU03`.
+The 5-file pilot uses `NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK` when configured.
+Its old fallback `https://buy.stripe.com/dRm6oH9SH8l671l59W8IU03` is inactive.
+After repairing it in Stripe, inspect the rendered product title and $745 price,
+update the offer evidence and URL, rebuild, and verify the full buyer path.
 
 Before checkout, the launch app asks customers to confirm scope and avoid sending raw farm coordinates. After scope confirmation and checkout, `/order-intake/` prompts customers to email the scope thread, source file, receipt email, commodity, source country, deadline, and buyer requirements so the paid cleanup order can be fulfilled manually. TraceReady is operated by Passive Print Labs LLC, and the Stripe checkout surface is labeled as TraceReady.
 

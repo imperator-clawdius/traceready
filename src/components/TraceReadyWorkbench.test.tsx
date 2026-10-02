@@ -19,17 +19,17 @@ vi.mock("next/image", () => ({
 describe("TraceReady conversion surface", () => {
   let container: HTMLDivElement;
   let root: Root;
-  let scrollIntoView: ReturnType<typeof vi.fn>;
+  let scrollIntoView: ReturnType<typeof vi.fn<Element["scrollIntoView"]>>;
 
   beforeAll(() => {
-    globalThis.IS_REACT_ACT_ENVIRONMENT = true;
+    Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
   });
 
   beforeEach(() => {
     container = document.createElement("div");
     document.body.append(container);
     root = createRoot(container);
-    scrollIntoView = vi.fn();
+    scrollIntoView = vi.fn<Element["scrollIntoView"]>();
     Element.prototype.scrollIntoView = scrollIntoView;
   });
 
