@@ -1172,11 +1172,11 @@ function BatchPilotSummary({
       </div>
 
       <div className="mt-4 divide-y divide-[#eadcc8] border border-[#e0c79d] bg-white/70">
-        {results.map((result) => {
+        {results.map((result, index) => {
           const status = batchFileStatus(result);
 
           return (
-            <div key={result.fileName} className="grid gap-3 px-4 py-3 text-sm sm:grid-cols-[minmax(0,1fr)_120px_120px]">
+            <div key={`${index}-${result.fileName}`} className="grid gap-3 px-4 py-3 text-sm sm:grid-cols-[minmax(0,1fr)_120px_120px]">
               <div>
                 <p className="font-semibold text-[#2b190f]">{result.fileName}</p>
                 <p className="mt-1 text-xs text-[#7a6144]">

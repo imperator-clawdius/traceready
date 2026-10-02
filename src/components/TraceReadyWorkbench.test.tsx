@@ -435,4 +435,36 @@ QA-1,Ama Mensah,Ghana,coffee,LOT-QA,2.2,6.2031,-1.7082
     expect(pageText).not.toContain("No issues found in this file.");
     expect(scrollIntoView).toHaveBeenCalled();
   });
+
+  it("replaces every visible batch row after selecting distinct files with duplicate names", async () => {
+    await act(async () => {
+      root.render(<TraceReadyWorkbench />);
+    });
+    const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+    const select = async (names: string[]) => {
+      Object.defineProperty(input, "files", {
+        configurable: true,
+        value: names.map((name, index) => new File([
+          `farm_id,supplier_name,country,commodity,batch_id,area_ha,latitude,longitude\nTEST-${index},Fictional Cooperative,Fictionland,cocoa,TEST-BATCH,2,10,10\n`,
+        ], name, { type: "text/csv" })),
+      });
+      await act(async () => {
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+      });
+    };
+    const visibleNames = () => {
+      const heading = Array.from(container.querySelectorAll("h2")).find(element =>
+        element.textContent === "Batch view for supplier file cleanup.",
+      );
+      return Array.from(heading!.closest("section")!.querySelectorAll("p"))
+        .map(element => element.textContent)
+        .filter(text => text?.endsWith(".csv"));
+    };
+    const first = ["supplier.csv", "supplier.csv", "third.csv", "fourth.csv", "fifth.csv"];
+    await select(first);
+    expect(visibleNames()).toEqual(first);
+    const replacement = ["new-first.csv", "new-second.csv", "new-third.csv", "new-fourth.csv", "new-fifth.csv"];
+    await select(replacement);
+    expect(visibleNames()).toEqual(replacement);
+  });
 });
