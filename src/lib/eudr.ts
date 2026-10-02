@@ -494,6 +494,29 @@ function validateCoordinates(issues: ValidationIssue[], record: FarmRecord) {
 
 function validateGeometry(issues: ValidationIssue[], record: FarmRecord) {
   const isPolygon = record.geometryType === "Polygon" || record.geometryType === "MultiPolygon";
+  const suppliedArea = getAliasedValue(record.raw, FIELD_ALIASES.areaHa);
+
+  if (suppliedArea && (record.areaHa === null || record.areaHa <= 0)) {
+    issues.push({
+      severity: "blocker",
+      code: "invalid_area",
+      sourceLabel: record.sourceLabel,
+      farmId: record.farmId,
+      field: "area_ha",
+      message: `Supplied area "${suppliedArea}" is not a positive finite number.`,
+      suggestion: "Confirm the plot area in hectares with the supplier and correct the source value. Do not estimate a replacement.",
+    });
+  } else if (record.areaHa === null && !isPolygon) {
+    issues.push({
+      severity: "warning",
+      code: "unknown_area",
+      sourceLabel: record.sourceLabel,
+      farmId: record.farmId,
+      field: "area_ha",
+      message: "Plot area is missing; the polygon threshold is unresolved for this record.",
+      suggestion: "Obtain the area in hectares from the supplier or provide verified polygon geometry. Do not estimate missing area.",
+    });
+  }
 
   if (record.areaHa !== null && record.areaHa > 4 && !isPolygon) {
     issues.push({
@@ -913,6 +936,8 @@ function buildPaidCleanupIntake(analysis: TraceReadyAnalysis, outreachAttributio
 }
 
 function buildEudrChecklist(analysis: TraceReadyAnalysis, outreachAttribution?: OutreachAttribution | null) {
+  const unknownAreaCount = analysis.issues.filter(issue => issue.code === "unknown_area").length;
+  const invalidAreaCount = analysis.issues.filter(issue => issue.code === "invalid_area").length;
   return {
     product: "TraceReady",
     artifact: "EUDR readiness checklist",
@@ -971,9 +996,13 @@ function buildEudrChecklist(analysis: TraceReadyAnalysis, outreachAttribution?: 
       checklistItem(
         "polygon_threshold",
         "Plots over 4 hectares use polygon geometry",
-        !hasIssue(analysis, ["polygon_required", "invalid_geometry"]),
-        hasIssue(analysis, ["polygon_required", "invalid_geometry"]),
-        `${analysis.records.filter((record) => record.geometryType === "Polygon" || record.geometryType === "MultiPolygon").length} polygon records`,
+        !hasIssue(analysis, ["polygon_required", "invalid_geometry", "unknown_area", "invalid_area"]),
+        hasIssue(analysis, ["polygon_required", "invalid_geometry", "invalid_area"]),
+        [
+          `${analysis.records.filter((record) => record.geometryType === "Polygon" || record.geometryType === "MultiPolygon").length} polygon records`,
+          ...(unknownAreaCount ? [`${unknownAreaCount} non-polygon records have unknown area; threshold unresolved`] : []),
+          ...(invalidAreaCount ? [`${invalidAreaCount} records have invalid supplied area`] : []),
+        ].join("; "),
       ),
       checklistItem(
         "unique_farm_ids",
