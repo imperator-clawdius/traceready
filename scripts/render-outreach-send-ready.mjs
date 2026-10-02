@@ -13,6 +13,7 @@ const DEFAULT_CONTACT_PROFILE = {
   lastName: "Desk",
   workEmail: "founder@traceready.online",
   companyName: "Passive Print Labs LLC / TraceReady",
+  registeredCompanyName: "Passive Print Labs LLC",
 };
 
 export function renderOutreachSendReadyPacket(batchRows, resultRows, sendabilityAudit, options = {}) {
@@ -92,7 +93,7 @@ export function renderOutreachSendReadyPacket(batchRows, resultRows, sendability
     `- Last name: \`${contactProfile.lastName}\``,
     `- Work email: \`${contactProfile.workEmail}\``,
     "- Work phone: leave blank",
-    `- Registered Company Name: \`${contactProfile.companyName}\``,
+    `- Registered Company Name: \`${contactProfile.registeredCompanyName}\``,
     `- Subject: \`${subject}\``,
     `- Your Message: copy from \`${messageFile}\``,
     "- Honeypot / company website: leave blank",

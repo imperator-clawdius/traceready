@@ -65,7 +65,7 @@ describe("outreach send-ready packet renderer", () => {
     expect(markdown).toContain("- First name: `TraceReady`");
     expect(markdown).toContain("- Last name: `Desk`");
     expect(markdown).toContain("- Work email: `founder@traceready.online`");
-    expect(markdown).toContain("- Registered Company Name: `Passive Print Labs LLC / TraceReady`");
+    expect(markdown).toContain("- Registered Company Name: `Passive Print Labs LLC`");
     expect(markdown).toContain("- Honeypot / company website: leave blank");
     expect(markdown).toContain("Subject: `Row-level check for messy EUDR farm files`");
     expect(markdown).toContain("46,134 point-only plots over 4 hectares");
