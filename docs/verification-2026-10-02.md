@@ -45,6 +45,38 @@ blockers; downloading a pack is not acceptance or certification.
 
 ## Revenue work remaining
 
+### Checkout repair in this release
+
+- Rendered Stripe inspection on October 2 confirmed the $149 cleanup title and
+  price with an available payment form. The pilot instead says its link is no
+  longer active. Neither observation required submitting a payment.
+- Added a dated per-offer operational record. Cleanup can be enabled independently;
+  the inactive pilot remains scope-request only. URL, title and price matching
+  prevent an offer from borrowing another offer's checkout availability.
+- A required confirmation checkbox reveals the Stripe link only after the customer
+  confirms that their file scope and intake instructions were agreed by email.
+- Removed market-signal requirements from operational checkout activation. Zero
+  sales remains zero; no customer proof is fabricated to enable the first order.
+- The Pages workflow now passes the explicit checkout build flag. Branch/PR CI
+  covers both enabled and locked builds. The sale verifier checks rendered output
+  and dated provider evidence rather than matching source text; it correctly
+  reports cleanup available and pilot pending. Launch checks enforce the intended
+  per-offer public state and explicitly distinguish HTTP reachability from activation.
+- Current email DNS checks pass and the existing June received-message evidence
+  validates against its challenge. This is historical delivery plus current DNS,
+  not a newly sent inbox or fulfillment test.
+- Full enabled-build check: 314 tests in45files, lint, TypeScript and production
+  export pass. Chrome verification confirms checkbox reveal/revocation and the
+  pilot's email-only fallback. Provider transactions and fulfillment remain untested.
+
+The prior mismatch below is the baseline observation, resolved in code by this
+release. Deployment and live verification are recorded separately in the portfolio
+ledger. Repairing the inactive pilot requires authenticated Stripe Dashboard
+access; it was signed out in this session. Both offers must work before overall
+sale readiness passes.
+
+### Baseline observation
+
 The current public checkout is scope-request only. `PAID_ORDER_INTAKE_READY`
 defaults false, the Pages workflow does not pass the corresponding variable,
 and the button leading to Stripe is absent. The sale-readiness script reports

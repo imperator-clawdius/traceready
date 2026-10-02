@@ -15,6 +15,11 @@ env:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        checkout: ["false", "true"]
+    env:
+      NEXT_PUBLIC_PAID_ORDER_INTAKE_READY: ${{ matrix.checkout }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

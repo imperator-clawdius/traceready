@@ -1,6 +1,10 @@
 # Stripe branding runbook
 
-Reviewed: 2026-06-14
+Latest inspection: 2026-10-02. The $149 cleanup link renders the correct active
+offer. The $745 pilot link renders "The link is no longer active." Its checkout
+handoff therefore stays scope-request only until the provider link is repaired.
+No payment was submitted. The historical Dashboard record below is not current
+activation evidence for the pilot.
 
 The TraceReady site now routes paid CTAs through TraceReady-owned checkout handoff pages before sending buyers to Stripe:
 

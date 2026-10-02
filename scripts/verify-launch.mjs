@@ -1,15 +1,20 @@
 import { resolve4, resolveCname } from "node:dns/promises";
 import http from "node:http";
 import https from "node:https";
+import fs from "node:fs/promises";
+import { pathToFileURL } from "node:url";
+import { JSDOM } from "jsdom";
+import { checkoutOffer, evaluateProviderEvidence, evaluateRenderedCheckout } from "./verify-sale-readiness.mjs";
 
 const EXPECTED_APEX_A = ["185.199.108.153", "185.199.109.153", "185.199.110.153", "185.199.111.153"];
 const EXPECTED_WWW_CNAME = "imperator-clawdius.github.io";
 const GITHUB_PAGES_IP = "185.199.108.153";
 const DOMAIN = "traceready.online";
 const WWW_DOMAIN = `www.${DOMAIN}`;
-const STRIPE_LINK = "https://buy.stripe.com/8x27sN6NW3qzb4d6df93y01";
-const PILOT_STRIPE_LINK = "https://buy.stripe.com/dRm6oH9SH8l671l59W8IU03";
+const STRIPE_LINK = checkoutOffer("cleanup").stripeHref;
+const PILOT_STRIPE_LINK = checkoutOffer("pilot").stripeHref;
 const STRICT_DNS = process.argv.includes("--strict-dns");
+const ALLOW_LOCKED_CHECKOUT = process.argv.includes("--allow-locked-checkout");
 
 const requiredPages = [
   {
@@ -67,13 +72,11 @@ const requiredPages = [
   {
     label: "CLEANUP_CHECKOUT_PAGE",
     path: "/checkout/cleanup/",
+    offer: "cleanup",
     content: [
       "TraceReady 24-hour cleanup",
       "Passive Print Labs LLC",
-      "Paid intake gate",
       "Do not pay or send raw farm coordinates before scope confirmation",
-      "Stripe opens only after reply capture and launch scope are confirmed",
-      "Email scope request first",
       "Download representative sample pack",
       "Review order intake checklist",
     ],
@@ -81,13 +84,11 @@ const requiredPages = [
   {
     label: "PILOT_CHECKOUT_PAGE",
     path: "/checkout/pilot/",
+    offer: "pilot",
     content: [
       "TraceReady 5-file pilot",
       "Passive Print Labs LLC",
-      "Paid intake gate",
       "Do not pay or send raw farm coordinates before scope confirmation",
-      "Stripe opens only after reply capture and launch scope are confirmed",
-      "Email scope request first",
       "Receive a batch cleanup summary and cleaned packs",
       "Review order intake checklist",
     ],
@@ -240,6 +241,15 @@ const requiredPages = [
 ];
 
 async function main() {
+  const approval = await fs.readFile("docs/paid-intake-approval.json", "utf8").then(JSON.parse).catch((error) => {
+    if (error.code === "ENOENT") return null;
+    throw error;
+  });
+  function checkCheckout(result) {
+    return result.offer
+      ? evaluateLaunchCheckout(result.body, { offer: result.offer, providerEvidence: approval?.offers?.[result.offer], allowLockedCheckout: ALLOW_LOCKED_CHECKOUT })
+      : { ready: true, errors: [] };
+  }
   const [apexRecords, wwwCname, artifactResults, liveResults, stripeLink, pilotStripeLink, wwwHttps] = await Promise.all([
     resolveA(DOMAIN),
     resolveCnameRecord(WWW_DOMAIN),
@@ -255,24 +265,30 @@ async function main() {
   const dnsReady = apexReady && wwwReady;
   const liveHttpsRequired = dnsReady || STRICT_DNS;
   const artifactChecks = artifactResults.map((result) => {
-    const contentReady = result.status === 200 && result.content.every((text) => result.body.includes(text));
+    const checkout = checkCheckout(result);
+    const contentReady = result.status === 200 && result.content.every((text) => result.body.includes(text)) && checkout.ready;
     const redirectReady = liveHttpsRequired && isExpectedHttpsRedirect(result, result.path);
 
     return {
       ...result,
       ready: contentReady || redirectReady,
-      missing: contentReady || redirectReady ? [] : result.content.filter((text) => !result.body.includes(text)),
+      missing: contentReady || redirectReady ? [] : [...result.content.filter((text) => !result.body.includes(text)), ...checkout.errors],
     };
   });
-  const liveChecks = liveResults.map((result) => ({
-    ...result,
-    ready: result.status === 200 && result.content.every((text) => result.body.includes(text)),
-    missing: result.content.filter((text) => !result.body.includes(text)),
-  }));
+  const liveChecks = liveResults.map((result) => {
+    const checkout = checkCheckout(result);
+    return {
+      ...result,
+      ready: result.status === 200 && result.content.every((text) => result.body.includes(text)) && checkout.ready,
+      missing: [...result.content.filter((text) => !result.body.includes(text)), ...checkout.errors],
+    };
+  });
   const artifactReady = artifactChecks.every((check) => check.ready);
   const liveHttpsReady = liveChecks.every((check) => check.ready);
-  const stripeReady = stripeLink.status >= 200 && stripeLink.status < 400;
-  const pilotStripeReady = pilotStripeLink.status >= 200 && pilotStripeLink.status < 400;
+  const stripeReachable = stripeLink.status >= 200 && stripeLink.status < 400;
+  const pilotStripeReachable = pilotStripeLink.status >= 200 && pilotStripeLink.status < 400;
+  const stripeReady = stripeReachable && evaluateProviderEvidence("cleanup", approval?.offers?.cleanup).ready;
+  const pilotStripeReady = pilotStripeReachable && evaluateProviderEvidence("pilot", approval?.offers?.pilot).ready;
   const wwwHttpsReady =
     wwwHttps.status >= 300 &&
     wwwHttps.status < 400 &&
@@ -303,8 +319,9 @@ async function main() {
     printStatus(`HTTPS_${check.label}`, check.ready, detail);
   }
 
-  printStatus("STRIPE_LINK", stripeReady, `status=${stripeLink.status} url=${STRIPE_LINK}`);
-  printStatus("PILOT_STRIPE_LINK", pilotStripeReady, `status=${pilotStripeLink.status} url=${PILOT_STRIPE_LINK}`);
+  printStatus("STRIPE_LINK", stripeReady, `http_status=${stripeLink.status} provider_snapshot=${approval?.offers?.cleanup?.active === true ? "active" : "inactive_or_unverified"} url=${STRIPE_LINK}`);
+  printStatus("PILOT_STRIPE_LINK", pilotStripeReady, `http_status=${pilotStripeLink.status} provider_snapshot=${approval?.offers?.pilot?.active === true ? "active" : "inactive_or_unverified"} url=${PILOT_STRIPE_LINK}`);
+  console.log("STRIPE_EVIDENCE=dated_rendered_checkout_snapshot_not_completed_payment; HTTP_200_ALONE_IS_NOT_ACTIVATION_PROOF");
   printStatus("HTTPS_WWW_REDIRECT", wwwHttpsReady, `status=${wwwHttps.status} location=${wwwHttps.location || "none"}`);
   printStatus("DNS_APEX", apexReady, `current=${apexRecords.join(",") || "none"}`);
   printStatus("DNS_WWW", wwwReady, `current=${wwwCname.join(",") || "none"}`);
@@ -328,13 +345,31 @@ async function main() {
 
   if (
     !artifactReady ||
-    !stripeReady ||
-    !pilotStripeReady ||
+    (!ALLOW_LOCKED_CHECKOUT && !stripeReady && !pilotStripeReady) ||
+    (approval?.offers?.cleanup?.active === true && !stripeReady) ||
+    (approval?.offers?.pilot?.active === true && !pilotStripeReady) ||
     (STRICT_DNS && !dnsReady) ||
     (liveHttpsRequired && (!liveHttpsReady || !wwwHttpsReady))
   ) {
     process.exitCode = 1;
   }
+}
+
+export function evaluateLaunchCheckout(html, { offer, providerEvidence, allowLockedCheckout = false, now = Date.now() }) {
+  const provider = evaluateProviderEvidence(offer, providerEvidence, { now });
+  if (provider.ready) {
+    const handoff = evaluateRenderedCheckout(html, { offer, contactEmail: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "founder@traceready.online" });
+    if (handoff.ready || !allowLockedCheckout) return handoff;
+  }
+  const knownInactive = providerEvidence?.active === false && provider.errors.length === 1 && provider.errors[0] === "provider checkout is not confirmed active";
+  if (!allowLockedCheckout && !knownInactive) return { ready: false, errors: provider.errors };
+  const dom = new JSDOM(html);
+  const document = dom.window.document;
+  const errors = [];
+  if (document.querySelector("fieldset[data-checkout-url]") || [...document.querySelectorAll("a[href]")].some((element) => element.getAttribute("href").startsWith("https://buy.stripe.com/"))) errors.push("inactive checkout must not expose a payment action");
+  if (![...document.querySelectorAll("a[href]")].some((element) => element.textContent.trim() === "Email scope request first" && element.getAttribute("href").startsWith("mailto:"))) errors.push("locked checkout must provide an email scope request");
+  dom.window.close();
+  return { ready: errors.length === 0, errors };
 }
 
 async function resolveA(hostname) {
@@ -452,4 +487,6 @@ function printStatus(label, ok, detail) {
   console.log(`${label}=${ok ? "pass" : "pending"} ${detail}`);
 }
 
-await main();
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  await main();
+}

@@ -1,5 +1,7 @@
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
+import { evaluateLaunchCheckout } from "./verify-launch.mjs";
+import { checkoutOffer } from "./verify-sale-readiness.mjs";
 
 describe("launch verifier route manifest", () => {
   it("checks the free issue-log triage route in live launch verification", () => {
@@ -86,10 +88,10 @@ describe("launch verifier route manifest", () => {
     expect(script).toContain('label: "CLEANUP_CHECKOUT_PAGE"');
     expect(script).toContain('label: "PILOT_CHECKOUT_PAGE"');
     expect(script).toContain('label: "ORDER_INTAKE_PAGE"');
-    expect(script).toContain("Paid intake gate");
     expect(script).toContain("Do not pay or send raw farm coordinates before scope confirmation");
-    expect(script).toContain("Stripe opens only after reply capture and launch scope are confirmed");
     expect(script).toContain("Email scope request first");
+    expect(script).toContain("evaluateLaunchCheckout");
+    expect(script).toContain("HTTP_200_ALONE_IS_NOT_ACTIVATION_PROOF");
     expect(script).toContain("After scope confirmation and checkout");
   });
 
@@ -100,5 +102,33 @@ describe("launch verifier route manifest", () => {
     expect(proofPageBlock).toContain("Request scoped cleanup");
     expect(proofPageBlock).toContain("TraceReady confirms launch scope before raw coordinates or Stripe payment");
     expect(proofPageBlock).not.toContain("Buy 24-hour cleanup");
+  });
+});
+
+describe("deployed checkout verification", () => {
+  const expected = checkoutOffer("cleanup");
+  const now = Date.parse("2026-10-02T18:00:00.000Z");
+  const providerEvidence = { href: expected.stripeHref, title: expected.title, amount: 14900, currency: "usd", active: true, verifiedAt: new Date(now).toISOString(), verificationMethod: "rendered_stripe_checkout" };
+  const enabledHtml = `<h1>${expected.title}</h1><p>${expected.price}</p><fieldset data-checkout-url="${expected.stripeHref}"><input type="checkbox" required></fieldset><a href="/order-intake/">Intake</a><a href="mailto:founder@traceready.online">Scope</a>`;
+  const lockedHtml = '<a href="mailto:founder@traceready.online?subject=scope">Email scope request first</a>';
+
+  it("requires enabled public handoff for an active released offer", () => {
+    expect(evaluateLaunchCheckout(enabledHtml, { offer: "cleanup", providerEvidence, now }).ready).toBe(true);
+    expect(evaluateLaunchCheckout(lockedHtml, { offer: "cleanup", providerEvidence, now }).ready).toBe(false);
+  });
+
+  it("permits a known inactive offer only while its payment action stays closed", () => {
+    const inactiveEvidence = { ...providerEvidence, active: false };
+    expect(evaluateLaunchCheckout(lockedHtml, { offer: "cleanup", providerEvidence: inactiveEvidence, now }).ready).toBe(true);
+    expect(evaluateLaunchCheckout(enabledHtml, { offer: "cleanup", providerEvidence: inactiveEvidence, now }).ready).toBe(false);
+  });
+
+  it("does not treat missing activation evidence as a launched offer", () => {
+    expect(evaluateLaunchCheckout(enabledHtml, { offer: "cleanup", now }).ready).toBe(false);
+    expect(evaluateLaunchCheckout(lockedHtml, { offer: "cleanup", now }).ready).toBe(false);
+  });
+
+  it("supports explicit diagnostics of intentionally locked checkout", () => {
+    expect(evaluateLaunchCheckout(lockedHtml, { offer: "cleanup", allowLockedCheckout: true, now }).ready).toBe(true);
   });
 });

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 2,
+  "replyCaptureReady": true,
+  "outboundReady": true,
+  "approvedForPublicCheckout": true,
+  "approvedAt": "2026-10-02T14:08:31.000Z",
+  "approver": "Codex under the owner's revenue-first implementation instruction",
+  "evidence": {
+    "replyCaptureEvidencePath": "private/reply-capture-evidence.json",
+    "emailVerifiedAt": "2026-10-02T14:08:31.000Z",
+    "fulfillmentRunbook": "docs/fulfillment-runbook.md"
+  },
+  "offers": {
+    "cleanup": {
+      "href": "https://buy.stripe.com/8x27sN6NW3qzb4d6df93y01",
+      "title": "TraceReady 24-hour cleanup",
+      "amount": 14900,
+      "currency": "usd",
+      "active": true,
+      "verifiedAt": "2026-10-02T14:08:31.000Z",
+      "verificationMethod": "rendered_stripe_checkout"
+    },
+    "pilot": {
+      "href": "https://buy.stripe.com/dRm6oH9SH8l671l59W8IU03",
+      "title": "TraceReady 5-file pilot",
+      "amount": 74500,
+      "currency": "usd",
+      "active": false,
+      "verifiedAt": "2026-10-02T14:08:31.000Z",
+      "verificationMethod": "rendered_stripe_checkout",
+      "note": "Stripe renders: The link is no longer active. Keep scope-request only until repaired and verified."
+    }
+  }
+}

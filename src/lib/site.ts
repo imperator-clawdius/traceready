@@ -1,3 +1,5 @@
+import paidIntakeApproval from "../../docs/paid-intake-approval.json";
+
 export const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "founder@traceready.online";
 export const LEGAL_OPERATOR = "Passive Print Labs LLC";
 
@@ -30,11 +32,15 @@ export const OFFER_STATUS = {
     title: "TraceReady 24-hour cleanup",
     price: "$149",
     stripeHref: STRIPE_CLEANUP_LINK,
+    checkoutReady: PAID_ORDER_INTAKE_READY && paidIntakeApproval.offers.cleanup.active &&
+      paidIntakeApproval.offers.cleanup.href === STRIPE_CLEANUP_LINK,
   },
   pilot: {
     title: "TraceReady 5-file pilot",
     price: "$745",
     stripeHref: STRIPE_PILOT_LINK,
+    checkoutReady: PAID_ORDER_INTAKE_READY && paidIntakeApproval.offers.pilot.active &&
+      paidIntakeApproval.offers.pilot.href === STRIPE_PILOT_LINK,
   },
   verifiedDate: "2026-06-14",
 };

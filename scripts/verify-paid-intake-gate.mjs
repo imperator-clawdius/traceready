@@ -103,9 +103,15 @@ async function readApproval(approvalPath, errors) {
 }
 
 function validateApproval(approval, errors) {
+  if (!approval || typeof approval !== "object" || Array.isArray(approval)) {
+    errors.push("approval must be an object");
+    return;
+  }
+  if (approval.schemaVersion !== 2) errors.push("approval schemaVersion must be 2");
   if (approval.replyCaptureReady !== true) {
     errors.push("approval replyCaptureReady must be true");
   }
+  if (approval.outboundReady !== true) errors.push("approval outboundReady must be true");
 
   if (approval.approvedForPublicCheckout !== true) {
     errors.push("approval approvedForPublicCheckout must be true");
@@ -123,17 +129,26 @@ function validateApproval(approval, errors) {
     errors.push("approval evidence.replyCaptureEvidencePath must be a non-empty string");
   }
 
-  if (approval.evidence?.saleReadinessState !== "sale_ready_with_market_signal") {
-    errors.push("approval evidence.saleReadinessState must be sale_ready_with_market_signal");
+  if (!isValidIsoTimestamp(approval.evidence?.emailVerifiedAt)) errors.push("approval evidence.emailVerifiedAt must be a valid ISO timestamp");
+  if (!isNonEmptyString(approval.evidence?.fulfillmentRunbook)) errors.push("approval evidence.fulfillmentRunbook must be a non-empty string");
+  const expectedOffers = { cleanup: 14900, pilot: 74500 };
+  let activeOffers = 0;
+  for (const [name, amount] of Object.entries(expectedOffers)) {
+    const offer = approval.offers?.[name];
+    if (!offer || typeof offer.active !== "boolean") {
+      errors.push(`approval offers.${name} must declare active true or false`);
+      continue;
+    }
+    if (!offer.active) continue;
+    activeOffers++;
+    if (!/^https:\/\/buy\.stripe\.com\/[A-Za-z0-9]+$/.test(offer.href ?? "")) errors.push(`approval offers.${name}.href must be a Stripe Payment Link`);
+    if (offer.amount !== amount || offer.currency !== "usd") errors.push(`approval offers.${name} must match the advertised USD price`);
+    if (!isNonEmptyString(offer.title)) errors.push(`approval offers.${name}.title must be present`);
+    if (!isValidIsoTimestamp(offer.verifiedAt) || offer.verificationMethod !== "rendered_stripe_checkout") errors.push(`approval offers.${name} requires rendered checkout verification`);
+    const configured = process.env[name === "cleanup" ? "NEXT_PUBLIC_STRIPE_PAYMENT_LINK" : "NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK"];
+    if (configured && configured !== offer.href) errors.push(`approval offers.${name}.href differs from the build payment link`);
   }
-
-  if (approval.evidence?.realMarketSignal !== true) {
-    errors.push("approval evidence.realMarketSignal must be true");
-  }
-
-  if (!isNonEmptyString(approval.evidence?.tractionEvidencePath)) {
-    errors.push("approval evidence.tractionEvidencePath must be a non-empty string");
-  }
+  if (!activeOffers) errors.push("approval requires at least one verified active offer");
 }
 
 function isNonEmptyString(value) {

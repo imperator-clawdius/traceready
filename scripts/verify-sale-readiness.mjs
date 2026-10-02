@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { JSDOM } from "jsdom";
 import { inspectOutreachEmailDns } from "./verify-outreach-email.mjs";
 import { parseOutreachResults, summarizeOutreachResults } from "./summarize-outreach-results.mjs";
 
@@ -11,6 +12,26 @@ const DEFAULT_REPLY_CAPTURE_CHALLENGE_PATH = "private/reply-capture-challenge.js
 const DEFAULT_REPLY_CAPTURE_EML_PATH = "private/reply-capture-received.eml";
 const DEFAULT_OUTPUT_PATH = "private/sale-readiness-report.md";
 const DEFAULT_CONTACT_EMAIL = "founder@traceready.online";
+const DEFAULT_APPROVAL_PATH = "docs/paid-intake-approval.json";
+export const CHECKOUT_OFFERS = {
+  cleanup: {
+    title: "TraceReady 24-hour cleanup",
+    price: "$149",
+    stripeHref: "https://buy.stripe.com/8x27sN6NW3qzb4d6df93y01",
+  },
+  pilot: {
+    title: "TraceReady 5-file pilot",
+    price: "$745",
+    stripeHref: "https://buy.stripe.com/dRm6oH9SH8l671l59W8IU03",
+  },
+};
+
+export function checkoutOffer(offer) {
+  const environmentLink = offer === "cleanup"
+    ? process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK
+    : process.env.NEXT_PUBLIC_STRIPE_PILOT_PAYMENT_LINK;
+  return { ...CHECKOUT_OFFERS[offer], stripeHref: environmentLink || CHECKOUT_OFFERS[offer].stripeHref };
+}
 
 export function evaluateSaleReadiness({
   publicProof = {},
@@ -54,7 +75,7 @@ export function evaluateSaleReadiness({
   }
 
   return {
-    status: currentState === "sale_ready_with_market_signal" ? "pass" : "pending",
+    status: ["sale_ready_with_market_signal", "sale_ops_ready_traction_unmeasured"].includes(currentState) ? "pass" : "pending",
     currentState,
     nextGate,
     checks: {
@@ -72,8 +93,11 @@ export function evaluateSaleReadiness({
     checkout: {
       stripeCleanupReady: Boolean(checkout.stripeCleanupReady),
       stripePilotReady: Boolean(checkout.stripePilotReady),
+      offers: checkout.offers ?? {},
       paidFileIntakeRequiresEmail,
       contactEmail: checkout.contactEmail ?? DEFAULT_CONTACT_EMAIL,
+      evidenceSource: checkout.evidenceSource ?? "supplied checks",
+      errors: checkout.errors ?? [],
     },
     email: {
       ready: outboundReady,
@@ -106,7 +130,8 @@ SALE_READINESS=${report.status} state=${report.currentState} next_gate=${report.
 | Check | Status | Evidence |
 | --- | --- | --- |
 | Public problem proof | ${statusFor(report.checks.publicProofReady)} | ${formatNumber(report.publicProof.recordsAnalyzed)} rows analyzed; ${formatNumber(report.publicProof.pointOnlyOver4ha)} point-only plots over 4 hectares; ${formatNumber(report.publicProof.readyRecords)} ready records |
-| Stripe checkout links | ${statusFor(report.checks.checkoutReady)} | cleanup=${statusFor(report.checkout.stripeCleanupReady)} pilot=${statusFor(report.checkout.stripePilotReady)} |
+| Paid checkout availability | ${statusFor(report.checks.checkoutReady)} | cleanup=${statusFor(report.checkout.stripeCleanupReady)} pilot=${statusFor(report.checkout.stripePilotReady)}; source=${report.checkout.evidenceSource} |
+${Object.entries(report.checkout.offers).map(([offer, evidence]) => `| ${offer} checkout evidence | ${statusFor(evidence.ready)} | rendered handoff=${statusFor(evidence.handoffReady)}; provider snapshot=${statusFor(evidence.providerReady)} |`).join("\n")}
 | Paid file intake inbox | ${statusFor(report.checks.paidFileIntakeReady)} | ${
     report.checks.paidFileIntakeReady
       ? `${contactEmail} proven enough for paid-file intake`
@@ -118,6 +143,9 @@ SALE_READINESS=${report.status} state=${report.currentState} next_gate=${report.
 ## Current Decision
 
 ${decisionText(report)}
+
+${report.checkout.errors.length ? `Checkout evidence missing: ${report.checkout.errors.join("; ")}` : "The rendered handoff check proves the published scope-confirmation control and its configured destination."}
+Provider activation evidence is a dated inspection of the rendered Stripe checkout, not a completed payment or a live transaction test. Both offers must pass for overall sale readiness; an individually ready offer can accept scoped orders while another remains unavailable.
 
 ${replyCaptureUnblockSection(report)}
 
@@ -134,6 +162,8 @@ export function parseSaleReadinessArgs(argv) {
     replyCaptureEvidencePath: DEFAULT_REPLY_CAPTURE_EVIDENCE_PATH,
     replyCaptureChallengePath: DEFAULT_REPLY_CAPTURE_CHALLENGE_PATH,
     outputPath: DEFAULT_OUTPUT_PATH,
+    siteDir: "out",
+    approvalPath: DEFAULT_APPROVAL_PATH,
     generatedAt: new Date().toISOString().slice(0, 10),
     allowPending: false,
   };
@@ -165,6 +195,10 @@ export function parseSaleReadinessArgs(argv) {
       options.replyCaptureChallengePath = value;
     } else if (flag === "--output") {
       options.outputPath = value;
+    } else if (flag === "--site-dir") {
+      options.siteDir = value;
+    } else if (flag === "--approval") {
+      options.approvalPath = value;
     } else if (flag === "--today") {
       options.generatedAt = value;
     } else {
@@ -185,7 +219,7 @@ export async function buildSaleReadinessFromFiles(options = {}) {
   const [publicAuditMarkdown, resultsCsv, checkout, emailReport, replyCaptureChallenge] = await Promise.all([
     fs.readFile(publicAuditPath, "utf8"),
     fs.readFile(resultsPath, "utf8"),
-    detectCheckoutDependencies(),
+    inspectRenderedCheckout({ siteDir: options.siteDir, approvalPath: options.approvalPath }),
     inspectOutreachEmailDns({
       replyCaptureEvidencePath,
       ...(await pathExists(replyCaptureChallengePath) ? { replyCaptureChallengePath } : {}),
@@ -251,19 +285,72 @@ function parsePublicProof(markdown) {
   };
 }
 
-async function detectCheckoutDependencies() {
-  const [siteTs, orderIntake, workbench] = await Promise.all([
-    fs.readFile("src/lib/site.ts", "utf8"),
-    fs.readFile("src/app/order-intake/page.tsx", "utf8"),
-    fs.readFile("src/components/TraceReadyWorkbench.tsx", "utf8"),
-  ]);
-  const contactEmail = siteTs.match(/CONTACT_EMAIL[^"]+"([^"]+)"/)?.[1] ?? DEFAULT_CONTACT_EMAIL;
+export function evaluateRenderedCheckout(html, { offer, contactEmail = DEFAULT_CONTACT_EMAIL } = {}) {
+  const expected = typeof offer === "string" ? checkoutOffer(offer) : offer;
+  const dom = new JSDOM(html);
+  const document = dom.window.document;
+  const errors = [];
+  const fieldset = document.querySelector("fieldset[data-checkout-url]");
+  if (document.querySelector("h1")?.textContent.trim() !== expected.title) errors.push("offer title is missing or incorrect");
+  if (![...document.querySelectorAll("p")].some((element) => element.textContent.trim() === expected.price)) errors.push("offer price is missing or incorrect");
+  if (!fieldset || fieldset.hasAttribute("disabled") || fieldset.getAttribute("data-checkout-url") !== expected.stripeHref) errors.push("enabled scope-confirmation checkout destination is missing or incorrect");
+  if (!fieldset?.querySelector('input[type="checkbox"][required]:not([disabled])')) errors.push("required scope-confirmation checkbox is missing");
+  if ([...document.querySelectorAll("a[href]")].some((element) => element.getAttribute("href") === expected.stripeHref)) errors.push("payment link appears before scope confirmation");
+  if (![...document.querySelectorAll("a[href]")].some((element) => element.getAttribute("href") === "/order-intake/")) errors.push("order intake link is missing");
+  if (![...document.querySelectorAll("a[href]")].some((element) => element.getAttribute("href").split("?")[0] === `mailto:${contactEmail}`)) errors.push("scope contact mailto is missing or incorrect");
+  dom.window.close();
+  return { ready: errors.length === 0, errors };
+}
 
+export function evaluateProviderEvidence(offer, evidence, { now = Date.now() } = {}) {
+  const expected = checkoutOffer(offer);
+  const errors = [];
+  if (!evidence || evidence.active !== true) errors.push("provider checkout is not confirmed active");
+  if (evidence?.href !== expected.stripeHref || evidence?.title !== expected.title || evidence?.amount !== Number(expected.price.slice(1)) * 100 || evidence?.currency !== "usd") errors.push("provider offer, price, currency, or destination does not match");
+  if (evidence?.verificationMethod !== "rendered_stripe_checkout") errors.push("provider evidence must inspect rendered Stripe checkout; HTTP status is insufficient");
+  const verifiedAt = Date.parse(evidence?.verifiedAt);
+  if (!Number.isFinite(verifiedAt) || verifiedAt > now + 5 * 60_000 || now - verifiedAt > 30 * 24 * 60 * 60_000) errors.push("provider inspection timestamp must be within the last 30 days");
+  return { ready: errors.length === 0, errors };
+}
+
+export async function inspectRenderedCheckout({ siteDir = "out", approvalPath = DEFAULT_APPROVAL_PATH, contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || DEFAULT_CONTACT_EMAIL, now = Date.now() } = {}) {
+  const errors = [];
+  async function readPage(relativePath) {
+    try {
+      return await fs.readFile(path.join(siteDir, relativePath), "utf8");
+    } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+      errors.push(`missing built page ${path.join(siteDir, relativePath)}; run npm run build`);
+      return "";
+    }
+  }
+  const [cleanupHtml, pilotHtml, intakeHtml] = await Promise.all([
+    readPage("checkout/cleanup/index.html"),
+    readPage("checkout/pilot/index.html"),
+    readPage("order-intake/index.html"),
+  ]);
+  const cleanup = evaluateRenderedCheckout(cleanupHtml, { offer: "cleanup", contactEmail });
+  const pilot = evaluateRenderedCheckout(pilotHtml, { offer: "pilot", contactEmail });
+  const approval = await loadJsonIfPresent(approvalPath);
+  const cleanupProvider = evaluateProviderEvidence("cleanup", approval?.offers?.cleanup, { now });
+  const pilotProvider = evaluateProviderEvidence("pilot", approval?.offers?.pilot, { now });
+  const intakeDom = new JSDOM(intakeHtml);
+  const intakeReady = [...intakeDom.window.document.querySelectorAll("a[href]")].some((element) => element.getAttribute("href").split("?")[0] === `mailto:${contactEmail}`);
+  intakeDom.window.close();
+  errors.push(...cleanup.errors.map((error) => `cleanup: ${error}`), ...pilot.errors.map((error) => `pilot: ${error}`));
+  errors.push(...cleanupProvider.errors.map((error) => `cleanup provider: ${error}`), ...pilotProvider.errors.map((error) => `pilot provider: ${error}`));
+  if (!intakeReady) errors.push("built order intake mailto is missing or incorrect");
   return {
-    stripeCleanupReady: /STRIPE_CLEANUP_LINK[\s\S]*buy\.stripe\.com/.test(siteTs),
-    stripePilotReady: /STRIPE_PILOT_LINK[\s\S]*buy\.stripe\.com/.test(siteTs),
-    paidFileIntakeRequiresEmail: /mailto:\$\{CONTACT_EMAIL\}/.test(orderIntake) || /mailto:\$\{CONTACT_EMAIL\}/.test(workbench),
+    stripeCleanupReady: cleanup.ready && intakeReady && cleanupProvider.ready,
+    stripePilotReady: pilot.ready && intakeReady && pilotProvider.ready,
+    offers: {
+      cleanup: { ready: cleanup.ready && intakeReady && cleanupProvider.ready, handoffReady: cleanup.ready && intakeReady, providerReady: cleanupProvider.ready },
+      pilot: { ready: pilot.ready && intakeReady && pilotProvider.ready, handoffReady: pilot.ready && intakeReady, providerReady: pilotProvider.ready },
+    },
+    paidFileIntakeRequiresEmail: true,
     contactEmail,
+    evidenceSource: path.resolve(siteDir),
+    errors,
   };
 }
 
@@ -277,7 +364,7 @@ function decisionText(report) {
   }
 
   if (report.currentState === "sale_ops_ready_traction_unmeasured") {
-    return "The sales path is operational, but the market problem is still unmeasured until a reply, file check, pilot request, or paid order appears.";
+    return "The sales path is operational and can accept scoped orders. Market traction is unmeasured until a reply, file check, pilot request, or paid order appears; traction is not a prerequisite for opening checkout.";
   }
 
   if (report.currentState === "sale_ready_with_market_signal") {
